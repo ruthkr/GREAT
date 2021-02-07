@@ -1,0 +1,9 @@
+reference_data/
+intermediate_data/
+final_data/
+*.csv
+*.tsv
+*.rds
+*.pdf
+.DS_Store
+05_05-02-21_registration_function.Rmd

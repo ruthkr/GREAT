@@ -782,7 +782,7 @@ load_mean.df <- function() {
   # GoIs <- fread(paste0('../graphs/', rds_file, '/comparison_genes.tsv')) # read the list of Arabidopsis id's for the genes of interest
 
   # ------ changed by Ruth
-  GoIs <- fread(paste0('../to_Shannon/graphs/', rds_file, '/comparison_genes.tsv'))
+  GoIs <- fread(paste0('graphs/', rds_file, '/comparison_genes.tsv'))
 
   print(unique(GoIs$model))
   keep_model_set <- c('rf') #, 'logistic', 'trough', 'spike', 'linear') # rf means don't force them to be the same AT ALL!
@@ -1254,7 +1254,7 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
 
   ara.fit <- lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=ara.spline.data)
   bra.fit <- lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=bra.spline.data)
-  combined.fit <- lm(mean.cpm~bs(shifted.time, df=num.spline.params, degree=3), data=combined.spline.data)
+  combined.fit <- lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=combined.spline.data)
   # calculate the log likelihoods
   ara.logLik <- logLik(ara.fit)
   bra.logLik <- logLik(bra.fit)
@@ -1706,7 +1706,7 @@ get_data_unique_symbol <- function(brassica_name) {
 
   rds_k <- 'klepikova' # 'klepikova
 
-  rdsdir <- '../to_Shannon/final_data/rds/'
+  rdsdir <- 'final_data/rds/'
   # rdsdir <- '../final_data/rds/'
   rdspath_k <- paste0(rdsdir, rds_k, '.rds')
   rdspath_b <- paste0(rdsdir, brassica_name, '.rds')
@@ -1771,7 +1771,7 @@ get_data_all_symbol <- function(brassica_name) {
   rds_k <- 'klepikova' # 'klepikova
 
   # ------- changed by Ruth
-  rdsdir <- '../to_Shannon/final_data/rds/'
+  rdsdir <- 'final_data/rds/'
 
   rdspath_k <- paste0(rdsdir, rds_k, '.rds')
   rdspath_b <- paste0(rdsdir, brassica_name, '.rds')
@@ -1781,7 +1781,7 @@ get_data_all_symbol <- function(brassica_name) {
 
   # id data
   # ------- changed by Ruth
-  ID_TABLE <- readRDS(paste0('../to_Shannon/reference_data/ID_TABLE_brapa-v3.rds'))
+  ID_TABLE <- readRDS(paste0('reference_data/ID_TABLE_brapa-v3.rds'))
 
   ID_TABLE <- unique(ID_TABLE[, c('locus_name', 'symbol', 'CDS.model')])
 

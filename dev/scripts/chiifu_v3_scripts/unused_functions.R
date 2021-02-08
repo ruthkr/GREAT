@@ -301,6 +301,12 @@ make_quantile_heatmaps <- function(Q.mean, Q.scaled, Q.registered) {
   return(p.all)
 }
 
+ecdf_fun <- function(x,perc) {
+  # estimate the quantile of the perc value in the x distribution
+  # https://stats.stackexchange.com/questions/50080/estimate-quantile-of-value-in-a-vector/114493
+  stats::ecdf(x)(perc)
+}
+
 # real.dt <- D.mean.real
 # shuffled.dt <- D.mean.shuffled
 get_all_quantiles <- function(real.dt, shuffled.dt) {

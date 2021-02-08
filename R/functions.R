@@ -1,9 +1,3 @@
-
-
-
-
-
-
 #file.type <- 'mean.df'
 load_shuffled_data <- function(shuffled.data.dir, file.type) {
   # file.type is type of file loading:
@@ -203,85 +197,6 @@ make_heatmap_w_shuffled <- function(D, title) {
 
   return(p)
 }
-
-# ro18_rds_file <- '../final_data/rds/ro18_leaf_reannotated.rds'
-# sari14_rds_file <- '../final_data/rds/sari14_chiifu_leaf_Jul2020.rds'
-#' load_mean.df_sari_ro18 <- function(ro18_rds_file, sari_rds_file) {
-#'
-#'
-#'   ro18.exp <- readRDS(ro18_rds_file)
-#'   #ro18.exp$FPKM <- NULL
-#'   sari14.exp <- readRDS(sari14_rds_file)
-#'   #sari14.exp$TPM <- NULL
-#'
-#'   # check that comparing the same tissue. Can't easily check
-#'   # that the same alignment though.
-#'   if (unique(ro18.exp$tissue != unique(sari14.exp$tissue))) {
-#'     print("compared tissues aren't the same in sari and exp")
-#'     stop()
-#'   }
-#'
-#'   # get the mean of each gene at each timepoint
-#'   ro18.exp[, mean.cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
-#'   sari14.exp[, mean.cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
-#'
-#'   exp <- rbind(ro18.exp, sari14.exp)
-#'   mean.df <- unique(exp[, c('CDS.model', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
-#'   names(mean.df) <-  c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')
-#'   names(exp)[names(exp)=='CDS.model'] <- 'locus_name'
-#'   # checking not cutting out key genes - need to know what they're called now
-#'   # FT
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.8543'),]
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.41993'),]
-#'   # # SOC1
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.15712'),]
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.26487'),]
-#'
-#'   # ggplot(tmp, aes(x=timepoint, y=mean.cpm))+
-#'   #   geom_line()
-#'
-#'   # filter mean.df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
-#'   # greater than 1 in both accessions
-#'   ro18.df <- mean.df[mean.df$accession=='Ro18']
-#'   ro18.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
-#'   ro18.keep.genes <- unique(ro18.df$locus_name[ro18.df$keep==TRUE])
-#'   #'MSTRG.8543' %in% ro18.keep.genes
-#'
-#'   sari14.df <- mean.df[mean.df$accession=='sarisha14']
-#'   sari14.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
-#'   sari14.keep.genes <- unique(sari14.df$locus_name[sari14.df$keep==TRUE])
-#'   #'MSTRG.8543' %in% sari14.keep.genes
-#'
-#'   keep.genes <- intersect(ro18.keep.genes, sari14.keep.genes)
-#'   mean.df <- mean.df[mean.df$locus_name %in% keep.genes,]
-#'
-#'
-#'   # filter to remove genes with low correlation between individual timepoints
-#'   # and mean timepoints in either accession
-#'   keep.genes <- filter.low.variability(exp, 0.7)
-#'   #'MSTRG.8543' %in% keep.genes
-#'
-#'   mean.df <- mean.df[mean.df$locus_name %in% keep.genes, ]
-#'   #'MSTRG.8543' %in% mean.df$locus_name
-#'
-#'   # # checking not cutting out key genes - need to know what they're called now
-#'   # # FT
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.8543'),]
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.41993'),]
-#'   # # SOC1
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.15712'),]
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.26487'),]
-#'   #
-#'
-#'   print(paste0(length(unique(mean.df$locus_name)), ' genes considered in the comparison'))
-#'   rm(ro18.df, keep.genes)
-#'
-#'   exp <- exp[exp$locus_name %in% unique(mean.df$locus_name)]
-#'   exp <- subset(exp, select=c('locus_name', 'accession', 'tissue', 'timepoint',
-#'                               'norm.cpm', 'group'))
-#'   names(exp)[names(exp)=='norm.cpm'] <- 'mean.cpm'
-#'   return(list(mean.df, exp))
-#' }
 
 #c.th <- 0.7
 filter.low.variability <- function(exp, c.th) {
@@ -1825,11 +1740,6 @@ apply_best_normalisation <- function(test, best_shifts) {
 
   return(test)
 }
-
-# my.scale <- function(V) {
-#   V <- (V - mean(V)) / sd(V)
-#   return(V)
-# }
 
 # test <- curr.data.df
 get_compared_timepoints <- function(test) {

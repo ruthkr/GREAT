@@ -56,8 +56,8 @@ load_shuffled_data <- function(shuffled.data.dir, file.type) {
 
 get_jobIds <- function(shuffled.data.dir) {
   files <- list.files(shuffled.data.dir)
-  tmp <- tstrsplit(files, '\\.')
-  tmp <- tstrsplit(tmp[[2]], '_')
+  tmp <- data.table::tstrsplit(files, '\\.')
+  tmp <- data.table::tstrsplit(tmp[[2]], '_')
   jobIds <- unique(paste0(tmp[[2]], '_', tmp[[3]]))
   jobIds <- jobIds[jobIds != 'NA_NA']
   if (length(jobIds) != 1000) {
@@ -76,8 +76,8 @@ get_job_suffixes <- function(data.dir) {
     stop()
   }
 
-  ids <- tstrsplit(files, '\\.')[[2]]
-  ids <- tstrsplit(ids, '_')
+  ids <- data.table::tstrsplit(files, '\\.')[[2]]
+  ids <- data.table::tstrsplit(ids, '_')
   ids <- unique(paste0(ids[[2]], '_', ids[[3]]))
   ids <- ids[ids != 'NA_NA']
 
@@ -101,7 +101,7 @@ scale_all_rep_data <- function(mean.df, all.rep.data, scale.func) {
   # calculate the summary stats to use for the rescaling
   gene.expression.stats <- unique(mean.df[,
                                           .(mean_val=mean(mean.cpm),
-                                            sd_val=sd(mean.cpm)),
+                                            sd_val=stats::sd(mean.cpm)),
                                           by=.(locus_name, accession)])
 
   all.rep.data <- merge(all.rep.data, gene.expression.stats, by=c('locus_name', 'accession'))
@@ -119,8 +119,9 @@ scale_all_rep_data <- function(mean.df, all.rep.data, scale.func) {
 
   names(out)[names(out)=='scaled.norm.cpm'] <- 'mean.cpm'
 
-  # ggplot(mean.df[mean.df$locus_name=='BRAA01G000040.3C', ], aes(x=timepoint, y=mean.cpm, color=accession)+
-  #          geom_point()
+  # ggplot2::ggplot(mean.df[mean.df$locus_name=='BRAA01G000040.3C', ], ) +
+  #  ggplot2::aes(x=timepoint, y=mean.cpm, color=accession
+  #  ggplot2::geom_point()
 
 
   return(out)
@@ -136,64 +137,64 @@ make_heatmap_quantile <- function(D, title) {
 
   D$quantile <- D$quantile * 100
 
-  p <- ggplot(D, aes(x=x.sample, y=y.sample, fill=quantile))+
-    geom_tile()+
-    geom_text(aes(label=round(quantile, digits=0)), color='grey', size=1)+
-    #scale_fill_viridis()+
-    scale_fill_gradient2(low='royalblue3', mid='white', high='red3', midpoint=50)+
-    theme_classic()+
-    theme(axis.text.x = element_text(angle=90,
+  p <- ggplot2::ggplot(D)+
+    ggplot2::aes(x=x.sample, y=y.sample, fill=quantile) +
+    ggplot2::geom_tile()+
+    ggplot2::geom_text(ggplot2::aes(label=round(quantile, digits=0)), color='grey', size=1)+
+    # viridis::scale_fill_viridis()+
+    ggplot2::scale_fill_gradient2(low='royalblue3', mid='white', high='red3', midpoint=50)+
+    ggplot2::theme_classic()+
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle=90,
                                      size=6),
-          axis.text.y = element_text(size=6),
-          plot.title = element_text(hjust=0.5, size=10),
+          axis.text.y = ggplot2::element_text(size=6),
+          plot.title = ggplot2::element_text(hjust=0.5, size=10),
           legend.position = 'top',
           legend.justification="right",
-          legend.margin=margin(0,0,0,0),
-          legend.box.margin = margin(0,0,-10,-10),
-          legend.text=element_text(size=4, vjust=-0.5),
-          legend.title = element_text(size=8),
-          legend.key.height = unit(0.2, 'cm'),
+          legend.margin= ggplot2::margin(0,0,0,0),
+          legend.box.margin = ggplot2::margin(0,0,-10,-10),
+          legend.text=ggplot2::element_text(size=4, vjust=-0.5),
+          legend.title = ggplot2::element_text(size=8),
+          legend.key.height = ggplot2::unit(0.2, 'cm'),
     )+
-    guides(fill=guide_colorbar(label.position='top'))+
-    ylab('')+
-    xlab('')+
-    ggtitle(title)
+    ggplot2::guides(fill=ggplot2::guide_colorbar(label.position='top'))+
+    ggplot2::labs(
+      x = "",
+      y = "",
+      title = title
+    )
 
   return(p)
-}
-
-ecdf_fun <- function(x,perc) {
-  # estimate the quantile of the perc value in the x distribution
-  # https://stats.stackexchange.com/questions/50080/estimate-quantile-of-value-in-a-vector/114493
-  ecdf(x)(perc)
 }
 
 make_heatmap_w_shuffled <- function(D, title) {
   D$x.sample <- factor(D$x.sample, levels=unique(sort(D$x.sample)))
   D$y.sample <- factor(D$y.sample, levels=unique(sort(D$y.sample)))
 
-  p <- ggplot(D, aes(x=x.sample, y=y.sample, fill=log(distance)))+
-    geom_tile()+
-    #scale_fill_viridis()+
-    theme_classic()+
-    theme(axis.text.x = element_text(angle=90,
+  p <- ggplot2::ggplot(D)+
+    ggplot2::aes(x=x.sample, y=y.sample, fill=log(distance)) +
+    ggplot2::geom_tile()+
+    #viridis::scale_fill_viridis()+
+    ggplot2::theme_classic()+
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle=90,
                                      size=6),
-          axis.text.y = element_text(size=6),
-          plot.title = element_text(hjust=0.5, size=10),
+          axis.text.y = ggplot2::element_text(size=6),
+          plot.title = ggplot2::element_text(hjust=0.5, size=10),
           legend.position = 'top',
           legend.justification="right",
-          legend.margin=margin(0,0,0,0),
-          legend.box.margin = margin(0,0,-10,-10),
-          legend.text=element_text(size=4, vjust=-0.5),
-          legend.title = element_text(size=8),
-          legend.key.height = unit(0.2, 'cm'),
+          legend.margin=ggplot2::margin(0,0,0,0),
+          legend.box.margin = ggplot2::margin(0,0,-10,-10),
+          legend.text=ggplot2::element_text(size=4, vjust=-0.5),
+          legend.title = ggplot2::element_text(size=8),
+          legend.key.height = ggplot2::unit(0.2, 'cm'),
     )+
-    guides(fill=guide_colorbar(label.position='top'))+
-    scale_fill_viridis()+
-    facet_wrap(~is.shuffled, nrow=1)+
-    ylab('')+
-    xlab('')+
-    ggtitle(title)
+    ggplot2::guides(fill=ggplot2::guide_colorbar(label.position='top'))+
+    viridis::scale_fill_viridis()+
+    ggplot2::facet_wrap(~is.shuffled, nrow=1)+
+    ggplot2::labs(
+      x = "",
+      y = "",
+      title = title
+    )
 
   return(p)
 }
@@ -204,7 +205,7 @@ filter.low.variability <- function(exp, c.th) {
   # between indiv replicate points, and mean df point
 
   # calculate correlation
-  exp[, C:=cor(mean.cpm, norm.cpm, method='pearson'), by=.(locus_name, accession, tissue)]
+  exp[, C:=stats::cor(mean.cpm, norm.cpm, method='pearson'), by=.(locus_name, accession, tissue)]
 
   #tmp <- exp[exp$locus_name.model=='MSTRG.8543',]
 
@@ -226,10 +227,10 @@ load_mean.df <- function() {
 
 
   #### specify the genes to be used in the comparison: ####
-  # GoIs <- fread(paste0('../graphs/', rds_file, '/comparison_genes.tsv')) # read the list of Arabidopsis id's for the genes of interest
+  # GoIs <- data.table::fread(paste0('../graphs/', rds_file, '/comparison_genes.tsv')) # read the list of Arabidopsis id's for the genes of interest
 
   # ------ changed by Ruth
-  GoIs <- fread(paste0('graphs/', rds_file, '/comparison_genes.tsv'))
+  GoIs <- data.table::fread(paste0('graphs/', rds_file, '/comparison_genes.tsv'))
 
   print(unique(GoIs$model))
   keep_model_set <- c('rf') #, 'logistic', 'trough', 'spike', 'linear') # rf means don't force them to be the same AT ALL!
@@ -343,7 +344,7 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches,
 
 
 
-  mean.df.sc <- copy(mean.df)
+  mean.df.sc <- data.table::copy(mean.df)
   # specify what kind of scaling
   mean.df.sc[, sc.mean.cpm:=scale(mean.cpm, scale=TRUE, center=TRUE), by=.(locus_name, accession)]
   #mean.df.sc[, sc.mean.cpm:=my.scale(mean.cpm), by=.(locus_name, accession)]
@@ -356,7 +357,7 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches,
   # whether prior rescaled mean, or mean data should be used for registration
   if (initial.rescale==TRUE) {
     # apply rescale to mean.df prior to registration
-    to.shift.df <- copy(mean.df.sc)
+    to.shift.df <- data.table::copy(mean.df.sc)
     to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
     to.shift.df$sc.mean.cpm <- NULL
 
@@ -366,16 +367,19 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches,
 
 
     # sanity plot that rescale all data worked
-    # ggplot(all.data.df[all.data.df$locus_name=='BRAA01G000040.3C'], aes(x=timepoint, y=mean.cpm, color=accession))+
-    #   geom_point()
+    # ggplot2::ggplot(all.data.df[all.data.df$locus_name=='BRAA01G000040.3C'])+
+    #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession)
+    #   ggplot2::geom_point()
   } else {
-    to.shift.df <- copy(mean.df)
+    to.shift.df <- data.table::copy(mean.df)
   }
-  # ggplot(to.shift.df[to.shift.df$locus_name=='BRAA03G004600.3C'], aes(x=timepoint, y=mean.cpm, color=accession))+
-  #   geom_point()
+  # ggplot2::ggplot(to.shift.df[to.shift.df$locus_name=='BRAA03G004600.3C'])+
+  #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession)
+  #   ggplot2::geom_point()
   # tst <- all.data.df
-  # ggplot(tst[tst$locus_name=='BRAA01G000040.3C'], aes(x=timepoint, y=mean.cpm, color=accession))+
-  #   geom_point()
+  # ggplot2::ggplot(tst[tst$locus_name=='BRAA01G000040.3C'])+
+  #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  #   ggplot2::geom_point()
 
   # calculate the best registration. Returns all tried registrations, best stretch and shift combo,
   # and AIC/BIC stats for comparison of best registration model to seperate models for expression of
@@ -404,15 +408,15 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches,
   # shifted.mean.df <- apply_best_shift(to.shift.df, best_shifts) # can be NA if exactly tied for what the best shift was
 
   # GOI <- 'MSTRG.11237'
-  # ggplot(all.data.df[all.data.df$locus_name==GOI],
-  #        aes(x=timepoint, y= mean.cpm, color=accession))+
-  #   geom_point()
+  # ggplot2::ggplot(all.data.df[all.data.df$locus_name==GOI])+
+  #   ggplot2::aes(x=timepoint, y= mean.cpm, color=accession) +
+  #   ggplot2::geom_point()
   #
   # #sanity plot that done right
-  # ggplot(shifted.mean.df[shifted.mean.df$locus_name==GOI],
-  #        aes(x=shifted.time, y=mean.cpm, color=accession))+
-  #   geom_point()+
-  #   geom_line()
+  # ggplot2::ggplot(shifted.mean.df[shifted.mean.df$locus_name==GOI])+
+  #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession) +
+  #   ggplot2::geom_point()+
+  #   ggplot2::geom_line()
 
 
   # impute arabidopsis values at times == to the observed brassica points for each shifted arabidopsis gene
@@ -422,14 +426,14 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches,
   imputed.mean.df <- impute_arabidopsis_values(shifted.mean.df)
 
   #sanity plot that done right
-  # ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA01G001540.3C'],
-  #        aes(x=shifted.time, y=mean.cpm, color=accession))+
-  #   geom_point()+
-  #   geom_line()
-  # ggplot(imputed.mean.df[imputed.mean.df$locus_name=='BRAA01G001540.3C'],
-  #        aes(x=shifted.time, y=mean.cpm, color=accession))+
-  #   geom_point()+
-  #   geom_line()
+  # ggplot2::ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA01G001540.3C'])+
+  #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession) +
+  #   ggplot2::geom_point()+
+  #   ggplot2::geom_line()
+  # ggplot2::ggplot(imputed.mean.df[imputed.mean.df$locus_name=='BRAA01G001540.3C'])+
+  #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
+  #   ggplot2::geom_point()+
+  #   ggplot2::geom_line()
 
 
   # fix the accession names to the ones actually passed in:
@@ -517,8 +521,9 @@ get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do.r
     # calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points
     # if do.rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
 
-    # ggplot(to.shift.df[to.shift.df$locus_name=='MSTRG.12467',], aes(x=timepoint, y=mean.cpm, color=accession))+
-    #   geom_point()
+    # ggplot2::ggplot(to.shift.df[to.shift.df$locus_name=='MSTRG.12467',])+
+    #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+    #   ggplot2::geom_point()
 
     all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do.rescale, min.num.overlapping.points, shift.extreme)
 
@@ -625,10 +630,12 @@ calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
 
   # # check that have now got scaled, stretched time for both genes.
   # tst <- all.data.df
-  # ggplot(tst[tst$locus_name=='BRAA01G000040.3C'], aes(x=shifted.time, y=mean.cpm, color=accession))+
-  #   geom_point()
-  # ggplot(tst[tst$locus_name=='BRAA01G000040.3C'], aes(x=timepoint, y=mean.cpm, color=accession))+
-  #   geom_point()
+  # ggplot2::ggplot(tst[tst$locus_name=='BRAA01G000040.3C'])+
+  #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession) +
+  #   ggplot2::geom_point()
+  # ggplot2::ggplot(tst[tst$locus_name=='BRAA01G000040.3C'])+
+  #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  #   ggplot2::geom_point()
 
   print('calculating registration vs different expression comparison AIC & BIC...')
 
@@ -654,7 +661,7 @@ calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
     out.combBIC[i] <- L[[4]]
   }
 
-  out <- data.table(data.frame('gene'=genes, 'seperate.AIC'=out.sepAIC, 'registered.AIC'=out.combAIC,
+  out <- data.table::data.table(data.frame('gene'=genes, 'seperate.AIC'=out.sepAIC, 'registered.AIC'=out.combAIC,
                                'seperate.BIC'=out.sepBIC, 'registered.BIC'=out.combBIC))
   return(out)
 }
@@ -676,8 +683,9 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
   # flag the timepoints to be used in the modelling, only the ones which overlap!
   curr.data.df <- get_compared_timepoints(curr.data.df)
 
-  # ggplot(curr.data.df, aes(x=shifted.time, y=mean.cpm, shape=is.compared, color=accession))+
-  #   geom_point()
+  # ggplot2::ggplot(curr.data.df)+
+  #   ggplot2::aes(x=shifted.time, y=mean.cpm, shape=is.compared, color=accession)+
+  #   ggplot2::geom_point()
 
   # cut down to the data for each model
   ara.spline.data <- curr.data.df[curr.data.df$is.compared==TRUE &
@@ -699,14 +707,14 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
   # print(bra.spline.data)
 
 
-  ara.fit <- lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=ara.spline.data)
-  bra.fit <- lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=bra.spline.data)
-  combined.fit <- lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=combined.spline.data)
+  ara.fit <- stats::lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=ara.spline.data)
+  bra.fit <- stats::lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=bra.spline.data)
+  combined.fit <- stats::lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=combined.spline.data)
   # calculate the log likelihoods
-  ara.logLik <- logLik(ara.fit)
-  bra.logLik <- logLik(bra.fit)
+  ara.logLik <- stats::logLik(ara.fit)
+  bra.logLik <- stats::logLik(bra.fit)
   seperate.logLik <- ara.logLik + bra.logLik # logLikelihoods, so sum
-  combined.logLik <- logLik(combined.fit)
+  combined.logLik <- stats::logLik(combined.fit)
 
   # calculate the comparison.stats - - AIC, BIC, smaller is better!
   # 2*num.spline.params as fitting seperate models for Ara * Col
@@ -718,25 +726,25 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
 
 
   if (is.testing==TRUE) {
-    ara.pred <- predict(ara.fit)
+    ara.pred <- stats::predict(ara.fit)
     ara.pred.df <- unique(data.frame('shifted.time'=ara.spline.data$shifted.time,
                                      'mean.cpm'=ara.pred, 'accession'='Col0'))
-    bra.pred <- predict(bra.fit)
+    bra.pred <- stats::predict(bra.fit)
     bra.pred.df <- unique(data.frame('shifted.time'=bra.spline.data$shifted.time,
                                      'mean.cpm'=bra.pred, 'accession'='Ro18'))
 
-    combined.pred <- predict(combined.fit)
+    combined.pred <- stats::predict(combined.fit)
     combined.pred.df <- unique(data.frame('shifted.time'=combined.spline.data$shifted.time,
                                           'mean.cpm'=combined.pred, 'accession'='registered'))
     spline.df <- rbind(ara.pred.df, bra.pred.df, combined.pred.df)
 
-    ggplot(data=combined.spline.data, aes(x=shifted.time, y=mean.cpm,
-                                          colour=accession))+
-      geom_point()+
-      geom_line(data=spline.df)+
-      ggtitle(paste0(curr.sym, ' : sep AIC:combo AIC=', round(seperate.AIC), ':', round(combined.AIC),
+    ggplot2::ggplot(data=combined.spline.data)+
+      ggplot2::aes(x=shifted.time, y=mean.cpm, colour=accession) +
+      ggplot2::geom_point()+
+      ggplot2::geom_line(data=spline.df)+
+      ggplot2::ggtitle(paste0(curr.sym, ' : sep AIC:combo AIC=', round(seperate.AIC), ':', round(combined.AIC),
                      ', sep BIC: combo BIC=', round(seperate.BIC), ':', round(combined.BIC)))
-    ggsave(paste0('./testing/fitted_splines/', curr.sym, '_', max(ara.pred.df$shifted.time), '.pdf'))
+    ggplot2::ggsave(paste0('./testing/fitted_splines/', curr.sym, '_', max(ara.pred.df$shifted.time), '.pdf'))
   }
 
   return(list(seperate.AIC, combined.AIC, seperate.BIC,combined.BIC))
@@ -749,30 +757,31 @@ make_heatmap <- function(D, ylabel, y.axis.fontsize=6) {
   D$x.sample <- factor(D$x.sample, levels=unique(sort(D$x.sample)))
   D$y.sample <- factor(D$y.sample, levels=unique(sort(D$y.sample)))
 
-  p <- ggplot(D, aes(x=x.sample, y=y.sample, fill=log(distance)))+
-    geom_tile()+
+  p <- ggplot2::ggplot(D)+
+    ggplot2::aes(x=x.sample, y=y.sample, fill=log(distance)) +
+    ggplot2::geom_tile()+
     #scale_fill_viridis()+
     #theme_classic()+
-    theme(axis.text.x = element_text(angle=90,
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle=90,
                                      size=6),
-          axis.text.y = element_text(size=y.axis.fontsize),
-          plot.title = element_text(hjust=0.5, size=10),
-          plot.margin = margin(0,0,-10,0),
-          panel.background = element_blank(),
+          axis.text.y = ggplot2::element_text(size=y.axis.fontsize),
+          plot.title = ggplot2::element_text(hjust=0.5, size=10),
+          plot.margin = ggplot2::margin(0,0,-10,0),
+          panel.background = ggplot2::element_blank(),
           legend.position = 'top',
           legend.justification="right",
-          legend.margin=margin(0,0,0,0),
-          legend.box.margin = margin(0,0,-10,-10),
-          legend.text=element_text(size=4, vjust=-0.5),
-          legend.title = element_text(size=8),
-          legend.key.height = unit(0.2, 'cm'),
+          legend.margin=ggplot2::margin(0,0,0,0),
+          legend.box.margin = ggplot2::margin(0,0,-10,-10),
+          legend.text=ggplot2::element_text(size=4, vjust=-0.5),
+          legend.title = ggplot2::element_text(size=8),
+          legend.key.height = ggplot2::unit(0.2, 'cm'),
     )+
-    guides(fill=guide_colorbar(label.position='top'))+
-    scale_fill_viridis()+
-    facet_wrap(~title, nrow=1)+
-    ylab(ylabel)+
-    xlab('')
-  #ggtitle(title)
+    ggplot2::guides(fill=ggplot2::guide_colorbar(label.position='top'))+
+    viridis::scale_fill_viridis()+
+    ggplot2::facet_wrap(~title, nrow=1)+
+    ggplot2::ylab(ylabel)+
+    ggplot2::xlab('')
+  # ggplot2::ggtitle(title)
 
   return(p)
 }
@@ -887,13 +896,13 @@ shuffle_ro18_timepoints <- function(unrandom.mean.df, unrandom.all.df) {
 shuffle_ro18_gene_names <- function(mean.df, out.all.df) {
   # shuffle the identities of the genes in the brassica
   # can't just do shuffle, becuase need to preserve which timepoints are from the same gene
-  out.mean.df <- copy(mean.df)
-  out.all.df <- copy(out.all.df)
+  out.mean.df <- data.table::copy(mean.df)
+  out.all.df <- data.table::copy(out.all.df)
 
   # make the gene lookup table for the same shuffled genes for both
   brassica.genes <- unique(out.mean.df$locus_name[out.mean.df$accession=='Ro18'])
   shuffled.genes <- sample(brassica.genes)
-  shuffle.gene.lookup <- data.table(data.frame('gene.id'=brassica.genes, 'shuffled.id'=shuffled.genes))
+  shuffle.gene.lookup <- data.table::data.table(data.frame('gene.id'=brassica.genes, 'shuffled.id'=shuffled.genes))
 
   # change the gene names for the mean.df
   out.mean.df <- swap_gene_names(out.mean.df, shuffle.gene.lookup)
@@ -926,7 +935,7 @@ make_data_heatmaps <- function(D.mean, D.scaled, D.registered, D.scaled.NR, D.sc
   p.registered.R <- make_heatmap(D.registered.R, 'registered & scaled mean expression (only  registered genes)')
 
 
-  p.all <- plot_grid(p.mean, p.scaled.NR, p.scaled, p.scaled.R, p.registered, p.registered.R, ncol=2)
+  p.all <- cowplot::plot_grid(p.mean, p.scaled.NR, p.scaled, p.scaled.R, p.registered, p.registered.R, ncol=2)
 
   return(p.all)
 }
@@ -935,28 +944,29 @@ make_heatmap_all <- function(D, title) {
   D$x.sample <- factor(D$x.sample, levels=unique(sort(D$x.sample)))
   D$y.sample <- factor(D$y.sample, levels=unique(sort(D$y.sample)))
 
-  p <- ggplot(D, aes(x=x.sample, y=y.sample, fill=log(distance)))+
-    geom_tile()+
-    #scale_fill_viridis()+
-    theme_classic()+
-    facet_wrap(~title, ncol=1, scales='free')+
-    theme(axis.text.x = element_text(angle=90,
+  p <- ggplot2::ggplot(D)+
+    ggplot2::aes(x=x.sample, y=y.sample, fill=log(distance)) +
+    ggplot2::geom_tile()+
+    #viridis::scale_fill_viridis()+
+    ggplot2::theme_classic()+
+    ggplot2::facet_wrap(~title, ncol=1, scales='free')+
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle=90,
                                      size=6),
-          axis.text.y = element_text(size=6),
-          plot.title = element_text(hjust=0.5, size=10),
+          axis.text.y = ggplot2::element_text(size=6),
+          plot.title = ggplot2::element_text(hjust=0.5, size=10),
           legend.position = 'top',
           legend.justification="right",
-          legend.margin=margin(0,0,0,0),
-          legend.box.margin = margin(0,0,-10,-10),
-          legend.text=element_text(size=4, vjust=-0.5),
-          legend.title = element_text(size=8),
-          legend.key.height = unit(0.2, 'cm'),
+          legend.margin=ggplot2::margin(0,0,0,0),
+          legend.box.margin = ggplot2::margin(0,0,-10,-10),
+          legend.text=ggplot2::element_text(size=4, vjust=-0.5),
+          legend.title = ggplot2::element_text(size=8),
+          legend.key.height = ggplot2::unit(0.2, 'cm'),
     )+
-    guides(fill=guide_colorbar(label.position='top'))+
-    scale_fill_viridis()+
-    ylab('')+
-    xlab('')+
-    ggtitle(title)
+    ggplot2::guides(fill=ggplot2::guide_colorbar(label.position='top'))+
+    viridis::scale_fill_viridis()+
+    ggplot2::ylab('')+
+    ggplot2::xlab('')+
+    ggplot2::ggtitle(title)
 
   return(p)
 }
@@ -967,7 +977,7 @@ calculate_pairwise_sample_distance_simple <- function(dt) {
   # relevant for registration case).
 
   # filter to genes with data in both.
-  dt <- na.omit(dt)
+  dt <- stats::na.omit(dt)
   # calculate distance
   dt$sq.diff <- (dt[, 1] - dt[, 2])^2
 
@@ -999,7 +1009,7 @@ calc_sample_distance <- function(dt, gene.col) {
       ds <- c(ds, d, d)
     }
   }
-  out.df <- data.table(data.frame('x.sample'=i.cols, 'y.sample'=j.cols, 'distance'=ds))
+  out.df <- data.table::data.table(data.frame('x.sample'=i.cols, 'y.sample'=j.cols, 'distance'=ds))
 }
 
 #brassica_name <- 'ro18_chiifu_apex'
@@ -1065,21 +1075,22 @@ get_data_all_symbol <- function(brassica_name) {
 
 shorten_groups <- function(exp) {
   # get reps for klepikova and for brassica data
-  exp <- data.table(exp)
+  exp <- data.table::data.table(exp)
   B <- exp[exp$accession != 'Col0']
-  B[, c('j1', 'j2', 'j3', 'j4', 'j5', 'j6', 'rep'):=tstrsplit(sample_id, split='_')]
+  B[, c('j1', 'j2', 'j3', 'j4', 'j5', 'j6', 'rep'):=data.table::tstrsplit(sample_id, split='_')]
   B$rep[is.na(B$rep)] <- 1
   B[, c('j1', 'j2', 'j3', 'j4', 'j5', 'j6')] <- NULL
 
   A <- exp[exp$accession == 'Col0']
-  A[, c('j1', 'j2','rep'):=tstrsplit(dataset, split='_')]
+  A[, c('j1', 'j2','rep'):=data.table::tstrsplit(dataset, split='_')]
   A[, c('j1', 'j2')] <- NULL
 
   exp <- rbind(B,A)
 
-  exp$ds <- mapvalues(exp$rep, from=c('1', '2', '3', '4'),
-                      to=c('a', 'b', 'c', 'd'))
-  exp <- data.table(exp)
+  # exp$ds <- plyr::mapvalues(exp$rep, from=c('1', '2', '3', '4'), to=c('a', 'b', 'c', 'd'))
+  exp$ds <- as.character(factor(exp$rep, levels=c('1', '2', '3', '4'), labels=c('a', 'b', 'c', 'd')))
+
+  exp <- data.table::data.table(exp)
   exp[, group:=paste(accession, sprintf('%02d', timepoint), ds, sep='-')]
   return(exp)
 }
@@ -1114,7 +1125,7 @@ get_expression_oI <- function(rds_file, curr_GoIs, sumBrassicas) {
   # reformat depending on how want to compare arabidopsis to brassica, using indiv. brassica genes, or summed brassica genes
   # if want to used summed brassica data to compare to the brassica: get symbol level expression total. Locus_name identity is ATG id
   if (sumBrassicas==T) {
-    exp <- aggregate(norm.cpm~sample_id+accession+tissue+timepoint+dataset+group+locus_name, data=exp, sum)
+    exp <- stats::aggregate(norm.cpm~sample_id+accession+tissue+timepoint+dataset+group+locus_name, data=exp, sum)
   } else if (sumBrassicas==F) {
     # otherwise duplicate each arabidopsis, so have an arabidopis copy for each brassica CDS gene. Now locus_name identity is CDS.model
     ara.exp <- exp[exp$accession=='Col0',]
@@ -1146,7 +1157,7 @@ reformat_for_distance_calculation <- function(dt, sample.id.cols, gene.col, expr
     for (i in 2:length(sample.id.cols)) {
       # pad timepoint to 2 figures to help ordering
       if (class(dt[[sample.id.cols[i]]]) %in%  c('integer', 'numeric')) {
-        dt[[sample.id.cols[i]]] <- str_pad(dt[[sample.id.cols[i]]], 2, pad='0')
+        dt[[sample.id.cols[i]]] <- stringr::str_pad(dt[[sample.id.cols[i]]], 2, pad='0')
       }
 
       dt$sample.id <- paste0(dt[['sample.id']], '-', dt[[sample.id.cols[i]]])
@@ -1157,7 +1168,7 @@ reformat_for_distance_calculation <- function(dt, sample.id.cols, gene.col, expr
   dt <- subset(dt, select=c('sample.id', gene.col, expression.col))
 
   # convert to wide format
-  dt.w <- dcast(dt, locus_name ~ sample.id, value.var=eval(expression.col))
+  dt.w <- data.table::dcast(dt, locus_name ~ sample.id, value.var=eval(expression.col))
 
   return(dt.w)
 }
@@ -1184,7 +1195,7 @@ do_tSNE <- function(DATA, rds_file, plot_name, sumBrassicas) {
   D <- DATA[, c('group', 'locus_name', 'norm.cpm')]
   names(D) <- c('group', 'locus_name', 'expression')
 
-  D <- dcast(D, group~locus_name, value.var='expression')
+  D <- data.table::dcast(D, group~locus_name, value.var='expression')
 
   # get rid of any genes (columns) with any NA
   D <- data.frame(D)
@@ -1198,7 +1209,7 @@ do_tSNE <- function(DATA, rds_file, plot_name, sumBrassicas) {
   #tmp <- cbind(Labels, tmp)
   ### train the model
   Labels <- D[, 1]
-  #M <- na.omit(as.matrix(D[, -1]))
+  #M <- stats::na.omit(as.matrix(D[, -1]))
   M <- as.matrix(D[, -1])
   nrow(M)
   ncol(M)
@@ -1222,36 +1233,36 @@ do_tSNE <- function(DATA, rds_file, plot_name, sumBrassicas) {
   perp <- 1
   for (perp in c(1, 2, 3, 4, 5, 6, 8)) {
     # set to 8000 iterations -≥ pretty consistently minimises the error to ~0.35
-    tsne <- Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=F)
-    p1 <- tSNEPlot(tsne, Labels) + guides(color=F)
-    tsne <- Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=F)
-    p2 <- tSNEPlot(tsne, Labels) + guides(color=F)
-    tsne <- Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=F)
-    p3 <- tSNEPlot(tsne, Labels) + guides(color=F)
-    tsne <- Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=F)
-    p4 <- tSNEPlot(tsne, Labels) + guides(color=F)
-    p <- ggarrange(p1, p2, p3, p4,
+    tsne <- Rtsne::Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=F)
+    p1 <- tSNEPlot(tsne, Labels) + ggplot2::guides(color=F)
+    tsne <- Rtsne::Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=F)
+    p2 <- tSNEPlot(tsne, Labels) + ggplot2::guides(color=F)
+    tsne <- Rtsne::Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=F)
+    p3 <- tSNEPlot(tsne, Labels) + ggplot2::guides(color=F)
+    tsne <- Rtsne::Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=F)
+    p4 <- tSNEPlot(tsne, Labels) + ggplot2::guides(color=F)
+    p <- ggpubr::ggarrange(p1, p2, p3, p4,
                    labels=c('a', 'b', 'c', 'd'),
                    ncol=2, nrow=2)
     p
-    ggsave(paste0(save.dir, '/', plot_name, '_p=', perp,'.pdf'), scale=1.5)
+    ggplot2::ggsave(paste0(save.dir, '/', plot_name, '_p=', perp,'.pdf'), scale=1.5)
   }
 
   # try with PCA before tSNE, as it seems to give an ok gradient timecourse.
   # for (perp in c(2,3,4,5,68,12,15)) {
   #   # set to 8000 iterations -≥ pretty consistently minimises the error to ~0.35
-  #   tsne <- Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=T, initial_dims=12)
-  #   p1 <- tSNEPlot(tsne, Labels) + guides(color=F)
-  #   tsne <- Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=T, initial_dims=12)
-  #   p2 <- tSNEPlot(tsne, Labels) + guides(color=F)
-  #   tsne <- Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=T, initial_dims=12)
-  #   p3 <- tSNEPlot(tsne, Labels) + guides(color=F)
-  #   tsne <- Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=T, initial_dims=12)
-  #   p4 <- tSNEPlot(tsne, Labels) + guides(color=F)
-  #   p <- ggarrange(p1, p2, p3, p4,
+  #   tsne <- Rtsne::Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=T, initial_dims=12)
+  #   p1 <- tSNEPlot(tsne, Labels) + ggplot2::guides(color=F)
+  #   tsne <- Rtsne::Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=T, initial_dims=12)
+  #   p2 <- tSNEPlot(tsne, Labels) + ggplot2::guides(color=F)
+  #   tsne <- Rtsne::Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=T, initial_dims=12)
+  #   p3 <- tSNEPlot(tsne, Labels) + ggplot2::guides(color=F)
+  #   tsne <- Rtsne::Rtsne(sc.M, dims=2, perplexity=perp, verbose=T, max_iter=16000, pca=T, initial_dims=12)
+  #   p4 <- tSNEPlot(tsne, Labels) + ggplot2::guides(color=F)
+  #   p <- ggpubr::ggarrange(p1, p2, p3, p4,
   #                  labels=c('a', 'b', 'c', 'd'),
   #                  ncol=2, nrow=2)
-  #   ggsave(paste0('../graphs/', rds_file, '/tSNE_plots/', plot_name, '_p=', perp,'_PCA.pdf'), scale=1.5)
+  #   ggplot2::ggsave(paste0('../graphs/', rds_file, '/tSNE_plots/', plot_name, '_p=', perp,'_PCA.pdf'), scale=1.5)
   # }
 }
 
@@ -1260,11 +1271,12 @@ tSNEPlot <- function(tsne, Labels) {
   position <- cbind(position, Labels)
   names(position) <- c('x', 'y', 'label')
 
-  position <- data.table(position)
-  position[, c('accession', 'timepoint', 'letter'):=tstrsplit(label, split='-')]
-  p <- ggplot(position, aes(x=x, y=y, color=accession, label=paste(timepoint, letter, sep='-')))+
-    geom_point()+
-    geom_text_repel(size=2)
+  position <- data.table::data.table(position)
+  position[, c('accession', 'timepoint', 'letter'):=data.table::tstrsplit(label, split='-')]
+  p <- ggplot2::ggplot(position)+
+    ggplot2::aes(x=x, y=y, color=accession, label=paste(timepoint, letter, sep='-')) +
+    ggplot2::geom_point()+
+    ggrepel::geom_text_repel(size=2)
   return(p)
 }
 
@@ -1285,11 +1297,13 @@ impute_arabidopsis_values <- function(shifted.mean.df) {
 
 
   # sanity plotting - a registered one
-  # ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA01G001090.3C', ], aes(x=shifted.time, y=mean.cpm, color=accession))+
-  #   geom_point()
+  # ggplot2::ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA01G001090.3C', ])+
+  #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
+  #   ggplot2::geom_point()
   # # an unregistered one
-  # ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA01G003140.3C', ], aes(x=shifted.time, y=mean.cpm, color=accession))+
-  #   geom_point()
+  # ggplot2::ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA01G003140.3C', ])+
+  #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
+  #   ggplot2::geom_point()
 
   # The imputed col0 times going to extimate gene expression for
   imputed.timepoints <- round(seq(min(shifted.mean.df$shifted.time), max(shifted.mean.df$shifted.time)))
@@ -1315,7 +1329,7 @@ impute_arabidopsis_values <- function(shifted.mean.df) {
     ara.df <- curr.df[curr.df$accession=='Col0',]
     bra.df <- curr.df[curr.df$accession=='Ro18',]
 
-    interp.ara.df <- data.table(data.frame('locus_name'=curr.gene, 'accession'='Col0', 'tissue'='apex', 'timepoint'=NA,
+    interp.ara.df <- data.table::data.table(data.frame('locus_name'=curr.gene, 'accession'='Col0', 'tissue'='apex', 'timepoint'=NA,
                                            'stretched.time.delta'= NA, 'shifted.time'=imputed.timepoints,
                                            'is.registered'= unique(ara.df$is.registered)[1]))
 
@@ -1326,9 +1340,10 @@ impute_arabidopsis_values <- function(shifted.mean.df) {
 
 
     # sanity testing - line is interpolated.
-    # ggplot(curr.df, aes(x=shifted.time, y=mean.cpm, color=accession))+
-    #   geom_point()+
-    #   geom_line(data=interp.ara.df)
+    # ggplot2::ggplot(curr.df)+
+    #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
+    #   ggplot2::geom_point()+
+    #   ggplot2::geom_line(data=interp.ara.df)
 
     out.list <- c(out.list, list(interp.ara.df))
     count <- count+1
@@ -1357,7 +1372,7 @@ get_extreme_shifts_for_all <- function(test, stretch_factor, min.num.overlapping
   # calculate min shift and max time shift, which still allows overlap of at least 5 times to be compared from whichever accession will be considering fewer timepoints from.
   # Shift is applied to the arabidopsis - so the 5th largest arabidopsis time is the biggest -ve shift can be applied
   # and the biggest shift which can be applied is to make the 5th smallest arabidopsis time == largest brassica time
-  #setorder(test, delta.time)
+  #data.table::setorder(test, delta.time)
   #min.shift <- min(test$delta.time[test$accession=='Ro18']) - test$delta.time[test$accession=='Col0'][length(test$delta.time[test$accession=='Col0'])-4]
   #max.shift <- max(test$delta.time[test$accession=='Ro18']) - test$delta.time[test$accession=='Col0'][5]
 
@@ -1396,8 +1411,9 @@ calculate_all_best_shifts <- function(mean.df, stretch_factor, do.rescale, min.n
     }
 
     # out is mean SSD between arabidopsis, and interpolated brassica (interpolated between 2 nearest points)
-    # ggplot(mean.df[mean.df$locus_name==curr_sym,], aes(x=timepoint, y=mean.cpm, color=accession))+
-    #   geom_point()
+    # ggplot2::ggplot(mean.df[mean.df$locus_name==curr_sym,])+
+    #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+    #   ggplot2::geom_point()
 
     ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
     ### if timepoints don't line up, brassica value is linearly imputed
@@ -1476,11 +1492,12 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.s
 
     #### test plot - of shifted, UNNORMALISED gene expression
     # if (testing==TRUE) {
-    #   p <- ggplot(test, aes(x=shifted.time, y=mean.cpm, color=accession))+
-    #     geom_point()+
-    #     ggtitle(paste0('shift : ', curr.shift))
+    #   p <- ggplot2::ggplot(test)+
+    #     ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
+    #     ggplot2::geom_point()+
+    #     ggplot2::ggtitle(paste0('shift : ', curr.shift))
     #   p
-    #   ggsave(paste0('./testing/', curr.shift, '.pdf'))
+    #   ggplot2::ggsave(paste0('./testing/', curr.shift, '.pdf'))
     # }
 
 
@@ -1494,8 +1511,8 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.s
       # in "apply shift" function
       ara.mean <- mean(compared$mean.cpm[compared$accession=='Col0'])
       bra.mean <- mean(compared$mean.cpm[compared$accession=='Ro18'])
-      ara.sd <- sd(compared$mean.cpm[compared$accession=='Col0'])
-      bra.sd<- sd(compared$mean.cpm[compared$accession=='Ro18'])
+      ara.sd <- stats::sd(compared$mean.cpm[compared$accession=='Col0'])
+      bra.sd<- stats::sd(compared$mean.cpm[compared$accession=='Ro18'])
 
       # do the transformation for here
       if ((ara.sd != 0) & (bra.sd != 0)) { # if neither are 0, so won't be dividing by 0 (which gives NaNs)
@@ -1523,10 +1540,11 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.s
 
     ### test plot of shifted, and normalised gene expression
     if (testing==TRUE) {
-      p <- ggplot(compared, aes(x=shifted.time, y=mean.cpm, color=accession))+
-        geom_point()+
-        ggtitle(paste0('shift : ', curr.shift))
-      ggsave(paste0('./testing/',stretch_factor, '-', curr.shift, '.pdf'))
+      p <- ggplot2::ggplot(compared)+
+        ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
+        ggplot2::geom_point()+
+        ggplot2::ggtitle(paste0('shift : ', curr.shift))
+      ggplot2::ggsave(paste0('./testing/',stretch_factor, '-', curr.shift, '.pdf'))
     }
 
     # for each arabidopsis timepoint, linear interpolate between the two nearest brassica timepoints
@@ -1553,7 +1571,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.s
     all.bra.sd[i] <- bra.sd
   }
 
-  out <- data.table(data.frame('gene'=curr_sym, 'stretch'=stretch_factor, 'shift'=all.shifts, 'score'=all.scores,
+  out <- data.table::data.table(data.frame('gene'=curr_sym, 'stretch'=stretch_factor, 'shift'=all.shifts, 'score'=all.scores,
                                'ara.compared.mean'=all.ara.mean, 'bra.compared.mean'=all.bra.mean,
                                'ara.compared.sd'=all.ara.sd, 'bra.compared.sd'=all.bra.sd))
   return(out)
@@ -1574,7 +1592,7 @@ calc_extreme_shifts <- function(test, min.num.overlapping.points, shift.extreme)
   # calculate the minimum and maximum shifts can apply to Col-0 after the stretch transformation, whilst
   # preserving the criteria that at least min.num.overlapping.points are being compared from both accessions.
 
-  original <- copy(test)
+  original <- data.table::copy(test)
   original$shifted.time <- original$delta.time
 
   # print('line 1803')
@@ -1614,7 +1632,7 @@ calc_extreme_shifts <- function(test, min.num.overlapping.points, shift.extreme)
 
 apply_stretch <- function(mean.df, best_shifts) {
   # gets the applied stretch from the best_shifts df
-  test <- copy(mean.df)
+  test <- data.table::copy(mean.df)
 
   # get the stretch factor applied in the best_shifts
   #stopifnot(length(unique(best_shifts$stretch))==1)
@@ -1657,7 +1675,7 @@ apply_best_shift <- function(mean.df, best_shifts) {
   # take unregistered expression over time, and the best shifts, and
   # return the registered expression over time for each gene
 
-  test <- copy(mean.df)
+  test <- data.table::copy(mean.df)
 
   test <- apply_stretch(mean.df, best_shifts)
 
@@ -1686,11 +1704,10 @@ apply_best_shift <- function(mean.df, best_shifts) {
     test$shifted.time[test$accession=='Col0' & test$locus_name==curr.gene] <- test$shifted.time[test$accession=='Col0' & test$locus_name==curr.gene] + curr.best.shift
 
     # tmp <- test[test$locus_name==curr.gene]
-    # ggplot(tmp, aes(x=shifted.time, y=mean.cpm, color=accession))+
-    #    geom_point()
+    # ggplot2::ggplot(tmp)+
+    #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession) +
+    #   ggplot2::geom_point()
   }
-
-
 
   print('done!')
 
@@ -1794,9 +1811,9 @@ max_is_compared_to_arabidopsis <- function(arabidopsis.time, bra.dt) {
 
   return(bra.max.time)
 
-  #setorder(bra.dt, diff)
+  #data.table::setorder(bra.dt, diff)
   #nearest.points <- bra.dt[1:2,]
-  #setorder(nearest.points, shifted.time)
+  #data.table::setorder(nearest.points, shifted.time)
   #return(nearest.points$shifted.time[2])
 }
 
@@ -1829,11 +1846,11 @@ interpolate_brassica_comparison_expression <- function(arabidopsis.time, bra.dt)
 
   # otherwise,  cut down brassica observations to the two nearest timepoints to the arabidopsis time
   bra.dt$diff <- abs(bra.dt$shifted.time - arabidopsis.time)
-  setorder(bra.dt, diff)
+  data.table::setorder(bra.dt, diff)
   nearest.points <- bra.dt[1:2,]
 
   # linearly interpolate between these points to estimate the comparison expression value
-  setorder(nearest.points, shifted.time) # so [1] is earlier time
+  data.table::setorder(nearest.points, shifted.time) # so [1] is earlier time
   time.diff <- nearest.points$shifted.time[2] - nearest.points$shifted.time[1] #
   expression.diff <- nearest.points$mean.cpm[2] - nearest.points$mean.cpm[1]
   grad <- expression.diff / time.diff
@@ -1852,8 +1869,9 @@ get_shifted_expression <- function(shift_results, exp) {
     # cut to get a single symbol
     test <- exp[exp$locus_name==cur_gene, ]
 
-    # ggplot(test, aes(x=timepoint, y=norm.cpm, color=accession))+
-    #   geom_point()
+    # ggplot2::ggplot(test)+
+    #   ggplot2::aes(x=timepoint, y=norm.cpm, color=accession)+
+    #   ggplot2::geom_point()
 
     # get the expression vectors for the current gene
     atdf <- test[test$accession=='Col0']
@@ -1880,8 +1898,9 @@ get_shifted_expression <- function(shift_results, exp) {
     df <- rbind(atdf, brdf)
     df$sc.norm.cpm <- df$norm.cpm
     df$shift <- shift
-    # ggplot(df, aes(x=shifted_time, y=norm.cpm, color=accession))+
-    #   geom_point()
+    # ggplot2::ggplot(df)+
+    #   ggplot2::aes(x=shifted_time, y=norm.cpm, color=accession)+
+    #   ggplot2::geom_point()
 
     #adf <- data.frame(accession='Col0', timepoint=at_times, sc.norm.cpm=AtVec, symbol=cur_gene, shift=num_points/3)
     #bdf <- data.frame(accession='Ro18', timepoint=br_times, sc.norm.cpm=BrVec, symbol=cur_gene, shift=num_points/3)

@@ -780,6 +780,80 @@ get_best_shift <- function(curr_sym, test) {
   return(out)
 }
 
+make_heatmap_quantile <- function(D, title) {
+  D$x.sample <- factor(D$x.sample, levels=unique(sort(D$x.sample)))
+  D$y.sample <- factor(D$y.sample, levels=unique(sort(D$y.sample)))
+
+  D$quantile <- D$quantile * 100
+
+  p <- ggplot2::ggplot(D)+
+    ggplot2::aes(x=x.sample, y=y.sample, fill=quantile) +
+    ggplot2::geom_tile()+
+    ggplot2::geom_text(ggplot2::aes(label=round(quantile, digits=0)), color='grey', size=1)+
+    # viridis::scale_fill_viridis()+
+    ggplot2::scale_fill_gradient2(low='royalblue3', mid='white', high='red3', midpoint=50)+
+    ggplot2::theme_classic()+
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle=90,
+                                                       size=6),
+                   axis.text.y = ggplot2::element_text(size=6),
+                   plot.title = ggplot2::element_text(hjust=0.5, size=10),
+                   legend.position = 'top',
+                   legend.justification="right",
+                   legend.margin= ggplot2::margin(0,0,0,0),
+                   legend.box.margin = ggplot2::margin(0,0,-10,-10),
+                   legend.text=ggplot2::element_text(size=4, vjust=-0.5),
+                   legend.title = ggplot2::element_text(size=8),
+                   legend.key.height = ggplot2::unit(0.2, 'cm'),
+    )+
+    ggplot2::guides(fill=ggplot2::guide_colorbar(label.position='top'))+
+    ggplot2::labs(
+      x = "",
+      y = "",
+      title = title
+    )
+
+  return(p)
+}
+
+get_jobIds <- function(shuffled.data.dir) {
+  files <- list.files(shuffled.data.dir)
+  tmp <- data.table::tstrsplit(files, '\\.')
+  tmp <- data.table::tstrsplit(tmp[[2]], '_')
+  jobIds <- unique(paste0(tmp[[2]], '_', tmp[[3]]))
+  jobIds <- jobIds[jobIds != 'NA_NA']
+  if (length(jobIds) != 1000) {
+    print('didnt find 1000 jobIds')
+    stop()
+  }
+  return(jobIds)
+}
+
+get_num_registered_genes <- function(file_path) {
+  imputed.mean <- readRDS(file_path)
+  is.registered.df <- unique(imputed.mean[, c('locus_name', 'is.registered')])
+  num.registered <- sum(is.registered.df$is.registered)
+  return(num.registered)
+}
+
+#c.th <- 0.7
+filter.low.variability <- function(exp, c.th) {
+  # return gene ids filtered to only include genes with high correlation ( >=c.th)
+  # between indiv replicate points, and mean df point
+
+  # calculate correlation
+  exp[, C:=stats::cor(mean.cpm, norm.cpm, method='pearson'), by=.(locus_name, accession, tissue)]
+
+  #tmp <- exp[exp$locus_name.model=='MSTRG.8543',]
+
+  # filter to keep if correlationin both accessions > c.th
+  exp[, keep:=all(C >= c.th), by=.(locus_name, tissue)]
+  keep.df <- exp[exp$keep==TRUE, ]
+
+  #tmp <- keep.df[keep.df$locus_name=='MSTRG.8543',]
+
+  return(unique(keep.df$locus_name))
+}
+
 # Commented functions ----
 
 # ro18_rds_file <- '../final_data/rds/ro18_leaf_reannotated.rds'

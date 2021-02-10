@@ -854,6 +854,166 @@ filter.low.variability <- function(exp, c.th) {
   return(unique(keep.df$locus_name))
 }
 
+
+make_heatmap_w_shuffled <- function(D, title) {
+  D$x.sample <- factor(D$x.sample, levels=unique(sort(D$x.sample)))
+  D$y.sample <- factor(D$y.sample, levels=unique(sort(D$y.sample)))
+
+  p <- ggplot2::ggplot(D)+
+    ggplot2::aes(x=x.sample, y=y.sample, fill=log(distance)) +
+    ggplot2::geom_tile()+
+    #viridis::scale_fill_viridis()+
+    ggplot2::theme_classic()+
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle=90,
+                                                       size=6),
+                   axis.text.y = ggplot2::element_text(size=6),
+                   plot.title = ggplot2::element_text(hjust=0.5, size=10),
+                   legend.position = 'top',
+                   legend.justification="right",
+                   legend.margin=ggplot2::margin(0,0,0,0),
+                   legend.box.margin = ggplot2::margin(0,0,-10,-10),
+                   legend.text=ggplot2::element_text(size=4, vjust=-0.5),
+                   legend.title = ggplot2::element_text(size=8),
+                   legend.key.height = ggplot2::unit(0.2, 'cm'),
+    )+
+    ggplot2::guides(fill=ggplot2::guide_colorbar(label.position='top'))+
+    viridis::scale_fill_viridis()+
+    ggplot2::facet_wrap(~is.shuffled, nrow=1)+
+    ggplot2::labs(
+      x = "",
+      y = "",
+      title = title
+    )
+
+  return(p)
+}
+
+load_shuffled_data <- function(shuffled.data.dir, file.type) {
+  # file.type is type of file loading:
+  # "comparison": for model.comparison files
+  # "mean.sc": for mean.df.sc files
+  # "mean.df" : for mean.df files
+  # "imputed.mean.df" for them
+  # "shifts" for all.shifts
+
+  allowed.types <- c('comparison', 'mean.sc', 'mean.df', 'imputed.mean.df', 'shifts')
+  if (!(file.type %in% allowed.types)) {
+    print(paste0('file.type must be one of : ', paste0(allowed.types, collapse=', ')))
+    stop()
+  }
+  # format file.type to searchable pattern - handle "."s
+  if (file.type=='mean.sc') {
+    file.type <- 'mean\\.df\\.sc'
+  } else if (file.type=='mean.df') {
+    file.type <-  '^mean\\.df'
+  } else if (file.type=='imputed.mean.df') {
+    file.type <-  'imputed\\.mean\\.df'
+  }
+
+
+  files <- list.files(shuffled.data.dir)
+  # make ids
+  ids <- get_job_suffixes(shuffled.data.dir)
+  i <- 1
+  outlist <- rep(list(0), length(ids))
+  for (i in 1:length(ids)) {
+    id <- ids[i]
+
+    # load files for this job id
+    #shift.file <- files[grepl(pattern=paste0('shifts_',id, '\\.'), files)]
+    file.idx <- grepl(pattern=paste0(file.type, '_', id, '\\.'), files)
+    model.comparison.file <- files[file.idx]
+
+    if (sum(file.idx) != 1) {
+      print(paste0('wrong number of files found for : ', file.type, '_', id, '\\.'))
+      print(paste0('hits to : ', paste0(model.comparison.file, collapse=' & ')))
+      stop()
+    }
+
+
+    #all.shifts <- readRDS(paste0(shuffled.data.dir, shift.file))
+
+    # model comparison only has the best registration used for each gene, so can use
+    # to get best shift
+    model.comparison <- readRDS(paste0(shuffled.data.dir, model.comparison.file))
+    model.comparison$job <- id
+    outlist[[i]] <- model.comparison
+  }
+  out.df <- do.call('rbind', outlist)
+  return(out.df)
+}
+
+#data.dir <- shuffled.data.dir
+get_job_suffixes <- function(data.dir) {
+  files <- list.files(data.dir)
+  if (length(files)==1) {
+    print('error in get_job_suffixes: ')
+    print(paste0('Incorrect directory specified : ',  data.dir))
+    stop()
+  }
+
+  ids <- data.table::tstrsplit(files, '\\.')[[2]]
+  ids <- data.table::tstrsplit(ids, '_')
+  ids <- unique(paste0(ids[[2]], '_', ids[[3]]))
+  ids <- ids[ids != 'NA_NA']
+
+  return(ids)
+}
+
+
+#get_shifted_expression(shift_results, exp)
+get_shifted_expression <- function(shift_results, exp) {
+  cur_gene <- 'BRAA01G010430.3C'
+  shifted_exp <- list()
+  for (cur_gene in unique(shift_results$symbol)) {
+
+    # cut to get a single symbol
+    test <- exp[exp$locus_name==cur_gene, ]
+
+    # ggplot2::ggplot(test)+
+    #   ggplot2::aes(x=timepoint, y=norm.cpm, color=accession)+
+    #   ggplot2::geom_point()
+
+    # get the expression vectors for the current gene
+    atdf <- test[test$accession=='Col0']
+    brdf <- test[test$accession=='Ro18']
+
+    # get the correct times for both
+    shift <- shift_results$num.points[shift_results$symbol==cur_gene]
+    atdf$timepoint
+    atdf$shifted_time <- atdf$timepoint - 7
+    atdf$shifted_time <- atdf$shifted_time * 2
+    atdf$shifted_time <- atdf$shifted_time + 7
+    atdf$shifted_time
+    brdf$shifted_time <- brdf$timepoint + (16 - 2*shift)
+    brdf$shifted_time
+    df <- rbind(atdf, brdf)
+    df$shift <- shift
+
+    # normalise each by its mean values in the overlapped time:
+    overlapped.times <- unique(intersect(atdf$shifted_time, brdf$shifted_time))
+    atdf$norm.cpm <- atdf$norm.cpm / mean(atdf$norm.cpm[atdf$shifted_time %in% overlapped.times])
+    brdf$norm.cpm <- brdf$norm.cpm / mean(brdf$norm.cpm[brdf$shifted_time %in% overlapped.times])
+
+
+    df <- rbind(atdf, brdf)
+    df$sc.norm.cpm <- df$norm.cpm
+    df$shift <- shift
+    # ggplot2::ggplot(df)+
+    #   ggplot2::aes(x=shifted_time, y=norm.cpm, color=accession)+
+    #   ggplot2::geom_point()
+
+    #adf <- data.frame(accession='Col0', timepoint=at_times, sc.norm.cpm=AtVec, symbol=cur_gene, shift=num_points/3)
+    #bdf <- data.frame(accession='Ro18', timepoint=br_times, sc.norm.cpm=BrVec, symbol=cur_gene, shift=num_points/3)
+    #df <- rbind(adf, bdf)
+    shifted_exp <- c(shifted_exp, list(df))
+  }
+  shifted_exp <- do.call('rbind', shifted_exp)
+
+  return(shifted_exp)
+}
+
+
 # Commented functions ----
 
 # ro18_rds_file <- '../final_data/rds/ro18_leaf_reannotated.rds'

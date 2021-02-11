@@ -1,0 +1,562 @@
+---
+title: "Gene registration"
+output: 
+  github_document:
+    toc: true
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+library(genereg)
+library(ggplot2)
+library(data.table)
+```
+
+
+# Running Alex Scripts
+
+List of all main functions
+
+```r
+# list of main function
+load_mean.df()
+shuffle_ro18_timepoints(mean.df, all.data.df)
+shuffle_ro18_gene_names(mean.df, all.data.df)
+prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min.num.overlapping.points, shift.extreme, transformed.timecourse)
+calculate_between_sample_distance(mean.df, mean.df.sc, imputed.mean.df)
+make_data_heatmaps(D.mean, D.scaled, D.registered, D.scaled.onlyNR, D.scaled.onlyR, D.registered.onlyR)
+```
+
+## Initialise some parameters
+
+```{r}
+jobNum <- 1 # if running lots of times on cluster to get enough shuffled results, then jobNum is used to prevent output overwriting
+do.initial.rescale <- 'nope' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
+do.register.rescale <- 'rescale' # should be 'rescale' if want to rescale using only the overlapping points during  registration
+shuffle.type <- 'shuffle.expression' # whether should shuffle by shuffling the gene ids compared, or by shuffling the gene expression
+# for each gene c('shuffle.genes', or 'shuffle.expression)
+
+outdir.string <- 'TESTING_rescale_as_register___shuffled_g_v4__'
+```
+
+```{r}
+# calculate the scores associated with each candidate shift
+# Arabidopsis observations = 7d -> 16d = 0d -> 9d
+# Ro18 observations = 11d -> 35d = 0d -> 24d
+# therefore if same start and end points stretch = 24 / 9
+
+# lots of spurious overlaps detected when too extreme shifts allowed
+stretch = c(2, 1.5, 1) # the stretch which lines up the start and end points.
+min.num.overlapping.points = 4 # will only allow shifts which leave this many overlapping points after applying the stretch
+shift.extreme  = 4 # the absolute maximum value which can be applied as a shift. Noticed that in the shuffled genes,
+transformed.timecourse = 'Col0' # the name of the timecourse to apply the registratsion to (one of the names in the mean.df$accession column)
+                                # which is loaded at line 133.
+
+num.shuffled <- 1 #25 # for real, ran 40 jobs to get 40 * 25 random shuffled pairs for comparison. 
+```
+
+## Setup flags
+
+```r
+print('********************')
+print(paste0('output will be in ', outdir.string, '!'))
+print('********************')
+```
+
+```{r}
+# setup flags for rescaling options
+if (do.initial.rescale=='rescale') {
+  initial.rescale <- TRUE
+} else {
+  initial.rescale <- FALSE
+}
+if (do.register.rescale=='rescale') {
+  should.rescale <- TRUE
+} else {
+  should.rescale <- FALSE
+}
+
+#real.and.shuffled <- c('real', 1)
+
+if (initial.rescale==TRUE) {
+  print('********************')
+  print('will rescale the data prior to registering, and register using this rescaled mean data!')
+  print('********************')
+}
+if (should.rescale==TRUE){
+  print('********************')
+  print('will rescale the data when deciding optimal registration!')
+  print('********************')
+} 
+```
+
+## Setup directory to set the path 
+
+```{r}
+here::here()
+```
+
+
+```{r}
+# directories to save graphs to
+real.data.graph.dir <- paste0('graphs/gene_registration/', outdir.string, '_real_data/')
+shuffled.data.graph.dir <- paste0('graphs/gene_registration/', outdir.string, '_shuffled_data/job_', jobNum, '/')
+# directories to save real and shuffled expression data to
+real.expression.dir <- paste0('intermediate_data/gene_registration/', outdir.string, '_real_data/gene_expression/job_', jobNum, '/')
+shuffled.expression.dir <- paste0('intermediate_data/gene_registration/', outdir.string, '_shuffled_data/gene_expression/')
+# directories to save real and shuffled distance data to
+real.distance.dir <- paste0('intermediate_data/gene_registration/', outdir.string, '_real_distance/job_', jobNum, '/')
+shuffled.distance.dir <- paste0('intermediate_data/gene_registration/', outdir.string, '_shuffled_distance/')
+  
+
+# somewhere to store the data.tables and graphs
+if (!(dir.exists(real.expression.dir))) {
+    dir.create(real.expression.dir, recursive=T)
+    dir.create(shuffled.expression.dir, recursive=T)
+    
+    dir.create(real.distance.dir, recursive=T)
+    dir.create(shuffled.distance.dir, recursive=T)
+
+    dir.create(real.data.graph.dir, recursive=T)
+    dir.create(shuffled.data.graph.dir, recursive=T)
+}
+```
+
+## View the data
+
+```{r}
+ro18_chiifu_apex <- readRDS(here::here("dev/final_data/rds/ro18_chiifu_apex.rds"))
+# klepikova <- readRDS(here::here("dev/final_data/rds/klepikova.rds"))
+
+ro18_chiifu_apex %>% 
+  head(5) %>% 
+  knitr::kable()
+```
+
+```{r}
+comparison_genes <- data.table::fread(here::here("dev/graphs/ro18_chiifu_apex/comparison_genes.tsv"))
+
+print(unique(comparison_genes$model))
+```
+
+## Get the Brassica data
+
+```{r}
+## GET THE RAW DATA. MEAN EXPRESSION OF BIOLOGICAL REPS. TREAT BRASSICA GENES INDIVIDUALLY (DON'T SUM THEM).
+# load the data expression data. Consider the brassica genes individually (don't sum)
+L <- load_mean.df() # sumBrassica copy flag is within load_mean.df()
+# mean.df <- L[[1]] # will compare Col0 vs Ro18 based on accession column
+# all.data.df <- L[[2]]
+```
+
+```{r}
+mean.df <- L[[1]]
+
+mean.df %>% 
+  head(20) %>% 
+  knitr::kable()
+```
+```{r}
+all.data.df <- L[[2]]
+
+all.data.df %>% 
+  head(20) %>% 
+  knitr::kable()
+```
+
+## Cut down to few genes for testing
+
+```{r}
+# Total number of unique locus name 
+unique(mean.df$locus_name) %>% length()
+```
+
+```{r}
+test.genes <- unique(mean.df$locus_name)[1:5]
+
+mean.df <- mean.df[mean.df$locus_name %in% test.genes,]
+all.data.df <- all.data.df[all.data.df$locus_name %in% test.genes, ]
+```
+
+## Shuffle the data 
+
+```{r}
+unshuffled_data <- data.table::copy(mean.df)
+unshuffled_all_data <- data.table::copy(all.data.df)
+```
+
+```{r}
+# Make the shuffle condition as a function 
+
+shuffle_option <- function(shuffle_type, unshuffled_data, unshuffled_all_data) {
+  
+  if (shuffle_type == "real") {
+    
+    mean_df <- data.table::copy(unshuffled_data)
+    all_data_df <- data.table::copy(unshuffled_all_data)
+    L <- list(mean_df, all_data_df)
+    
+  } else if (shuffle_type == "shuffle_expression") {
+    
+    print("shuffling expression timecourse for each gene")
+    L <- shuffle_ro18_timepoints(unshuffled_data, unshuffled_all_data)
+
+    
+  } else if (shuffle_type == "shuffle_genes") {
+      
+    print("shuffling gene names")
+    L <- shuffle_ro18_gene_names(unshuffled_data, unshuffled_all_data)
+
+    
+  } else {
+    
+    message("Could not perform shuffle, wrong shuffle type!")
+    
+  }
+  return(L)
+}
+  
+  
+```
+
+
+
+```{r}
+# Try not to shuffle
+list <- shuffle_option(shuffle_type = "real", unshuffled_data, unshuffled_all_data)
+
+mean.df <- list[[1]]
+all.data.df <- list[[2]]
+
+# Try to shuffle expression
+list_shuff_expression <- shuffle_option(shuffle_type = "shuffle_expression", unshuffled_data, unshuffled_all_data)
+
+mean_df_shuff_expression <- list_shuff_expression[[1]]
+all_data_dfshuff_expression <- list_shuff_expression[[2]]
+
+
+# Try to shuffle genes
+list_shuff_genes <- shuffle_option(shuffle_type = "shuffle_genes", unshuffled_data, unshuffled_all_data)
+
+mean_df_shuff_genes <- list_shuff_genes[[1]]
+all_data_dfshuff_genes <- list_shuff_genes[[2]]
+```
+
+### Look into each df 
+
+```{r}
+mean_df_shuff_expression %>%
+  head(5)
+```
+
+
+```{r}
+mean_df_shuff_genes %>% 
+  head(5)
+```
+
+
+
+```{r}
+mean.df %>%
+  head(5)
+```
+
+
+## Prepare registered and scaled data 
+
+### Step 1:  Change accession names
+
+```{r}
+list_res_change_accession_names <- change.accession.names(mean.df, all.data.df, transformed.timecourse)
+
+mean.df_change_accession_names <- list_res_change_accession_names[['mean.df']]
+all.data.df_change_accession_names <- list_res_change_accession_names[['all.data.df']]
+original.transformed.accession_change_accession_names <- list_res_change_accession_names[['original.transformed.accession.name']]
+original.other.accession_change_accession_names <- list_res_change_accession_names[['original.other.accession.name']]
+```
+
+
+```{r}
+mean.df_change_accession_names %>% 
+  head(5)
+```
+
+### Step 2: Scale
+
+
+```{r}
+mean.df.sc <- data.table::copy(mean.df_change_accession_names)
+# specify what kind of scaling
+mean.df.sc[, sc.mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
+
+mean.df.sc %>% 
+  head(5)
+```
+
+```{r}
+initial.rescale = "TRUE"
+if (initial.rescale == TRUE) {
+  # apply rescale to mean.df prior to registration
+  to.shift.df <- data.table::copy(mean.df.sc)
+  to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
+  to.shift.df$sc.mean.cpm <- NULL
+  all.data.df <- scale_all_rep_data(mean.df, all.data.df, "scale")
+    
+} else {
+  to.shift.df <- data.table::copy(mean.df)
+}
+```
+
+
+```{r}
+ggplot2::ggplot(to.shift.df[to.shift.df$locus_name=='BRAA01G000040.3C'])+
+  ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  ggplot2::geom_point()
+```
+
+
+
+```{r}
+all.data.df %>% 
+  head(5) %>% 
+  knitr::kable()
+```
+
+
+```{r}
+# sanity plot that rescale all data worked
+ggplot2::ggplot(all.data.df[all.data.df$locus_name=='BRAA01G000040.3C']) +
+  ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  ggplot2::geom_point()
+```
+
+
+
+
+### Step 3: Get best stretch and shift
+
+```{r}
+knitr::include_graphics("figure/flowchart_get_best_stretch_shift.png")
+```
+
+The main function: 
+
+```{r}
+# calculate the best registration. Returns all tried registrations, best stretch and shift combo,
+# and AIC/BIC stats for comparison of best registration model to seperate models for expression of
+# each gene in Ro18 and Col0.
+best_stretch_and_shift <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches = stretch, do.rescale = should.rescale, min.num.overlapping.points, shift.extreme)
+```
+
+```{r}
+best_stretch_and_shift %>% summary()
+```
+
+### Step 3a: Calculate all best shift
+
+Break down Step 3.  Main function: 
+
+```r
+# call in script
+calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do.rescale=FALSE, min.num.overlapping.points, shift.extreme)
+```
+
+```
+# original function
+calculate_all_best_shifts(mean.df, stretch_factor, do.rescale, min.num.overlapping.points, shift.extreme)
+```
+
+#### Step 3a.1 : Get extreme shift for all 
+
+```{r include=FALSE}
+# get the extreme shifts which can be applied to the genes
+M <- get_extreme_shifts_for_all(to.shift.df, stretch_factor = stretch, min.num.overlapping.points = 4, shift.extreme = 4)
+min.shift <- M[[1]]
+max.shift <- M[[2]]
+```
+
+```{r}
+min.shift
+```
+
+
+```{r}
+max.shift
+```
+
+#### Step 3a.2 onwards
+
+
+```{r}
+symbols <- c()
+num_points <- c()
+#curr_sym <- 'TT16'
+all.scores.list <- rep(list(0), length(unique(to.shift.df$locus_name)))
+length(unique(to.shift.df$locus_name))
+```
+
+
+
+```{r}
+count <- 0
+curr_sym <- unique(to.shift.df$locus_name)[2]
+i <- 1
+
+for (i in 1:length(unique(to.shift.df$locus_name))) {
+  # for (curr_sym in unique(mean.df$locus_name)) {
+  curr_sym <- unique(to.shift.df$locus_name)[i]
+  if (count %% 100 == 0) {
+    print(paste0(count, " / ", length(unique(to.shift.df$locus_name))))
+  }
+
+  # out is mean SSD between arabidopsis, and interpolated brassica (interpolated between 2 nearest points)
+  # ggplot2::ggplot(to.shift.df[to.shift.df$locus_name==curr_sym,])+
+  #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  #   ggplot2::geom_point()
+
+  ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
+  ### if timepoints don't line up, brassica value is linearly imputed
+  out <- get_best_shift_new(curr_sym, to.shift.df, stretch_factor = 2, do.rescale = FALSE, min.shift, max.shift, testing = FALSE)
+
+  best_shift <- out$shift[out$score == min(out$score)]
+  if (length(best_shift) > 1) {
+    if (max(out$score) == "Inf") { # can get inf score if brassica gene note expressed in the comparison
+      next
+    } else {
+      # if ties for the best shift applied, apply the smaller absolute one
+      best_shift <- best_shift[abs(best_shift) == min(abs(best_shift))]
+    }
+  }
+
+  all.scores <- out
+  all.scores.list[[i]] <- all.scores
+  symbols <- c(symbols, curr_sym)
+  # num_points <- c(num_points, best_shift)
+  # print(best_shift)
+
+  count <- count + 1
+}
+# shift_results <- data.frame(symbol=symbols, num.points = num_points)
+all.scores.df <- do.call("rbind", all.scores.list)
+```
+
+```{r}
+all.scores.df %>% 
+  knitr::kable()
+```
+
+
+
+
+
+
+
+
+
+   
+```r
+  ## PREPARE, AND REGISTER AND SCALE THE DATA
+  O <- prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min.num.overlapping.points, shift.extreme, transformed.timecourse)
+
+  mean.df <- O[['mean.df']] # mean.df is unchanged
+  mean.df.sc <- O[['mean.df.sc']] # mean.df.sc : data is scaled(center=T, scale=T)
+  imputed.mean.df <- O[['imputed.mean.df']] # imputed.mean.df is registered data, Col0 values imputed to make a single timepoint.
+  all.shifts <- O[['all.shifts']] # all.shifts is data.table of score for each shift for each gene. 
+  model.comparison <- O[['model.comparison']]
+
+  
+  ### CALCULATE THE DISTANCES BETWEEN THE SAMPLES ####
+  O <- calculate_between_sample_distance(mean.df, mean.df.sc, imputed.mean.df)
+  D.mean <- O[['D.mean']]
+  D.scaled <- O[['D.scaled']]
+  D.registered <- O[['D.registered']]
+  D.scaled.onlyNR <- O[['D.scaled.onlyNR']]
+  D.scaled.onlyR <- O[['D.scaled.onlyR']]
+  D.registered.onlyR <- O[['D.registered.onlyR']]
+  
+  
+  # Save the generated tables
+  if (i=='real') {
+    # save the expression info
+    saveRDS(mean.df, file=paste0(real.expression.dir, 'mean.df.rds'))
+    saveRDS(mean.df.sc, file=paste0(real.expression.dir, 'mean.df.sc.rds'))
+    saveRDS(imputed.mean.df, file=paste0(real.expression.dir, 'imputed.mean.df.rds'))
+    saveRDS(all.shifts, file=paste0(real.expression.dir, 'all.shifts.rds'))
+    saveRDS(model.comparison, file=paste0(real.expression.dir, 'model.comparison.rds'))
+    
+    # save the distances calculated
+    saveRDS(D.mean, file=paste0(real.distance.dir, 'D.mean.rds'))
+    saveRDS(D.scaled, file=paste0(real.distance.dir, 'D.scaled.rds'))
+    saveRDS(D.registered, file=paste0(real.distance.dir, 'D.registered.rds'))
+    saveRDS(D.scaled.onlyNR, file=paste0(real.distance.dir, 'D.scaled.onlyNR.rds'))
+    saveRDS(D.scaled.onlyR, file=paste0(real.distance.dir, 'D.scaled.onlyR.rds'))
+    saveRDS(D.registered.onlyR, file=paste0(real.distance.dir, 'D.registered.onlyR.rds'))
+    
+  } else { # if the data timecourse has been shuffled
+    # save the expression info
+    saveRDS(mean.df, file=paste0(shuffled.expression.dir, 'mean.df_', jobNum, '_', i, '.rds'))
+    saveRDS(mean.df.sc, file=paste0(shuffled.expression.dir, 'mean.df.sc_', jobNum, '_', i, '.rds'))
+    saveRDS(imputed.mean.df, file=paste0(shuffled.expression.dir, 'imputed.mean.df_', jobNum, '_', i, '.rds'))
+    saveRDS(all.shifts, file=paste0(shuffled.expression.dir, 'all.shifts_', jobNum, '_', i, '.rds'))
+    saveRDS(model.comparison, file=paste0(shuffled.expression.dir, 'model.comparison_', jobNum, '_', i,'.rds'))
+    
+    
+    # save the distances calculated
+    saveRDS(D.mean, file=paste0(shuffled.distance.dir, 'D.mean_', jobNum, '_', i, '.rds'))
+    saveRDS(D.scaled, file=paste0(shuffled.distance.dir, 'D.scaled_', jobNum, '_', i, '.rds'))
+    saveRDS(D.registered, file=paste0(shuffled.distance.dir, 'D.registered_', jobNum, '_', i, '.rds'))
+    saveRDS(D.scaled.onlyNR, file=paste0(shuffled.distance.dir, 'D.scaled.onlyNR', jobNum, '_', i,'.rds'))
+    saveRDS(D.scaled.onlyR, file=paste0(shuffled.distance.dir, 'D.scaled.onlyR', jobNum, '_', i, '.rds'))
+    saveRDS(D.registered.onlyR, file=paste0(shuffled.distance.dir, 'D.registered.onlyR', jobNum, '_', i, '.rds'))
+  }
+  
+  
+  # replace self comparison with NA for scaled
+  D.scaled$distance[grepl('Col0', D.scaled$x.sample) &
+                          grepl('Col0', D.scaled$y.sample) ] <- NA
+  D.scaled$distance[grepl('Ro18', D.scaled$x.sample) &
+                          grepl('Ro18', D.scaled$y.sample) ] <- NA
+  
+  D.scaled.onlyNR$distance[grepl('Col0', D.scaled.onlyNR$x.sample) &
+                      grepl('Col0', D.scaled.onlyNR$y.sample) ] <- NA
+  D.scaled.onlyNR$distance[grepl('Ro18', D.scaled.onlyNR$x.sample) &
+                      grepl('Ro18', D.scaled.onlyNR$y.sample) ] <- NA
+  
+  D.scaled.onlyR$distance[grepl('Col0', D.scaled.onlyR$x.sample) &
+                      grepl('Col0', D.scaled.onlyR$y.sample) ] <- NA
+  D.scaled.onlyR$distance[grepl('Ro18', D.scaled.onlyR$x.sample) &
+                      grepl('Ro18', D.scaled.onlyR$y.sample) ] <- NA
+  
+  
+  
+  # replace self comparison with NA for registered
+  D.registered$distance[grepl('Col0', D.registered$x.sample) &
+                        grepl('Col0', D.registered$y.sample) ] <- NA
+  D.registered$distance[grepl('Ro18', D.registered$x.sample) &
+                          grepl('Ro18', D.registered$y.sample) ] <- NA
+  
+  D.registered.onlyR$distance[grepl('Col0', D.registered.onlyR$x.sample) &
+                          grepl('Col0', D.registered.onlyR$y.sample) ] <- NA
+  D.registered.onlyR$distance[grepl('Ro18', D.registered.onlyR$x.sample) &
+                          grepl('Ro18', D.registered.onlyR$y.sample) ] <- NA
+  
+  p.all <- make_data_heatmaps(D.mean, D.scaled, D.registered, D.scaled.onlyNR, D.scaled.onlyR, D.registered.onlyR)
+  if (i=='real') {
+    ggsave(filename=paste0(real.data.graph.dir, 'job_', jobNum, '_distance_plots_real_data_all_sepScale.pdf'),
+           p.all,
+           width=12,
+           height=16)
+  } else {
+    ggsave(filename=paste0(shuffled.data.graph.dir, i, '_distance_plots_shuffled_data_all_sepScale.pdf'),
+           p.all,
+           width=12,
+           height=16)
+  }
+}
+```
+
+
+
+
+

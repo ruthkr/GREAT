@@ -1,19 +1,19 @@
 rm(list=ls())
 #library(Rtsne)
-library(data.table)
+# library(data.table)
 #library(ggrepel)
-library(plyr)
+# library(plyr)
 #library(ggpubr)
-library(ggplot2)
-library(viridis)
-library(cowplot)
-library(stringr)
-library(splines)
+# library(ggplot2)
+# library(viridis)
+# library(cowplot)
+# library(stringr)
+# library(splines)
 
 ## once have used ballgown_Arabidopsis_get_comparison_genes.R to make a .tsv files of candidate mapping genes,
 # and the methods used to derive them, use this to make tSNE comparison plot.
 
-# here, register the gene expression data for the real data, and for shuffled (randomised) data. 
+# here, register the gene expression data for the real data, and for shuffled (randomised) data.
 
 ### IF RUNNING ON CLUSTER
 # args <- commandArgs(trailingOnly = T)
@@ -53,7 +53,7 @@ shift.extreme  = 4 # the absolute maximum value which can be applied as a shift.
 transformed.timecourse = 'Col0' # the name of the timecourse to apply the registratsion to (one of the names in the mean.df$accession column)
                                 # which is loaded at line 133.
 
-num.shuffled <- 1 #25 # for real, ran 40 jobs to get 40 * 25 random shuffled pairs for comparison. 
+num.shuffled <- 1 #25 # for real, ran 40 jobs to get 40 * 25 random shuffled pairs for comparison.
 
 
 
@@ -87,7 +87,7 @@ if (should.rescale==TRUE){
   print('********************')
   print('will rescale the data when deciding optimal registration!')
   print('********************')
-} 
+}
 
 
 # directories to save graphs to
@@ -99,13 +99,13 @@ shuffled.expression.dir <- paste0('../intermediate_data/gene_registration/', out
 # directories to save real and shuffled distance data to
 real.distance.dir <- paste0('../intermediate_data/gene_registration/', outdir.string, '_real_distance/job_', jobNum, '/')
 shuffled.distance.dir <- paste0('../intermediate_data/gene_registration/', outdir.string, '_shuffled_distance/')
-  
+
 
 # somewhere to store the data.tables and graphs
 if (!(dir.exists(real.expression.dir))) {
     dir.create(real.expression.dir, recursive=T)
     dir.create(shuffled.expression.dir, recursive=T)
-    
+
     dir.create(real.distance.dir, recursive=T)
     dir.create(shuffled.distance.dir, recursive=T)
 
@@ -133,12 +133,12 @@ unshuffled.all.data <- copy(all.data.df)
 real.and.shuffled <- c('real', 1:num.shuffled) # if just want to do for real=c('real'), or for random shuffles as well
 i <- 'real'
 for (i in real.and.shuffled) {
-  
+
   print('*****************')
   print(paste0('on loop : ', i))
   print('*****************')
-  
-  
+
+
   if (i == 'real') {
     mean.df <- copy(unshuffled.data)
     all.data.df <- copy(unshuffled.all.data)
@@ -157,24 +157,24 @@ for (i in real.and.shuffled) {
       print(junk.because.wrong.shuffle.type)
     }
   }
-   
+
 
   ## PREPARE, AND REGISTER AND SCALE THE DATA
-  O <- prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min.num.overlapping.points, 
+  O <- prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min.num.overlapping.points,
                                           shift.extreme, transformed.timecourse)
 
   mean.df <- O[['mean.df']] # mean.df is unchanged
   mean.df.sc <- O[['mean.df.sc']] # mean.df.sc : data is scaled(center=T, scale=T)
   imputed.mean.df <- O[['imputed.mean.df']] # imputed.mean.df is registered data, Col0 values imputed to make a single timepoint.
-  all.shifts <- O[['all.shifts']] # all.shifts is data.table of score for each shift for each gene. 
+  all.shifts <- O[['all.shifts']] # all.shifts is data.table of score for each shift for each gene.
   model.comparison <- O[['model.comparison']]
-  
+
   # sanity test plot
   # ggplot(imputed.mean.df[imputed.mean.df$locus_name=='BRAA02G015410.3C',],
   #        aes(x=shifted.time, y=mean.cpm, color=accession))+
   #   geom_point()+
   #   geom_line()
-  
+
   #### CALCULATE THE DISTANCES BETWEEN THE SAMPLES ####
   O <- calculate_between_sample_distance(mean.df, mean.df.sc, imputed.mean.df)
   D.mean <- O[['D.mean']]
@@ -183,8 +183,8 @@ for (i in real.and.shuffled) {
   D.scaled.onlyNR <- O[['D.scaled.onlyNR']]
   D.scaled.onlyR <- O[['D.scaled.onlyR']]
   D.registered.onlyR <- O[['D.registered.onlyR']]
-  
-  
+
+
   # Save the generated tables
   if (i=='real') {
     # save the expression info
@@ -193,7 +193,7 @@ for (i in real.and.shuffled) {
     saveRDS(imputed.mean.df, file=paste0(real.expression.dir, 'imputed.mean.df.rds'))
     saveRDS(all.shifts, file=paste0(real.expression.dir, 'all.shifts.rds'))
     saveRDS(model.comparison, file=paste0(real.expression.dir, 'model.comparison.rds'))
-    
+
     # save the distances calculated
     saveRDS(D.mean, file=paste0(real.distance.dir, 'D.mean.rds'))
     saveRDS(D.scaled, file=paste0(real.distance.dir, 'D.scaled.rds'))
@@ -201,7 +201,7 @@ for (i in real.and.shuffled) {
     saveRDS(D.scaled.onlyNR, file=paste0(real.distance.dir, 'D.scaled.onlyNR.rds'))
     saveRDS(D.scaled.onlyR, file=paste0(real.distance.dir, 'D.scaled.onlyR.rds'))
     saveRDS(D.registered.onlyR, file=paste0(real.distance.dir, 'D.registered.onlyR.rds'))
-    
+
   } else { # if the data timecourse has been shuffled
     # save the expression info
     saveRDS(mean.df, file=paste0(shuffled.expression.dir, 'mean.df_', jobNum, '_', i, '.rds'))
@@ -209,8 +209,8 @@ for (i in real.and.shuffled) {
     saveRDS(imputed.mean.df, file=paste0(shuffled.expression.dir, 'imputed.mean.df_', jobNum, '_', i, '.rds'))
     saveRDS(all.shifts, file=paste0(shuffled.expression.dir, 'all.shifts_', jobNum, '_', i, '.rds'))
     saveRDS(model.comparison, file=paste0(shuffled.expression.dir, 'model.comparison_', jobNum, '_', i,'.rds'))
-    
-    
+
+
     # save the distances calculated
     saveRDS(D.mean, file=paste0(shuffled.distance.dir, 'D.mean_', jobNum, '_', i, '.rds'))
     saveRDS(D.scaled, file=paste0(shuffled.distance.dir, 'D.scaled_', jobNum, '_', i, '.rds'))
@@ -219,46 +219,46 @@ for (i in real.and.shuffled) {
     saveRDS(D.scaled.onlyR, file=paste0(shuffled.distance.dir, 'D.scaled.onlyR', jobNum, '_', i, '.rds'))
     saveRDS(D.registered.onlyR, file=paste0(shuffled.distance.dir, 'D.registered.onlyR', jobNum, '_', i, '.rds'))
   }
-  
-    
+
+
   # D.all <- do.call('rbind', list(D.mean, D.scaled, D.registered))
-  # D.all$title <- factor(D.all$title, levels=c('mean expression', 'scaled mean expression', 
+  # D.all$title <- factor(D.all$title, levels=c('mean expression', 'scaled mean expression',
   #                                             'registered & scaled mean expression'))
   # p.all <- make_heatmap_all(D.all, '')
   # ggsave(filename='../graphs/registration_plots/distance_plots_real_data_all.pdf',
   #        p.all,
   #        width=3,
   #        height=10)
-  
+
   # replace self comparison with NA for scaled
   D.scaled$distance[grepl('Col0', D.scaled$x.sample) &
                           grepl('Col0', D.scaled$y.sample) ] <- NA
   D.scaled$distance[grepl('Ro18', D.scaled$x.sample) &
                           grepl('Ro18', D.scaled$y.sample) ] <- NA
-  
+
   D.scaled.onlyNR$distance[grepl('Col0', D.scaled.onlyNR$x.sample) &
                       grepl('Col0', D.scaled.onlyNR$y.sample) ] <- NA
   D.scaled.onlyNR$distance[grepl('Ro18', D.scaled.onlyNR$x.sample) &
                       grepl('Ro18', D.scaled.onlyNR$y.sample) ] <- NA
-  
+
   D.scaled.onlyR$distance[grepl('Col0', D.scaled.onlyR$x.sample) &
                       grepl('Col0', D.scaled.onlyR$y.sample) ] <- NA
   D.scaled.onlyR$distance[grepl('Ro18', D.scaled.onlyR$x.sample) &
                       grepl('Ro18', D.scaled.onlyR$y.sample) ] <- NA
-  
-  
-  
+
+
+
   # replace self comparison with NA for registered
   D.registered$distance[grepl('Col0', D.registered$x.sample) &
                         grepl('Col0', D.registered$y.sample) ] <- NA
   D.registered$distance[grepl('Ro18', D.registered$x.sample) &
                           grepl('Ro18', D.registered$y.sample) ] <- NA
-  
+
   D.registered.onlyR$distance[grepl('Col0', D.registered.onlyR$x.sample) &
                           grepl('Col0', D.registered.onlyR$y.sample) ] <- NA
   D.registered.onlyR$distance[grepl('Ro18', D.registered.onlyR$x.sample) &
                           grepl('Ro18', D.registered.onlyR$y.sample) ] <- NA
-  
+
   p.all <- make_data_heatmaps(D.mean, D.scaled, D.registered, D.scaled.onlyNR, D.scaled.onlyR, D.registered.onlyR)
   if (i=='real') {
     ggsave(filename=paste0(real.data.graph.dir, 'job_', jobNum, '_distance_plots_real_data_all_sepScale.pdf'),

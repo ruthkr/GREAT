@@ -1,6 +1,7 @@
 
 #' @export
 get_best_result <- function(df) {
+  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # return TRUE/FALSE vector. TRUE for the smallest score
   # if tied for this, true for the one with the smallest stretch. (1x is smaller than 0.75x though)
   # if tied, then the one with the smallest shift
@@ -30,6 +31,7 @@ get_best_result <- function(df) {
 
 #' @export
 calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
+  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # wrapper to apply compare_registered_to_unregistered_model() to all the genes
 
   if (!('Col0' %in% unique(all.data.df$accession) &
@@ -87,6 +89,7 @@ calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
 # best_shifts
 #' @export
 apply_best_shift <- function(mean.df, best_shifts) {
+  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # take unregistered expression over time, and the best shifts, and
   # return the registered expression over time for each gene
 
@@ -131,6 +134,7 @@ apply_best_shift <- function(mean.df, best_shifts) {
 
 #' @export
 apply_stretch <- function(mean.df, best_shifts) {
+  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # gets the applied stretch from the best_shifts df
   test <- data.table::copy(mean.df)
 
@@ -170,6 +174,7 @@ apply_stretch <- function(mean.df, best_shifts) {
 
 #' @export
 apply_best_normalisation <- function(test, best_shifts) {
+  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # for each gene, in each accession (Ro18 and COl0) normalise by the mean and standard deviation of the compared points.
   # if the gene wasn't compared, set the expresion value to NA
 
@@ -217,6 +222,7 @@ apply_best_normalisation <- function(test, best_shifts) {
 # is.testing <- TRUE
 #' @export
 compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.testing) {
+  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # compare the overlapping timepoints in brassica and arabidopsis after the best registration,
   # and without registration (use the same timepoints for both models).
   # use the stretched data for both models, whether considering as registered or not.
@@ -307,6 +313,7 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
 # do.rescale=F
 #' @export
 calculate_all_best_shifts <- function(mean.df, stretch_factor, do.rescale, min.num.overlapping.points, shift.extreme) {
+  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   symbols <- c()
   num_points <- c()
   #curr_sym <- 'TT16'
@@ -369,6 +376,7 @@ calculate_all_best_shifts <- function(mean.df, stretch_factor, do.rescale, min.n
 # shift.extreme
 #' @export
 get_extreme_shifts_for_all <- function(test, stretch_factor, min.num.overlapping.points, shift.extreme) {
+  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # wrapper for calc_extreme_shifts to be able to move it out of the loop so don't calculate for every gene.
 
   #min.num.overlapping.points <- 5 # bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
@@ -394,6 +402,7 @@ get_extreme_shifts_for_all <- function(test, stretch_factor, min.num.overlapping
 
 #' @export
 calc_extreme_shifts <- function(test, min.num.overlapping.points, shift.extreme) {
+  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # calculate the minimum and maximum shifts can apply to Col-0 after the stretch transformation, whilst
   # preserving the criteria that at least min.num.overlapping.points are being compared from both accessions.
 
@@ -443,6 +452,7 @@ calc_extreme_shifts <- function(test, min.num.overlapping.points, shift.extreme)
 
 #' @export
 get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.shift, max.shift, testing=FALSE) {
+  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # for the current gene, and current stretch_factor, calculate the score for all
   # shifts, and return the scores for all as a table, and the value of the optimal shift.
 

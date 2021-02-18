@@ -1,6 +1,7 @@
 # test <- curr.data.df
 #' @export
 get_compared_timepoints <- function(test) {
+  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # flag the arabidopsis timepoints which overlap the brassica timecourse, and so will be compared
   bra.min <- min(test$shifted.time[test$accession=='Ro18'])
   bra.max <- max(test$shifted.time[test$accession=='Ro18'])
@@ -27,7 +28,7 @@ get_compared_timepoints <- function(test) {
 # bra.dt <- ara.df
 #' @export
 interpolate_brassica_comparison_expression <- function(arabidopsis.time, bra.dt) {
-
+  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # arabidopsis time is outside of the range of the bra.dt shifted timepoints
   bra.dt$diff <- bra.dt$shifted.time - arabidopsis.time
 

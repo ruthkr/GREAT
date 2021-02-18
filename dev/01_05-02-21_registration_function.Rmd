@@ -137,6 +137,9 @@ ro18_chiifu_apex %>%
 comparison_genes <- data.table::fread(here::here("dev/graphs/ro18_chiifu_apex/comparison_genes.tsv"))
 
 print(unique(comparison_genes$model))
+
+comparison_genes %>% 
+  head(10)
 ```
 
 ## Get the Brassica data
@@ -172,7 +175,7 @@ unique(mean.df$locus_name) %>% length()
 ```
 
 ```{r}
-test.genes <- unique(mean.df$locus_name)[1:5]
+test.genes <- unique(mean.df$locus_name)[1:300]
 
 mean.df <- mean.df[mean.df$locus_name %in% test.genes,]
 all.data.df <- all.data.df[all.data.df$locus_name %in% test.genes, ]
@@ -227,19 +230,19 @@ list <- shuffle_option(shuffle_type = "real", unshuffled_data, unshuffled_all_da
 
 mean.df <- list[[1]]
 all.data.df <- list[[2]]
-
-# Try to shuffle expression
-list_shuff_expression <- shuffle_option(shuffle_type = "shuffle_expression", unshuffled_data, unshuffled_all_data)
-
-mean_df_shuff_expression <- list_shuff_expression[[1]]
-all_data_dfshuff_expression <- list_shuff_expression[[2]]
-
-
-# Try to shuffle genes
-list_shuff_genes <- shuffle_option(shuffle_type = "shuffle_genes", unshuffled_data, unshuffled_all_data)
-
-mean_df_shuff_genes <- list_shuff_genes[[1]]
-all_data_dfshuff_genes <- list_shuff_genes[[2]]
+# 
+# # Try to shuffle expression
+# list_shuff_expression <- shuffle_option(shuffle_type = "shuffle_expression", unshuffled_data, unshuffled_all_data)
+# 
+# mean_df_shuff_expression <- list_shuff_expression[[1]]
+# all_data_dfshuff_expression <- list_shuff_expression[[2]]
+# 
+# 
+# # Try to shuffle genes
+# list_shuff_genes <- shuffle_option(shuffle_type = "shuffle_genes", unshuffled_data, unshuffled_all_data)
+# 
+# mean_df_shuff_genes <- list_shuff_genes[[1]]
+# all_data_dfshuff_genes <- list_shuff_genes[[2]]
 ```
 
 ### Look into each df 
@@ -262,6 +265,12 @@ mean.df %>%
   head(5)
 ```
 
+```{r}
+all.data.df %>% 
+  head(5)
+```
+
+
 
 ## Prepare registered and scaled data 
 
@@ -282,6 +291,12 @@ mean.df_change_accession_names %>%
   head(5)
 ```
 
+```{r}
+all.data.df_change_accession_names %>% 
+  head(5)
+```
+
+
 ### Step 2: Scale
 
 
@@ -295,6 +310,18 @@ mean.df.sc %>%
 ```
 
 ```{r}
+# To check if Col0 always have same timepoint with Ro18
+mean.df.sc %>% 
+  dplyr::group_by(locus_name, accession) %>% 
+  dplyr::do(data.frame(nrow=nrow(.)))
+
+  # dplyr::summarise(count = n())
+```
+
+
+
+```{r}
+# here all.data.df and mean.df are scaled differently
 initial.rescale = "TRUE"
 if (initial.rescale == TRUE) {
   # apply rescale to mean.df prior to registration
@@ -302,7 +329,6 @@ if (initial.rescale == TRUE) {
   to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
   to.shift.df$sc.mean.cpm <- NULL
   all.data.df <- scale_all_rep_data(mean.df, all.data.df, "scale")
-    
 } else {
   to.shift.df <- data.table::copy(mean.df)
 }
@@ -310,23 +336,19 @@ if (initial.rescale == TRUE) {
 
 
 ```{r}
-ggplot2::ggplot(to.shift.df[to.shift.df$locus_name=='BRAA01G000040.3C'])+
+saveRDS(to.shift.df, "to_shift_df_all_genes.RDS")
+saveRDS(all.data.df, "all_data_df_all_genes.RDS")
+```
+
+```{r}
+ggplot2::ggplot(to.shift.df[to.shift.df$locus_name=='BRAA03G023790.3C'])+
   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
   ggplot2::geom_point()
 ```
 
-
-
-```{r}
-all.data.df %>% 
-  head(5) %>% 
-  knitr::kable()
-```
-
-
 ```{r}
 # sanity plot that rescale all data worked
-ggplot2::ggplot(all.data.df[all.data.df$locus_name=='BRAA01G000040.3C']) +
+ggplot2::ggplot(all.data.df[all.data.df$locus_name=='BRAA03G023790.3C']) +
   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
   ggplot2::geom_point()
 ```
@@ -337,10 +359,19 @@ ggplot2::ggplot(all.data.df[all.data.df$locus_name=='BRAA01G000040.3C']) +
 ### Step 3: Get best stretch and shift
 
 ```{r}
-knitr::include_graphics("figure/flowchart_get_best_stretch_shift.png")
+# knitr::include_graphics("figure/flowchart_get_best_stretch_shift.png")
 ```
 
 The main function: 
+
+```{r}
+# Check the data
+
+to.shift.df %>% 
+  head(5)
+```
+
+
 
 ```{r}
 # calculate the best registration. Returns all tried registrations, best stretch and shift combo,
@@ -350,8 +381,11 @@ best_stretch_and_shift <- get_best_stretch_and_shift(to.shift.df, all.data.df, s
 ```
 
 ```{r}
-best_stretch_and_shift %>% summary()
+# save results in RDS
+# saveRDS(best_stretch_and_shift, "strecth_shift_results_all_genes.rds")
 ```
+
+
 
 ### Step 3a: Calculate all best shift
 
@@ -397,10 +431,15 @@ length(unique(to.shift.df$locus_name))
 ```
 
 
+```{r}
+curr_sym <- unique(to.shift.df$locus_name)[2]
+get_best_shift_new(curr_sym, to.shift.df, stretch_factor = 2, do.rescale = TRUE, min.shift, max.shift, testing = FALSE)
+```
+
 
 ```{r}
 count <- 0
-curr_sym <- unique(to.shift.df$locus_name)[2]
+# curr_sym <- unique(to.shift.df$locus_name)[2]
 i <- 1
 
 for (i in 1:length(unique(to.shift.df$locus_name))) {
@@ -443,11 +482,64 @@ all.scores.df <- do.call("rbind", all.scores.list)
 
 ```{r}
 all.scores.df %>% 
-  knitr::kable()
+  head(5)
+```
+### Step 3b 
+
+```{r}
+# All is already unique
+all_shifts <- unique(all.scores.df)
+
+
+all_shifts %>% 
+  head(5)
+```
+
+```{r}
+all_shifts[, is.best:=get_best_result(.SD), by=.(gene)]
+
+all_shifts %>% 
+  head(10) 
+```
+
+```{r}
+# Get all of the best shifts 
+
+best_shifts <- all_shifts[is.best==TRUE,]
+
+best_shifts
+```
+
+```{r}
+# Delete column "is.best"
+all_shifts$is.best <- NULL
+
+all_shifts
 ```
 
 
+```{r}
+model.comparison.dt <- calculate_all_model_comparison_stats(all.data.df, best_shifts)
+```
 
+```{r}
+model.comparison.dt %>% 
+  head(5)
+```
+
+```{r}
+model.comparison.dt <- merge(model.comparison.dt, best_shifts[, c('gene', 'stretch', 'shift'),], by='gene')
+```
+
+
+```{r}
+model.comparison.dt %>% 
+  head(5)
+```
+
+```{r}
+
+```
 
 
 

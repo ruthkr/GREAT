@@ -60,7 +60,7 @@ load_mean.df <- function() {
 get_expression_oI <- function(rds_file, curr_GoIs, sumBrassicas) {
 
   # load rds and arabidopsis gene expression data into single df.
-  master_exp <- get_data_all_symbol(rds_file)
+  master_exp <- get_all_data(rds_file)
   master_exp <- unique(master_exp)
   # cut down to common tissue
   exp <- master_exp[master_exp$tissue=='apex', ]
@@ -106,64 +106,41 @@ get_expression_oI <- function(rds_file, curr_GoIs, sumBrassicas) {
   return(exp)
 }
 
-#brassica_name <- 'ro18_chiifu_apex'
+
 #' @export
-get_data_all_symbol <- function(brassica_name) {
+get_all_data <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table) {
 
-  rds_k <- 'klepikova' # 'klepikova
+  # Read RDS file
+  bra_data <- readRDS(file_path_brassica)
+  ara_data <- readRDS(file_path_arabidopsis)
+  id_table <- readRDS(file_path_id_table)
 
-  # ------- changed by Ruth
-  rdsdir <- 'final_data/rds/'
+  id_table <- unique(id_table[, c("locus_name", "symbol", "CDS.model")])
 
-  rdspath_k <- paste0(rdsdir, rds_k, '.rds')
-  rdspath_b <- paste0(rdsdir, brassica_name, '.rds')
+  # Take unique id_table
+  id_table_unique <- unique(id_table[, c("CDS.model", "locus_name")]) %>%
+    dplyr::mutate(CDS.model = toupper(CDS.model)) %>%
+    dplyr::filter(!is.na(locus_name), !locus_name %in% c("", "-"))
 
-  expression_b <- readRDS(rdspath_b)
-  expression_k <- readRDS(rdspath_k)
+  # Add ATG locus info
+  bra_data <- merge(bra_data, id_table_unique, by = "CDS.model")
 
-  # id data
-  # ------- changed by Ruth
-  ID_TABLE <- readRDS(paste0('reference_data/ID_TABLE_brapa-v3.rds'))
-
-  ID_TABLE <- unique(ID_TABLE[, c('locus_name', 'symbol', 'CDS.model')])
-
-  # this screws up the number of copies of each gene unless reorder based on symbol name first!
-  #ID_TABLE <- ID_TABLE[order(ID_TABLE$symbol, decreasing=T), ]
-  #ID_TABLE <- ID_TABLE[!duplicated(ID_TABLE[c('locus_name', 'CDS.model')]), ]
-
-  # add ATG locus info and cut down
-  little.IDT <- unique(ID_TABLE[, c('CDS.model', 'locus_name')]) # has to be unique, because ID_TABLE has duplicate rows for multiple symbols!!
-  expression_b <- merge(expression_b, little.IDT, by='CDS.model')
-
-  #little.IDT <- ID_TABLE[, c('locus_name', 'symbol')]
-  #names(little.IDT) <- c('CDS.model', 'symbol')
-  #expression_k <- unique(merge(expression_k, little.IDT, by='CDS.model', allow.cartesian = T))
-  expression_k$locus_name <- expression_k$CDS.model
+  # Create a column in ara_data
+  ara_data$locus_name <- ara_data$CDS.model
 
   # cut down to only have genes with ATG locus present in both datasets
-  common_symbols <- intersect(expression_k$locus_name, expression_b$locus_name)
-  expression_k <- expression_k[expression_k$locus_name %in% common_symbols, ]
-  expression_b <- expression_b[expression_b$locus_name %in% common_symbols, ]
+  common_symbols <- intersect(ara_data$locus_name, bra_data$locus_name)
+  ara_data <- ara_data[ara_data$locus_name %in% common_symbols, ]
+  bra_data <- bra_data[bra_data$locus_name %in% common_symbols, ]
 
-  # join the two datasets into 1 & housekeeping
-  expression <- rbind(expression_b, expression_k)
+  # Take a common columns
+  colnames_intersect <- intersect(colnames(ara_data), colnames(bra_data))
 
-  # cut down to remove the 'blank' symbol
-  expression <- expression[expression$locus_name!='',]
+  # Join the two datasets into 1 & housekeeping
+  expression <- rbind(bra_data[, ..colnames_intersect], ara_data[, ..colnames_intersect])
 
-  # cut down to only have tissue present in both dataset
-  #expression <- expression[expression$tissue=='apex', ]
-
-  # cut down to only have similar/equivalent timepoint
-  # cut down extra Col0 times
-  #expression <- expression[expression$accession!='Col0' | expression$timepoint <=14, ]
-  # cut down extra ZS11 times
-  # expression <- expression[expression$accession!='ZS11' | (expression$timepoint<63 & expression$timepoint >=43), ]
-  # # cut out dodgy 51 day timepoint
-  # expression <- expression[expression$dataset!='ds_2018_06_19' | expression$timepoint != 51, ]
-
-  rm(expression_b, expression_k, ID_TABLE, little.IDT)
-  gc()
+  # Cut down to remove the 'blank' symbol
+  expression <- expression[expression$locus_name != "", ]
 
   return(expression)
 }

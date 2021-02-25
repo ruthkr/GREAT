@@ -1,0 +1,389 @@
+---
+title: "Get my head make more sense with AP3 not want to stretch"
+output: 
+  github_document:
+    toc: true
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+library(genereg)
+library(ggplot2)
+library(data.table)
+library(cowplot)
+library(ggpubr)
+```
+
+## Get the data 
+
+```{r}
+# Get all of the data path
+table_id_path <- "/Users/kristiar/PhD/second-rotation-JIC/b_oleracea/data/ID_TAB.csv"
+ara_path <- '/Users/kristiar/PhD/second-rotation-JIC/b_oleracea/data/klepikova.rds'
+b_oleracea_path <- "/Users/kristiar/PhD/second-rotation-JIC/b_oleracea/data/dh_with_sample_id.rds"
+
+table_id_info_key_floral_genes <- data.table::fread(table_id_path) %>% 
+  dplyr::filter(symbol == "AP3") %>% 
+  dplyr::select(CDS.model, symbol, locus_name) %>% 
+  unique() %>% 
+  dplyr::arrange(symbol)
+
+list_gene_AP3 <- table_id_info_key_floral_genes  %>%
+  dplyr::pull(locus_name) %>%
+  unique()
+
+table_id_info_key_floral_genes
+```
+
+```{r}
+# tools::file_ext("/Users/kristiar/PhD/second-rotation-JIC/b_oleracea/data/ID_TAB.csv")
+
+b_oleracea_mean_df_AP3 <- genereg::load_mean_df(
+  file_path_brassica = b_oleracea_path,
+  file_path_arabidopsis = ara_path,
+  file_path_id_table = table_id_path,
+  tissue_wanted = "apex",
+  curr_GoIs = list_gene_AP3,
+  sum_brassicas = F
+)
+```
+
+```{r all}
+# just for test
+mean.df <- b_oleracea_mean_df_AP3[[1]] %>% 
+  dplyr::mutate(accession = ifelse(accession == "DH", "Ro18", "Col0"))
+all.data.df <- b_oleracea_mean_df_AP3[[2]] %>% 
+  dplyr::mutate(accession = ifelse(accession == "DH", "Ro18", "Col0"))
+```
+
+```{r}
+mean.df
+```
+
+
+## Specify all parameters
+
+
+```{r}
+do.initial.rescale <- 'TRUE' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
+do.register.rescale <- 'rescale' 
+outdir.string <- 'TESTING_B_Oleracea_key_floral_genes_AP3'
+
+# calculate the scores associated with each candidate shift
+# Arabidopsis observations = 7d -> 16d = 0d -> 9d
+# Ro18 observations = 11d -> 35d = 0d -> 24d
+# therefore if same start and end points stretch = 24 / 9
+
+# lots of spurious overlaps detected when too extreme shifts allowed
+stretch = c(6, 5.5, 5, 4.5, 4, 3.5, 3, 2.5)
+# stretch = c(2, 1.5)
+min.num.overlapping.points = 4
+shift.extreme = 4
+transformed.timecourse = 'Col0'
+num.shuffled <- 1 
+jobNum <- 1
+
+# Setup flags for rescaling options
+if (do.initial.rescale=='rescale') {
+  initial.rescale <- TRUE
+} else {
+  initial.rescale <- FALSE
+}
+if (do.register.rescale=='rescale') {
+  should.rescale <- TRUE
+} else {
+  should.rescale <- FALSE
+}
+
+# directories to save graphs to
+real.data.graph.dir <- paste0('graphs/gene_registration/', outdir.string, '_real_data/')
+# shuffled.data.graph.dir <- paste0('graphs/gene_registration/', outdir.string, '_shuffled_data/job_', jobNum, '/')
+# directories to save real and shuffled expression data to
+real.expression.dir <- paste0('intermediate_data/gene_registration/', outdir.string, '_real_data/gene_expression/job_', jobNum, '/')
+# shuffled.expression.dir <- paste0('intermediate_data/gene_registration/', outdir.string, '_shuffled_data/gene_expression/')
+# directories to save real and shuffled distance data to
+real.distance.dir <- paste0('intermediate_data/gene_registration/', outdir.string, '_real_distance/job_', jobNum, '/')
+# shuffled.distance.dir <- paste0('intermediate_data/gene_registration/', outdir.string, '_shuffled_distance/')
+  
+
+# somewhere to store the data.tables and graphs
+if (!(dir.exists(real.expression.dir))) {
+    dir.create(real.expression.dir, recursive=T)
+    # dir.create(shuffled.expression.dir, recursive=T)
+    
+    dir.create(real.distance.dir, recursive=T)
+    # dir.create(shuffled.distance.dir, recursive=T)
+
+    dir.create(real.data.graph.dir, recursive=T)
+    # dir.create(shuffled.data.graph.dir, recursive=T)
+}
+```
+
+
+## Get best shift for one shift
+
+```{r scaling}
+mean.df.sc <- data.table::copy(mean.df)
+mean.df.sc[, sc.mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
+to.shift.df <- data.table::copy(mean.df.sc)
+to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
+to.shift.df$sc.mean.cpm <- NULL
+
+all.data.df <- scale_all_rep_data(mean.df, all.data.df, 'scale')
+```
+
+
+```{r take df}
+test <- to.shift.df[to.shift.df$locus_name == "BO8G083600", ]
+
+test %>% 
+  head(5)
+```
+
+```{r}
+ggplot2::ggplot(test)+
+  ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  ggplot2::geom_point() +
+  ggplot2::geom_line()
+```
+
+```{r get delta timepoint}
+test[, delta.time:=timepoint - min(timepoint), by=.(accession)]
+```
+
+```{r plot after finding delta point}
+ggplot2::ggplot(test)+
+  ggplot2::aes(x=delta.time, y=mean.cpm, color=accession) +
+  ggplot2::geom_point() +
+  ggplot2::geom_line()
+```
+
+```{r stretch it}
+test$delta.time[test$accession == 'Col0'] <- test$delta.time[test$accession=='Col0'] * 3.5
+```
+
+```{r plot stretch result}
+ggplot2::ggplot(test)+
+  ggplot2::aes(x=delta.time, y=mean.cpm, color=accession) +
+  ggplot2::geom_point() +
+  ggplot2::geom_line()
+```
+
+```r
+# Try to make it consistent as in apply stretch
+test$delta.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0'] + 7
+test$delta.time[test$accession=='Ro18'] <- test$delta.time[test$accession=='Ro18'] + 14
+```
+
+```{r plot after return it to original time}
+ggplot2::ggplot(test)+
+  ggplot2::aes(x=delta.time, y=mean.cpm, color=accession) +
+  ggplot2::geom_point() +
+  ggplot2::geom_line()
+```
+
+
+
+
+```{r shift the time}
+test$shifted.time <- test$delta.time
+test$shifted.time[test$accession == 'Col0'] <- test$delta.time[test$accession == 'Col0'] + 0.6
+```
+
+```{r plot after shifting time}
+ggplot2::ggplot(test)+
+  ggplot2::aes(x = shifted.time, y=mean.cpm, color=accession) +
+  ggplot2::geom_point() +
+  ggplot2::geom_line()
+```
+
+```{r compared}
+test <- get_compared_timepoints(test)
+test
+compared <- test[test$is.compared==TRUE, ]
+
+compared
+```
+```{r normalise again}
+ara.mean <- mean(compared$mean.cpm[compared$accession == "Col0"])
+bra.mean <- mean(compared$mean.cpm[compared$accession == "Ro18"])
+ara.sd <- stats::sd(compared$mean.cpm[compared$accession == "Col0"])
+bra.sd <- stats::sd(compared$mean.cpm[compared$accession == "Ro18"])
+
+bra.sd
+```
+
+```{r}
+# do the transformation for here
+if ((ara.sd != 0) & (bra.sd != 0)) { 
+  # if neither are 0, so won't be dividing by 0 (which gives NaNs)
+  compared[, mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(accession)]
+} else { 
+  # if at least one of them is all 0
+  ara.compared <- compared[compared$accession == "Col0", ]
+  bra.compared <- compared[compared$accession == "Ro18", ]
+  if ((ara.sd == 0) & (bra.sd != 0)) { # if only ara.sd==0
+    bra.compared[, mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(accession)]
+  }
+  if ((ara.sd != 0) & (bra.sd == 0)) { # if only bra.sd == 0
+    ara.compared[, mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(accession)]
+  }
+  # if both are all 0, then do nothing.
+  compared <- rbind(ara.compared, bra.compared)
+}
+```
+
+```{r}
+compared
+```
+
+
+```{r plot compared}
+ggplot2::ggplot(compared)+
+  ggplot2::aes(x = shifted.time, y=mean.cpm, color=accession) +
+  ggplot2::geom_point() +
+  ggplot2::geom_line()
+```
+
+```{r}
+# for each arabidopsis timepoint, linear interpolate between the two nearest brassica timepoints
+ara.compared <- compared[compared$accession == "Col0"]
+bra.compared <- compared[compared$accession == "Ro18"]
+
+ara.compared$pred.bra.expression <- sapply(ara.compared$shifted.time, interpolate_brassica_comparison_expression, bra.dt = bra.compared)
+```
+
+```{r}
+ara.compared
+```
+
+
+```{r}
+ara.compared$shifted.time
+```
+
+```{r}
+interpolate_brassica_comparison_expression(4.1, bra.compared)
+```
+
+```{r}
+score <- calc_score(ara.compared$mean.cpm, ara.compared$pred.bra.expression)
+
+score
+```
+
+```{r}
+out <- get_best_shift_new(curr_sym = "BO8G083600", to.shift.df, stretch_factor = 3.5, do.rescale = TRUE, -4, 4, testing=FALSE)
+
+
+out
+```
+
+
+```{r}
+all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor = 3.5, do.rescale = TRUE, min.num.overlapping.points = 4, shift.extreme = 4)
+```
+
+```{r}
+all_shifts %>% 
+  dplyr::select(gene) %>% 
+  unique()
+
+all_shifts
+```
+```{r}
+all_shifts <- unique(all_shifts) # ensure no duplicated rows
+
+# cut down to single best shift for each gene
+all_shifts[, is.best:=get_best_result(.SD), by=.(gene)]
+best_shifts <- all_shifts[is.best==TRUE,]
+all_shifts$is.best <- NULL
+
+best_shifts
+```
+## Running calculate_all_model_comparison_stats
+
+```{r running func: calculate_all_model_comparison_stats}
+model.comparison.dt <- calculate_all_model_comparison_stats(all.data.df, best_shifts)
+
+model.comparison.dt
+```
+
+```{r func1: apply_best_shift}
+shifted.all.data.df <- apply_best_shift(all.data.df, best_shifts)
+
+shifted.all.data.df 
+```
+
+
+```{r plot original data}
+ggplot2::ggplot(all.data.df[all.data.df$locus_name=='BO4G120010'])+
+  ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  ggplot2::geom_point()
+```
+```{r plot after shifted}
+ggplot2::ggplot(shifted.all.data.df[shifted.all.data.df$locus_name=='BO4G120010'])+
+  ggplot2::aes(x = shifted.time, y=mean.cpm, color=accession) +
+  ggplot2::geom_point()
+```
+```{r}
+test_stretch <- apply_stretch(all.data.df, best_shifts)
+
+test_stretch
+```
+
+```{r plot after stretched}
+ggplot2::ggplot(test_stretch[test_stretch$locus_name=='BO4G120010'])+
+  ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession) +
+  ggplot2::geom_point()
+```
+
+
+```{r}
+curr.data.df <- shifted.all.data.df[shifted.all.data.df$locus_name == 'BO4G120010']
+
+# print('line 662')
+# print(curr.data.df)
+
+# flag the timepoints to be used in the modelling, only the ones which overlap!
+curr.data.df <- get_compared_timepoints(curr.data.df)
+
+ggplot2::ggplot(curr.data.df)+
+  ggplot2::aes(x=shifted.time, y=mean.cpm, shape=is.compared, color=accession)+
+  ggplot2::geom_point()
+
+curr.data.df
+```
+
+```{r}
+# cut down to the data for each model
+ara.spline.data <- curr.data.df[curr.data.df$is.compared == TRUE &
+  curr.data.df$accession == "Col0", ]
+bra.spline.data <- curr.data.df[curr.data.df$is.compared == TRUE &
+  curr.data.df$accession == "Ro18", ]
+combined.spline.data <- curr.data.df[curr.data.df$is.compared == TRUE, ]
+```
+
+
+```{r}
+num.spline.params <- 6 # number of parameters for each spline fitting (degree and this used to calculate num knots).
+num.registration.params <- 2 # stretch, shift
+num.obs <- nrow(combined.spline.data)
+
+# print('line 676')
+# print(ara.spline.data)
+# print(bra.spline.data)
+
+
+ara.fit <- stats::lm(mean.cpm ~ splines::bs(shifted.time, df = num.spline.params, degree = 3), data = ara.spline.data)
+bra.fit <- stats::lm(mean.cpm ~ splines::bs(shifted.time, df = num.spline.params, degree = 3), data = bra.spline.data)
+combined.fit <- stats::lm(mean.cpm ~ splines::bs(shifted.time, df = num.spline.params, degree = 3), data = combined.spline.data)
+
+ara.fit
+```
+
+
+
+
+
+

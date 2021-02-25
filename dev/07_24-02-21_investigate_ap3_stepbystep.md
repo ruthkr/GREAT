@@ -1,4 +1,4 @@
-Get my head make more sense with AP3 not want to stretch
+Get myself understand why AP3 did not want to be stretched/shifted
 ================
 
 -   [Get the data](#get-the-data)

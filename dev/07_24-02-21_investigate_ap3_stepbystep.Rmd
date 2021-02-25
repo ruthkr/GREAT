@@ -1,5 +1,5 @@
 ---
-title: "Get my head make more sense with AP3 not want to stretch"
+title: "Get myself understand why AP3 did not want to be stretched/shifted"
 output: 
   github_document:
     toc: true

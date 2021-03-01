@@ -1,0 +1,225 @@
+---
+title: "Running all of gene-registration functions for all genes in B. Oleracea"
+output: 
+  github_document:
+    toc: true
+---
+
+```{r setup}
+knitr::opts_chunk$set()
+library(genereg)
+library(ggplot2)
+library(data.table)
+library(cowplot)
+library(ggpubr)
+```
+
+## Introduction
+
+In this report, I am going to try running gene registration scripts for all *B. Oleracea* genes. However, since there are some *Arabidopsis* values that are zeros, it gave some errors. Therefore, the solutions are to filter *Arabidopsis* genes with all zero values.
+
+## Load mean data frame
+
+```{r}
+# Get all of the data path
+table_id_path <- "/Users/kristiar/PhD/second-rotation-JIC/b_oleracea/data/ID_TAB.csv"
+ara_path <- '/Users/kristiar/PhD/second-rotation-JIC/b_oleracea/data/klepikova.rds'
+b_oleracea_path <- "/Users/kristiar/PhD/second-rotation-JIC/b_oleracea/data/dh_with_sample_id.rds"
+```
+
+```{r}
+id_table_all <- data.table::fread(table_id_path) %>% 
+  dplyr::select(CDS.model, symbol, locus_name) %>% 
+  dplyr::arrange(symbol) %>% 
+  dplyr::mutate(CDS.model = toupper(CDS.model)) %>% 
+  unique()
+
+# Take all locus name from the table
+list_all_ara_locus_name <- id_table_all %>% 
+  dplyr::pull(locus_name)
+```
+
+```{r}
+id_table_all %>% 
+  head(10) 
+```
+
+
+```{r}
+# Get summary 
+id_table_with_symbol <- id_table_all %>% 
+  dplyr::filter(symbol != "") %>% 
+  nrow()
+
+id_table_without_symbol <- id_table_all %>% 
+  dplyr::filter(symbol == "") %>% 
+  nrow()
+
+data.frame(with_symbol = id_table_with_symbol, 
+           without_symbol = id_table_without_symbol)
+```
+
+```{r load_mean_df key floral genes}
+b_oleracea_mean_df <- genereg::load_mean_df(
+  file_path_brassica = b_oleracea_path,
+  file_path_arabidopsis = ara_path,
+  file_path_id_table = table_id_path,
+  tissue_wanted = "apex",
+  curr_GoIs = list_all_ara_locus_name,
+  sum_brassicas = F
+)
+```
+
+```{r all}
+# Change the accession since all the scripts are still hard-coded for "Ro18"
+mean.df <- b_oleracea_mean_df[[1]] %>% 
+  dplyr::mutate(accession = ifelse(accession == "DH", "Ro18", "Col0"))
+all.data.df <- b_oleracea_mean_df[[2]] %>% 
+  dplyr::mutate(accession = ifelse(accession == "DH", "Ro18", "Col0"))
+```
+
+## Specify all parameters
+
+
+```{r}
+outdir.string <- 'TESTING_B_Oleracea_all_genes'
+do.initial.rescale <- 'TRUE' 
+do.register.rescale <- 'rescale'
+
+stretch = c(7, 6.5, 6, 5.5, 5, 4.5, 4, 3.5, 3, 2.5)
+min.num.overlapping.points = 4
+shift.extreme = 4
+transformed.timecourse = 'Col0'
+num.shuffled <- 1 
+jobNum <- 1
+
+if (do.initial.rescale=='rescale') {
+  initial.rescale <- TRUE
+} else {
+  initial.rescale <- FALSE
+}
+if (do.register.rescale=='rescale') {
+  should.rescale <- TRUE
+} else {
+  should.rescale <- FALSE
+}
+```
+
+
+```{r include=FALSE}
+# Directories to save graphs to
+real.data.graph.dir <- paste0('graphs/gene_registration/', outdir.string, '_real_data/')
+real.expression.dir <- paste0('intermediate_data/gene_registration/', outdir.string, '_real_data/gene_expression/job_', jobNum, '/')
+real.distance.dir <- paste0('intermediate_data/gene_registration/', outdir.string, '_real_distance/job_', jobNum, '/')
+
+# Somewhere to store the data.tables and graphs
+if (!(dir.exists(real.expression.dir))) {
+    dir.create(real.expression.dir, recursive=T)
+    dir.create(real.distance.dir, recursive=T)
+    dir.create(real.data.graph.dir, recursive=T)
+}
+```
+
+```{r error=TRUE}
+shifted_stretched_all <- prepare_scaled_and_registered_data(
+  mean.df, 
+  all.data.df,
+  stretch, 
+  initial.rescale = TRUE, 
+  do.rescale = TRUE,
+  min.num.overlapping.points,
+  shift.extreme, 
+  transformed.timecourse
+)
+```
+
+#### Checking for accession BO00578S060
+
+```{r}
+mean.df.sc <- data.table::copy(mean.df)
+mean.df.sc[, sc.mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
+to.shift.df <- data.table::copy(mean.df.sc)
+to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
+to.shift.df$sc.mean.cpm <- NULL
+
+df_BO00578S060 <- mean.df[mean.df$locus_name == "BO00578S060", ] %>% 
+  dplyr::mutate(accession = ifelse(accession == "Ro18", "DH", "Col0"))
+
+ggplot2::ggplot(df_BO00578S060) +
+  ggplot2::aes(x = timepoint, y = mean.cpm, color = accession) +
+  ggplot2::geom_point() +
+  ggplot2::geom_line()
+
+
+df_BO00578S060
+```
+
+#### What is the effect of having all zeros after scaling?
+
+```{r}
+to.shift.df[to.shift.df$locus_name == "BO00578S060", ]
+```
+
+#### What the formula of R scale is 
+
+```{r}
+set.seed(100)
+x <- runif(10)
+
+# Manually scaling
+(x - mean(x)) / sd(x)
+```
+
+```{r}
+scale(x)
+```
+
+
+## Testing if we also filter out the Arabidopsis with value all zeros
+
+```{r}
+exp <- get_expression_of_interest(file_path_brassica = b_oleracea_path,
+  file_path_arabidopsis = ara_path,
+  file_path_id_table = table_id_path,
+  tissue_wanted = "apex",
+  curr_GoIs = list_all_ara_locus_name,
+  sum_brassicas = F)
+
+exp[, mean.cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
+mean.df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
+```
+
+```{r}
+list_for_testing <- c("BO00578S060", "BO00285S220", "BO00285S360", "BO00285S220", "BO00285S290", "BO00285S310")
+```
+
+```{r}
+# Checking the Arabidopsis values that has expression == 0
+mean.df %>% 
+  dplyr::filter(locus_name == "BO00578S060")
+```
+
+```{r}
+mean.df <- mean.df %>% 
+  dplyr::filter(locus_name %in% list_for_testing)
+```
+
+
+```{r}
+# discard.genes <- unique(bra_df$locus_name[bra_df$keep==FALSE])
+bra_df <- mean.df[mean.df$accession != "Col0"]
+bra_df[, keep := (max(mean.cpm) > 5 | mean(mean.cpm > 1) > 0.5), by = .(locus_name)]
+keep_bra_genes <- unique(bra_df$locus_name[bra_df$keep == TRUE])
+discard_bra_genes <- unique(bra_df$locus_name[bra_df$keep == FALSE])
+
+# Filter mean.df to remove all arabidopsis genes with all zeros values
+ara_df <- mean.df[mean.df$locus_name == keep_bra_genes & mean.df$accession == "Col0"]
+ara_df[, keep_final := (mean(mean.cpm) != 0 & sd(mean.cpm) != 0), by = .(locus_name)]
+keep_ara_genes <- unique(ara_df$locus_name[ara_df$keep_final == TRUE])
+discard_ara_genes <- unique(ara_df$locus_name[ara_df$keep_final == TRUE])
+
+ara_df
+```
+
+
+

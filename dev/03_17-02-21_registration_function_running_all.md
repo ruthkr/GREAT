@@ -1,9 +1,9 @@
-Gene registration – running all
+Gene registration – running all functions for *B.rapa* key floral genes
 ================
 
--   [Apply all of the registration function to key floral
-    genes](#apply-all-of-the-registration-function-to-key-floral-genes)
-    -   [Introduction](#introduction)
+-   [Apply all of the registration function to *B.rapa* key floral
+    genes](#apply-all-of-the-registration-function-to-brapa-key-floral-genes)
+    -   [Background](#background)
     -   [Run scripts](#run-scripts)
     -   [Get the saved RDS data](#get-the-saved-rds-data)
         -   [Take the reference](#take-the-reference)
@@ -21,9 +21,9 @@ library(data.table)
 source("scripts/chiifu_v3_scripts/unused_functions.R")
 ```
 
-# Apply all of the registration function to key floral genes
+# Apply all of the registration function to *B.rapa* key floral genes
 
-## Introduction
+## Background
 
 This short report is to try to run all of the registration functions,
 with the purpose to get/reproduce the same results in Alex’s paper.

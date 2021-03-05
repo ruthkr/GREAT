@@ -1,0 +1,106 @@
+---
+title: "Comparing registered and non-registered models with more samples and more stretches/shifts"
+author: "Ruth Kristianingsih"
+date: "2021-03-04"
+output: 
+  github_document:
+    toc: true
+---
+
+# Background
+
+Comparing registered and non-registered models with more sample points between in *Arabidopsis* data by calculating BIC/AIC values. Also trying to apply more shift and stretch on the data with best/optimal shift and stretch value. 
+
+# Initial set-up
+
+```{r setup, message=FALSE, include=FALSE}
+library(dplyr)
+library(data.table)
+library(ggplot2)
+library(genereg)
+
+source("others/compare_registered_to_unregistered_model_with_ks.R")
+source("others/impute_data_points.R")
+source("others/plot_fit.R")
+```
+
+
+## Load data 
+
+```{r}
+shifted.all.data.df <- readRDS("others/shifted.all.data.df.RDS")
+```
+
+
+## Compare registered to unregistered
+
+```{r}
+L_ara_ara <- compare_registered_to_unregistered_model_with_ks(
+  curr.sym = "BO4G120010",
+  shifted.all.data.df,
+  accessions = rep("Col0", 2)
+)
+
+L_bra_bra <- compare_registered_to_unregistered_model_with_ks(
+  curr.sym = "BO4G120010",
+  shifted.all.data.df,
+  accessions = rep("Ro18", 2)
+)
+```
+
+```{r arabidopsis}
+L_ara_bra <- compare_registered_to_unregistered_model_with_ks(
+  curr.sym = "BO4G120010",
+  shifted.all.data.df
+)
+
+L_ara_bra_imp_3<- compare_registered_to_unregistered_model_with_ks(
+  curr.sym = "BO4G120010",
+  shifted.all.data.df,
+  n_input = 3
+)
+
+L_ara_bra_imp_20 <- compare_registered_to_unregistered_model_with_ks(
+  curr.sym = "BO4G120010",
+  shifted.all.data.df,
+  n_input = 20
+)
+
+L_ara_bra_shifted <- compare_registered_to_unregistered_model_with_ks(
+  curr.sym = "BO4G120010",
+  shifted.all.data.df,
+  n_input = 0,
+  new_shape = TRUE,
+  shape = c(2.4, -61.5)
+)
+```
+
+
+## Plots
+
+### Compare different options
+
+```{r bic-comparison, fig.height=10}
+list(
+  # plot_fit(L_ara_ara, title = "Ara/Ara - ", facets = c("arabidopsis1", "arabidopsis2")),
+  # plot_fit(L_bra_bra, title = "Bra/Bra - ", facets = c("brassica1", "brassica2")),
+  plot_fit(L_ara_bra, title = "Ara/Bra (Original) - "),
+  plot_fit(L_ara_bra_imp_3, title = "Ara/Bra (Imp n = 3) - "),
+  plot_fit(L_ara_bra_imp_20, title = "Ara/Bra (Imp n = 20) - "),
+  plot_fit(L_ara_bra_shifted, title = "Ara/Bra (Shifted) - ")
+) %>%
+  patchwork::wrap_plots(ncol = 1, guides = "collect")
+```
+
+### Good shift
+
+```{r shifted-individual-plot}
+rbind(
+  L_ara_bra_shifted$ara.spline.data,
+  L_ara_bra_shifted$bra.spline.data
+) %>%
+  ggplot() +
+  aes(x = shifted.time, y = mean.cpm, group = accession, color = accession) +
+  geom_line() +
+  geom_point()
+```

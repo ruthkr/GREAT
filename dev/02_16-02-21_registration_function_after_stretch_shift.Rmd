@@ -12,6 +12,11 @@ library(ggplot2)
 library(data.table)
 ```
 
+## Background
+
+In this Rmd file, I tried to understand the process after getting all stretch and shift. 
+
+
 ## Initialise some parameters
 
 ```{r}

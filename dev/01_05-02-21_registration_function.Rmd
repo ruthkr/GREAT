@@ -1,5 +1,5 @@
 ---
-title: "Gene registration"
+title: "Getting started with Alex's gene registration"
 output: 
   github_document:
     toc: true
@@ -26,6 +26,11 @@ prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initia
 calculate_between_sample_distance(mean.df, mean.df.sc, imputed.mean.df)
 make_data_heatmaps(D.mean, D.scaled, D.registered, D.scaled.onlyNR, D.scaled.onlyR, D.registered.onlyR)
 ```
+
+## Background
+
+In this Rmd file, I ran all of Alex's gene registration script to get an idea mainly what the input that the scripts need and what the expected outputs from the scripts. 
+
 
 ## Initialise some parameters
 

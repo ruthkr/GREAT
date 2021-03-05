@@ -1,54 +1,40 @@
 #' @export
-load_mean.df <- function() {
+load_mean_df <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F) {
 
-  #setwd('/Volumes/Research-Projects/bravo/alex/BRAVO_rna-seq/scripts/')
-  rds_file <- 'ro18_chiifu_apex' # don't include the .rds # the name of the brassica data to load
-  sumBrassicas <- F # if false use seperate brassica genes, and compare to repeated arabidopsis genes. If true, sume copies of each brassica and compare to arabidopsis
-  #datapath <- paste0('../final_data/rds/', rds_file, '.rds')
+  # Load the expression data for all the curr_GoIs gene models, for arabidopsis, and for the specified brassica
+  exp <- get_expression_of_interest(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F)
 
-
-  #### specify the genes to be used in the comparison: ---
-  # GoIs <- data.table::fread(paste0('../graphs/', rds_file, '/comparison_genes.tsv')) # read the list of Arabidopsis id's for the genes of interest
-
-  # ------ changed by Ruth
-  GoIs <- data.table::fread(paste0('graphs/', rds_file, '/comparison_genes.tsv'))
-
-  print(unique(GoIs$model))
-  keep_model_set <- c('rf') #, 'logistic', 'trough', 'spike', 'linear') # rf means don't force them to be the same AT ALL!
-  curr_GoIs <- GoIs$symbol[GoIs$model %in% keep_model_set]
-  # add some particular flowering genes of interest
-  # AT2G22540 : SVP
-  # AT3G57920 : SPL15
-  # AT2G42200 : SPL9
-  # AT5G51870 : AGL71 : BRAA10G010470.3C
-  # AT5G51860 : AGL72
-  # AT4G36920 : AP2
-  curr_GoIs <- c(curr_GoIs, 'AT2G22540', 'AT3G57920', 'AT2G42200', 'AT5G51870', 'AT5G51860', 'AT4G36920')
-  #curr_GoIs <- c('LMI1', 'STM', 'PNY', 'PNF', 'UFO', 'AGL42', 'AGL71', 'AGL72', 'PI', 'GA20OX1', 'GA20OX2') # KEY THINGS, MISSING
-
-
-
-  ##### load the expression data for all the curr_GoIs gene models, for arabidopsis, and for the specified brassica
-  filt_models <- get_expression_oI(rds_file, curr_GoIs, sumBrassicas) #
-  length(unique(curr_GoIs))
-  length(unique(filt_models$CDS.model))
-  exp <- filt_models
-
-  # get mean of each timepoint
+  # Calculate mean of each timepoint by adding a column called "mean.cpm"
   exp[, mean.cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
   mean.df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
 
+  # Filter mean.df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed greater than 1
+  # bra_df <- mean.df[mean.df$accession != 'Col0']
+  # bra_df[, keep:=(max(mean.cpm) > 5 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
+  # keep.genes <- unique(bra_df$locus_name[bra_df$keep==TRUE])
+  # discard.genes <- unique(bra_df$locus_name[bra_df$keep==FALSE])
+  bra_df <- mean.df[mean.df$accession != 'Col0']
+  bra_df[, keep:=(max(mean.cpm) > 5 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
+  keep_bra_genes <- unique(bra_df$locus_name[bra_df$keep==TRUE])
+  discard_bra_genes <- unique(bra_df$locus_name[bra_df$keep==FALSE])
+
+  # Filter mean.df to remove all arabidopsis genes with all zeros values
+  ara_df <- mean.df[mean.df$locus_name %in% keep_bra_genes & mean.df$accession == 'Col0']
+  ara_df[, keep_final:=(mean(mean.cpm) != 0 & sd(mean.cpm) != 0), by=.(locus_name)]
+  keep_final_genes <- unique(ara_df$locus_name[ara_df$keep_final==TRUE])
+  discard_final_genes <- unique(ara_df$locus_name[ara_df$keep_final==FALSE])
+
+  mean.df <- mean.df[mean.df$locus_name %in% keep_final_genes,]
+
+  # Printing the keep genes
+  print(paste0(length(keep_bra_genes), ' brassica genes considered in the comparison'))
+  print(paste0(length(keep_final_genes), ' all genes considered in the comparison'))
 
 
-  # filter mean.df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
-  # greater than 1
-  ro18.df <- mean.df[mean.df$accession=='Ro18']
-  ro18.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
-  keep.genes <- unique(ro18.df$locus_name[ro18.df$keep==TRUE])
-  mean.df <- mean.df[mean.df$locus_name %in% keep.genes,]
-  print(paste0(length(unique(mean.df$locus_name)), ' genes considered in the comparison'))
-  rm(ro18.df, keep.genes)
+  # print(paste0(length(unique(mean.df$locus_name)), ' brassica genes considered in the comparison'))
+  # print(paste(c("Discarded genes:", paste(discard.genes, collapse = ", ")), collapse = " "))
 
+  # Get mean.df, including column "group"
   exp <- exp[exp$locus_name %in% unique(mean.df$locus_name)]
   exp <- subset(exp, select=c('locus_name', 'accession', 'tissue', 'timepoint',
                               'norm.cpm', 'group'))
@@ -57,38 +43,24 @@ load_mean.df <- function() {
 }
 
 #' @export
-get_expression_oI <- function(rds_file, curr_GoIs, sumBrassicas) {
+get_expression_of_interest <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F) {
 
-  # load rds and arabidopsis gene expression data into single df.
-  master_exp <- get_all_data(rds_file)
+  # Load rds and arabidopsis gene expression data into single df.
+  master_exp <- get_all_data(file_path_brassica, file_path_arabidopsis, file_path_id_table)
   master_exp <- unique(master_exp)
-  # cut down to common tissue
-  exp <- master_exp[master_exp$tissue=='apex', ]
-  #cut down to genes of interest (based on membership of comparison_genes.tsv)
+
+  # Cut down to common tissue
+  exp <- master_exp[master_exp$tissue == tissue_wanted, ]
+
+  # Cut down to genes of interest (based on membership of comparison_genes.tsv)
   exp <- exp[exp$locus_name %in% curr_GoIs,]
-  tmp <- unique(exp)
-  tmp <- exp[exp$CDS.model=='BRAA06G036760.3C',]
 
-  # different models can potentially have selected the same genes, but with diff symbol names - e.g. AP1, ATAP1 - want to ensure only have one of each
-  # of these.
-  # exp <- exp[order(exp$symbol, decreasing=F), ]
-  # # get rid of different symbols for same genes really!
-  # tmp <- exp[accession=='Col0', c('CDS.model', 'symbol')]
-  # unique_tmp <- tmp[!duplicated(tmp[, c('CDS.model')])] # when multiple symbols for same CDS, keep one arbitrary one.
-  # exp <- exp[exp$symbol %in% unique_tmp$symbol,]
-
-
-  #length(unique(exp$symbol))
-  #exp <- data.frame(exp)
-  #exp <- exp[!duplicated(exp[c('sample_id', 'CDS.model')]), ]
-  #length(unique(test$symbol))
-
-  # reformat depending on how want to compare arabidopsis to brassica, using indiv. brassica genes, or summed brassica genes
+  # Reformat depending on how want to compare arabidopsis to brassica, using indiv. brassica genes, or summed brassica genes
   # if want to used summed brassica data to compare to the brassica: get symbol level expression total. Locus_name identity is ATG id
-  if (sumBrassicas==T) {
+  if (sum_brassicas == T) {
     exp <- stats::aggregate(norm.cpm~sample_id+accession+tissue+timepoint+dataset+group+locus_name, data=exp, sum)
-  } else if (sumBrassicas==F) {
-    # otherwise duplicate each arabidopsis, so have an arabidopis copy for each brassica CDS gene. Now locus_name identity is CDS.model
+  } else if (sum_brassicas == F) {
+    # Otherwise duplicate each arabidopsis, so have an arabidopis copy for each brassica CDS gene. Now locus_name identity is CDS.model
     ara.exp <- exp[exp$accession=='Col0',]
     bra.exp <- exp[exp$accession!='Col0',]
     bra.ids <- unique(bra.exp[, c('CDS.model', 'locus_name')])
@@ -101,24 +73,30 @@ get_expression_oI <- function(rds_file, curr_GoIs, sumBrassicas) {
     exp <- rbind(ara.exp, bra.exp)
   }
 
-  # shorten experiment group names
+  # Shorten experiment group names
   exp <- shorten_groups(exp)
   return(exp)
 }
 
 
 #' @export
-get_all_data <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table) {
+get_all_data <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, colnames_wanted = NULL) {
 
   # Read RDS file
   bra_data <- readRDS(file_path_brassica)
   ara_data <- readRDS(file_path_arabidopsis)
-  id_table <- readRDS(file_path_id_table)
+
+  if (tools::file_ext(file_path_id_table) == "csv"){
+    id_table <- data.table::fread(file_path_id_table)
+  } else {
+    id_table <- readRDS(file_path_id_table)
+  }
+
 
   id_table <- unique(id_table[, c("locus_name", "symbol", "CDS.model")])
 
   # Take unique id_table
-  id_table_unique <- unique(id_table[, c("CDS.model", "locus_name")]) %>%
+  id_table_unique <- unique(id_table[, c("CDS.model", "symbol", "locus_name")]) %>%
     dplyr::mutate(CDS.model = toupper(CDS.model)) %>%
     dplyr::filter(!is.na(locus_name), !locus_name %in% c("", "-"))
 
@@ -134,10 +112,15 @@ get_all_data <- function(file_path_brassica, file_path_arabidopsis, file_path_id
   bra_data <- bra_data[bra_data$locus_name %in% common_symbols, ]
 
   # Take a common columns
-  colnames_intersect <- intersect(colnames(ara_data), colnames(bra_data))
+  if (is.null(colnames_wanted)) {
+    colnames_wanted <- intersect(colnames(ara_data), colnames(bra_data))
+  } else {
+    colnames_wanted <- colnames_wanted
+  }
+
 
   # Join the two datasets into 1 & housekeeping
-  expression <- rbind(bra_data[, ..colnames_intersect], ara_data[, ..colnames_intersect])
+  expression <- rbind(bra_data[, ..colnames_wanted], ara_data[, ..colnames_wanted])
 
   # Cut down to remove the 'blank' symbol
   expression <- expression[expression$locus_name != "", ]
@@ -147,20 +130,24 @@ get_all_data <- function(file_path_brassica, file_path_arabidopsis, file_path_id
 
 #' @export
 shorten_groups <- function(exp) {
-  # get reps for klepikova and for brassica data
+
+  # Get reps for klepikova and for brassica data, make sure it is a data.table
   exp <- data.table::data.table(exp)
+
+  # Get the last element of "sample_id" of Brassica data
   B <- exp[exp$accession != 'Col0']
   B[, c('j1', 'j2', 'j3', 'j4', 'j5', 'j6', 'rep'):=data.table::tstrsplit(sample_id, split='_')]
   B$rep[is.na(B$rep)] <- 1
   B[, c('j1', 'j2', 'j3', 'j4', 'j5', 'j6')] <- NULL
 
+  # Get the last element of "dataset" of Arabidopsis data
   A <- exp[exp$accession == 'Col0']
   A[, c('j1', 'j2','rep'):=data.table::tstrsplit(dataset, split='_')]
   A[, c('j1', 'j2')] <- NULL
 
+  # Combine both data
   exp <- rbind(B,A)
 
-  # exp$ds <- plyr::mapvalues(exp$rep, from=c('1', '2', '3', '4'), to=c('a', 'b', 'c', 'd'))
   exp$ds <- as.character(factor(exp$rep, levels=c('1', '2', '3', '4'), labels=c('a', 'b', 'c', 'd')))
 
   exp <- data.table::data.table(exp)

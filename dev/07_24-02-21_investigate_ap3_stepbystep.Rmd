@@ -14,6 +14,10 @@ library(cowplot)
 library(ggpubr)
 ```
 
+## Background
+
+Investigating why AP3 gene did not want to get stretched and shifted. I tried to step-by-step understand the process. 
+
 ## Get the data 
 
 ```{r}
@@ -313,6 +317,14 @@ model.comparison.dt
 shifted.all.data.df <- apply_best_shift(all.data.df, best_shifts)
 
 shifted.all.data.df 
+```
+
+```{r}
+all.data.df
+```
+
+```{r}
+mean.df
 ```
 
 

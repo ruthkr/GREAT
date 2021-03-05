@@ -191,7 +191,7 @@ plot_goI_expression <- function(summed.GoIs.df) {
   summed.GoIs.df <- summed.GoIs.df[summed.GoIs.df$timepoint <=21,]
 
   summed.GoIs.df[, scaled.cpm:=my.scale(mean.cpm), by=.(Ara.id, accession)]
-  morphology.equiv.df <- data.frame('accession'=c('Col-0', 'R-O-18'), 'floral.transition.time'=c(14, 17))
+  morphology.equiv.df <- data.frame('accession'=c('Col-0', 'R-O-18'), 'floral.transition.time'=c(14, 35))
   summed.GoIs.df$accession <- as.character(summed.GoIs.df$accession)
   summed.GoIs.df$accession[summed.GoIs.df$accession=='Col0'] <- 'Col-0'
   summed.GoIs.df$accession[summed.GoIs.df$accession=='Ro18'] <- 'R-O-18'
@@ -268,7 +268,7 @@ plot_registered_GoIs_for_comparible_timepoints <- function(all.stretched.df) {
 
   registered.plot.df$accession <- as.character(registered.plot.df$accession)
   registered.plot.df$accession[registered.plot.df$accession=='Col0'] <- 'Col-0'
-  registered.plot.df$accession[registered.plot.df$accession=='Ro18'] <- 'R-O-18'
+  registered.plot.df$accession[registered.plot.df$accession=='Ro18'] <- 'DH'
 
   p.registered <- ggplot(registered.plot.df, aes(x=shifted.time, y=mean.cpm, color=accession, fill=accession))+
     stat_summary(fun=mean, geom='line', size=1)+

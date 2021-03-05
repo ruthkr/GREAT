@@ -8,7 +8,9 @@
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
-The goal of genereg is to …
+The goal of genereg to estimate the temporal expression pattern of a
+specific target gene using simple transformations, such as shifts and
+stretches.
 
 ## Installation
 

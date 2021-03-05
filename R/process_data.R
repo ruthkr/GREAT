@@ -56,6 +56,8 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches, 
   } else {
     to.shift.df <- data.table::copy(mean.df)
   }
+
+  print(paste0('Max value of mean.cpm of all.data.df :', max(all.data.df$mean.cpm)))
   # ggplot2::ggplot(to.shift.df[to.shift.df$locus_name=='BRAA03G004600.3C'])+
   #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession)
   #   ggplot2::geom_point()
@@ -71,6 +73,8 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches, 
   all_shifts <- L[['all_shifts']]
   best_shifts <- L[['best_shifts']]
   model.comparison.dt <- L[['model.comparison.dt']]
+
+  print(paste0('Max value of all_shifts mean.cpm :', max(all_shifts$mean.cpm)))
 
 
   # report model comparison results
@@ -88,6 +92,8 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches, 
   # seperate models by BIC. Don't stretch out, or shift genes for which seperate is better.
   # registration is applied to col0.
   shifted.mean.df <- apply_shift_to_registered_genes_only(to.shift.df, best_shifts, model.comparison.dt)
+  # shifted.mean.df <- apply_shift_to_all(to.shift.df, best_shifts, model.comparison.dt)
+  print(paste0('Max value of mean.cpm :', max(shifted.mean.df$mean.cpm)))
   # shifted.mean.df <- apply_best_shift(to.shift.df, best_shifts) # can be NA if exactly tied for what the best shift was
 
   # GOI <- 'MSTRG.11237'
@@ -120,9 +126,9 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches, 
 
 
   # fix the accession names to the ones actually passed in:
-  mean.df <- fix.accessions(mean.df, original.transformed.accession, original.other.accession)
-  mean.df.sc <- fix.accessions(mean.df.sc, original.transformed.accession, original.other.accession)
-  imputed.mean.df <- fix.accessions(imputed.mean.df, original.transformed.accession, original.other.accession)
+  # mean.df <- fix.accessions(mean.df, original.transformed.accession, original.other.accession)
+  # mean.df.sc <- fix.accessions(mean.df.sc, original.transformed.accession, original.other.accession)
+  # imputed.mean.df <- fix.accessions(imputed.mean.df, original.transformed.accession, original.other.accession)
 
 
   OUT <- list('mean.df'=mean.df,
@@ -234,16 +240,12 @@ get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do.r
   all_best_shifts <- rep(list(0), length(stretches))
   all_model_comparison.dt <- rep(list(0), length(stretches))
 
-  # i <- 3 # useless
+
   for (i in 1:length(stretches)) {
     stretch <- stretches[i]
     message(paste0('testing models for stretch factor = ', stretch))
     # calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points
     # if do.rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
-
-    # ggplot2::ggplot(to.shift.df[to.shift.df$locus_name=='MSTRG.12467',])+
-    #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
-    #   ggplot2::geom_point()
 
     all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do.rescale, min.num.overlapping.points, shift.extreme)
 
@@ -320,7 +322,7 @@ apply_shift_to_registered_genes_only <- function(to.shift.df, best_shifts, model
   # print('line 594')
   # print(min(timepoint))
   seperate.dt[, stretched.time.delta:=timepoint - min(timepoint), by=.(locus_name, accession)]
-  seperate.dt$shifted.time <- seperate.dt$stretched.time.delta + 11 # add eleven, as this is done for the registered genes
+  seperate.dt$shifted.time <- seperate.dt$stretched.time.delta + 14 # add eleven, as this is done for the registered genes
   # to make comparible between Ro18 and Col. Therefore need to to this
   # here, to keep unregistered col0 in same frame as
   # stretch 1, shift 0 registered genes.
@@ -336,19 +338,31 @@ apply_shift_to_registered_genes_only <- function(to.shift.df, best_shifts, model
 }
 
 #' @export
+apply_shift_to_all <- function(to.shift.df, best_shifts, model.comparison.dt) {
+  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
+
+  registered.dt <- to.shift.df
+  registered.dt <- apply_best_shift(registered.dt, best_shifts)
+  # registered.dt$shifted.time <- registered.dt$stretched.time.delta + 14 # add eleven, as this is done for the registered genes
+
+  registered.dt$is.registered <- TRUE
+  return(registered.dt)
+}
+
+#' @export
 impute_arabidopsis_values <- function(shifted.mean.df) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # Arabidopsis gene expression profiles are shifted all over. Need to impute times at set of common timepoints
   # in order to allow sample distance comparison to Ro18.
   #
   # Ro18 genes haven't been shifted around, therefore imputed timepoints are realtive to Ro18 timepoints.
-  # We ONLY have ro18 observations for 11, 13, 15, ... 35
+  # We ONLY have Ro18 observations for 11, 13, 15, ... 35
   #
   # Col0 can have had different shifts applied to them, so need to impute them to a common scale, and to compare to Ro18
   #
   # therefore, we only need to impute Arabidopsis gene expression, which will be compared to the Ro18 timepoints.
   # BUT don't want to discard any col0 data, so want to generate imputed time observations for col0 from minimum
-  # to maximum shifted timepoints for Col0 not just for 11,13,15, etc RO18 observations.
+  # to maximum shifted timepoints for Col0 not just for 11,13,15, etc Ro18 observations.
 
 
   # sanity plotting - a registered one

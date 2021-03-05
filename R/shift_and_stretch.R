@@ -114,7 +114,7 @@ apply_best_shift <- function(mean.df, best_shifts) {
   print('applying best shift...')
 
   # for each gene, shift the arabidopsis expression by the optimal shift found previously
-  curr.gene <- 'BRAA01G000040.3C'
+  # curr.gene <- 'BRAA01G000040.3C'
   #curr.gene <- unique(test$locus_name)[1]
   for (curr.gene in unique(test$locus_name)) {
     #print(curr.gene)
@@ -153,20 +153,20 @@ apply_stretch <- function(mean.df, best_shifts) {
 
   # stretch the arabidopsis expression data, leave the rapa as is
   test[, delta.time:=timepoint - min(timepoint), by=.(accession)]
-  ro18.test <- test[test$accession=='Ro18',]
+  Ro18.test <- test[test$accession=='Ro18',]
   col0.test <- test[test$accession=='Col0']
   #test$delta.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0']*stretch_factor
   col0.test <- merge(col0.test, best_shifts[, c('gene', 'stretch')], by.x='locus_name', by.y='gene')
   col0.test$delta.time <- col0.test$delta.time * col0.test$stretch
   col0.test$stretch <- NULL
-  test <- rbind(ro18.test, col0.test)
+  test <- rbind(Ro18.test, col0.test)
 
   # record the stretched times (before indiv shifting applied)
   test$stretched.time.delta <- test$delta.time # record the time (from start of timecourse) after stretching,
   test$shifted.time <- test$delta.time
-  # after stretching, add the time to the first datapoint (7d for ara, 11d for ro18) back on
-  test$shifted.time[test$accession=='Col0'] <- test$shifted.time[test$accession=='Col0'] + 11 #7
-  test$shifted.time[test$accession=='Ro18'] <- test$shifted.time[test$accession=='Ro18'] + 11
+  # after stretching, add the time to the first datapoint (7d for ara, 11d for Ro18) back on
+  test$shifted.time[test$accession=='Col0'] <- test$shifted.time[test$accession=='Col0'] + 14
+  test$shifted.time[test$accession=='Ro18'] <- test$shifted.time[test$accession=='Ro18'] + 14
   test$delta.time <- NULL
 
   return(test)
@@ -291,13 +291,13 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
                                           'mean.cpm'=combined.pred, 'accession'='registered'))
     spline.df <- rbind(ara.pred.df, bra.pred.df, combined.pred.df)
 
-    ggplot2::ggplot(data=combined.spline.data)+
+    p <- ggplot2::ggplot(data=combined.spline.data)+
       ggplot2::aes(x=shifted.time, y=mean.cpm, colour=accession) +
       ggplot2::geom_point()+
       ggplot2::geom_line(data=spline.df)+
       ggplot2::ggtitle(paste0(curr.sym, ' : sep AIC:combo AIC=', round(seperate.AIC), ':', round(combined.AIC),
                               ', sep BIC: combo BIC=', round(seperate.BIC), ':', round(combined.BIC)))
-    ggplot2::ggsave(paste0('./testing/fitted_splines/', curr.sym, '_', max(ara.pred.df$shifted.time), '.pdf'))
+    # ggplot2::ggsave(paste0('./testing/fitted_splines/', curr.sym, '_', max(ara.pred.df$shifted.time), '.pdf'))
   }
 
   return(list(seperate.AIC, combined.AIC, seperate.BIC,combined.BIC))
@@ -314,22 +314,20 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
 #' @export
 calculate_all_best_shifts <- function(mean.df, stretch_factor, do.rescale, min.num.overlapping.points, shift.extreme) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
+
+  # Initialize vectors
   symbols <- c()
   num_points <- c()
-  #curr_sym <- 'TT16'
   all.scores.list <- rep(list(0), length(unique(mean.df$locus_name)))
-  length(unique(mean.df$locus_name))
 
-
-  # get the extreme shifts which can be applied to the genes
+  # Get the extreme shifts which can be applied to the genes
   M <- get_extreme_shifts_for_all(mean.df, stretch_factor, min.num.overlapping.points, shift.extreme)
   min.shift <- M[[1]]
   max.shift <- M[[2]]
+  print(paste0("min shift:", min.shift, "max shift:", max.shift))
+
 
   count <- 0
-  curr_sym <- unique(mean.df$locus_name)[2]
-
-  i = 1
   for (i in 1:length(unique(mean.df$locus_name))) {
     #for (curr_sym in unique(mean.df$locus_name)) {
     curr_sym <- unique(mean.df$locus_name)[i]
@@ -359,12 +357,10 @@ calculate_all_best_shifts <- function(mean.df, stretch_factor, do.rescale, min.n
     all.scores <- out
     all.scores.list[[i]] <- all.scores
     symbols <- c(symbols, curr_sym)
-    #num_points <- c(num_points, best_shift)
-    #print(best_shift)
 
     count <- count + 1
   }
-  #shift_results <- data.frame(symbol=symbols, num.points = num_points)
+
   all.scores.df <- do.call('rbind', all.scores.list)
 
   return(all.scores.df)
@@ -412,7 +408,7 @@ calc_extreme_shifts <- function(test, min.num.overlapping.points, shift.extreme)
   # print('line 1803')
   # print(original)
 
-  # -ve extreme shift will be -1*exactly the difference between 1 of the stretched Col0 timepoints, and the smallest ro18 timepoint
+  # -ve extreme shift will be -1*exactly the difference between 1 of the stretched Col0 timepoints, and the smallest Ro18 timepoint
   # +ve extreme will be the difference between 1 of the col0 timepoints, and the maximum Ro18 timepoint
   neg.extreme.candidates <- -1*(original$delta.time[original$accession=='Col0'] - min(original$delta.time[original$accession=='Ro18']))
   pos.extreme.candidates <- max(original$delta.time[original$accession=='Ro18']) - original$delta.time[original$accession=='Col0']
@@ -460,7 +456,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.s
 
   # do.rescale == TRUE, means apply "scale" to compared points for each shift. ==FALSE, means use original mean expression data
 
-  num.shifts <- 10 # the number of different shifts to be considered.
+  num.shifts <- 25 # the number of different shifts to be considered.
 
 
   test <- test[test$locus_name==curr_sym, ]
@@ -468,7 +464,12 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.s
   # transform timepoint to be time from first timepoint
   test[, delta.time:=timepoint - min(timepoint), by=.(accession)]
   # apply stretch_factor to the arabidopsis, leave the rapa as is
-  test$delta.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0']*stretch_factor
+  test$delta.time[test$accession == 'Col0'] <- test$delta.time[test$accession=='Col0'] * stretch_factor
+
+
+  # # Try to make it consistent as in apply stretch
+  # test$delta.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0'] + 7
+  # test$delta.time[test$accession=='Ro18'] <- test$delta.time[test$accession=='Ro18'] + 14
 
   all.scores <- rep(0, num.shifts)
   all.ara.mean <- rep(0, num.shifts)
@@ -485,12 +486,9 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.s
 
     curr.shift <- all.shifts[i]
 
-    #print('line 1676')
-    #print(curr.shift)
-
-    # shift the arabidopsis expression timeings
+    # shift the arabidopsis expression timings
     test$shifted.time <- test$delta.time
-    test$shifted.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0'] + curr.shift
+    test$shifted.time[test$accession == 'Col0'] <- test$delta.time[test$accession == 'Col0'] + curr.shift
 
     #### test plot - of shifted, UNNORMALISED gene expression
     # if (testing==TRUE) {
@@ -503,12 +501,12 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.s
     # }
 
 
-    # cut down to just the arabidopsis and brassica timepoints which compared
+    # Cut down to just the arabidopsis and brassica timepoints which compared
     test <- get_compared_timepoints(test)
     compared <- test[test$is.compared==TRUE, ]
 
-    # renormalise expression using just these timepoints?
-    if (do.rescale==TRUE) {
+    # Renormalise expression using just these timepoints?
+    if (do.rescale == TRUE) {
       # record the mean and sd of the compared points, used for rescaling
       # in "apply shift" function
       ara.mean <- mean(compared$mean.cpm[compared$accession=='Col0'])
@@ -517,15 +515,15 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.s
       bra.sd<- stats::sd(compared$mean.cpm[compared$accession=='Ro18'])
 
       # do the transformation for here
-      if ((ara.sd != 0) & (bra.sd != 0)) { # if neither are 0, so won't be dividing by 0 (which gives NaNs)
+      if ((ara.sd != 0 | !is.nan(ara.sd)) & (bra.sd != 0 | !is.nan(bra.sd))) { # if neither are 0, so won't be dividing by 0 (which gives NaNs)
         compared[, mean.cpm:=scale(mean.cpm, scale=TRUE, center=TRUE), by=.(accession)]
       } else { # if at least one of them is all 0
         ara.compared <- compared[compared$accession=='Col0',]
         bra.compared <- compared[compared$accession=='Ro18',]
-        if((ara.sd == 0) & (bra.sd != 0)) { # if only ara.sd==0
+        if((ara.sd == 0) & (bra.sd != 0 | !is.nan(bra.sd))) { # if only ara.sd==0
           bra.compared[, mean.cpm:=scale(mean.cpm, scale=TRUE, center=TRUE), by=.(accession)]
         }
-        if ((ara.sd != 0) & (bra.sd == 0)) { # if only bra.sd == 0
+        if ((ara.sd != 0 | !is.nan(ara.sd))  & (bra.sd == 0)) { # if only bra.sd == 0
           ara.compared[, mean.cpm:=scale(mean.cpm, scale=TRUE, center=TRUE), by=.(accession)]
         }
         # if both are all 0, then do nothing.
@@ -561,6 +559,8 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.s
 
     if (is.na(score)) {
       print('error in get_best_shift_new(): got a score of NA for gene:')
+      print(paste("ara.compared$mean.cpm:", ara.compared$mean.cpm))
+      print(ara.compared$pred.bra.expression)
       print(curr_sym)
       print(paste0('with curr.shift=', curr.shift))
       stop()

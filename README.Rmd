@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# genereg
+# genereg <img src="dev/hexagon_logo/logo1.png" align="right" width="120"/>
 
 <!-- badges: start -->
 `r badgecreatr::badge_lifecycle("experimental")`

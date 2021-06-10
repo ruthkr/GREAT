@@ -25,6 +25,9 @@ In this report, I am going to try running gene registration scripts for all *B. 
 table_id_path <- "/Users/kristiar/PhD/second-rotation-JIC/b_oleracea/data/ID_TAB.csv"
 ara_path <- '/Users/kristiar/PhD/second-rotation-JIC/b_oleracea/data/klepikova.rds'
 b_oleracea_path <- "/Users/kristiar/PhD/second-rotation-JIC/b_oleracea/data/dh_with_sample_id.rds"
+
+readRDS(b_oleracea_path) %>% 
+  head(5)
 ```
 
 ```{r}

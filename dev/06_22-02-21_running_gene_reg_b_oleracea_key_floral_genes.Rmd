@@ -30,9 +30,13 @@ plot_goI_expression <- function(summed.GoIs.df) {
                      aes(x=timepoint, y=mean.cpm, color=Ara.name, fill=Ara.name))+
       geom_vline(data=morphology.equiv.df[morphology.equiv.df==curr.acc,], aes(xintercept=floral.transition.time), size=1)+
       stat_summary(fun=mean, geom='line', size=1)+
-      # https://stackoverflow.com/questions/19258460/standard-error-bars-using-stat-summary
       # stat_summary(fun.data=mean_se, fun.args=list(mult=1.96),geom='ribbon',color=NA, alpha=0.3)+
-      stat_summary(fun.data=mean_se,geom='ribbon',color=NA, alpha=0.3)+
+      # https://stackoverflow.com/questions/19258460/standard-error-bars-using-stat-summary
+      # https://www.ling.upenn.edu/~joseff/rstudy/summer2010_ggplot2_intro.html
+      # option1
+      stat_summary(fun.data = mean_cl_normal, geom = 'ribbon', fun.args = list(mult = 1), alpha=0.3, color = NA) +
+      # option2
+      # stat_summary(fun.data=mean_se, geom='ribbon', color=NA, alpha=0.3) +
       geom_point(size=0.4)+
       facet_wrap(~accession, ncol=1, scales='free')+
       scale_x_continuous(breaks=scales::pretty_breaks())+
@@ -429,16 +433,38 @@ list(plot_a, plot_b) %>%
   patchwork::wrap_plots(ncol = 2, guides = "collect")
 ```
 
+```{r}
+cds_model_wanted <- c("BO2G062650", "BO6G095760", "BO6G108600")
+readRDS("intermediate_data/gene_registration/model.comparison_b_oleracea_from_original_14_14.RDS") %>% 
+  dplyr::filter(gene %in% cds_model_wanted) %>%
+  dplyr::select(gene, stretch, shift) %>% 
+  dplyr::left_join(table_id_info_key_floral_genes %>% 
+                     dplyr::mutate(CDS.model = toupper(CDS.model)), by = c("gene" = "CDS.model")) %>% 
+  dplyr::select(symbol, gene, stretch, shift) %>% 
+  dplyr::arrange(symbol) 
+```
+
+```{r}
+readRDS("intermediate_data/gene_registration/model.comparison_shifted_to_original_7_14.RDS") %>% 
+  dplyr::filter(gene %in% cds_model_wanted) %>%
+  dplyr::select(gene, stretch, shift) %>% 
+  dplyr::left_join(table_id_info_key_floral_genes %>% 
+                     dplyr::mutate(CDS.model = toupper(CDS.model)), by = c("gene" = "CDS.model")) %>% 
+  dplyr::select(symbol, gene, stretch, shift) %>% 
+  dplyr::arrange(symbol) 
+```
+
+
 
 ### Try to plot shifted AP3 
 
 ```{r}
-bra_genes_AP3 <- table_id_info_key_floral_genes %>% 
-  dplyr::filter(symbol == "AP3") %>% 
+bra_genes_AP1 <- table_id_info_key_floral_genes %>% 
+  dplyr::filter(symbol == "AP1") %>% 
   dplyr::pull(CDS.model) %>% 
   toupper()
 
-bra_genes_AP3
+bra_genes_AP1
 ```
 
 ```{r}

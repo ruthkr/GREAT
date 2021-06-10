@@ -80,7 +80,7 @@ L_ara_bra_shifted <- compare_registered_to_unregistered_model_with_ks(
 
 ### Compare different options
 
-```{r bic-comparison, fig.height=10}
+```{r bic-comparison, warning=FALSE, fig.height=15, fig.width=10}
 list(
   # plot_fit(L_ara_ara, title = "Ara/Ara - ", facets = c("arabidopsis1", "arabidopsis2")),
   # plot_fit(L_bra_bra, title = "Bra/Bra - ", facets = c("brassica1", "brassica2")),

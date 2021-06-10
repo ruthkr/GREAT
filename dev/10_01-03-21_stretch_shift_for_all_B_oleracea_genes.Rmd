@@ -176,6 +176,15 @@ all.shifts <- shifted_stretched_all[["all.shifts"]]
 model.comparison <- shifted_stretched_all[["model.comparison"]]
 ```
 
+```{r}
+model.comparison %>% 
+  dplyr::filter(BIC.registered.is.better == FALSE) %>% 
+  dplyr::pull(gene) %>% 
+  unique() %>% 
+  write.csv("/Users/kristiar/PhD/second-rotation-JIC/b_oleracea/data/list_unregistered_gene_ID.csv", row.names = FALSE, col.names = NULL)
+```
+
+
 
 ```{r}
 model.comparison %>% 
@@ -192,7 +201,7 @@ data.table(AIC_better = sum(model.comparison$AIC.registered.is.better),
 
 ```{r}
 table_id_info_key_floral_genes <- data.table::fread(table_id_path) %>% 
-  dplyr::filter(symbol %in% c("SOC1", "AP1", "AP3", "AGL24", "LFY")) %>% 
+  dplyr::filter(symbol %in% c("SOC1", "AP1", "AP3", "AGL24", "LFY", "SPL4", "AGL6", "SPL5", "GA20OX2", "AGL8")) %>% 
   dplyr::select(CDS.model, symbol, locus_name) %>% 
   dplyr::mutate(CDS.model = toupper(CDS.model)) %>% 
   unique() %>% 
@@ -238,13 +247,14 @@ test <- imputed.mean.df_floral_genes %>%
 ```
 
 
-```{r, warning=FALSE, fig.width=9, fig.height=50}
+```{r, warning=FALSE}
 shifted_stretched_oleracea_floral_genes <- plot_registered_GoIs_for_comparible_timepoints(imputed.mean.df_floral_genes)
 
 # ggsave("shifted_stretched_oleracea_floral_genes.pdf", shifted_stretched_oleracea_floral_genes, width = 6, height = 10)
+
+
+shifted_stretched_oleracea_floral_genes
 ```
-
-
 
 ```{r}
 imputed.mean.df_floral_genes %>% 
@@ -289,9 +299,6 @@ test_using_test_symbol <- imputed.mean.df_non_reg_with_symbol %>%
 test_using_sample_symbol %>% 
   head()
 ```
-
-
-
 
 
 ```{r, warning=FALSE, fig.width=9, fig.height=50}

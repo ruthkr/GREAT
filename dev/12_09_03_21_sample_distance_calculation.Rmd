@@ -1,0 +1,132 @@
+---
+title: "How similar the expression of B. Oleracea and Arabidopsis?"
+output: 
+  github_document:
+    toc: true
+---
+
+
+
+```{r setup}
+knitr::opts_chunk$set()
+library(genereg)
+library(ggplot2)
+library(data.table)
+library(cowplot)
+library(ggpubr)
+```
+
+## Load data
+
+```{r}
+shifted_stretched_all <- readRDS("dev/others/shifted_stretched_all.rds")
+
+mean_df <- shifted_stretched_all[["mean.df"]] 
+mean.df.sc <- shifted_stretched_all[["mean.df.sc"]]
+imputed.mean.df <- shifted_stretched_all[["imputed.mean.df"]] 
+all.shifts <- shifted_stretched_all[["all.shifts"]] 
+model.comparison <- shifted_stretched_all[["model.comparison"]]
+```
+
+## Calculate the distance
+
+```{r}
+O <- calculate_between_sample_distance(mean_df, mean.df.sc, imputed.mean.df)
+D.mean <- O[["D.mean"]]
+D.scaled <- O[["D.scaled"]]
+D.registered <- O[["D.registered"]]
+D.scaled.onlyNR <- O[["D.scaled.onlyNR"]]
+D.scaled.onlyR <- O[["D.scaled.onlyR"]]
+D.registered.onlyR <- O[["D.registered.onlyR"]]
+```
+
+```{r}
+# replace self comparison with NA for scaled
+D.scaled$distance[grepl("Col0", D.scaled$x.sample) &
+  grepl("Col0", D.scaled$y.sample)] <- NA
+D.scaled$distance[grepl("Ro18", D.scaled$x.sample) &
+  grepl("Ro18", D.scaled$y.sample)] <- NA
+
+D.scaled.onlyNR$distance[grepl("Col0", D.scaled.onlyNR$x.sample) &
+  grepl("Col0", D.scaled.onlyNR$y.sample)] <- NA
+D.scaled.onlyNR$distance[grepl("Ro18", D.scaled.onlyNR$x.sample) &
+  grepl("Ro18", D.scaled.onlyNR$y.sample)] <- NA
+
+D.scaled.onlyR$distance[grepl("Col0", D.scaled.onlyR$x.sample) &
+  grepl("Col0", D.scaled.onlyR$y.sample)] <- NA
+D.scaled.onlyR$distance[grepl("Ro18", D.scaled.onlyR$x.sample) &
+  grepl("Ro18", D.scaled.onlyR$y.sample)] <- NA
+
+
+
+# replace self comparison with NA for registered
+D.registered$distance[grepl("Col0", D.registered$x.sample) &
+  grepl("Col0", D.registered$y.sample)] <- NA
+D.registered$distance[grepl("Ro18", D.registered$x.sample) &
+  grepl("Ro18", D.registered$y.sample)] <- NA
+
+D.registered.onlyR$distance[grepl("Col0", D.registered.onlyR$x.sample) &
+  grepl("Col0", D.registered.onlyR$y.sample)] <- NA
+D.registered.onlyR$distance[grepl("Ro18", D.registered.onlyR$x.sample) &
+  grepl("Ro18", D.registered.onlyR$y.sample)] <- NA
+
+p.all <- make_data_heatmaps(D.mean, D.scaled, D.registered, D.scaled.onlyNR, D.scaled.onlyR, D.registered.onlyR)
+```
+
+```{r}
+make_heatmap(D.mean, 'mean expression')
+```
+```{r}
+D.scaled_unique <- D.scaled %>% 
+  dplyr::rowwise() %>%
+  dplyr::mutate(
+    id = paste0(sort(c(x.sample, y.sample)), collapse = "")
+  ) %>% 
+  dplyr::group_by(id) %>% 
+  dplyr::slice(1) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::filter(!is.na(distance)) 
+
+make_heatmap(D.scaled_unique, 'scaled mean expression')  
+```
+
+```{r}
+timepoint_col0_after51 <- seq(52, 81, 1)
+timepoint_col0_before14 <- seq(10, 13, 1)
+list_col0_after51 <- paste0("Col0-", timepoint_col0_after51)
+list_col0_before14 <- paste0("Col0-", timepoint_col0_before14)
+
+D.registered_unique <- D.registered %>% 
+  dplyr::rowwise() %>%
+  dplyr::mutate(
+    id = paste0(sort(c(x.sample, y.sample)), collapse = "")
+  ) %>% 
+  dplyr::group_by(id) %>% 
+  dplyr::slice(1) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::filter(!is.na(distance), 
+                !(x.sample %in% list_col0_after51),
+                !(x.sample %in% list_col0_before14)) 
+
+make_heatmap(D.registered_unique, 'registered & scaled mean expression') +
+  coord_flip()
+```
+
+```{r}
+D.registered.onlyR_unique <- D.registered.onlyR %>% 
+  dplyr::rowwise() %>%
+  dplyr::mutate(
+    id = paste0(sort(c(x.sample, y.sample)), collapse = "")
+  ) %>% 
+  dplyr::group_by(id) %>% 
+  dplyr::slice(1) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::filter(!is.na(distance), 
+                !(x.sample %in% list_col0_after51),
+                !(x.sample %in% list_col0_before14))
+
+
+make_heatmap(D.registered.onlyR_unique, 'registered & scaled mean expression (only  registered genes)') +
+  coord_flip()
+```
+

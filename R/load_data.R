@@ -1,8 +1,8 @@
 #' @export
-load_mean_df <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F) {
+load_mean_df <- function(filepath_reg_data, filepath_target_data, filepath_id_table, tissue_wanted, curr_GoIs, sum_exp_reg_data = F) {
 
   # Load the expression data for all the curr_GoIs gene models, for arabidopsis, and for the specified brassica
-  exp <- get_expression_of_interest(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F)
+  exp <- get_expression_of_interest(filepath_reg_data, filepath_target_data, filepath_id_table, tissue_wanted, curr_GoIs, sum_exp_reg_data = F)
 
   # Calculate mean of each timepoint by adding a column called "mean.cpm"
   exp[, mean.cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
@@ -43,10 +43,10 @@ load_mean_df <- function(file_path_brassica, file_path_arabidopsis, file_path_id
 }
 
 #' @export
-get_expression_of_interest <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F) {
+get_expression_of_interest <- function(filepath_reg_data, filepath_target_data, filepath_id_table, tissue_wanted, curr_GoIs, sum_exp_reg_data = F) {
 
   # Load rds and arabidopsis gene expression data into single df.
-  master_exp <- get_all_data(file_path_brassica, file_path_arabidopsis, file_path_id_table)
+  master_exp <- get_all_data(filepath_reg_data, filepath_target_data, filepath_id_table)
   master_exp <- unique(master_exp)
 
   # Cut down to common tissue
@@ -57,9 +57,9 @@ get_expression_of_interest <- function(file_path_brassica, file_path_arabidopsis
 
   # Reformat depending on how want to compare arabidopsis to brassica, using indiv. brassica genes, or summed brassica genes
   # if want to used summed brassica data to compare to the brassica: get symbol level expression total. Locus_name identity is ATG id
-  if (sum_brassicas == T) {
+  if (sum_exp_reg_data == T) {
     exp <- stats::aggregate(norm.cpm~sample_id+accession+tissue+timepoint+dataset+group+locus_name, data=exp, sum)
-  } else if (sum_brassicas == F) {
+  } else if (sum_exp_reg_data == F) {
     # Otherwise duplicate each arabidopsis, so have an arabidopis copy for each brassica CDS gene. Now locus_name identity is CDS.model
     ara.exp <- exp[exp$accession=='Col0',]
     bra.exp <- exp[exp$accession!='Col0',]
@@ -80,47 +80,44 @@ get_expression_of_interest <- function(file_path_brassica, file_path_arabidopsis
 
 
 #' @export
-get_all_data <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, colnames_wanted = NULL) {
+get_all_data <- function(filepath_reg_data, filepath_target_data, filepath_id_table, colnames_id_table = c("CDS.model", "symbol", "locus_name"), colnames_wanted = NULL) {
 
   # Read RDS file
-  bra_data <- readRDS(file_path_brassica)
-  ara_data <- readRDS(file_path_arabidopsis)
+  reg_data <- readRDS(filepath_reg_data)
+  target_data <- readRDS(filepath_target_data)
 
-  if (tools::file_ext(file_path_id_table) == "csv"){
-    id_table <- data.table::fread(file_path_id_table)
+  if (tools::file_ext(filepath_id_table) == "csv"){
+    id_table <- data.table::fread(filepath_id_table)
   } else {
-    id_table <- readRDS(file_path_id_table)
+    id_table <- readRDS(filepath_id_table)
   }
 
-
-  id_table <- unique(id_table[, c("locus_name", "symbol", "CDS.model")])
-
   # Take unique id_table
-  id_table_unique <- unique(id_table[, c("CDS.model", "symbol", "locus_name")]) %>%
+  id_table_unique <- unique(id_table[, colnames_id_table]) %>%
     dplyr::mutate(CDS.model = toupper(CDS.model)) %>%
     dplyr::filter(!is.na(locus_name), !locus_name %in% c("", "-"))
 
   # Add ATG locus info
-  bra_data <- merge(bra_data, id_table_unique, by = "CDS.model")
+  reg_data <- merge(reg_data, id_table_unique, by = "CDS.model")
 
-  # Create a column in ara_data
-  ara_data$locus_name <- ara_data$CDS.model
+  # Create a column in target_data
+  target_data$locus_name <- target_data$CDS.model
 
   # cut down to only have genes with ATG locus present in both datasets
-  common_symbols <- intersect(ara_data$locus_name, bra_data$locus_name)
-  ara_data <- ara_data[ara_data$locus_name %in% common_symbols, ]
-  bra_data <- bra_data[bra_data$locus_name %in% common_symbols, ]
+  common_symbols <- intersect(target_data$locus_name, reg_data$locus_name)
+  target_data <- target_data[target_data$locus_name %in% common_symbols, ]
+  reg_data <- reg_data[reg_data$locus_name %in% common_symbols, ]
 
   # Take a common columns
   if (is.null(colnames_wanted)) {
-    colnames_wanted <- intersect(colnames(ara_data), colnames(bra_data))
+    colnames_wanted <- intersect(colnames(target_data), colnames(reg_data))
   } else {
     colnames_wanted <- colnames_wanted
   }
 
 
   # Join the two datasets into 1 & housekeeping
-  expression <- rbind(bra_data[, ..colnames_wanted], ara_data[, ..colnames_wanted])
+  expression <- rbind(reg_data[, ..colnames_wanted], target_data[, ..colnames_wanted])
 
   # Cut down to remove the 'blank' symbol
   expression <- expression[expression$locus_name != "", ]

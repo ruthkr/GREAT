@@ -97,7 +97,7 @@ get_all_data <- function(filepath_reg_data, filepath_target_data, filepath_id_ta
     dplyr::mutate(CDS.model = toupper(CDS.model)) %>%
     dplyr::filter(!is.na(locus_name), !locus_name %in% c("", "-"))
 
-  # Add ATG locus info
+  # Add target dataframe info to reg dataframe from
   reg_data <- merge(reg_data, id_table_unique, by = "CDS.model")
 
   # Create a column in target_data

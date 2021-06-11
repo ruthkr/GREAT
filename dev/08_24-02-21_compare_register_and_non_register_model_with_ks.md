@@ -7,7 +7,7 @@ Compare registered and non-registered model
 
 ``` r
 knitr::opts_chunk$set(echo = TRUE)
-library(genereg)
+library(GREAT)
 library(ggplot2)
 library(data.table)
 ```

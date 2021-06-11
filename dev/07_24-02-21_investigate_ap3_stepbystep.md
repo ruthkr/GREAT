@@ -10,7 +10,7 @@ Get myself understand why AP3 did not want to be stretched/shifted
 
 ``` r
 knitr::opts_chunk$set(echo = TRUE)
-library(genereg)
+library(GREAT)
 library(ggplot2)
 library(data.table)
 library(cowplot)
@@ -57,7 +57,7 @@ table_id_info_key_floral_genes
 ``` r
 # tools::file_ext("/Users/kristiar/PhD/second-rotation-JIC/b_oleracea/data/ID_TAB.csv")
 
-b_oleracea_mean_df_AP3 <- genereg::load_mean_df(
+b_oleracea_mean_df_AP3 <- GREAT::load_mean_df(
   file_path_brassica = b_oleracea_path,
   file_path_arabidopsis = ara_path,
   file_path_id_table = table_id_path,

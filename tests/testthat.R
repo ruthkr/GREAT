@@ -1,4 +1,4 @@
 library(testthat)
-library(genereg)
+library(GREAT)
 
-test_check("genereg", reporter = c("progress", "list", "fail"))
+test_check("GREAT", reporter = c("progress", "list", "fail"))

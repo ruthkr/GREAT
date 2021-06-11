@@ -14,7 +14,7 @@ Gene registration – running all functions for *B.rapa* key floral genes
 
 ``` r
 knitr::opts_chunk$set(echo = TRUE)
-library(genereg)
+library(GREAT)
 library(ggplot2)
 library(data.table)
 

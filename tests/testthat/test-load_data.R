@@ -1,9 +1,9 @@
 test_that("Function to combine all data return dataframe/data table object", {
-  id_table_path <- system.file("extdata/sample_data/id_table.RDS", package = "genereg")
-  arabidopsis_expression_path <- system.file("extdata/sample_data/arabidopsis_expression.RDS", package = "genereg")
-  brassica_rapa_expression_path <- system.file("extdata/sample_data/brassica_rapa_expression.RDS", package = "genereg")
+  id_table_path <- system.file("extdata/sample_data/id_table.RDS", package = "GREAT")
+  arabidopsis_expression_path <- system.file("extdata/sample_data/arabidopsis_expression.RDS", package = "GREAT")
+  brassica_rapa_expression_path <- system.file("extdata/sample_data/brassica_rapa_expression.RDS", package = "GREAT")
 
-  all_data <- genereg::get_all_data(brassica_rapa_expression_path,
+  all_data <- GREAT::get_all_data(brassica_rapa_expression_path,
                                            arabidopsis_expression_path,
                                            id_table_path) %>%
     class()
@@ -13,12 +13,12 @@ test_that("Function to combine all data return dataframe/data table object", {
 })
 
 test_that("Function to get all expression of interest dataframe/data table object", {
-  id_table_path <- system.file("extdata/sample_data/id_table.RDS", package = "genereg")
-  arabidopsis_expression_path <- system.file("extdata/sample_data/arabidopsis_expression.RDS", package = "genereg")
-  brassica_rapa_expression_path <- system.file("extdata/sample_data/brassica_rapa_expression.RDS", package = "genereg")
+  id_table_path <- system.file("extdata/sample_data/id_table.RDS", package = "GREAT")
+  arabidopsis_expression_path <- system.file("extdata/sample_data/arabidopsis_expression.RDS", package = "GREAT")
+  brassica_rapa_expression_path <- system.file("extdata/sample_data/brassica_rapa_expression.RDS", package = "GREAT")
   list_gene_of_interest <- c("AT1G69120", "AT5G61850", "AT2G45660")
 
-  all_data <- genereg::get_expression_of_interest(brassica_rapa_expression_path,
+  all_data <- GREAT::get_expression_of_interest(brassica_rapa_expression_path,
                                                   arabidopsis_expression_path,
                                                   id_table_path,
                                                   tissue_wanted = 'apex',
@@ -31,12 +31,12 @@ test_that("Function to get all expression of interest dataframe/data table objec
 })
 
 test_that("Function to get mean df return a list of dataframe/data table object", {
-  id_table_path <- system.file("extdata/sample_data/id_table.RDS", package = "genereg")
-  arabidopsis_expression_path <- system.file("extdata/sample_data/arabidopsis_expression.RDS", package = "genereg")
-  brassica_rapa_expression_path <- system.file("extdata/sample_data/brassica_rapa_expression.RDS", package = "genereg")
+  id_table_path <- system.file("extdata/sample_data/id_table.RDS", package = "GREAT")
+  arabidopsis_expression_path <- system.file("extdata/sample_data/arabidopsis_expression.RDS", package = "GREAT")
+  brassica_rapa_expression_path <- system.file("extdata/sample_data/brassica_rapa_expression.RDS", package = "GREAT")
   list_gene_of_interest <- c("AT1G69120", "AT5G61850", "AT2G45660")
 
-  mean_df <- genereg::load_mean_df(brassica_rapa_expression_path,
+  mean_df <- GREAT::load_mean_df(brassica_rapa_expression_path,
     arabidopsis_expression_path,
     id_table_path,
     tissue_wanted = "apex",

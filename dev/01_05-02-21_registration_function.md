@@ -24,7 +24,7 @@ Gene registration
 
 ``` r
 knitr::opts_chunk$set(echo = TRUE)
-library(genereg)
+library(GREAT)
 library(ggplot2)
 library(data.table)
 ```
@@ -116,7 +116,7 @@ if (should.rescale==TRUE){
 here::here()
 ```
 
-    ## [1] "/Users/kristiar/Code/genereg"
+    ## [1] "/Users/kristiar/Code/GREAT"
 
 ``` r
 # directories to save graphs to

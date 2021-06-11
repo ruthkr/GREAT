@@ -9,7 +9,7 @@ Running all of gene-registration functions for all genes in B. Oleracea
 
 ``` r
 knitr::opts_chunk$set()
-library(genereg)
+library(GREAT)
 library(ggplot2)
 library(data.table)
 library(cowplot)
@@ -86,7 +86,7 @@ data.frame(with_symbol = id_table_with_symbol,
     ## 1       20200          13493
 
 ``` r
-b_oleracea_mean_df <- genereg::load_mean_df(
+b_oleracea_mean_df <- GREAT::load_mean_df(
   file_path_brassica = b_oleracea_path,
   file_path_arabidopsis = ara_path,
   file_path_id_table = table_id_path,

@@ -14,7 +14,7 @@ genes in *B. Oleracea*
 
 ``` r
 knitr::opts_chunk$set()
-library(genereg)
+library(GREAT)
 library(ggplot2)
 library(data.table)
 library(cowplot)
@@ -91,7 +91,7 @@ list_gene_of_interest
     ## [7] "AT2G22540" "AT1G02065"
 
 ``` r
-b_oleracea_mean_df <- genereg::load_mean_df(
+b_oleracea_mean_df <- GREAT::load_mean_df(
   file_path_brassica = b_oleracea_path,
   file_path_arabidopsis = ara_path,
   file_path_id_table = table_id_path,

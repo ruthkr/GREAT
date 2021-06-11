@@ -17,7 +17,7 @@ Comparing registered and non-registered models with more sample points between i
 library(dplyr)
 library(data.table)
 library(ggplot2)
-library(genereg)
+library(GREAT)
 
 source("others/compare_registered_to_unregistered_model_with_ks.R")
 source("others/impute_data_points.R")

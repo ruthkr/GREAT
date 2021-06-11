@@ -1,10 +1,10 @@
-#' \code{genereg} package
+#' \code{GREAT} package
 #'
 #' See the README on
-#' \href{https://github.com/ruthkr/genereg/}{GitHub}
+#' \href{https://github.com/ruthkr/GREAT/}{GitHub}
 #'
 #' @docType package
-#' @name genereg
+#' @name GREAT
 NULL
 
 ## quiets concerns of R CMD check re: the .'s that appear in pipelines

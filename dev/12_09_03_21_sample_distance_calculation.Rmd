@@ -9,7 +9,7 @@ output:
 
 ```{r setup}
 knitr::opts_chunk$set()
-library(genereg)
+library(GREAT)
 library(ggplot2)
 library(data.table)
 library(cowplot)

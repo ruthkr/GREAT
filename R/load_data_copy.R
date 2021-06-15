@@ -43,7 +43,7 @@ load_mean_df <- function(file_path_brassica, file_path_arabidopsis, file_path_id
 }
 
 #' @export
-get_expression_of_interest <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F) {
+get_expression_of_interest_copy <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F) {
 
   # Load rds and arabidopsis gene expression data into single df.
   master_exp <- get_all_data(file_path_brassica, file_path_arabidopsis, file_path_id_table)
@@ -80,7 +80,7 @@ get_expression_of_interest <- function(file_path_brassica, file_path_arabidopsis
 
 
 #' @export
-get_all_data <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, colnames_wanted = NULL) {
+get_all_data_copy <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, colnames_wanted = NULL) {
 
   # Read RDS file
   bra_data <- readRDS(file_path_brassica)

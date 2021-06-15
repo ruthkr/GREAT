@@ -1,0 +1,24 @@
+---
+title: "Refactoring load_data.R"
+output: 
+  github_document:
+    toc: true
+---
+
+```{r setup}
+knitr::opts_chunk$set()
+library(GREAT)
+library(ggplot2)
+library(data.table)
+library(cowplot)
+library(ggpubr)
+```
+
+```{r}
+# Define data sample path 
+
+id_table_path <- system.file("extdata/sample_data/id_table.RDS", package = "GREAT")
+arabidopsis_expression_path <- system.file("extdata/sample_data/arabidopsis_expression.RDS", package = "GREAT")
+brassica_rapa_expression_path <- system.file("extdata/sample_data/brassica_rapa_expression.RDS", package = "GREAT")
+```
+

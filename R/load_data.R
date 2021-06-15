@@ -43,34 +43,74 @@ load_mean_df <- function(filepath_data_target, filepath_data_to_align, filepath_
 }
 
 #' @export
-get_expression_of_interest <- function(filepath_data_target, filepath_data_to_align, filepath_id_table, tissue_wanted, curr_GoIs, sum_exp_data_target = F) {
+get_expression_of_interest <- function(filepath_data_target,
+                                       filepath_data_to_align,
+                                       filepath_id_table,
+                                       target_id_table_shared_colname,
+                                       target_and_to_align_data_shared_colname,
+                                       colnames_id_table,
+                                       colnames_wanted,
+                                       tissue_wanted,
+                                       curr_GoIs,
+                                       sum_exp_data_target = F,
+                                       accession_data_to_align = "Col0",
+                                       ids_data_target_colnames = c("CDS.model", "locus_name")) {
 
-  # Load rds and arabidopsis gene expression data into single df.
-  master_exp <- get_all_data(filepath_data_target, filepath_data_to_align, filepath_id_table)
+  # Load of the single df data
+  master_exp <- get_all_data(filepath_data_target,
+                           filepath_data_to_align,
+                           filepath_id_table,
+                           target_id_table_shared_colname = "CDS.model",
+                           target_and_to_align_data_shared_colname = "locus_name",
+                           colnames_id_table = c("CDS.model", "symbol", "locus_name"),
+                           colnames_wanted = NULL)
+
   master_exp <- unique(master_exp)
 
   # Cut down to common tissue
-  exp <- master_exp[master_exp$tissue == tissue_wanted, ]
+  exp <- master_exp[master_exp$tissue %in% tissue_wanted, ]
 
   # Cut down to genes of interest (based on membership of comparison_genes.tsv)
-  exp <- exp[exp$locus_name %in% curr_GoIs,]
+  exp <- exp[exp$locus_name %in% curr_GoIs, ]
 
-  # Reformat depending on how want to compare arabidopsis to brassica, using indiv. brassica genes, or summed brassica genes
-  # if want to used summed brassica data to compare to the brassica: get symbol level expression total. Locus_name identity is ATG id
+  # Reformat depending on how want to compare candidate aligned data to target data, using individual target data, or summed target data genes
+  # Example: if want to used summed brassica data to compare to the brassica: get symbol level expression total. Locus_name identity is ATG id
+  # Otherwise duplicate each arabidopsis, so have an arabidopis copy for each brassica CDS gene. Now locus_name identity is CDS.model
   if (sum_exp_data_target == T) {
     exp <- stats::aggregate(norm.cpm~sample_id+accession+tissue+timepoint+dataset+group+locus_name, data=exp, sum)
   } else if (sum_exp_data_target == F) {
-    # Otherwise duplicate each arabidopsis, so have an arabidopis copy for each brassica CDS gene. Now locus_name identity is CDS.model
-    ara.exp <- exp[exp$accession=='Col0',]
-    bra.exp <- exp[exp$accession!='Col0',]
-    bra.ids <- unique(bra.exp[, c('CDS.model', 'locus_name')])
-    ara.exp$CDS.model <- NULL
-    ara.exp <- merge(bra.ids, ara.exp, by='locus_name', allow.cartesian=T)
-    ara.exp$ara.id <- ara.exp$locus_name
-    ara.exp$locus_name <- ara.exp$CDS.model
-    bra.exp$ara.id <- bra.exp$locus_name
-    bra.exp$locus_name <- bra.exp$CDS.model
-    exp <- rbind(ara.exp, bra.exp)
+    exp_data_to_align <- exp[exp$accession == accession_data_to_align,]
+    exp_data_target <- exp[exp$accession != accession_data_to_align,]
+
+    ids_data_target <- unique(exp_data_target[, ..ids_data_target_colnames])
+    # exp_data_to_align$CDS.model <- NULL
+
+    exp_data_to_align <- exp_data_to_align %>%
+      dplyr::select(-c(target_id_table_shared_colname))
+
+    exp_data_to_align <- merge(ids_data_target, exp_data_to_align, by = target_and_to_align_data_shared_colname, allow.cartesian=T)
+
+    # Define the same ID and locus name for each data
+    exp_data_to_align <- exp_data_to_align %>%
+      dplyr::mutate(
+        id_align_data = get(target_and_to_align_data_shared_colname),
+        locus_name = get(target_id_table_shared_colname)
+      )
+
+    exp_data_target <- exp_data_target %>%
+      dplyr::mutate(
+        id_align_data = get(target_and_to_align_data_shared_colname),
+        locus_name = get(target_id_table_shared_colname)
+      )
+
+
+    # exp_data_to_align$ara.id <- exp_data_to_align$locus_name
+    # exp_data_to_align$locus_name <- exp_data_to_align$CDS.model
+    # exp_data_target$ara.id <- exp_data_target$locus_name
+    # exp_data_target$locus_name <- exp_data_target$CDS.model
+
+
+    exp <- rbind(exp_data_to_align, exp_data_target)
   }
 
   # Shorten experiment group names
@@ -80,7 +120,13 @@ get_expression_of_interest <- function(filepath_data_target, filepath_data_to_al
 
 
 #' @export
-get_all_data <- function(filepath_data_target, filepath_data_to_align, filepath_id_table, colnames_id_table = c("CDS.model", "symbol", "locus_name"), colnames_wanted = NULL) {
+get_all_data <- function(filepath_data_target,
+                         filepath_data_to_align,
+                         filepath_id_table,
+                         target_id_table_shared_colname = "CDS.model",
+                         target_and_to_align_data_shared_colname = "locus_name",
+                         colnames_id_table = c("CDS.model", "symbol", "locus_name"),
+                         colnames_wanted = NULL) {
 
   # Read RDS file
   data_target <- readRDS(filepath_data_target)
@@ -93,20 +139,23 @@ get_all_data <- function(filepath_data_target, filepath_data_to_align, filepath_
   }
 
   # Take unique id_table
-  id_table_unique <- unique(id_table[, colnames_id_table]) %>%
-    dplyr::mutate(CDS.model = toupper(CDS.model)) %>%
-    dplyr::filter(!is.na(locus_name), !locus_name %in% c("", "-"))
+  id_table_unique <- unique(id_table[, ..colnames_id_table]) %>%
+    dplyr:: mutate_all(.funs = toupper)
+
+  # Filtering NA values in dataframe of table id
+  # dplyr::filter(!is.na(locus_name), !locus_name %in% c("", "-"))
 
   # Add target dataframe info to reg dataframe from
-  data_target <- merge(data_target, id_table_unique, by = "CDS.model")
+  data_target <- merge(data_target, id_table_unique, by = target_id_table_shared_colname)
 
   # Create a column in data_to_align
-  data_to_align$locus_name <- data_to_align$CDS.model
+  # data_to_align$locus_name <- data_to_align$CDS.model
+  data_to_align[, (target_and_to_align_data_shared_colname) := data_to_align[[target_id_table_shared_colname]]]
 
-  # cut down to only have genes with ATG locus present in both datasets
-  common_symbols <- intersect(data_to_align$locus_name, data_target$locus_name)
-  data_to_align <- data_to_align[data_to_align$locus_name %in% common_symbols, ]
-  data_target <- data_target[data_target$locus_name %in% common_symbols, ]
+  # Cut down to only have genes with ATG locus present in both datasets
+  common_symbols <- intersect(data_to_align[[target_and_to_align_data_shared_colname]], data_target[[target_and_to_align_data_shared_colname]])
+  data_to_align <- data_to_align[data_to_align[[target_and_to_align_data_shared_colname]] %in% common_symbols, ]
+  data_target <- data_target[data_target[[target_and_to_align_data_shared_colname]] %in% common_symbols, ]
 
   # Take a common columns
   if (is.null(colnames_wanted)) {
@@ -115,12 +164,11 @@ get_all_data <- function(filepath_data_target, filepath_data_to_align, filepath_
     colnames_wanted <- colnames_wanted
   }
 
-
   # Join the two datasets into 1 & housekeeping
   expression <- rbind(data_target[, ..colnames_wanted], data_to_align[, ..colnames_wanted])
 
   # Cut down to remove the 'blank' symbol
-  expression <- expression[expression$locus_name != "", ]
+  expression <- expression[expression[[target_and_to_align_data_shared_colname]] != "", ]
 
   return(expression)
 }

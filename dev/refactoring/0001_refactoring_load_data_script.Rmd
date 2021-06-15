@@ -12,6 +12,9 @@ library(ggplot2)
 library(data.table)
 library(cowplot)
 library(ggpubr)
+
+source("../../R/load_data.R")
+source("../../R/load_data_copy.R")
 ```
 
 ```{r}
@@ -20,5 +23,75 @@ library(ggpubr)
 id_table_path <- system.file("extdata/sample_data/id_table.RDS", package = "GREAT")
 arabidopsis_expression_path <- system.file("extdata/sample_data/arabidopsis_expression.RDS", package = "GREAT")
 brassica_rapa_expression_path <- system.file("extdata/sample_data/brassica_rapa_expression.RDS", package = "GREAT")
+```
+
+
+## Compare "get_all_data" function
+
+```{r}
+# data_to_align <- readRDS(arabidopsis_expression_path)
+# data_target <- readRDS(brassica_rapa_expression_path)
+# id_table <- readRDS(id_table_path)
+# colnames_id_table = c("CDS.model", "symbol", "locus_name")
+# id_table_unique <- unique(id_table[, ..colnames_id_table]) %>% 
+#   dplyr:: mutate_all(.funs = toupper) 
+
+test_get_all_data <- get_all_data(filepath_data_target = brassica_rapa_expression_path, 
+                         filepath_data_to_align = arabidopsis_expression_path,
+                         filepath_id_table = id_table_path,
+                         target_id_table_shared_colname = "CDS.model",
+                         target_and_to_align_data_shared_colname = "locus_name",
+                         colnames_id_table = c("CDS.model", "symbol", "locus_name"),
+                         colnames_wanted = NULL)
+
+
+test_get_all_data
+```
+
+
+```{r}
+test_get_all_data_copy <- get_all_data_copy(file_path_brassica = brassica_rapa_expression_path, 
+                                            file_path_arabidopsis = arabidopsis_expression_path, 
+                                            file_path_id_table = id_table_path,
+                                            colnames_wanted = NULL)
+
+test_get_all_data_copy
+```
+
+```{r}
+setdiff(test_get_all_data, test_get_all_data_copy)
+```
+
+## Compare get_expression_of_interest and get_expression_of_interest_copy
+
+```{r}
+test_get_expression_of_interest <- get_expression_of_interest(
+  filepath_data_target = brassica_rapa_expression_path,
+  filepath_data_to_align = arabidopsis_expression_path,
+  filepath_id_table = id_table_path,
+  target_id_table_shared_colname = "CDS.model",
+  target_and_to_align_data_shared_colname = "locus_name",
+  colnames_id_table = c("CDS.model", "symbol", "locus_name"),
+  colnames_wanted = NULL,
+  tissue_wanted = "apex",
+  curr_GoIs = c("AT1G69120", "AT5G61850", "AT2G45660"),
+  sum_exp_data_target = F, 
+  accession_data_to_align = "Col0",
+  ids_data_target_colnames = c("CDS.model", "locus_name")
+)
+
+
+test_get_expression_of_interest
+```
+
+```{r}
+test_get_expression_of_interest_copy <- get_expression_of_interest_copy(file_path_brassica = brassica_rapa_expression_path, file_path_arabidopsis = arabidopsis_expression_path, file_path_id_table = id_table_path, tissue_wanted = "apex", curr_GoIs =  c("AT1G69120", "AT5G61850", "AT2G45660"), sum_brassicas = F)
+
+test_get_expression_of_interest_copy 
+```
+
+
+```{r}
+setdiff(test_get_expression_of_interest, test_get_expression_of_interest_copy)
 ```
 

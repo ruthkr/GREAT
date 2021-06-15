@@ -1,8 +1,8 @@
 #' @export
-load_mean_df <- function(filepath_reg_data, filepath_target_data, filepath_id_table, tissue_wanted, curr_GoIs, sum_exp_reg_data = F) {
+load_mean_df <- function(filepath_data_target, filepath_data_to_align, filepath_id_table, tissue_wanted, curr_GoIs, sum_exp_data_target = F) {
 
   # Load the expression data for all the curr_GoIs gene models, for arabidopsis, and for the specified brassica
-  exp <- get_expression_of_interest(filepath_reg_data, filepath_target_data, filepath_id_table, tissue_wanted, curr_GoIs, sum_exp_reg_data = F)
+  exp <- get_expression_of_interest(filepath_data_target, filepath_data_to_align, filepath_id_table, tissue_wanted, curr_GoIs, sum_exp_data_target = F)
 
   # Calculate mean of each timepoint by adding a column called "mean.cpm"
   exp[, mean.cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
@@ -43,10 +43,10 @@ load_mean_df <- function(filepath_reg_data, filepath_target_data, filepath_id_ta
 }
 
 #' @export
-get_expression_of_interest <- function(filepath_reg_data, filepath_target_data, filepath_id_table, tissue_wanted, curr_GoIs, sum_exp_reg_data = F) {
+get_expression_of_interest <- function(filepath_data_target, filepath_data_to_align, filepath_id_table, tissue_wanted, curr_GoIs, sum_exp_data_target = F) {
 
   # Load rds and arabidopsis gene expression data into single df.
-  master_exp <- get_all_data(filepath_reg_data, filepath_target_data, filepath_id_table)
+  master_exp <- get_all_data(filepath_data_target, filepath_data_to_align, filepath_id_table)
   master_exp <- unique(master_exp)
 
   # Cut down to common tissue
@@ -57,9 +57,9 @@ get_expression_of_interest <- function(filepath_reg_data, filepath_target_data, 
 
   # Reformat depending on how want to compare arabidopsis to brassica, using indiv. brassica genes, or summed brassica genes
   # if want to used summed brassica data to compare to the brassica: get symbol level expression total. Locus_name identity is ATG id
-  if (sum_exp_reg_data == T) {
+  if (sum_exp_data_target == T) {
     exp <- stats::aggregate(norm.cpm~sample_id+accession+tissue+timepoint+dataset+group+locus_name, data=exp, sum)
-  } else if (sum_exp_reg_data == F) {
+  } else if (sum_exp_data_target == F) {
     # Otherwise duplicate each arabidopsis, so have an arabidopis copy for each brassica CDS gene. Now locus_name identity is CDS.model
     ara.exp <- exp[exp$accession=='Col0',]
     bra.exp <- exp[exp$accession!='Col0',]
@@ -80,11 +80,11 @@ get_expression_of_interest <- function(filepath_reg_data, filepath_target_data, 
 
 
 #' @export
-get_all_data <- function(filepath_reg_data, filepath_target_data, filepath_id_table, colnames_id_table = c("CDS.model", "symbol", "locus_name"), colnames_wanted = NULL) {
+get_all_data <- function(filepath_data_target, filepath_data_to_align, filepath_id_table, colnames_id_table = c("CDS.model", "symbol", "locus_name"), colnames_wanted = NULL) {
 
   # Read RDS file
-  reg_data <- readRDS(filepath_reg_data)
-  target_data <- readRDS(filepath_target_data)
+  data_target <- readRDS(filepath_data_target)
+  data_to_align <- readRDS(filepath_data_to_align)
 
   if (tools::file_ext(filepath_id_table) == "csv"){
     id_table <- data.table::fread(filepath_id_table)
@@ -98,26 +98,26 @@ get_all_data <- function(filepath_reg_data, filepath_target_data, filepath_id_ta
     dplyr::filter(!is.na(locus_name), !locus_name %in% c("", "-"))
 
   # Add target dataframe info to reg dataframe from
-  reg_data <- merge(reg_data, id_table_unique, by = "CDS.model")
+  data_target <- merge(data_target, id_table_unique, by = "CDS.model")
 
-  # Create a column in target_data
-  target_data$locus_name <- target_data$CDS.model
+  # Create a column in data_to_align
+  data_to_align$locus_name <- data_to_align$CDS.model
 
   # cut down to only have genes with ATG locus present in both datasets
-  common_symbols <- intersect(target_data$locus_name, reg_data$locus_name)
-  target_data <- target_data[target_data$locus_name %in% common_symbols, ]
-  reg_data <- reg_data[reg_data$locus_name %in% common_symbols, ]
+  common_symbols <- intersect(data_to_align$locus_name, data_target$locus_name)
+  data_to_align <- data_to_align[data_to_align$locus_name %in% common_symbols, ]
+  data_target <- data_target[data_target$locus_name %in% common_symbols, ]
 
   # Take a common columns
   if (is.null(colnames_wanted)) {
-    colnames_wanted <- intersect(colnames(target_data), colnames(reg_data))
+    colnames_wanted <- intersect(colnames(data_to_align), colnames(data_target))
   } else {
     colnames_wanted <- colnames_wanted
   }
 
 
   # Join the two datasets into 1 & housekeeping
-  expression <- rbind(reg_data[, ..colnames_wanted], target_data[, ..colnames_wanted])
+  expression <- rbind(data_target[, ..colnames_wanted], data_to_align[, ..colnames_wanted])
 
   # Cut down to remove the 'blank' symbol
   expression <- expression[expression$locus_name != "", ]

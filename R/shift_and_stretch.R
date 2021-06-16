@@ -85,17 +85,17 @@ calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
   return(out)
 }
 
-# mean.df <- all.data.df
+# mean_df <- all.data.df
 # best_shifts
 #' @export
-apply_best_shift <- function(mean.df, best_shifts) {
+apply_best_shift <- function(mean_df, best_shifts) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # take unregistered expression over time, and the best shifts, and
   # return the registered expression over time for each gene
 
-  test <- data.table::copy(mean.df)
+  test <- data.table::copy(mean_df)
 
-  test <- apply_stretch(mean.df, best_shifts)
+  test <- apply_stretch(mean_df, best_shifts)
 
   # normalise the expression data (if was normalised when calculating the expression data, is recorder in the
   # .compared.mean, and .compared.sd columns. If no normalisation was carried out, then these should have values of 0,
@@ -133,19 +133,19 @@ apply_best_shift <- function(mean.df, best_shifts) {
 }
 
 #' @export
-apply_stretch <- function(mean.df, best_shifts) {
+apply_stretch <- function(mean_df, best_shifts) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # gets the applied stretch from the best_shifts df
-  test <- data.table::copy(mean.df)
+  test <- data.table::copy(mean_df)
 
   # get the stretch factor applied in the best_shifts
   #stopifnot(length(unique(best_shifts$stretch))==1)
   #stretch_factor <- unique(best_shifts$stretch)
 
-  #stopifnot(length(unique(mean.df$locus_name))==length(best_shifts$gene)) # best_shifts should have 1 row per gene
-  # if (length(unique(mean.df$locus_name)) != length(best_shifts$gene)) {
+  #stopifnot(length(unique(mean_df$locus_name))==length(best_shifts$gene)) # best_shifts should have 1 row per gene
+  # if (length(unique(mean_df$locus_name)) != length(best_shifts$gene)) {
   #   print('ERROR!:')
-  #   print(length(unique(mean.df$locus_name)))
+  #   print(length(unique(mean_df$locus_name)))
   #   print(length(best_shifts$gene))
   #   stop()
   # }
@@ -305,44 +305,44 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
 
 
 
-# for all genes, in mean.df, get the scores, and the shifts which result in them after
+# for all genes, in mean_df, get the scores, and the shifts which result in them after
 # stretching arabidopsis by "stretch_factor, and applying shifts forward and
 # backward, with the extremes defined by allowing 5 overlapping points for comparison.
-# mean.df <- to.shift.df
+# mean_df <- to.shift.df
 # stretch_factor <- 2
 # do_rescale=F
 #' @export
-calculate_all_best_shifts <- function(mean.df, stretch_factor, do_rescale, min.num.overlapping.points, shift.extreme) {
+calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min.num.overlapping.points, shift.extreme) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
 
   # Initialize vectors
   symbols <- c()
   num_points <- c()
-  all.scores.list <- rep(list(0), length(unique(mean.df$locus_name)))
+  all.scores.list <- rep(list(0), length(unique(mean_df$locus_name)))
 
   # Get the extreme shifts which can be applied to the genes
-  M <- get_extreme_shifts_for_all(mean.df, stretch_factor, min.num.overlapping.points, shift.extreme)
+  M <- get_extreme_shifts_for_all(mean_df, stretch_factor, min.num.overlapping.points, shift.extreme)
   min.shift <- M[[1]]
   max.shift <- M[[2]]
   print(paste0("min shift:", min.shift, "max shift:", max.shift))
 
 
   count <- 0
-  for (i in 1:length(unique(mean.df$locus_name))) {
-    #for (curr_sym in unique(mean.df$locus_name)) {
-    curr_sym <- unique(mean.df$locus_name)[i]
+  for (i in 1:length(unique(mean_df$locus_name))) {
+    #for (curr_sym in unique(mean_df$locus_name)) {
+    curr_sym <- unique(mean_df$locus_name)[i]
     if (count %% 100 == 0) {
-      print(paste0(count, ' / ', length(unique(mean.df$locus_name))))
+      print(paste0(count, ' / ', length(unique(mean_df$locus_name))))
     }
 
     # out is mean SSD between arabidopsis, and interpolated brassica (interpolated between 2 nearest points)
-    # ggplot2::ggplot(mean.df[mean.df$locus_name==curr_sym,])+
+    # ggplot2::ggplot(mean_df[mean_df$locus_name==curr_sym,])+
     #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
     #   ggplot2::geom_point()
 
     ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
     ### if timepoints don't line up, brassica value is linearly imputed
-    out <- get_best_shift_new(curr_sym, mean.df, stretch_factor, do_rescale, min.shift, max.shift, testing=FALSE)
+    out <- get_best_shift_new(curr_sym, mean_df, stretch_factor, do_rescale, min.shift, max.shift, testing=FALSE)
 
     best_shift <- out$shift[out$score==min(out$score)]
     if (length(best_shift) > 1) {
@@ -366,7 +366,7 @@ calculate_all_best_shifts <- function(mean.df, stretch_factor, do_rescale, min.n
   return(all.scores.df)
 }
 
-# test <- mean.df
+# test <- mean_df
 # stretch_factor
 # min.num.overlapping.points
 # shift.extreme
@@ -441,7 +441,7 @@ calc_extreme_shifts <- function(test, min.num.overlapping.points, shift.extreme)
 
 # wroking on new implementation of the funciton
 # curr_sym <- 'BRAA02G015410.3C'
-#test <- mean.df
+#test <- mean_df
 # stretch_factor <- 1
 # do_rescale <- TRUE
 #testing=T

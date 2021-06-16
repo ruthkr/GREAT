@@ -21,9 +21,9 @@ library(ggpubr)
 ```{r}
 shifted_stretched_all <- readRDS("dev/others/shifted_stretched_all.rds")
 
-mean_df <- shifted_stretched_all[["mean.df"]] 
-mean.df.sc <- shifted_stretched_all[["mean.df.sc"]]
-imputed.mean.df <- shifted_stretched_all[["imputed.mean.df"]] 
+mean_df <- shifted_stretched_all[["mean_df"]] 
+mean_df.sc <- shifted_stretched_all[["mean_df.sc"]]
+imputed.mean_df <- shifted_stretched_all[["imputed.mean_df"]] 
 all.shifts <- shifted_stretched_all[["all.shifts"]] 
 model.comparison <- shifted_stretched_all[["model.comparison"]]
 ```
@@ -31,7 +31,7 @@ model.comparison <- shifted_stretched_all[["model.comparison"]]
 ## Calculate the distance
 
 ```{r}
-O <- calculate_between_sample_distance(mean_df, mean.df.sc, imputed.mean.df)
+O <- calculate_between_sample_distance(mean_df, mean_df.sc, imputed.mean_df)
 D.mean <- O[["D.mean"]]
 D.scaled <- O[["D.scaled"]]
 D.registered <- O[["D.registered"]]

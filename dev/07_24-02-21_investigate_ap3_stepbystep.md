@@ -72,14 +72,14 @@ b_oleracea_mean_df_AP3 <- GREAT::load_mean_df(
 
 ``` r
 # just for test
-mean.df <- b_oleracea_mean_df_AP3[[1]] %>% 
+mean_df <- b_oleracea_mean_df_AP3[[1]] %>% 
   dplyr::mutate(accession = ifelse(accession == "DH", "Ro18", "Col0"))
 all.data.df <- b_oleracea_mean_df_AP3[[2]] %>% 
   dplyr::mutate(accession = ifelse(accession == "DH", "Ro18", "Col0"))
 ```
 
 ``` r
-mean.df
+mean_df
 ```
 
     ##     locus_name accession tissue timepoint     mean.cpm
@@ -138,7 +138,7 @@ mean.df
 ## Specify all parameters
 
 ``` r
-do.initial.rescale <- 'TRUE' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
+do.initial.rescale <- 'TRUE' # should be 'rescale' if want to use scaled df for registration, rather than mean_df
 do.register.rescale <- 'rescale' 
 outdir.string <- 'TESTING_B_Oleracea_key_floral_genes_AP3'
 
@@ -195,13 +195,13 @@ if (!(dir.exists(real.expression.dir))) {
 ## Get best shift for one shift
 
 ``` r
-mean.df.sc <- data.table::copy(mean.df)
-mean.df.sc[, sc.mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
-to.shift.df <- data.table::copy(mean.df.sc)
+mean_df.sc <- data.table::copy(mean_df)
+mean_df.sc[, sc.mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
+to.shift.df <- data.table::copy(mean_df.sc)
 to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
 to.shift.df$sc.mean.cpm <- NULL
 
-all.data.df <- scale_all_rep_data(mean.df, all.data.df, 'scale')
+all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'scale')
 ```
 
 ``` r
@@ -809,7 +809,7 @@ all.data.df
     ## 150: BO8G083600      Ro18   apex        35 -0.4311406
 
 ``` r
-mean.df
+mean_df
 ```
 
     ##     locus_name accession tissue timepoint     mean.cpm

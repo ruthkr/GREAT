@@ -75,9 +75,9 @@ calculate_between_sample_distance_for_shuffled_data <- function(shuffled.data.di
   # wrapper for calculate_between_sample_distance() which applies it to all the shuffled results
 
   # print('loading shuffled data...')
-  # all.mean.df <- load_shuffled_data(shuffled.data.dir, 'mean.df')
+  # all.mean_df <- load_shuffled_data(shuffled.data.dir, 'mean_df')
   # all.sc.df <- load_shuffled_data(shuffled.data.dir, 'mean.sc')
-  # all.registered.df <- load_shuffled_data(shuffled.data.dir, 'imputed.mean.df')
+  # all.registered.df <- load_shuffled_data(shuffled.data.dir, 'imputed.mean_df')
 
   print('calculating distances...')
   jobIds <- get_job_suffixes(shuffled.data.dir)
@@ -94,11 +94,11 @@ calculate_between_sample_distance_for_shuffled_data <- function(shuffled.data.di
     }
     curr.job <- jobIds[i]
 
-    curr.mean.df <- readRDS(paste0(shuffled.data.dir, 'mean.df_', curr.job, '.rds')) #all.mean.df[all.mean.df$job==curr.job,]
-    curr.sc.df <- readRDS(paste0(shuffled.data.dir, 'mean.df.sc_', curr.job, '.rds')) #all.sc.df[all.sc.df$job==curr.job,]
-    curr.imputed.mean.df <- readRDS(paste0(shuffled.data.dir, 'imputed.mean.df_', curr.job, '.rds')) #all.registered.df[all.registered.df$job==curr.job,]
+    curr.mean_df <- readRDS(paste0(shuffled.data.dir, 'mean_df_', curr.job, '.rds')) #all.mean_df[all.mean_df$job==curr.job,]
+    curr.sc.df <- readRDS(paste0(shuffled.data.dir, 'mean_df.sc_', curr.job, '.rds')) #all.sc.df[all.sc.df$job==curr.job,]
+    curr.imputed.mean_df <- readRDS(paste0(shuffled.data.dir, 'imputed.mean_df_', curr.job, '.rds')) #all.registered.df[all.registered.df$job==curr.job,]
 
-    O <- calculate_between_sample_distance(curr.mean.df, curr.sc.df, curr.imputed.mean.df)
+    O <- calculate_between_sample_distance(curr.mean_df, curr.sc.df, curr.imputed.mean_df)
     curr.D.mean <- O[['D.mean']]
     curr.D.scaled <- O[['D.scaled']]
     curr.D.registered <- O[['D.registered']]
@@ -152,7 +152,7 @@ plot_number_of_registered_genes_in_shuffled <- function(real.data.dir, shuffled.
   # quantile.
 
   # get real number of genes registered
-  num.registered.real <- get_num_registered_genes(paste0(real.data.dir, 'imputed.mean.df.rds'))
+  num.registered.real <- get_num_registered_genes(paste0(real.data.dir, 'imputed.mean_df.rds'))
   # get vector of number of genes registered after random shuffling
   imputed.random.files <- list.files(path=shuffled.data.dir, pattern='imputed')
   imputed.random.paths <- paste0(shuffled.data.dir, imputed.random.files)
@@ -397,7 +397,7 @@ load_shuffled_distances <- function(dir.name, D.type, numJobs, numRuns) {
 
 # ro18_rds_file <- '../final_data/rds/ro18_leaf_reannotated.rds'
 # sari14_rds_file <- '../final_data/rds/sari14_chiifu_leaf_Jul2020.rds'
-load_mean.df_sari_ro18 <- function(ro18_rds_file, sari_rds_file, pCor.th) {
+load_mean_df_sari_ro18 <- function(ro18_rds_file, sari_rds_file, pCor.th) {
 
 
   ro18.exp <- readRDS(ro18_rds_file)
@@ -417,34 +417,34 @@ load_mean.df_sari_ro18 <- function(ro18_rds_file, sari_rds_file, pCor.th) {
   sari14.exp[, mean.cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
 
   exp <- rbind(ro18.exp, sari14.exp)
-  mean.df <- unique(exp[, c('CDS.model', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
-  names(mean.df) <-  c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')
+  mean_df <- unique(exp[, c('CDS.model', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
+  names(mean_df) <-  c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')
   names(exp)[names(exp)=='CDS.model'] <- 'locus_name'
   # checking not cutting out key genes - need to know what they're called now
   # FT
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.8543'),]
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.41993'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.8543'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.41993'),]
   # # SOC1
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.15712'),]
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.26487'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.15712'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.26487'),]
 
   # ggplot(tmp, aes(x=timepoint, y=mean.cpm))+
   #   geom_line()
 
-  # filter mean.df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
+  # filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
   # greater than 1 in both accessions
-  ro18.df <- mean.df[mean.df$accession=='Ro18']
+  ro18.df <- mean_df[mean_df$accession=='Ro18']
   ro18.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
   ro18.keep.genes <- unique(ro18.df$locus_name[ro18.df$keep==TRUE])
   #'MSTRG.8543' %in% ro18.keep.genes
 
-  sari14.df <- mean.df[mean.df$accession=='sarisha14']
+  sari14.df <- mean_df[mean_df$accession=='sarisha14']
   sari14.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
   sari14.keep.genes <- unique(sari14.df$locus_name[sari14.df$keep==TRUE])
   #'MSTRG.8543' %in% sari14.keep.genes
 
   keep.genes <- intersect(ro18.keep.genes, sari14.keep.genes)
-  mean.df <- mean.df[mean.df$locus_name %in% keep.genes,]
+  mean_df <- mean_df[mean_df$locus_name %in% keep.genes,]
 
 
   # filter to remove genes with low correlation between individual timepoints
@@ -452,26 +452,26 @@ load_mean.df_sari_ro18 <- function(ro18_rds_file, sari_rds_file, pCor.th) {
   keep.genes <- filter.low.variability(exp, pCor.th)
   #'MSTRG.8543' %in% keep.genes
 
-  mean.df <- mean.df[mean.df$locus_name %in% keep.genes, ]
-  #'MSTRG.8543' %in% mean.df$locus_name
+  mean_df <- mean_df[mean_df$locus_name %in% keep.genes, ]
+  #'MSTRG.8543' %in% mean_df$locus_name
 
   # # checking not cutting out key genes - need to know what they're called now
   # # FT
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.8543'),]
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.41993'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.8543'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.41993'),]
   # # SOC1
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.15712'),]
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.26487'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.15712'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.26487'),]
   #
 
-  print(paste0(length(unique(mean.df$locus_name)), ' genes considered in the comparison'))
+  print(paste0(length(unique(mean_df$locus_name)), ' genes considered in the comparison'))
   rm(ro18.df, keep.genes)
 
-  exp <- exp[exp$locus_name %in% unique(mean.df$locus_name)]
+  exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
   exp <- subset(exp, select=c('locus_name', 'accession', 'tissue', 'timepoint',
                               'norm.cpm', 'group'))
   names(exp)[names(exp)=='norm.cpm'] <- 'mean.cpm'
-  return(list(mean.df, exp))
+  return(list(mean_df, exp))
 }
 
 plot_all_real_distance_heatmaps <- function(D.mean, D.scaled, D.scaled.onlyNR, D.scaled.onlyR, D.registered, D.registered.onlyR) {
@@ -716,7 +716,7 @@ calculate_sample_distance <- function(exp) {
   return(dist.df)
 }
 
-#test <- mean.df
+#test <- mean_df
 get_best_shift <- function(curr_sym, test) {
   # here statistic used to assess best is 1 / mean(squared difference)
 
@@ -891,12 +891,12 @@ make_heatmap_w_shuffled <- function(D, title) {
 load_shuffled_data <- function(shuffled.data.dir, file.type) {
   # file.type is type of file loading:
   # "comparison": for model.comparison files
-  # "mean.sc": for mean.df.sc files
-  # "mean.df" : for mean.df files
-  # "imputed.mean.df" for them
+  # "mean.sc": for mean_df.sc files
+  # "mean_df" : for mean_df files
+  # "imputed.mean_df" for them
   # "shifts" for all.shifts
 
-  allowed.types <- c('comparison', 'mean.sc', 'mean.df', 'imputed.mean.df', 'shifts')
+  allowed.types <- c('comparison', 'mean.sc', 'mean_df', 'imputed.mean_df', 'shifts')
   if (!(file.type %in% allowed.types)) {
     print(paste0('file.type must be one of : ', paste0(allowed.types, collapse=', ')))
     stop()
@@ -904,9 +904,9 @@ load_shuffled_data <- function(shuffled.data.dir, file.type) {
   # format file.type to searchable pattern - handle "."s
   if (file.type=='mean.sc') {
     file.type <- 'mean\\.df\\.sc'
-  } else if (file.type=='mean.df') {
+  } else if (file.type=='mean_df') {
     file.type <-  '^mean\\.df'
-  } else if (file.type=='imputed.mean.df') {
+  } else if (file.type=='imputed.mean_df') {
     file.type <-  'imputed\\.mean\\.df'
   }
 
@@ -1018,7 +1018,7 @@ get_shifted_expression <- function(shift_results, exp) {
 
 # ro18_rds_file <- '../final_data/rds/ro18_leaf_reannotated.rds'
 # sari14_rds_file <- '../final_data/rds/sari14_chiifu_leaf_Jul2020.rds'
-#' load_mean.df_sari_ro18 <- function(ro18_rds_file, sari_rds_file) {
+#' load_mean_df_sari_ro18 <- function(ro18_rds_file, sari_rds_file) {
 #'
 #'
 #'   ro18.exp <- readRDS(ro18_rds_file)
@@ -1038,16 +1038,16 @@ get_shifted_expression <- function(shift_results, exp) {
 #'   sari14.exp[, mean.cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
 #'
 #'   exp <- rbind(ro18.exp, sari14.exp)
-#'   mean.df <- unique(exp[, c('CDS.model', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
-#'   names(mean.df) <-  c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')
+#'   mean_df <- unique(exp[, c('CDS.model', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
+#'   names(mean_df) <-  c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')
 #'   names(exp)[names(exp)=='CDS.model'] <- 'locus_name'
 #'   # checking not cutting out key genes - need to know what they're called now
 #'   # FT
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.8543'),]
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.41993'),]
+#'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.8543'),]
+#'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.41993'),]
 #'   # # SOC1
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.15712'),]
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.26487'),]
+#'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.15712'),]
+#'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.26487'),]
 #'
 #'   # ggplot(tmp, aes(x=timepoint, y=mean.cpm))+
 #'   #   geom_line()

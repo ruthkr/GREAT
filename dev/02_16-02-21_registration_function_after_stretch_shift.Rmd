@@ -21,7 +21,7 @@ In this Rmd file, I tried to understand the process after getting all stretch an
 
 ```{r}
 jobNum <- 1 # if running lots of times on cluster to get enough shuffled results, then jobNum is used to prevent output overwriting
-do.initial.rescale <- 'nope' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
+do.initial.rescale <- 'nope' # should be 'rescale' if want to use scaled df for registration, rather than mean_df
 do.register.rescale <- 'rescale' # should be 'rescale' if want to rescale using only the overlapping points during  registration
 shuffle.type <- 'shuffle.expression' # whether should shuffle by shuffling the gene ids compared, or by shuffling the gene expression
 # for each gene c('shuffle.genes', or 'shuffle.expression)
@@ -39,7 +39,7 @@ outdir.string <- 'TESTING_rescale_as_register___shuffled_g_v4__'
 stretch = c(2, 1.5, 1) # the stretch which lines up the start and end points.
 min.num.overlapping.points = 4 # will only allow shifts which leave this many overlapping points after applying the stretch
 shift.extreme  = 4 # the absolute maximum value which can be applied as a shift. Noticed that in the shuffled genes,
-transformed.timecourse = 'Col0' # the name of the timecourse to apply the registratsion to (one of the names in the mean.df$accession column)
+transformed.timecourse = 'Col0' # the name of the timecourse to apply the registratsion to (one of the names in the mean_df$accession column)
                                 # which is loaded at line 133.
 
 num.shuffled <- 1 #25 # for real, ran 40 jobs to get 40 * 25 random shuffled pairs for comparison. 
@@ -163,7 +163,7 @@ all.data.df <- readRDS("all_data_df_all_genes.RDS")
 
 ```{r}
 # The main function to apply shift to registered genes only
-# shifted.mean.df <- apply_shift_to_registered_genes_only(to.shift.df, best_shifts, model.comparison.dt)
+# shifted.mean_df <- apply_shift_to_registered_genes_only(to.shift.df, best_shifts, model.comparison.dt)
 ```
 
 #### Step 5a: 
@@ -243,7 +243,7 @@ out.dt <- rbind(registered.dt, seperate.dt)
 
 # change name like in the big function: 
 
-shifted.mean.df <- out.dt
+shifted.mean_df <- out.dt
 ```
 
 ### Step 6: impute
@@ -252,12 +252,12 @@ Testing how the data looks after shifted for SOC1
 
 ```{r}
 # sanity plotting - a registered one
-ggplot2::ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA03G023790.3C', ])+
+ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA03G023790.3C', ])+
   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
   ggplot2::geom_point()
 ```
 ```{r}
-ggplot2::ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA05G005370.3C', ])+
+ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA05G005370.3C', ])+
   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
   ggplot2::geom_point()
 ```
@@ -266,12 +266,12 @@ ggplot2::ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA05G005370.3C', 
 Take one gene, just to see how this works
 
 ```{r}
-imputed.timepoints <- round(seq(min(shifted.mean.df$shifted.time), max(shifted.mean.df$shifted.time)))
+imputed.timepoints <- round(seq(min(shifted.mean_df$shifted.time), max(shifted.mean_df$shifted.time)))
 
-curr.gene <- 'BRAA03G023790.3C' #unique(shifted.mean.df$locus_name)[17]
+curr.gene <- 'BRAA03G023790.3C' #unique(shifted.mean_df$locus_name)[17]
 
 # get the current gene expression data
-curr.df <- shifted.mean.df[shifted.mean.df$locus_name==curr.gene, ]
+curr.df <- shifted.mean_df[shifted.mean_df$locus_name==curr.gene, ]
 
 ara.df <- curr.df[curr.df$accession=='Col0',]
 bra.df <- curr.df[curr.df$accession=='Ro18',]
@@ -289,7 +289,7 @@ interp.ara.df$mean.cpm <- sapply(imputed.timepoints, interpolate_brassica_compar
 
 ```{r}
 # sanity plotting - a registered one
-ggplot2::ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA01G000040.3C', ])+
+ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G000040.3C', ])+
   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
   ggplot2::geom_point()
 ```
@@ -306,17 +306,17 @@ ggplot2::ggplot(curr.df)+
 Now do it all, and try to do sanity check again: 
 
 ```{r}
-imputed.mean.df <- impute_arabidopsis_values(shifted.mean.df)
+imputed.mean_df <- impute_arabidopsis_values(shifted.mean_df)
 ```
 
 ```{r}
-imputed.mean.df %>% 
+imputed.mean_df %>% 
   head(5)
 ```
 
 
 ```{r}
-imputed.mean.df <- fix.accessions(imputed.mean.df, original.transformed.accession, original.other.accession)
+imputed.mean_df <- fix.accessions(imputed.mean_df, original.transformed.accession, original.other.accession)
 ```
 
 

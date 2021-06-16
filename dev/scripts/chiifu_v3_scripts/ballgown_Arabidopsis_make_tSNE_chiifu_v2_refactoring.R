@@ -30,7 +30,7 @@ rm(list=ls())
 jobNum <- 1 # if running lots of times on cluster to get enough shuffled results, then jobNum is used to prevent output overwriting
 setwd('/Volumes/Research-Projects/bravo/shared/to_Shannon/scripts/')
 source("./chiifu_v3_scripts/registration_functions.R")
-do.initial.rescale <- 'nope' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
+do.initial.rescale <- 'nope' # should be 'rescale' if want to use scaled df for registration, rather than mean_df
 do.register.rescale <- 'rescale' # should be 'rescale' if want to rescale using only the overlapping points during
                               # registration
 shuffle.type <- 'shuffle.expression' # whether should shuffle by shuffling the gene ids compared, or by shuffling the gene expression
@@ -50,7 +50,7 @@ outdir.string <- 'TESTING_rescale_as_register___shuffled_g_v4__'
 stretch = c(2, 1.5, 1) # the stretch which lines up the start and end points.
 min.num.overlapping.points = 4 # will only allow shifts which leave this many overlapping points after applying the stretch
 shift.extreme  = 4 # the absolute maximum value which can be applied as a shift. Noticed that in the shuffled genes,
-transformed.timecourse = 'Col0' # the name of the timecourse to apply the registratsion to (one of the names in the mean.df$accession column)
+transformed.timecourse = 'Col0' # the name of the timecourse to apply the registratsion to (one of the names in the mean_df$accession column)
                                 # which is loaded at line 133.
 
 num.shuffled <- 1 #25 # for real, ran 40 jobs to get 40 * 25 random shuffled pairs for comparison.
@@ -116,18 +116,18 @@ if (!(dir.exists(real.expression.dir))) {
 
 ## GET THE RAW DATA. MEAN EXPRESSION OF BIOLOGICAL REPS. TREAT BRASSICA GENES INDIVIDUALLY (DON'T SUM THEM).
 # load the data expression data. Consider the brassica genes individually (don't sum)
-L <- load_mean.df() # sumBrassica copy flag is within load_mean.df()
-mean.df <- L[[1]] # will compare Col0 vs Ro18 based on accession column
+L <- load_mean_df() # sumBrassica copy flag is within load_mean_df()
+mean_df <- L[[1]] # will compare Col0 vs Ro18 based on accession column
 all.data.df <- L[[2]]
 
 
 #cut down to few genes for testing
-test.genes <- unique(mean.df$locus_name)[1:200]
-mean.df <- mean.df[mean.df$locus_name %in% test.genes,]
+test.genes <- unique(mean_df$locus_name)[1:200]
+mean_df <- mean_df[mean_df$locus_name %in% test.genes,]
 all.data.df <- all.data.df[all.data.df$locus_name %in% test.genes, ]
 
 
-unshuffled.data <- copy(mean.df)
+unshuffled.data <- copy(mean_df)
 unshuffled.all.data <- copy(all.data.df)
 
 real.and.shuffled <- c('real', 1:num.shuffled) # if just want to do for real=c('real'), or for random shuffles as well
@@ -140,18 +140,18 @@ for (i in real.and.shuffled) {
 
 
   if (i == 'real') {
-    mean.df <- copy(unshuffled.data)
+    mean_df <- copy(unshuffled.data)
     all.data.df <- copy(unshuffled.all.data)
   } else {
     if (shuffle.type=='shuffle.expression') {
       print('shuffling expression timecourse for each gene')
-      L <- shuffle_ro18_timepoints(mean.df, all.data.df)
-      mean.df <- L[[1]]
+      L <- shuffle_ro18_timepoints(mean_df, all.data.df)
+      mean_df <- L[[1]]
       all.data.df <- L[[2]]
     } else if (shuffle.type=='shuffle.genes') {
       print('shuffling gene names')
-      L <- shuffle_ro18_gene_names(mean.df, all.data.df)
-      mean.df <- L[[1]]
+      L <- shuffle_ro18_gene_names(mean_df, all.data.df)
+      mean_df <- L[[1]]
       all.data.df <- L[[2]]
     } else {
       print(junk.because.wrong.shuffle.type)
@@ -160,23 +160,23 @@ for (i in real.and.shuffled) {
 
 
   ## PREPARE, AND REGISTER AND SCALE THE DATA
-  O <- prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min.num.overlapping.points,
+  O <- prepare_scaled_and_registered_data(mean_df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min.num.overlapping.points,
                                           shift.extreme, transformed.timecourse)
 
-  mean.df <- O[['mean.df']] # mean.df is unchanged
-  mean.df.sc <- O[['mean.df.sc']] # mean.df.sc : data is scaled(center=T, scale=T)
-  imputed.mean.df <- O[['imputed.mean.df']] # imputed.mean.df is registered data, Col0 values imputed to make a single timepoint.
+  mean_df <- O[['mean_df']] # mean_df is unchanged
+  mean_df.sc <- O[['mean_df.sc']] # mean_df.sc : data is scaled(center=T, scale=T)
+  imputed.mean_df <- O[['imputed.mean_df']] # imputed.mean_df is registered data, Col0 values imputed to make a single timepoint.
   all.shifts <- O[['all.shifts']] # all.shifts is data.table of score for each shift for each gene.
   model.comparison <- O[['model.comparison']]
 
   # sanity test plot
-  # ggplot(imputed.mean.df[imputed.mean.df$locus_name=='BRAA02G015410.3C',],
+  # ggplot(imputed.mean_df[imputed.mean_df$locus_name=='BRAA02G015410.3C',],
   #        aes(x=shifted.time, y=mean.cpm, color=accession))+
   #   geom_point()+
   #   geom_line()
 
   #### CALCULATE THE DISTANCES BETWEEN THE SAMPLES ####
-  O <- calculate_between_sample_distance(mean.df, mean.df.sc, imputed.mean.df)
+  O <- calculate_between_sample_distance(mean_df, mean_df.sc, imputed.mean_df)
   D.mean <- O[['D.mean']]
   D.scaled <- O[['D.scaled']]
   D.registered <- O[['D.registered']]
@@ -188,9 +188,9 @@ for (i in real.and.shuffled) {
   # Save the generated tables
   if (i=='real') {
     # save the expression info
-    saveRDS(mean.df, file=paste0(real.expression.dir, 'mean.df.rds'))
-    saveRDS(mean.df.sc, file=paste0(real.expression.dir, 'mean.df.sc.rds'))
-    saveRDS(imputed.mean.df, file=paste0(real.expression.dir, 'imputed.mean.df.rds'))
+    saveRDS(mean_df, file=paste0(real.expression.dir, 'mean_df.rds'))
+    saveRDS(mean_df.sc, file=paste0(real.expression.dir, 'mean_df.sc.rds'))
+    saveRDS(imputed.mean_df, file=paste0(real.expression.dir, 'imputed.mean_df.rds'))
     saveRDS(all.shifts, file=paste0(real.expression.dir, 'all.shifts.rds'))
     saveRDS(model.comparison, file=paste0(real.expression.dir, 'model.comparison.rds'))
 
@@ -204,9 +204,9 @@ for (i in real.and.shuffled) {
 
   } else { # if the data timecourse has been shuffled
     # save the expression info
-    saveRDS(mean.df, file=paste0(shuffled.expression.dir, 'mean.df_', jobNum, '_', i, '.rds'))
-    saveRDS(mean.df.sc, file=paste0(shuffled.expression.dir, 'mean.df.sc_', jobNum, '_', i, '.rds'))
-    saveRDS(imputed.mean.df, file=paste0(shuffled.expression.dir, 'imputed.mean.df_', jobNum, '_', i, '.rds'))
+    saveRDS(mean_df, file=paste0(shuffled.expression.dir, 'mean_df_', jobNum, '_', i, '.rds'))
+    saveRDS(mean_df.sc, file=paste0(shuffled.expression.dir, 'mean_df.sc_', jobNum, '_', i, '.rds'))
+    saveRDS(imputed.mean_df, file=paste0(shuffled.expression.dir, 'imputed.mean_df_', jobNum, '_', i, '.rds'))
     saveRDS(all.shifts, file=paste0(shuffled.expression.dir, 'all.shifts_', jobNum, '_', i, '.rds'))
     saveRDS(model.comparison, file=paste0(shuffled.expression.dir, 'model.comparison_', jobNum, '_', i,'.rds'))
 

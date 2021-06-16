@@ -32,7 +32,7 @@ new_mean_data <- load_mean_df(file_path_brassica = brassica_rapa_expression_path
 ```
 
 ```{r}
-do.initial.rescale <- 'nope' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
+do.initial.rescale <- 'nope' # should be 'rescale' if want to use scaled df for registration, rather than mean_df
 do.register.rescale <- 'rescale' 
 outdir.string <- 'TESTING_rescale_as_register___shuffled_g_v4__'
 ```
@@ -107,13 +107,13 @@ if (!(dir.exists(real.expression.dir))) {
 ```{r}
 ## GET THE RAW DATA. MEAN EXPRESSION OF BIOLOGICAL REPS. TREAT BRASSICA GENES INDIVIDUALLY (DON'T SUM THEM).
 # load the data expression data. Consider the brassica genes individually (don't sum)
-# L <- load_mean.df() # sumBrassica copy flag is within load_mean.df()
-mean.df <- new_mean_data[[1]] # will compare Col0 vs Ro18 based on accession column
+# L <- load_mean_df() # sumBrassica copy flag is within load_mean_df()
+mean_df <- new_mean_data[[1]] # will compare Col0 vs Ro18 based on accession column
 all.data.df <- new_mean_data[[2]]
 ```
 
 ```r
-mean.df <- mean.df %>% 
+mean_df <- mean_df %>% 
   dplyr::mutate(accession = ifelse(accession == "Ro18", "DH", "Col0"))
 
 all.data.df <- all.data.df %>% 
@@ -121,21 +121,21 @@ all.data.df <- all.data.df %>%
 ```
 
 ```{r}
-mean.df
+mean_df
 ```
 
 
 
 ```{r}
 ## PREPARE, AND REGISTER AND SCALE THE DATA
-O <- prepare_scaled_and_registered_data(mean.df, all.data.df,
+O <- prepare_scaled_and_registered_data(mean_df, all.data.df,
   stretch = stretch, initial.rescale, should.rescale, min.num.overlapping.points,
   shift.extreme, transformed.timecourse
 )
 ```
 
 ```{r}
-mean.df 
+mean_df 
 ```
 
 
@@ -143,7 +143,7 @@ mean.df
 
 ```{r start test get_extreme shift}
 # Make input data name as it is inside the function
-test <- mean.df
+test <- mean_df
 stretch_factor <- stretch
 stretch_factor
 

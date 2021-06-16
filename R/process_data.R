@@ -2,34 +2,34 @@
 # initial.rescale=FALSE
 # do_rescale=FALSE
 # min.num.overlapping.points = 4
-# test.genes <- unique(mean.df$locus_name)[1:101]
+# test.genes <- unique(mean_df$locus_name)[1:101]
 # #test.genes <- 'MSTRG.10244'
-# mean.df <- mean.df[mean.df$locus_name %in% test.genes,]
+# mean_df <- mean_df[mean_df$locus_name %in% test.genes,]
 # all.data.df <- all.data.df[all.data.df$locus_name %in% test.genes,]
 # shift.extreme=4
 # transformed.timecourse <- 'Ro18'
 
 #' @export
-prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches, initial.rescale, do_rescale, min.num.overlapping.points, shift.extreme, transformed.timecourse) {
+prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, initial.rescale, do_rescale, min.num.overlapping.points, shift.extreme, transformed.timecourse) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   ## APPLY NORMALISATION OF EXPRESSION FOR EACH GENE ACROSS ALL TIMEPOINTS ##
 
   # hardcoded all the functions to use 'Col0', and 'Ro18'. Rather than fix all instances
   # of that, just temporarily rename them here, and turn back at the end.
   # will apply stretch, and shift to the "transformed.timecourse" accession (which should be the quicker one...)
-  L <- change.accession.names(mean.df, all.data.df, transformed.timecourse)
-  mean.df <- L[['mean.df']]
+  L <- change.accession.names(mean_df, all.data.df, transformed.timecourse)
+  mean_df <- L[['mean_df']]
   all.data.df <- L[['all.data.df']]
   original.transformed.accession <- L[['original.transformed.accession.name']]
   original.other.accession <- L[['original.other.accession.name']]
 
 
 
-  mean.df.sc <- data.table::copy(mean.df)
+  mean_df.sc <- data.table::copy(mean_df)
   # specify what kind of scaling
   # TODO: handle my.scale in conditional
-  mean.df.sc[, sc.mean.cpm:=scale(mean.cpm, scale=TRUE, center=TRUE), by=.(locus_name, accession)]
-  #mean.df.sc[, sc.mean.cpm:=my.scale(mean.cpm), by=.(locus_name, accession)]
+  mean_df.sc[, sc.mean.cpm:=scale(mean.cpm, scale=TRUE, center=TRUE), by=.(locus_name, accession)]
+  #mean_df.sc[, sc.mean.cpm:=my.scale(mean.cpm), by=.(locus_name, accession)]
 
   ## APPLY INDIVIDUAL SHIFTING ---
   # optimise transformations applied to arabidopsis gene profile to map onto the brassicas - shift in x direction, using mean for mapping,
@@ -38,15 +38,15 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches, 
   # specify which data to use for registering.
   # whether prior rescaled mean, or mean data should be used for registration
   if (initial.rescale==TRUE) {
-    # apply rescale to mean.df prior to registration
-    to.shift.df <- data.table::copy(mean.df.sc)
+    # apply rescale to mean_df prior to registration
+    to.shift.df <- data.table::copy(mean_df.sc)
     to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
     to.shift.df$sc.mean.cpm <- NULL
 
     # apply THE SAME rescale to all.data.df prior to registration
     # TODO: handle my.scale in conditional
-    all.data.df <- scale_all_rep_data(mean.df, all.data.df, 'scale')
-    #all.data.df <- scale_all_rep_data(mean.df, all.data.df, 'my.scale')
+    all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'scale')
+    #all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'my.scale')
 
 
     # sanity plot that rescale all data worked
@@ -54,7 +54,7 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches, 
     #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession)
     #   ggplot2::geom_point()
   } else {
-    to.shift.df <- data.table::copy(mean.df)
+    to.shift.df <- data.table::copy(mean_df)
   }
 
   print(paste0('Max value of mean.cpm of all.data.df :', max(all.data.df$mean.cpm)))
@@ -91,10 +91,10 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches, 
   # get the best-shifted and stretched mean gene expression, only to genes which registration is better than
   # seperate models by BIC. Don't stretch out, or shift genes for which seperate is better.
   # registration is applied to col0.
-  shifted.mean.df <- apply_shift_to_registered_genes_only(to.shift.df, best_shifts, model.comparison.dt)
-  # shifted.mean.df <- apply_shift_to_all(to.shift.df, best_shifts, model.comparison.dt)
-  print(paste0('Max value of mean.cpm :', max(shifted.mean.df$mean.cpm)))
-  # shifted.mean.df <- apply_best_shift(to.shift.df, best_shifts) # can be NA if exactly tied for what the best shift was
+  shifted.mean_df <- apply_shift_to_registered_genes_only(to.shift.df, best_shifts, model.comparison.dt)
+  # shifted.mean_df <- apply_shift_to_all(to.shift.df, best_shifts, model.comparison.dt)
+  print(paste0('Max value of mean.cpm :', max(shifted.mean_df$mean.cpm)))
+  # shifted.mean_df <- apply_best_shift(to.shift.df, best_shifts) # can be NA if exactly tied for what the best shift was
 
   # GOI <- 'MSTRG.11237'
   # ggplot2::ggplot(all.data.df[all.data.df$locus_name==GOI])+
@@ -102,7 +102,7 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches, 
   #   ggplot2::geom_point()
   #
   # #sanity plot that done right
-  # ggplot2::ggplot(shifted.mean.df[shifted.mean.df$locus_name==GOI])+
+  # ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name==GOI])+
   #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession) +
   #   ggplot2::geom_point()+
   #   ggplot2::geom_line()
@@ -112,28 +112,28 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches, 
   # so can compare using heatmap.
   # arabidopsis curves are the ones that been shifted around. Linear impute values for these
   # curves so that brassica samples can be compared to an arabidopsis point.
-  imputed.mean.df <- impute_arabidopsis_values(shifted.mean.df)
+  imputed.mean_df <- impute_arabidopsis_values(shifted.mean_df)
 
   #sanity plot that done right
-  # ggplot2::ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA01G001540.3C'])+
+  # ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G001540.3C'])+
   #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession) +
   #   ggplot2::geom_point()+
   #   ggplot2::geom_line()
-  # ggplot2::ggplot(imputed.mean.df[imputed.mean.df$locus_name=='BRAA01G001540.3C'])+
+  # ggplot2::ggplot(imputed.mean_df[imputed.mean_df$locus_name=='BRAA01G001540.3C'])+
   #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
   #   ggplot2::geom_point()+
   #   ggplot2::geom_line()
 
 
   # fix the accession names to the ones actually passed in:
-  # mean.df <- fix.accessions(mean.df, original.transformed.accession, original.other.accession)
-  # mean.df.sc <- fix.accessions(mean.df.sc, original.transformed.accession, original.other.accession)
-  # imputed.mean.df <- fix.accessions(imputed.mean.df, original.transformed.accession, original.other.accession)
+  # mean_df <- fix.accessions(mean_df, original.transformed.accession, original.other.accession)
+  # mean_df.sc <- fix.accessions(mean_df.sc, original.transformed.accession, original.other.accession)
+  # imputed.mean_df <- fix.accessions(imputed.mean_df, original.transformed.accession, original.other.accession)
 
 
-  OUT <- list('mean.df'=mean.df,
-              'mean.df.sc'=mean.df.sc,
-              'imputed.mean.df'=imputed.mean.df,
+  OUT <- list('mean_df'=mean_df,
+              'mean_df.sc'=mean_df.sc,
+              'imputed.mean_df'=imputed.mean_df,
               'all.shifts'=all_shifts,
               'model.comparison'=model.comparison.dt)
 }
@@ -141,24 +141,24 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches, 
 
 
 #' @export
-change.accession.names <- function(mean.df, all.data.df, transformed.timecourse) {
+change.accession.names <- function(mean_df, all.data.df, transformed.timecourse) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # set the "transformed.timecourse" accession to "Col0", and the other one to "Ro18"
 
   # error checking
-  if (length(unique(mean.df$accession)) != 2) {
+  if (length(unique(mean_df$accession)) != 2) {
     stop('Error in change.accession.names() : comparison must be made between two accessions!')
   }
 
   # store these, to rename at the end
   original.transformed.timecourse.name <- transformed.timecourse
-  original.other.accession.name <- as.character(unique(mean.df$accession[mean.df$accession!=transformed.timecourse]))
+  original.other.accession.name <- as.character(unique(mean_df$accession[mean_df$accession!=transformed.timecourse]))
 
-  # change mean.df
-  new.mean.df.accession <- mean.df$accession
-  new.mean.df.accession[mean.df$accession==transformed.timecourse] <- 'Col0'
-  new.mean.df.accession[mean.df$accession!=transformed.timecourse] <- 'Ro18'
-  mean.df$accession <- new.mean.df.accession
+  # change mean_df
+  new.mean_df.accession <- mean_df$accession
+  new.mean_df.accession[mean_df$accession==transformed.timecourse] <- 'Col0'
+  new.mean_df.accession[mean_df$accession!=transformed.timecourse] <- 'Ro18'
+  mean_df$accession <- new.mean_df.accession
 
   # change all.data.df
   new.all.data.df.accession <- all.data.df$accession
@@ -166,7 +166,7 @@ change.accession.names <- function(mean.df, all.data.df, transformed.timecourse)
   new.all.data.df.accession[all.data.df$accession!=transformed.timecourse] <- 'Ro18'
   all.data.df$accession <- new.all.data.df.accession
 
-  return(list('mean.df'=mean.df,
+  return(list('mean_df'=mean_df,
               'all.data.df'=all.data.df,
               'original.transformed.accession.name'=original.transformed.timecourse.name,
               'original.other.accession.name'=original.other.accession.name))
@@ -174,7 +174,7 @@ change.accession.names <- function(mean.df, all.data.df, transformed.timecourse)
 
 #all.rep.data <- all.data.df
 #' @export
-scale_all_rep_data <- function(mean.df, all.rep.data, scale.func) {
+scale_all_rep_data <- function(mean_df, all.rep.data, scale.func) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # apply the same scaling which done to the mean expression data
   # to all the reps.
@@ -182,7 +182,7 @@ scale_all_rep_data <- function(mean.df, all.rep.data, scale.func) {
   # as this is what was used to find the best shift.
 
   # calculate the summary stats to use for the rescaling
-  gene.expression.stats <- unique(mean.df[,
+  gene.expression.stats <- unique(mean_df[,
                                           .(mean_val=mean(mean.cpm),
                                             sd_val=stats::sd(mean.cpm)),
                                           by=.(locus_name, accession)])
@@ -202,7 +202,7 @@ scale_all_rep_data <- function(mean.df, all.rep.data, scale.func) {
 
   names(out)[names(out)=='scaled.norm.cpm'] <- 'mean.cpm'
 
-  # ggplot2::ggplot(mean.df[mean.df$locus_name=='BRAA01G000040.3C', ], ) +
+  # ggplot2::ggplot(mean_df[mean_df$locus_name=='BRAA01G000040.3C', ], ) +
   #  ggplot2::aes(x=timepoint, y=mean.cpm, color=accession
   #  ggplot2::geom_point()
 
@@ -350,7 +350,7 @@ apply_shift_to_all <- function(to.shift.df, best_shifts, model.comparison.dt) {
 }
 
 #' @export
-impute_arabidopsis_values <- function(shifted.mean.df) {
+impute_arabidopsis_values <- function(shifted.mean_df) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # Arabidopsis gene expression profiles are shifted all over. Need to impute times at set of common timepoints
   # in order to allow sample distance comparison to Ro18.
@@ -366,29 +366,29 @@ impute_arabidopsis_values <- function(shifted.mean.df) {
 
 
   # sanity plotting - a registered one
-  # ggplot2::ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA01G001090.3C', ])+
+  # ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G001090.3C', ])+
   #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
   #   ggplot2::geom_point()
   # # an unregistered one
-  # ggplot2::ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA01G003140.3C', ])+
+  # ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G003140.3C', ])+
   #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
   #   ggplot2::geom_point()
 
   # The imputed col0 times going to extimate gene expression for
-  imputed.timepoints <- round(seq(min(shifted.mean.df$shifted.time), max(shifted.mean.df$shifted.time)))
+  imputed.timepoints <- round(seq(min(shifted.mean_df$shifted.time), max(shifted.mean_df$shifted.time)))
 
   out.list <- list()
-  out.list <- c(out.list, list(shifted.mean.df[shifted.mean.df$accession=='Ro18']))
+  out.list <- c(out.list, list(shifted.mean_df[shifted.mean_df$accession=='Ro18']))
 
-  curr.gene <- 'BRAA01G001090.3C' #unique(shifted.mean.df$locus_name)[17]
+  curr.gene <- 'BRAA01G001090.3C' #unique(shifted.mean_df$locus_name)[17]
   count <- 0
-  for (curr.gene in unique(shifted.mean.df$locus_name)) {
+  for (curr.gene in unique(shifted.mean_df$locus_name)) {
     if (count %% 100 == 0) {
-      print(paste0(count, ' / ', length(unique(shifted.mean.df$locus_name))))
+      print(paste0(count, ' / ', length(unique(shifted.mean_df$locus_name))))
     }
 
     # get the current gene expression data
-    curr.df <- shifted.mean.df[shifted.mean.df$locus_name==curr.gene, ]
+    curr.df <- shifted.mean_df[shifted.mean_df$locus_name==curr.gene, ]
 
     # skip over this one, if not assigned a best shift value, because brassica gene not expressed
     # if (all(is.na(curr.df$mean.cpm))) {

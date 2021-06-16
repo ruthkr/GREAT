@@ -29,7 +29,7 @@ This short report is to try to run all of the registration functions,
 with the purpose to get/reproduce the same results in Alex’s paper.
 
 ``` r
-do.initial.rescale <- 'rescale' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
+do.initial.rescale <- 'rescale' # should be 'rescale' if want to use scaled df for registration, rather than mean_df
 do.register.rescale <- 'rescale' 
 outdir.string <- 'TESTING_rescale_as_register___shuffled_g_v4__'
 ```
@@ -104,32 +104,32 @@ if (!(dir.exists(real.expression.dir))) {
 ``` r
 ## GET THE RAW DATA. MEAN EXPRESSION OF BIOLOGICAL REPS. TREAT BRASSICA GENES INDIVIDUALLY (DON'T SUM THEM).
 # load the data expression data. Consider the brassica genes individually (don't sum)
-L <- load_mean.df() # sumBrassica copy flag is within load_mean.df()
-mean.df <- L[[1]] # will compare Col0 vs Ro18 based on accession column
+L <- load_mean_df() # sumBrassica copy flag is within load_mean_df()
+mean_df <- L[[1]] # will compare Col0 vs Ro18 based on accession column
 all.data.df <- L[[2]]
 ```
 
 ``` r
 ## PREPARE, AND REGISTER AND SCALE THE DATA
-O <- prepare_scaled_and_registered_data(mean.df, all.data.df,
+O <- prepare_scaled_and_registered_data(mean_df, all.data.df,
   stretch = stretch, initial.rescale, should.rescale, min.num.overlapping.points,
   shift.extreme, transformed.timecourse
 )
 
-mean.df <- O[["mean.df"]] # mean.df is unchanged
-mean.df.sc <- O[["mean.df.sc"]] # mean.df.sc : data is scaled(center=T, scale=T)
-imputed.mean.df <- O[["imputed.mean.df"]] # imputed.mean.df is registered data, Col0 values imputed to make a single timepoint.
+mean_df <- O[["mean_df"]] # mean_df is unchanged
+mean_df.sc <- O[["mean_df.sc"]] # mean_df.sc : data is scaled(center=T, scale=T)
+imputed.mean_df <- O[["imputed.mean_df"]] # imputed.mean_df is registered data, Col0 values imputed to make a single timepoint.
 all.shifts <- O[["all.shifts"]] # all.shifts is data.table of score for each shift for each gene.
 model.comparison <- O[["model.comparison"]]
 
 # sanity test plot
-# ggplot(imputed.mean.df[imputed.mean.df$locus_name=='BRAA02G015410.3C',],
+# ggplot(imputed.mean_df[imputed.mean_df$locus_name=='BRAA02G015410.3C',],
 #        aes(x=shifted.time, y=mean.cpm, color=accession))+
 #   geom_point()+
 #   geom_line()
 
 #### CALCULATE THE DISTANCES BETWEEN THE SAMPLES ####
-O <- calculate_between_sample_distance(mean.df, mean.df.sc, imputed.mean.df)
+O <- calculate_between_sample_distance(mean_df, mean_df.sc, imputed.mean_df)
 D.mean <- O[["D.mean"]]
 D.scaled <- O[["D.scaled"]]
 D.registered <- O[["D.registered"]]
@@ -139,9 +139,9 @@ D.registered.onlyR <- O[["D.registered.onlyR"]]
 ```
 
 ``` r
-saveRDS(mean.df, file = paste0(real.expression.dir, "mean.df.rds"))
-saveRDS(mean.df.sc, file = paste0(real.expression.dir, "mean.df.sc.rds"))
-saveRDS(imputed.mean.df, file = paste0(real.expression.dir, "imputed.mean.df.rds"))
+saveRDS(mean_df, file = paste0(real.expression.dir, "mean_df.rds"))
+saveRDS(mean_df.sc, file = paste0(real.expression.dir, "mean_df.sc.rds"))
+saveRDS(imputed.mean_df, file = paste0(real.expression.dir, "imputed.mean_df.rds"))
 saveRDS(all.shifts, file = paste0(real.expression.dir, "all.shifts.rds"))
 saveRDS(model.comparison, file = paste0(real.expression.dir, "model.comparison.rds"))
 
@@ -157,13 +157,13 @@ saveRDS(D.registered.onlyR, file = paste0(real.distance.dir, "D.registered.onlyR
 ## Get the saved RDS data
 
 ``` r
-mean.df <- readRDS("intermediate_data/gene_registration/TESTING_rescale_as_register___shuffled_g_v4___real_data/gene_expression/job_1/mean.df.rds")
-imputed.mean.df <- readRDS("intermediate_data/gene_registration/TESTING_rescale_as_register___shuffled_g_v4___real_data/gene_expression/job_1/imputed.mean.df.rds")
+mean_df <- readRDS("intermediate_data/gene_registration/TESTING_rescale_as_register___shuffled_g_v4___real_data/gene_expression/job_1/mean_df.rds")
+imputed.mean_df <- readRDS("intermediate_data/gene_registration/TESTING_rescale_as_register___shuffled_g_v4___real_data/gene_expression/job_1/imputed.mean_df.rds")
 model.comparison <- readRDS("intermediate_data/gene_registration/TESTING_rescale_as_register___shuffled_g_v4___real_data/gene_expression/job_1/model.comparison.rds")
 ```
 
 ``` r
-mean.df %>% 
+mean_df %>% 
   head(10) %>% 
   knitr::kable()
 ```
@@ -182,7 +182,7 @@ mean.df %>%
 | BRAA01G000040.3C | Ro18      | apex   |        21 | 232.1549 |
 
 ``` r
-imputed.mean.df %>% 
+imputed.mean_df %>% 
   head(10) %>% 
   knitr::kable()
 ```
@@ -259,13 +259,13 @@ cds_model_wanted <- id_table_unique_key_floral %>%
 ### Get the registered key floral genes
 
 ``` r
-imputed.mean.df_key_floral <- imputed.mean.df %>% 
+imputed.mean_df_key_floral <- imputed.mean_df %>% 
   dplyr::filter(locus_name %in% cds_model_wanted)
 ```
 
 ``` r
 # left join to get the symbol genes (e.g. AP3 etc) to the main df
-imputed.mean.df_wanted <- imputed.mean.df_key_floral %>%
+imputed.mean_df_wanted <- imputed.mean_df_key_floral %>%
   dplyr::left_join(id_table_unique_key_floral, by = c("locus_name" = "CDS.model")) %>% 
   dplyr::select(-c(locus_name.y)) %>%
   dplyr::rename(locus_name = symbol, bra_gene = locus_name)
@@ -274,7 +274,7 @@ imputed.mean.df_wanted <- imputed.mean.df_key_floral %>%
 ### Plot the registered genes
 
 ``` r
-plot_registered_GoIs_for_comparible_timepoints(imputed.mean.df_wanted)
+plot_registered_GoIs_for_comparible_timepoints(imputed.mean_df_wanted)
 ```
 
 ![](03_17-02-21_registration_function_running_all_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->

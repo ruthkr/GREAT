@@ -1,12 +1,12 @@
-# unrandom.mean.df <- mean.df
+# unrandom.mean_df <- mean_df
 # unrandom.all.df <- all.data.df
 #' @export
-shuffle_ro18_timepoints <- function(unrandom.mean.df, unrandom.all.df) {
+shuffle_ro18_timepoints <- function(unrandom.mean_df, unrandom.all.df) {
   # shuffle the timepoints for each ro18 gene
 
-  # split the mean.df
-  col.df <- unrandom.mean.df[unrandom.mean.df$accession=='Col0',]
-  ro18.df <- unrandom.mean.df[unrandom.mean.df$accession=='Ro18',]
+  # split the mean_df
+  col.df <- unrandom.mean_df[unrandom.mean_df$accession=='Col0',]
+  ro18.df <- unrandom.mean_df[unrandom.mean_df$accession=='Ro18',]
   shuffled.ro18.df <-copy(ro18.df)
   # split the all.df
   col.all.df <- unrandom.all.df[unrandom.all.df$accession=='Col0',]
@@ -30,29 +30,29 @@ shuffle_ro18_timepoints <- function(unrandom.mean.df, unrandom.all.df) {
     shuffled.ro18.all.df$timepoint[shuffled.ro18.all.df$locus_name==curr.locus] <- all.replacement.times
   }
 
-  mean.df <- rbind(col.df, shuffled.ro18.df)
+  mean_df <- rbind(col.df, shuffled.ro18.df)
   all.df <- rbind(col.all.df, shuffled.ro18.all.df)
-  return(list(mean.df, all.df))
+  return(list(mean_df, all.df))
 }
 
 #' @export
-shuffle_ro18_gene_names <- function(mean.df, out.all.df) {
+shuffle_ro18_gene_names <- function(mean_df, out.all.df) {
   # shuffle the identities of the genes in the brassica
   # can't just do shuffle, becuase need to preserve which timepoints are from the same gene
-  out.mean.df <- data.table::copy(mean.df)
+  out.mean_df <- data.table::copy(mean_df)
   out.all.df <- data.table::copy(out.all.df)
 
   # make the gene lookup table for the same shuffled genes for both
-  brassica.genes <- unique(out.mean.df$locus_name[out.mean.df$accession=='Ro18'])
+  brassica.genes <- unique(out.mean_df$locus_name[out.mean_df$accession=='Ro18'])
   shuffled.genes <- sample(brassica.genes)
   shuffle.gene.lookup <- data.table::data.table(data.frame('gene.id'=brassica.genes, 'shuffled.id'=shuffled.genes))
 
-  # change the gene names for the mean.df
-  out.mean.df <- swap_gene_names(out.mean.df, shuffle.gene.lookup)
+  # change the gene names for the mean_df
+  out.mean_df <- swap_gene_names(out.mean_df, shuffle.gene.lookup)
   # change the gene names for the all.df
   out.all.df <- swap_gene_names(out.all.df, shuffle.gene.lookup)
 
-  return(list(out.mean.df, out.all.df))
+  return(list(out.mean_df, out.all.df))
 }
 
 #' @export

@@ -1,35 +1,35 @@
-# mean.df <- real.mean.df
-# mean.df.sc <- real.sc.df
-# imputed.mean.df <- imputed.mean.df
+# mean_df <- real.mean_df
+# mean_df.sc <- real.sc.df
+# imputed.mean_df <- imputed.mean_df
 #' @export
-calculate_between_sample_distance <- function(mean.df, mean.df.sc, imputed.mean.df) {
+calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_df) {
 
   ### convert all to wide format ready for distance calculation
 
-  # mean.df
+  # mean_df
   sample.id.cols <- c('accession','timepoint')
   gene.col <- c('locus_name')
   expression.col <- 'mean.cpm'
-  mean.dt.w <- reformat_for_distance_calculation(mean.df, sample.id.cols, gene.col, expression.col)
+  mean.dt.w <- reformat_for_distance_calculation(mean_df, sample.id.cols, gene.col, expression.col)
 
-  # normalised mean.df
+  # normalised mean_df
   sample.id.cols <- c('accession','timepoint')
   gene.col <- c('locus_name')
   expression.col <- c('sc.mean.cpm')
-  mean.dt.sc.w <- reformat_for_distance_calculation(mean.df.sc, sample.id.cols, gene.col, expression.col)
+  mean.dt.sc.w <- reformat_for_distance_calculation(mean_df.sc, sample.id.cols, gene.col, expression.col)
 
-  # imputed.mean.df - all genes
+  # imputed.mean_df - all genes
   sample.id.cols <- c('accession','shifted.time')
   gene.col <- c('locus_name')
   expression.col <- c('mean.cpm')
-  imputed.mean.dt.w <- reformat_for_distance_calculation(imputed.mean.df, sample.id.cols, gene.col, expression.col)
+  imputed.mean.dt.w <- reformat_for_distance_calculation(imputed.mean_df, sample.id.cols, gene.col, expression.col)
 
   # same, but for subsets of REGISTERED / NOT REGISTERED genes.
   # distance between samples, only using genes which are found best model is not registered
-  not.registered.genes <- unique(imputed.mean.df$locus_name[imputed.mean.df$is.registered==FALSE])
+  not.registered.genes <- unique(imputed.mean_df$locus_name[imputed.mean_df$is.registered==FALSE])
   mean.dt.sc.w.not.registered <- mean.dt.sc.w[mean.dt.sc.w$locus_name %in% not.registered.genes,]
   # distance between samples, only using genes which are found best when ARE registered
-  registered.genes <- unique(imputed.mean.df$locus_name[imputed.mean.df$is.registered==TRUE])
+  registered.genes <- unique(imputed.mean_df$locus_name[imputed.mean_df$is.registered==TRUE])
   mean.dt.sc.w.registered <- mean.dt.sc.w[mean.dt.sc.w$locus_name %in% registered.genes,]
   # after registration, but only for registered genes
   imputed.mean.dt.w.registered <- imputed.mean.dt.w[imputed.mean.dt.w$locus_name %in% registered.genes,]
@@ -72,7 +72,7 @@ calculate_between_sample_distance <- function(mean.df, mean.df.sc, imputed.mean.
 # sample.id.cols <- c('accession','delta.time')
 # gene.col <- c('locus_name')
 # expression.col <- 'mean.cpm'
-# dt <- mean.df
+# dt <- mean_df
 #' @export
 reformat_for_distance_calculation <- function(dt, sample.id.cols, gene.col, expression.col) {
 

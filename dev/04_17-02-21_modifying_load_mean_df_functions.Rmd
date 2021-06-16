@@ -372,8 +372,8 @@ data_get_expression_oI <- get_expression_oI(brassica_rapa_expression_path, arabi
 
 setdiff(data_get_expression_oI, all_data)
 ```
-```{r load_mean.df}
-load_mean.df <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F) {
+```{r load_mean_df}
+load_mean_df <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F) {
 # 
 #   #setwd('/Volumes/Research-Projects/bravo/alex/BRAVO_rna-seq/scripts/')
 #   rds_file <- 'ro18_chiifu_apex' # don't include the .rds # the name of the brassica data to load
@@ -411,29 +411,29 @@ load_mean.df <- function(file_path_brassica, file_path_arabidopsis, file_path_id
 
   # get mean of each timepoint
   exp[, mean.cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
-  mean.df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
+  mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
 
 
 
-  # filter mean.df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
+  # filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
   # greater than 1
-  ro18.df <- mean.df[mean.df$accession=='Ro18']
+  ro18.df <- mean_df[mean_df$accession=='Ro18']
   ro18.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
   keep.genes <- unique(ro18.df$locus_name[ro18.df$keep==TRUE])
-  mean.df <- mean.df[mean.df$locus_name %in% keep.genes,]
-  print(paste0(length(unique(mean.df$locus_name)), ' genes considered in the comparison'))
+  mean_df <- mean_df[mean_df$locus_name %in% keep.genes,]
+  print(paste0(length(unique(mean_df$locus_name)), ' genes considered in the comparison'))
   rm(ro18.df, keep.genes)
 
-  exp <- exp[exp$locus_name %in% unique(mean.df$locus_name)]
+  exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
   # exp <- subset(exp, select=c('locus_name', 'accession', 'tissue', 'timepoint',
   #                             'norm.cpm', 'group'))
   # names(exp)[names(exp)=='norm.cpm'] <- 'mean.cpm'
-  return(list(mean.df, exp))
+  return(list(mean_df, exp))
 }
 ```
 
 ```{r}
-old_mean_data <- load_mean.df(file_path_brassica = brassica_rapa_expression_path, 
+old_mean_data <- load_mean_df(file_path_brassica = brassica_rapa_expression_path, 
                               file_path_arabidopsis = arabidopsis_expression_path, 
                               file_path_id_table = id_table_path, 
                               tissue_wanted = "apex", 

@@ -116,7 +116,7 @@ b_oleracea_mean_df <- GREAT::load_mean_df(
 )
 ```
 
-    ## Warning in mean.df$locus_name == keep_bra_genes: longer object length is not a
+    ## Warning in mean_df$locus_name == keep_bra_genes: longer object length is not a
     ## multiple of shorter object length
 
     ## [1] "20870 brassica genes considered in the comparison"
@@ -124,7 +124,7 @@ b_oleracea_mean_df <- GREAT::load_mean_df(
 
 ``` r
 # Change the accession since all the scripts are still hard-coded for "Ro18"
-mean.df <- b_oleracea_mean_df[[1]] %>% 
+mean_df <- b_oleracea_mean_df[[1]] %>% 
   dplyr::mutate(accession = ifelse(accession == "DH", "Ro18", "Col0"))
 all.data.df <- b_oleracea_mean_df[[2]] %>% 
   dplyr::mutate(accession = ifelse(accession == "DH", "Ro18", "Col0"))
@@ -156,7 +156,7 @@ if (do.register.rescale=='rescale') {
 
 ``` r
 shifted_stretched_all <- prepare_scaled_and_registered_data(
-  mean.df, 
+  mean_df, 
   all.data.df,
   stretch, 
   initial.rescale = TRUE, 
@@ -179,9 +179,9 @@ shifted_stretched_all <- prepare_scaled_and_registered_data(
 ``` r
 shifted_stretched_all <- readRDS("others/shifted_stretched_all.rds")
 
-mean_df <- shifted_stretched_all[["mean.df"]] 
-mean.df.sc <- shifted_stretched_all[["mean.df.sc"]]
-imputed.mean.df <- shifted_stretched_all[["imputed.mean.df"]] 
+mean_df <- shifted_stretched_all[["mean_df"]] 
+mean_df.sc <- shifted_stretched_all[["mean_df.sc"]]
+imputed.mean_df <- shifted_stretched_all[["imputed.mean_df"]] 
 all.shifts <- shifted_stretched_all[["all.shifts"]] 
 model.comparison <- shifted_stretched_all[["model.comparison"]]
 ```
@@ -247,7 +247,7 @@ table_id_info_key_floral_genes
     ## 12: BO4G195720   SOC1  AT2G45660
 
 ``` r
-imputed.mean.df %>% 
+imputed.mean_df %>% 
   nrow()
 ```
 
@@ -256,11 +256,11 @@ imputed.mean.df %>%
 ### Check the result of key floral genes
 
 ``` r
-imputed.mean.df_floral_genes <- imputed.mean.df %>% 
+imputed.mean_df_floral_genes <- imputed.mean_df %>% 
   dplyr::left_join(table_id_info_key_floral_genes, by = c("locus_name" = "CDS.model")) %>% 
   dplyr::filter(!is.na(symbol))
   
-imputed.mean.df_floral_genes %>% 
+imputed.mean_df_floral_genes %>% 
   dplyr::filter(is.registered == TRUE) %>% 
   dplyr::pull(symbol) %>% 
   unique()
@@ -269,7 +269,7 @@ imputed.mean.df_floral_genes %>%
     ## [1] "AGL24" "LFY"   "SOC1"  "AP1"
 
 ``` r
-imputed.mean.df_floral_genes %>% 
+imputed.mean_df_floral_genes %>% 
   dplyr::filter(is.registered == FALSE) %>% 
   dplyr::pull(symbol) %>% 
   unique()
@@ -278,7 +278,7 @@ imputed.mean.df_floral_genes %>%
     ## [1] "AP3" "AP1"
 
 ``` r
-imputed.mean.df_floral_genes %>% 
+imputed.mean_df_floral_genes %>% 
   head(5)
 ```
 
@@ -296,19 +296,19 @@ imputed.mean.df_floral_genes %>%
     ## 5:           49          TRUE  AGL24    AT4G24540
 
 ``` r
-test <- imputed.mean.df_floral_genes %>% 
+test <- imputed.mean_df_floral_genes %>% 
   dplyr::select(-c(locus_name.y)) %>%
   dplyr::rename(locus_name = symbol, bra_gene = locus_name)
 ```
 
 ``` r
-shifted_stretched_oleracea_floral_genes <- plot_registered_GoIs_for_comparible_timepoints(imputed.mean.df_floral_genes)
+shifted_stretched_oleracea_floral_genes <- plot_registered_GoIs_for_comparible_timepoints(imputed.mean_df_floral_genes)
 
 # ggsave("shifted_stretched_oleracea_floral_genes.pdf", shifted_stretched_oleracea_floral_genes, width = 6, height = 10)
 ```
 
 ``` r
-imputed.mean.df_floral_genes %>% 
+imputed.mean_df_floral_genes %>% 
   dplyr::filter(symbol == "AP3") %>% 
   dplyr::pull(locus_name) %>% 
   unique()
@@ -335,11 +335,11 @@ Try to see example with of non-register models
 
 ``` r
 # Get the non-registered genes with known symbol 
-imputed.mean.df_non_reg_with_symbol <- imputed.mean.df %>% 
+imputed.mean_df_non_reg_with_symbol <- imputed.mean_df %>% 
   dplyr::left_join(id_table_all, by = c("locus_name" = "CDS.model")) %>%
   dplyr::filter(is.registered == FALSE, !is.na(symbol)) 
 
-symbol_samples <- imputed.mean.df_non_reg_with_symbol %>% 
+symbol_samples <- imputed.mean_df_non_reg_with_symbol %>% 
   dplyr::pull(symbol) %>% 
   unique() %>% 
   sample(size = 60)
@@ -348,10 +348,10 @@ test_symbol <- c("CER1", "CPK7", "EMB506")
 ```
 
 ``` r
-test_using_sample_symbol <- imputed.mean.df_non_reg_with_symbol %>% 
+test_using_sample_symbol <- imputed.mean_df_non_reg_with_symbol %>% 
   dplyr::filter(symbol %in% symbol_samples)
 
-test_using_test_symbol <- imputed.mean.df_non_reg_with_symbol %>% 
+test_using_test_symbol <- imputed.mean_df_non_reg_with_symbol %>% 
   dplyr::filter(symbol %in% test_symbol)
 
 

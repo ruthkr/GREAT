@@ -74,9 +74,9 @@ calculate_between_sample_distance_for_shuffled_data <- function(shuffled.data.di
   # wrapper for calculate_between_sample_distance() which applies it to all the shuffled results
 
   # print('loading shuffled data...')
-  # all.mean.df <- load_shuffled_data(shuffled.data.dir, 'mean.df')
+  # all.mean_df <- load_shuffled_data(shuffled.data.dir, 'mean_df')
   # all.sc.df <- load_shuffled_data(shuffled.data.dir, 'mean.sc')
-  # all.registered.df <- load_shuffled_data(shuffled.data.dir, 'imputed.mean.df')
+  # all.registered.df <- load_shuffled_data(shuffled.data.dir, 'imputed.mean_df')
 
   print('calculating distances...')
   jobIds <- get_job_suffixes(shuffled.data.dir)
@@ -93,11 +93,11 @@ calculate_between_sample_distance_for_shuffled_data <- function(shuffled.data.di
     }
     curr.job <- jobIds[i]
 
-    curr.mean.df <- readRDS(paste0(shuffled.data.dir, 'mean.df_', curr.job, '.rds')) #all.mean.df[all.mean.df$job==curr.job,]
-    curr.sc.df <- readRDS(paste0(shuffled.data.dir, 'mean.df.sc_', curr.job, '.rds')) #all.sc.df[all.sc.df$job==curr.job,]
-    curr.imputed.mean.df <- readRDS(paste0(shuffled.data.dir, 'imputed.mean.df_', curr.job, '.rds')) #all.registered.df[all.registered.df$job==curr.job,]
+    curr.mean_df <- readRDS(paste0(shuffled.data.dir, 'mean_df_', curr.job, '.rds')) #all.mean_df[all.mean_df$job==curr.job,]
+    curr.sc.df <- readRDS(paste0(shuffled.data.dir, 'mean_df.sc_', curr.job, '.rds')) #all.sc.df[all.sc.df$job==curr.job,]
+    curr.imputed.mean_df <- readRDS(paste0(shuffled.data.dir, 'imputed.mean_df_', curr.job, '.rds')) #all.registered.df[all.registered.df$job==curr.job,]
 
-    O <- calculate_between_sample_distance(curr.mean.df, curr.sc.df, curr.imputed.mean.df)
+    O <- calculate_between_sample_distance(curr.mean_df, curr.sc.df, curr.imputed.mean_df)
     curr.D.mean <- O[['D.mean']]
     curr.D.scaled <- O[['D.scaled']]
     curr.D.registered <- O[['D.registered']]
@@ -146,16 +146,16 @@ calculate_between_sample_distance_for_shuffled_data <- function(shuffled.data.di
 }
 
 
-#file.type <- 'mean.df'
+#file.type <- 'mean_df'
 load_shuffled_data <- function(shuffled.data.dir, file.type) {
   # file.type is type of file loading:
   # "comparison": for model.comparison files
-  # "mean.sc": for mean.df.sc files
-  # "mean.df" : for mean.df files
-  # "imputed.mean.df" for them
+  # "mean.sc": for mean_df.sc files
+  # "mean_df" : for mean_df files
+  # "imputed.mean_df" for them
   # "shifts" for all.shifts
 
-  allowed.types <- c('comparison', 'mean.sc', 'mean.df', 'imputed.mean.df', 'shifts')
+  allowed.types <- c('comparison', 'mean.sc', 'mean_df', 'imputed.mean_df', 'shifts')
   if (!(file.type %in% allowed.types)) {
     print(paste0('file.type must be one of : ', paste0(allowed.types, collapse=', ')))
     stop()
@@ -163,9 +163,9 @@ load_shuffled_data <- function(shuffled.data.dir, file.type) {
   # format file.type to searchable pattern - handle "."s
   if (file.type=='mean.sc') {
     file.type <- 'mean\\.df\\.sc'
-  } else if (file.type=='mean.df') {
+  } else if (file.type=='mean_df') {
     file.type <-  '^mean\\.df'
-  } else if (file.type=='imputed.mean.df') {
+  } else if (file.type=='imputed.mean_df') {
     file.type <-  'imputed\\.mean\\.df'
   }
 
@@ -245,7 +245,7 @@ plot_number_of_registered_genes_in_shuffled <- function(real.data.dir, shuffled.
   # quantile.
 
   # get real number of genes registered
-  num.registered.real <- get_num_registered_genes(paste0(real.data.dir, 'imputed.mean.df.rds'))
+  num.registered.real <- get_num_registered_genes(paste0(real.data.dir, 'imputed.mean_df.rds'))
   # get vector of number of genes registered after random shuffling
   imputed.random.files <- list.files(path=shuffled.data.dir, pattern='imputed')
   imputed.random.paths <- paste0(shuffled.data.dir, imputed.random.files)
@@ -387,14 +387,14 @@ plot_registered_GoIs_for_comparible_timepoints <- function(all.stretched.df) {
 
 
 #all.rep.data <- all.data.df
-scale_all_rep_data <- function(mean.df, all.rep.data, scale.func) {
+scale_all_rep_data <- function(mean_df, all.rep.data, scale.func) {
   # apply the same scaling which done to the mean expression data
   # to all the reps.
   # (subtract mean, and divide by sd), using the values for the mean data
   # as this is what was used to find the best shift.
 
   # calculate the summary stats to use for the rescaling
-  gene.expression.stats <- unique(mean.df[,
+  gene.expression.stats <- unique(mean_df[,
                                           .(mean_val=mean(mean.cpm),
                                             sd_val=sd(mean.cpm)),
                                           by=.(locus_name, accession)])
@@ -414,7 +414,7 @@ scale_all_rep_data <- function(mean.df, all.rep.data, scale.func) {
 
   names(out)[names(out)=='scaled.norm.cpm'] <- 'mean.cpm'
 
-  # ggplot(mean.df[mean.df$locus_name=='BRAA01G000040.3C', ], aes(x=timepoint, y=mean.cpm, color=accession)+
+  # ggplot(mean_df[mean_df$locus_name=='BRAA01G000040.3C', ], aes(x=timepoint, y=mean.cpm, color=accession)+
   #          geom_point()
 
 
@@ -595,7 +595,7 @@ load_shuffled_distances <- function(dir.name, D.type, numJobs, numRuns) {
 
 # ro18_rds_file <- '../final_data/rds/ro18_leaf_reannotated.rds'
 # sari14_rds_file <- '../final_data/rds/sari14_chiifu_leaf_Jul2020.rds'
-load_mean.df_sari_ro18 <- function(ro18_rds_file, sari_rds_file, pCor.th) {
+load_mean_df_sari_ro18 <- function(ro18_rds_file, sari_rds_file, pCor.th) {
 
 
   ro18.exp <- readRDS(ro18_rds_file)
@@ -615,34 +615,34 @@ load_mean.df_sari_ro18 <- function(ro18_rds_file, sari_rds_file, pCor.th) {
   sari14.exp[, mean.cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
 
   exp <- rbind(ro18.exp, sari14.exp)
-  mean.df <- unique(exp[, c('CDS.model', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
-  names(mean.df) <-  c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')
+  mean_df <- unique(exp[, c('CDS.model', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
+  names(mean_df) <-  c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')
   names(exp)[names(exp)=='CDS.model'] <- 'locus_name'
   # checking not cutting out key genes - need to know what they're called now
   # FT
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.8543'),]
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.41993'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.8543'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.41993'),]
   # # SOC1
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.15712'),]
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.26487'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.15712'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.26487'),]
 
   # ggplot(tmp, aes(x=timepoint, y=mean.cpm))+
   #   geom_line()
 
-  # filter mean.df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
+  # filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
   # greater than 1 in both accessions
-  ro18.df <- mean.df[mean.df$accession=='Ro18']
+  ro18.df <- mean_df[mean_df$accession=='Ro18']
   ro18.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
   ro18.keep.genes <- unique(ro18.df$locus_name[ro18.df$keep==TRUE])
   #'MSTRG.8543' %in% ro18.keep.genes
 
-  sari14.df <- mean.df[mean.df$accession=='sarisha14']
+  sari14.df <- mean_df[mean_df$accession=='sarisha14']
   sari14.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
   sari14.keep.genes <- unique(sari14.df$locus_name[sari14.df$keep==TRUE])
   #'MSTRG.8543' %in% sari14.keep.genes
 
   keep.genes <- intersect(ro18.keep.genes, sari14.keep.genes)
-  mean.df <- mean.df[mean.df$locus_name %in% keep.genes,]
+  mean_df <- mean_df[mean_df$locus_name %in% keep.genes,]
 
 
   # filter to remove genes with low correlation between individual timepoints
@@ -650,31 +650,31 @@ load_mean.df_sari_ro18 <- function(ro18_rds_file, sari_rds_file, pCor.th) {
   keep.genes <- filter.low.variability(exp, pCor.th)
   #'MSTRG.8543' %in% keep.genes
 
-  mean.df <- mean.df[mean.df$locus_name %in% keep.genes, ]
-  #'MSTRG.8543' %in% mean.df$locus_name
+  mean_df <- mean_df[mean_df$locus_name %in% keep.genes, ]
+  #'MSTRG.8543' %in% mean_df$locus_name
 
   # # checking not cutting out key genes - need to know what they're called now
   # # FT
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.8543'),]
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.41993'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.8543'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.41993'),]
   # # SOC1
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.15712'),]
-  # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.26487'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.15712'),]
+  # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.26487'),]
   #
 
-  print(paste0(length(unique(mean.df$locus_name)), ' genes considered in the comparison'))
+  print(paste0(length(unique(mean_df$locus_name)), ' genes considered in the comparison'))
   rm(ro18.df, keep.genes)
 
-  exp <- exp[exp$locus_name %in% unique(mean.df$locus_name)]
+  exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
   exp <- subset(exp, select=c('locus_name', 'accession', 'tissue', 'timepoint',
                               'norm.cpm', 'group'))
   names(exp)[names(exp)=='norm.cpm'] <- 'mean.cpm'
-  return(list(mean.df, exp))
+  return(list(mean_df, exp))
 }
 
 # ro18_rds_file <- '../final_data/rds/ro18_leaf_reannotated.rds'
 # sari14_rds_file <- '../final_data/rds/sari14_chiifu_leaf_Jul2020.rds'
-#' load_mean.df_sari_ro18 <- function(ro18_rds_file, sari_rds_file) {
+#' load_mean_df_sari_ro18 <- function(ro18_rds_file, sari_rds_file) {
 #'
 #'
 #'   ro18.exp <- readRDS(ro18_rds_file)
@@ -694,34 +694,34 @@ load_mean.df_sari_ro18 <- function(ro18_rds_file, sari_rds_file, pCor.th) {
 #'   sari14.exp[, mean.cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
 #'
 #'   exp <- rbind(ro18.exp, sari14.exp)
-#'   mean.df <- unique(exp[, c('CDS.model', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
-#'   names(mean.df) <-  c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')
+#'   mean_df <- unique(exp[, c('CDS.model', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
+#'   names(mean_df) <-  c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')
 #'   names(exp)[names(exp)=='CDS.model'] <- 'locus_name'
 #'   # checking not cutting out key genes - need to know what they're called now
 #'   # FT
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.8543'),]
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.41993'),]
+#'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.8543'),]
+#'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.41993'),]
 #'   # # SOC1
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.15712'),]
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.26487'),]
+#'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.15712'),]
+#'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.26487'),]
 #'
 #'   # ggplot(tmp, aes(x=timepoint, y=mean.cpm))+
 #'   #   geom_line()
 #'
-#'   # filter mean.df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
+#'   # filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
 #'   # greater than 1 in both accessions
-#'   ro18.df <- mean.df[mean.df$accession=='Ro18']
+#'   ro18.df <- mean_df[mean_df$accession=='Ro18']
 #'   ro18.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
 #'   ro18.keep.genes <- unique(ro18.df$locus_name[ro18.df$keep==TRUE])
 #'   #'MSTRG.8543' %in% ro18.keep.genes
 #'
-#'   sari14.df <- mean.df[mean.df$accession=='sarisha14']
+#'   sari14.df <- mean_df[mean_df$accession=='sarisha14']
 #'   sari14.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
 #'   sari14.keep.genes <- unique(sari14.df$locus_name[sari14.df$keep==TRUE])
 #'   #'MSTRG.8543' %in% sari14.keep.genes
 #'
 #'   keep.genes <- intersect(ro18.keep.genes, sari14.keep.genes)
-#'   mean.df <- mean.df[mean.df$locus_name %in% keep.genes,]
+#'   mean_df <- mean_df[mean_df$locus_name %in% keep.genes,]
 #'
 #'
 #'   # filter to remove genes with low correlation between individual timepoints
@@ -729,26 +729,26 @@ load_mean.df_sari_ro18 <- function(ro18_rds_file, sari_rds_file, pCor.th) {
 #'   keep.genes <- filter.low.variability(exp, 0.7)
 #'   #'MSTRG.8543' %in% keep.genes
 #'
-#'   mean.df <- mean.df[mean.df$locus_name %in% keep.genes, ]
-#'   #'MSTRG.8543' %in% mean.df$locus_name
+#'   mean_df <- mean_df[mean_df$locus_name %in% keep.genes, ]
+#'   #'MSTRG.8543' %in% mean_df$locus_name
 #'
 #'   # # checking not cutting out key genes - need to know what they're called now
 #'   # # FT
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.8543'),]
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.41993'),]
+#'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.8543'),]
+#'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.41993'),]
 #'   # # SOC1
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.15712'),]
-#'   # tmp <- mean.df[mean.df$locus_name %in% c('MSTRG.26487'),]
+#'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.15712'),]
+#'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.26487'),]
 #'   #
 #'
-#'   print(paste0(length(unique(mean.df$locus_name)), ' genes considered in the comparison'))
+#'   print(paste0(length(unique(mean_df$locus_name)), ' genes considered in the comparison'))
 #'   rm(ro18.df, keep.genes)
 #'
-#'   exp <- exp[exp$locus_name %in% unique(mean.df$locus_name)]
+#'   exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
 #'   exp <- subset(exp, select=c('locus_name', 'accession', 'tissue', 'timepoint',
 #'                               'norm.cpm', 'group'))
 #'   names(exp)[names(exp)=='norm.cpm'] <- 'mean.cpm'
-#'   return(list(mean.df, exp))
+#'   return(list(mean_df, exp))
 #' }
 
 #c.th <- 0.7
@@ -770,7 +770,7 @@ filter.low.variability <- function(exp, c.th) {
   return(unique(keep.df$locus_name))
 }
 
-load_mean.df <- function() {
+load_mean_df <- function() {
 
   #setwd('/Volumes/Research-Projects/bravo/alex/BRAVO_rna-seq/scripts/')
   rds_file <- 'ro18_chiifu_apex' # don't include the .rds # the name of the brassica data to load
@@ -807,24 +807,24 @@ load_mean.df <- function() {
 
   # get mean of each timepoint
   exp[, mean.cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
-  mean.df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
+  mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
 
 
 
-  # filter mean.df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
+  # filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
   # greater than 1
-  ro18.df <- mean.df[mean.df$accession=='Ro18']
+  ro18.df <- mean_df[mean_df$accession=='Ro18']
   ro18.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
   keep.genes <- unique(ro18.df$locus_name[ro18.df$keep==TRUE])
-  mean.df <- mean.df[mean.df$locus_name %in% keep.genes,]
-  print(paste0(length(unique(mean.df$locus_name)), ' genes considered in the comparison'))
+  mean_df <- mean_df[mean_df$locus_name %in% keep.genes,]
+  print(paste0(length(unique(mean_df$locus_name)), ' genes considered in the comparison'))
   rm(ro18.df, keep.genes)
 
-  exp <- exp[exp$locus_name %in% unique(mean.df$locus_name)]
+  exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
   exp <- subset(exp, select=c('locus_name', 'accession', 'tissue', 'timepoint',
                               'norm.cpm', 'group'))
   names(exp)[names(exp)=='norm.cpm'] <- 'mean.cpm'
-  return(list(mean.df, exp))
+  return(list(mean_df, exp))
 }
 
 # calculate the comparison stats
@@ -837,23 +837,23 @@ calc.BIC <- function(logL, num.params, num.obs) {
 }
 
 
-change.accession.names <- function(mean.df, all.data.df, transformed.timecourse) {
+change.accession.names <- function(mean_df, all.data.df, transformed.timecourse) {
   # set the "transformed.timecourse" accession to "Col0", and the other one to "Ro18"
 
   # error checking
-  if (length(unique(mean.df$accession)) != 2) {
+  if (length(unique(mean_df$accession)) != 2) {
     stop('Error in change.accession.names() : comparison must be made between two accessions!')
   }
 
   # store these, to rename at the end
   original.transformed.timecourse.name <- transformed.timecourse
-  original.other.accession.name <- as.character(unique(mean.df$accession[mean.df$accession!=transformed.timecourse]))
+  original.other.accession.name <- as.character(unique(mean_df$accession[mean_df$accession!=transformed.timecourse]))
 
-  # change mean.df
-  new.mean.df.accession <- mean.df$accession
-  new.mean.df.accession[mean.df$accession==transformed.timecourse] <- 'Col0'
-  new.mean.df.accession[mean.df$accession!=transformed.timecourse] <- 'Ro18'
-  mean.df$accession <- new.mean.df.accession
+  # change mean_df
+  new.mean_df.accession <- mean_df$accession
+  new.mean_df.accession[mean_df$accession==transformed.timecourse] <- 'Col0'
+  new.mean_df.accession[mean_df$accession!=transformed.timecourse] <- 'Ro18'
+  mean_df$accession <- new.mean_df.accession
 
   # change all.data.df
   new.all.data.df.accession <- all.data.df$accession
@@ -861,7 +861,7 @@ change.accession.names <- function(mean.df, all.data.df, transformed.timecourse)
   new.all.data.df.accession[all.data.df$accession!=transformed.timecourse] <- 'Ro18'
   all.data.df$accession <- new.all.data.df.accession
 
-  return(list('mean.df'=mean.df,
+  return(list('mean_df'=mean_df,
               'all.data.df'=all.data.df,
               'original.transformed.accession.name'=original.transformed.timecourse.name,
               'original.other.accession.name'=original.other.accession.name))
@@ -872,14 +872,14 @@ change.accession.names <- function(mean.df, all.data.df, transformed.timecourse)
 # initial.rescale=FALSE
 # do_rescale=FALSE
 # min.num.overlapping.points = 4
-# test.genes <- unique(mean.df$locus_name)[1:101]
+# test.genes <- unique(mean_df$locus_name)[1:101]
 # #test.genes <- 'MSTRG.10244'
-# mean.df <- mean.df[mean.df$locus_name %in% test.genes,]
+# mean_df <- mean_df[mean_df$locus_name %in% test.genes,]
 # all.data.df <- all.data.df[all.data.df$locus_name %in% test.genes,]
 # shift.extreme=4
 # transformed.timecourse <- 'Ro18'
 
-prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches,
+prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches,
                                                initial.rescale, do_rescale,
                                                min.num.overlapping.points, shift.extreme,
                                                transformed.timecourse) {
@@ -888,18 +888,18 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches,
   # hardcoded all the functions to use 'Col0', and 'Ro18'. Rather than fix all instances
   # of that, just temporarily rename them here, and turn back at the end.
   # will apply stretch, and shift to the "transformed.timecourse" accession (which should be the quicker one...)
-  L <- change.accession.names(mean.df, all.data.df, transformed.timecourse)
-  mean.df <- L[['mean.df']]
+  L <- change.accession.names(mean_df, all.data.df, transformed.timecourse)
+  mean_df <- L[['mean_df']]
   all.data.df <- L[['all.data.df']]
   original.transformed.accession <- L[['original.transformed.accession.name']]
   original.other.accession <- L[['original.other.accession.name']]
 
 
 
-  mean.df.sc <- copy(mean.df)
+  mean_df.sc <- copy(mean_df)
   # specify what kind of scaling
-  mean.df.sc[, sc.mean.cpm:=scale(mean.cpm, scale=TRUE, center=TRUE), by=.(locus_name, accession)]
-  #mean.df.sc[, sc.mean.cpm:=my.scale(mean.cpm), by=.(locus_name, accession)]
+  mean_df.sc[, sc.mean.cpm:=scale(mean.cpm, scale=TRUE, center=TRUE), by=.(locus_name, accession)]
+  #mean_df.sc[, sc.mean.cpm:=my.scale(mean.cpm), by=.(locus_name, accession)]
 
   ## APPLY INDIVIDUAL SHIFTING ######
   # optimise transformations applied to arabidopsis gene profile to map onto the brassicas - shift in x direction, using mean for mapping,
@@ -908,21 +908,21 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches,
   # specify which data to use for registering.
   # whether prior rescaled mean, or mean data should be used for registration
   if (initial.rescale==TRUE) {
-    # apply rescale to mean.df prior to registration
-    to.shift.df <- copy(mean.df.sc)
+    # apply rescale to mean_df prior to registration
+    to.shift.df <- copy(mean_df.sc)
     to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
     to.shift.df$sc.mean.cpm <- NULL
 
     # apply THE SAME rescale to all.data.df prior to registration
-    #all.data.df <- scale_all_rep_data(mean.df, all.data.df, 'my.scale')
-    all.data.df <- scale_all_rep_data(mean.df, all.data.df, 'scale')
+    #all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'my.scale')
+    all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'scale')
 
 
     # sanity plot that rescale all data worked
     # ggplot(all.data.df[all.data.df$locus_name=='BRAA01G000040.3C'], aes(x=timepoint, y=mean.cpm, color=accession))+
     #   geom_point()
   } else {
-    to.shift.df <- copy(mean.df)
+    to.shift.df <- copy(mean_df)
   }
   # ggplot(to.shift.df[to.shift.df$locus_name=='BRAA03G004600.3C'], aes(x=timepoint, y=mean.cpm, color=accession))+
   #   geom_point()
@@ -953,8 +953,8 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches,
   # get the best-shifted and stretched mean gene expression, only to genes which registration is better than
   # seperate models by BIC. Don't stretch out, or shift genes for which seperate is better.
   # registration is applied to col0.
-  shifted.mean.df <- apply_shift_to_registered_genes_only(to.shift.df, best_shifts, model.comparison.dt)
-  # shifted.mean.df <- apply_best_shift(to.shift.df, best_shifts) # can be NA if exactly tied for what the best shift was
+  shifted.mean_df <- apply_shift_to_registered_genes_only(to.shift.df, best_shifts, model.comparison.dt)
+  # shifted.mean_df <- apply_best_shift(to.shift.df, best_shifts) # can be NA if exactly tied for what the best shift was
 
   # GOI <- 'MSTRG.11237'
   # ggplot(all.data.df[all.data.df$locus_name==GOI],
@@ -962,7 +962,7 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches,
   #   geom_point()
   #
   # #sanity plot that done right
-  # ggplot(shifted.mean.df[shifted.mean.df$locus_name==GOI],
+  # ggplot(shifted.mean_df[shifted.mean_df$locus_name==GOI],
   #        aes(x=shifted.time, y=mean.cpm, color=accession))+
   #   geom_point()+
   #   geom_line()
@@ -972,28 +972,28 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches,
   # so can compare using heatmap.
   # arabidopsis curves are the ones that been shifted around. Linear impute values for these
   # curves so that brassica samples can be compared to an arabidopsis point.
-  imputed.mean.df <- impute_arabidopsis_values(shifted.mean.df)
+  imputed.mean_df <- impute_arabidopsis_values(shifted.mean_df)
 
   #sanity plot that done right
-  # ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA01G001540.3C'],
+  # ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G001540.3C'],
   #        aes(x=shifted.time, y=mean.cpm, color=accession))+
   #   geom_point()+
   #   geom_line()
-  # ggplot(imputed.mean.df[imputed.mean.df$locus_name=='BRAA01G001540.3C'],
+  # ggplot(imputed.mean_df[imputed.mean_df$locus_name=='BRAA01G001540.3C'],
   #        aes(x=shifted.time, y=mean.cpm, color=accession))+
   #   geom_point()+
   #   geom_line()
 
 
   # fix the accession names to the ones actually passed in:
-  mean.df <- fix.accessions(mean.df, original.transformed.accession, original.other.accession)
-  mean.df.sc <- fix.accessions(mean.df.sc, original.transformed.accession, original.other.accession)
-  imputed.mean.df <- fix.accessions(imputed.mean.df, original.transformed.accession, original.other.accession)
+  mean_df <- fix.accessions(mean_df, original.transformed.accession, original.other.accession)
+  mean_df.sc <- fix.accessions(mean_df.sc, original.transformed.accession, original.other.accession)
+  imputed.mean_df <- fix.accessions(imputed.mean_df, original.transformed.accession, original.other.accession)
 
 
-  OUT <- list('mean.df'=mean.df,
-              'mean.df.sc'=mean.df.sc,
-              'imputed.mean.df'=imputed.mean.df,
+  OUT <- list('mean_df'=mean_df,
+              'mean_df.sc'=mean_df.sc,
+              'imputed.mean_df'=imputed.mean_df,
               'all.shifts'=all_shifts,
               'model.comparison'=model.comparison.dt)
 }
@@ -1385,37 +1385,37 @@ make_heatmap <- function(D, ylabel, y.axis.fontsize=6) {
 }
 
 
-# mean.df <- real.mean.df
-# mean.df.sc <- real.sc.df
-# imputed.mean.df <- imputed.mean.df
-calculate_between_sample_distance <- function(mean.df, mean.df.sc, imputed.mean.df) {
+# mean_df <- real.mean_df
+# mean_df.sc <- real.sc.df
+# imputed.mean_df <- imputed.mean_df
+calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_df) {
 
   ### convert all to wide format ready for distance calculation
 
-  # mean.df
+  # mean_df
   sample.id.cols <- c('accession','timepoint')
   gene.col <- c('locus_name')
   expression.col <- 'mean.cpm'
-  mean.dt.w <- reformat_for_distance_calculation(mean.df, sample.id.cols, gene.col, expression.col)
+  mean.dt.w <- reformat_for_distance_calculation(mean_df, sample.id.cols, gene.col, expression.col)
 
-  # normalised mean.df
+  # normalised mean_df
   sample.id.cols <- c('accession','timepoint')
   gene.col <- c('locus_name')
   expression.col <- c('sc.mean.cpm')
-  mean.dt.sc.w <- reformat_for_distance_calculation(mean.df.sc, sample.id.cols, gene.col, expression.col)
+  mean.dt.sc.w <- reformat_for_distance_calculation(mean_df.sc, sample.id.cols, gene.col, expression.col)
 
-  # imputed.mean.df - all genes
+  # imputed.mean_df - all genes
   sample.id.cols <- c('accession','shifted.time')
   gene.col <- c('locus_name')
   expression.col <- c('mean.cpm')
-  imputed.mean.dt.w <- reformat_for_distance_calculation(imputed.mean.df, sample.id.cols, gene.col, expression.col)
+  imputed.mean.dt.w <- reformat_for_distance_calculation(imputed.mean_df, sample.id.cols, gene.col, expression.col)
 
   # same, but for subsets of REGISTERED / NOT REGISTERED genes.
   # distance between samples, only using genes which are found best model is not registered
-  not.registered.genes <- unique(imputed.mean.df$locus_name[imputed.mean.df$is.registered==FALSE])
+  not.registered.genes <- unique(imputed.mean_df$locus_name[imputed.mean_df$is.registered==FALSE])
   mean.dt.sc.w.not.registered <- mean.dt.sc.w[mean.dt.sc.w$locus_name %in% not.registered.genes,]
   # distance between samples, only using genes which are found best when ARE registered
-  registered.genes <- unique(imputed.mean.df$locus_name[imputed.mean.df$is.registered==TRUE])
+  registered.genes <- unique(imputed.mean_df$locus_name[imputed.mean_df$is.registered==TRUE])
   mean.dt.sc.w.registered <- mean.dt.sc.w[mean.dt.sc.w$locus_name %in% registered.genes,]
   # after registration, but only for registered genes
   imputed.mean.dt.w.registered <- imputed.mean.dt.w[imputed.mean.dt.w$locus_name %in% registered.genes,]
@@ -1456,14 +1456,14 @@ calculate_between_sample_distance <- function(mean.df, mean.df.sc, imputed.mean.
 }
 
 
-# unrandom.mean.df <- mean.df
+# unrandom.mean_df <- mean_df
 # unrandom.all.df <- all.data.df
-shuffle_ro18_timepoints <- function(unrandom.mean.df, unrandom.all.df) {
+shuffle_ro18_timepoints <- function(unrandom.mean_df, unrandom.all.df) {
   # shuffle the timepoints for each ro18 gene
 
-  # split the mean.df
-  col.df <- unrandom.mean.df[unrandom.mean.df$accession=='Col0',]
-  ro18.df <- unrandom.mean.df[unrandom.mean.df$accession=='Ro18',]
+  # split the mean_df
+  col.df <- unrandom.mean_df[unrandom.mean_df$accession=='Col0',]
+  ro18.df <- unrandom.mean_df[unrandom.mean_df$accession=='Ro18',]
   shuffled.ro18.df <-copy(ro18.df)
   # split the all.df
   col.all.df <- unrandom.all.df[unrandom.all.df$accession=='Col0',]
@@ -1487,28 +1487,28 @@ shuffle_ro18_timepoints <- function(unrandom.mean.df, unrandom.all.df) {
     shuffled.ro18.all.df$timepoint[shuffled.ro18.all.df$locus_name==curr.locus] <- all.replacement.times
   }
 
-  mean.df <- rbind(col.df, shuffled.ro18.df)
+  mean_df <- rbind(col.df, shuffled.ro18.df)
   all.df <- rbind(col.all.df, shuffled.ro18.all.df)
-  return(list(mean.df, all.df))
+  return(list(mean_df, all.df))
 }
 
-shuffle_ro18_gene_names <- function(mean.df, out.all.df) {
+shuffle_ro18_gene_names <- function(mean_df, out.all.df) {
   # shuffle the identities of the genes in the brassica
   # can't just do shuffle, becuase need to preserve which timepoints are from the same gene
-  out.mean.df <- copy(mean.df)
+  out.mean_df <- copy(mean_df)
   out.all.df <- copy(out.all.df)
 
   # make the gene lookup table for the same shuffled genes for both
-  brassica.genes <- unique(out.mean.df$locus_name[out.mean.df$accession=='Ro18'])
+  brassica.genes <- unique(out.mean_df$locus_name[out.mean_df$accession=='Ro18'])
   shuffled.genes <- sample(brassica.genes)
   shuffle.gene.lookup <- data.table(data.frame('gene.id'=brassica.genes, 'shuffled.id'=shuffled.genes))
 
-  # change the gene names for the mean.df
-  out.mean.df <- swap_gene_names(out.mean.df, shuffle.gene.lookup)
+  # change the gene names for the mean_df
+  out.mean_df <- swap_gene_names(out.mean_df, shuffle.gene.lookup)
   # change the gene names for the all.df
   out.all.df <- swap_gene_names(out.all.df, shuffle.gene.lookup)
 
-  return(list(out.mean.df, out.all.df))
+  return(list(out.mean_df, out.all.df))
 }
 
 swap_gene_names <- function(df, shuffle.gene.lookup) {
@@ -1900,7 +1900,7 @@ get_expression_oI <- function(rds_file, curr_GoIs, sumBrassicas) {
 # sample.id.cols <- c('accession','delta.time')
 # gene.col <- c('locus_name')
 # expression.col <- 'mean.cpm'
-# dt <- mean.df
+# dt <- mean_df
 reformat_for_distance_calculation <- function(dt, sample.id.cols, gene.col, expression.col) {
 
   # concatenate sample.id columns to generate sample ids
@@ -2070,7 +2070,7 @@ calculate_sample_distance <- function(exp) {
 
 
 
-impute_arabidopsis_values <- function(shifted.mean.df) {
+impute_arabidopsis_values <- function(shifted.mean_df) {
   # Arabidopsis gene expression profiles are shifted all over. Need to impute times at set of common timepoints
   # in order to allow sample distance comparison to Ro18.
   #
@@ -2085,27 +2085,27 @@ impute_arabidopsis_values <- function(shifted.mean.df) {
 
 
   # sanity plotting - a registered one
-  # ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA01G001090.3C', ], aes(x=shifted.time, y=mean.cpm, color=accession))+
+  # ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G001090.3C', ], aes(x=shifted.time, y=mean.cpm, color=accession))+
   #   geom_point()
   # # an unregistered one
-  # ggplot(shifted.mean.df[shifted.mean.df$locus_name=='BRAA01G003140.3C', ], aes(x=shifted.time, y=mean.cpm, color=accession))+
+  # ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G003140.3C', ], aes(x=shifted.time, y=mean.cpm, color=accession))+
   #   geom_point()
 
   # The imputed col0 times going to extimate gene expression for
-  imputed.timepoints <- round(seq(min(shifted.mean.df$shifted.time), max(shifted.mean.df$shifted.time)))
+  imputed.timepoints <- round(seq(min(shifted.mean_df$shifted.time), max(shifted.mean_df$shifted.time)))
 
   out.list <- list()
-  out.list <- c(out.list, list(shifted.mean.df[shifted.mean.df$accession=='Ro18']))
+  out.list <- c(out.list, list(shifted.mean_df[shifted.mean_df$accession=='Ro18']))
 
-  curr.gene <- 'BRAA01G001090.3C' #unique(shifted.mean.df$locus_name)[17]
+  curr.gene <- 'BRAA01G001090.3C' #unique(shifted.mean_df$locus_name)[17]
   count <- 0
-  for (curr.gene in unique(shifted.mean.df$locus_name)) {
+  for (curr.gene in unique(shifted.mean_df$locus_name)) {
     if (count %% 100 == 0) {
-      print(paste0(count, ' / ', length(unique(shifted.mean.df$locus_name))))
+      print(paste0(count, ' / ', length(unique(shifted.mean_df$locus_name))))
     }
 
     # get the current gene expression data
-    curr.df <- shifted.mean.df[shifted.mean.df$locus_name==curr.gene, ]
+    curr.df <- shifted.mean_df[shifted.mean_df$locus_name==curr.gene, ]
 
     # skip over this one, if not assigned a best shift value, because brassica gene not expressed
     # if (all(is.na(curr.df$mean.cpm))) {
@@ -2137,7 +2137,7 @@ impute_arabidopsis_values <- function(shifted.mean.df) {
   return(out.df)
 }
 
-# test <- mean.df
+# test <- mean_df
 # stretch_factor
 # min.num.overlapping.points
 # shift.extreme
@@ -2167,43 +2167,43 @@ get_extreme_shifts_for_all <- function(test, stretch_factor, min.num.overlapping
 
 
 
-# for all genes, in mean.df, get the scores, and the shifts which result in them after
+# for all genes, in mean_df, get the scores, and the shifts which result in them after
 # stretching arabidopsis by "stretch_factor, and applying shifts forward and
 # backward, with the extremes defined by allowing 5 overlapping points for comparison.
-# mean.df <- to.shift.df
+# mean_df <- to.shift.df
 # stretch_factor <- 2
 # do_rescale=F
-calculate_all_best_shifts <- function(mean.df, stretch_factor, do_rescale, min.num.overlapping.points, shift.extreme) {
+calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min.num.overlapping.points, shift.extreme) {
   symbols <- c()
   num_points <- c()
   #curr_sym <- 'TT16'
-  all.scores.list <- rep(list(0), length(unique(mean.df$locus_name)))
-  length(unique(mean.df$locus_name))
+  all.scores.list <- rep(list(0), length(unique(mean_df$locus_name)))
+  length(unique(mean_df$locus_name))
 
 
   # get the extreme shifts which can be applied to the genes
-  M <- get_extreme_shifts_for_all(mean.df, stretch_factor, min.num.overlapping.points, shift.extreme)
+  M <- get_extreme_shifts_for_all(mean_df, stretch_factor, min.num.overlapping.points, shift.extreme)
   min.shift <- M[[1]]
   max.shift <- M[[2]]
 
   count <- 0
-  curr_sym <- unique(mean.df$locus_name)[2]
+  curr_sym <- unique(mean_df$locus_name)[2]
 
   i = 1
-  for (i in 1:length(unique(mean.df$locus_name))) {
-  #for (curr_sym in unique(mean.df$locus_name)) {
-    curr_sym <- unique(mean.df$locus_name)[i]
+  for (i in 1:length(unique(mean_df$locus_name))) {
+  #for (curr_sym in unique(mean_df$locus_name)) {
+    curr_sym <- unique(mean_df$locus_name)[i]
     if (count %% 100 == 0) {
-      print(paste0(count, ' / ', length(unique(mean.df$locus_name))))
+      print(paste0(count, ' / ', length(unique(mean_df$locus_name))))
     }
 
     # out is mean SSD between arabidopsis, and interpolated brassica (interpolated between 2 nearest points)
-    # ggplot(mean.df[mean.df$locus_name==curr_sym,], aes(x=timepoint, y=mean.cpm, color=accession))+
+    # ggplot(mean_df[mean_df$locus_name==curr_sym,], aes(x=timepoint, y=mean.cpm, color=accession))+
     #   geom_point()
 
     ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
     ### if timepoints don't line up, brassica value is linearly imputed
-    out <- get_best_shift_new(curr_sym, mean.df, stretch_factor, do_rescale, min.shift, max.shift, testing=FALSE)
+    out <- get_best_shift_new(curr_sym, mean_df, stretch_factor, do_rescale, min.shift, max.shift, testing=FALSE)
 
     best_shift <- out$shift[out$score==min(out$score)]
     if (length(best_shift) > 1) {
@@ -2229,7 +2229,7 @@ calculate_all_best_shifts <- function(mean.df, stretch_factor, do_rescale, min.n
   return(all.scores.df)
 }
 
-#test <- mean.df
+#test <- mean_df
 get_best_shift <- function(curr_sym, test) {
   # here statistic used to assess best is 1 / mean(squared difference)
 
@@ -2295,7 +2295,7 @@ get_best_shift <- function(curr_sym, test) {
 
 # wroking on new implementation of the funciton
 # curr_sym <- 'BRAA02G015410.3C'
-#test <- mean.df
+#test <- mean_df
 # stretch_factor <- 1
 # do_rescale <- TRUE
 #testing=T
@@ -2478,18 +2478,18 @@ calc_extreme_shifts <- function(test, min.num.overlapping.points, shift.extreme)
 
 
 
-apply_stretch <- function(mean.df, best_shifts) {
+apply_stretch <- function(mean_df, best_shifts) {
   # gets the applied stretch from the best_shifts df
-  test <- copy(mean.df)
+  test <- copy(mean_df)
 
   # get the stretch factor applied in the best_shifts
   #stopifnot(length(unique(best_shifts$stretch))==1)
   #stretch_factor <- unique(best_shifts$stretch)
 
-  #stopifnot(length(unique(mean.df$locus_name))==length(best_shifts$gene)) # best_shifts should have 1 row per gene
-  # if (length(unique(mean.df$locus_name)) != length(best_shifts$gene)) {
+  #stopifnot(length(unique(mean_df$locus_name))==length(best_shifts$gene)) # best_shifts should have 1 row per gene
+  # if (length(unique(mean_df$locus_name)) != length(best_shifts$gene)) {
   #   print('ERROR!:')
-  #   print(length(unique(mean.df$locus_name)))
+  #   print(length(unique(mean_df$locus_name)))
   #   print(length(best_shifts$gene))
   #   stop()
   # }
@@ -2517,15 +2517,15 @@ apply_stretch <- function(mean.df, best_shifts) {
 }
 
 
-# mean.df <- all.data.df
+# mean_df <- all.data.df
 # best_shifts
-apply_best_shift <- function(mean.df, best_shifts) {
+apply_best_shift <- function(mean_df, best_shifts) {
   # take unregistered expression over time, and the best shifts, and
   # return the registered expression over time for each gene
 
-  test <- copy(mean.df)
+  test <- copy(mean_df)
 
-  test <- apply_stretch(mean.df, best_shifts)
+  test <- apply_stretch(mean_df, best_shifts)
 
   # normalise the expression data (if was normalised when calculating the expression data, is recorder in the
   # .compared.mean, and .compared.sd columns. If no normalisation was carried out, then these should have values of 0,

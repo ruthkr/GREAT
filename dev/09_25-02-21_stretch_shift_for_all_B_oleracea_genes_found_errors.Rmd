@@ -75,7 +75,7 @@ b_oleracea_mean_df <- GREAT::load_mean_df(
 
 ```{r all}
 # Change the accession since all the scripts are still hard-coded for "Ro18"
-mean.df <- b_oleracea_mean_df[[1]] %>% 
+mean_df <- b_oleracea_mean_df[[1]] %>% 
   dplyr::mutate(accession = ifelse(accession == "DH", "Ro18", "Col0"))
 all.data.df <- b_oleracea_mean_df[[2]] %>% 
   dplyr::mutate(accession = ifelse(accession == "DH", "Ro18", "Col0"))
@@ -125,7 +125,7 @@ if (!(dir.exists(real.expression.dir))) {
 
 ```{r error=TRUE}
 shifted_stretched_all <- prepare_scaled_and_registered_data(
-  mean.df, 
+  mean_df, 
   all.data.df,
   stretch, 
   initial.rescale = TRUE, 
@@ -139,13 +139,13 @@ shifted_stretched_all <- prepare_scaled_and_registered_data(
 #### Checking for accession BO00578S060
 
 ```{r}
-mean.df.sc <- data.table::copy(mean.df)
-mean.df.sc[, sc.mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
-to.shift.df <- data.table::copy(mean.df.sc)
+mean_df.sc <- data.table::copy(mean_df)
+mean_df.sc[, sc.mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
+to.shift.df <- data.table::copy(mean_df.sc)
 to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
 to.shift.df$sc.mean.cpm <- NULL
 
-df_BO00578S060 <- mean.df[mean.df$locus_name == "BO00578S060", ] %>% 
+df_BO00578S060 <- mean_df[mean_df$locus_name == "BO00578S060", ] %>% 
   dplyr::mutate(accession = ifelse(accession == "Ro18", "DH", "Col0"))
 
 ggplot2::ggplot(df_BO00578S060) +
@@ -189,7 +189,7 @@ exp <- get_expression_of_interest(file_path_brassica = b_oleracea_path,
   sum_brassicas = F)
 
 exp[, mean.cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
-mean.df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
+mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
 ```
 
 ```{r}
@@ -198,25 +198,25 @@ list_for_testing <- c("BO00578S060", "BO00285S220", "BO00285S360", "BO00285S220"
 
 ```{r}
 # Checking the Arabidopsis values that has expression == 0
-mean.df %>% 
+mean_df %>% 
   dplyr::filter(locus_name == "BO00578S060")
 ```
 
 ```{r}
-mean.df <- mean.df %>% 
+mean_df <- mean_df %>% 
   dplyr::filter(locus_name %in% list_for_testing)
 ```
 
 
 ```{r}
 # discard.genes <- unique(bra_df$locus_name[bra_df$keep==FALSE])
-bra_df <- mean.df[mean.df$accession != "Col0"]
+bra_df <- mean_df[mean_df$accession != "Col0"]
 bra_df[, keep := (max(mean.cpm) > 5 | mean(mean.cpm > 1) > 0.5), by = .(locus_name)]
 keep_bra_genes <- unique(bra_df$locus_name[bra_df$keep == TRUE])
 discard_bra_genes <- unique(bra_df$locus_name[bra_df$keep == FALSE])
 
-# Filter mean.df to remove all arabidopsis genes with all zeros values
-ara_df <- mean.df[mean.df$locus_name == keep_bra_genes & mean.df$accession == "Col0"]
+# Filter mean_df to remove all arabidopsis genes with all zeros values
+ara_df <- mean_df[mean_df$locus_name == keep_bra_genes & mean_df$accession == "Col0"]
 ara_df[, keep_final := (mean(mean.cpm) != 0 & sd(mean.cpm) != 0), by = .(locus_name)]
 keep_ara_genes <- unique(ara_df$locus_name[ara_df$keep_final == TRUE])
 discard_ara_genes <- unique(ara_df$locus_name[ara_df$keep_final == TRUE])

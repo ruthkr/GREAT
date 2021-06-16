@@ -870,7 +870,7 @@ change.accession.names <- function(mean.df, all.data.df, transformed.timecourse)
 
 # stretches=c(1, 1.5, 2.0)
 # initial.rescale=FALSE
-# do.rescale=FALSE
+# do_rescale=FALSE
 # min.num.overlapping.points = 4
 # test.genes <- unique(mean.df$locus_name)[1:101]
 # #test.genes <- 'MSTRG.10244'
@@ -880,7 +880,7 @@ change.accession.names <- function(mean.df, all.data.df, transformed.timecourse)
 # transformed.timecourse <- 'Ro18'
 
 prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches,
-                                               initial.rescale, do.rescale,
+                                               initial.rescale, do_rescale,
                                                min.num.overlapping.points, shift.extreme,
                                                transformed.timecourse) {
   ## APPLY NORMALISATION OF EXPRESSION FOR EACH GENE ACROSS ALL TIMEPOINTS ##
@@ -933,7 +933,7 @@ prepare_scaled_and_registered_data <- function(mean.df, all.data.df, stretches,
   # calculate the best registration. Returns all tried registrations, best stretch and shift combo,
   # and AIC/BIC stats for comparison of best registration model to seperate models for expression of
   # each gene in Ro18 and Col0.
-  L <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches, do.rescale, min.num.overlapping.points, shift.extreme)
+  L <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches, do_rescale, min.num.overlapping.points, shift.extreme)
   all_shifts <- L[['all_shifts']]
   best_shifts <- L[['best_shifts']]
   model.comparison.dt <- L[['model.comparison.dt']]
@@ -1040,10 +1040,10 @@ get_best_result <- function(df) {
 # to.shift.df
 # all.data.df
 # stretches
-# do.rescale
+# do_rescale
 # min.num.overlapping.points
 # shift.extreme
-get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do.rescale, min.num.overlapping.points, shift.extreme) {
+get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_rescale, min.num.overlapping.points, shift.extreme) {
   # for each stretch in stretches, calculates best shift, by comparing SUM of squares difference.
   # for the best shift in each stretch, compares to seperate models to calculate AIC/BIC under registration,
   # / no registration.
@@ -1068,12 +1068,12 @@ get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do.r
     stretch <- stretches[i]
     print(paste0('testing models for stretch factor = ', stretch))
     # calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points
-    # if do.rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
+    # if do_rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
 
     # ggplot(to.shift.df[to.shift.df$locus_name=='MSTRG.12467',], aes(x=timepoint, y=mean.cpm, color=accession))+
     #   geom_point()
 
-    all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do.rescale, min.num.overlapping.points, shift.extreme)
+    all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do_rescale, min.num.overlapping.points, shift.extreme)
 
     all_shifts <- unique(all_shifts) # ensure no dulicated rows
 
@@ -2172,8 +2172,8 @@ get_extreme_shifts_for_all <- function(test, stretch_factor, min.num.overlapping
 # backward, with the extremes defined by allowing 5 overlapping points for comparison.
 # mean.df <- to.shift.df
 # stretch_factor <- 2
-# do.rescale=F
-calculate_all_best_shifts <- function(mean.df, stretch_factor, do.rescale, min.num.overlapping.points, shift.extreme) {
+# do_rescale=F
+calculate_all_best_shifts <- function(mean.df, stretch_factor, do_rescale, min.num.overlapping.points, shift.extreme) {
   symbols <- c()
   num_points <- c()
   #curr_sym <- 'TT16'
@@ -2203,7 +2203,7 @@ calculate_all_best_shifts <- function(mean.df, stretch_factor, do.rescale, min.n
 
     ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
     ### if timepoints don't line up, brassica value is linearly imputed
-    out <- get_best_shift_new(curr_sym, mean.df, stretch_factor, do.rescale, min.shift, max.shift, testing=FALSE)
+    out <- get_best_shift_new(curr_sym, mean.df, stretch_factor, do_rescale, min.shift, max.shift, testing=FALSE)
 
     best_shift <- out$shift[out$score==min(out$score)]
     if (length(best_shift) > 1) {
@@ -2297,16 +2297,16 @@ get_best_shift <- function(curr_sym, test) {
 # curr_sym <- 'BRAA02G015410.3C'
 #test <- mean.df
 # stretch_factor <- 1
-# do.rescale <- TRUE
+# do_rescale <- TRUE
 #testing=T
 
-get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.shift, max.shift, testing=FALSE) {
+get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min.shift, max.shift, testing=FALSE) {
   # for the current gene, and current stretch_factor, calculate the score for all
   # shifts, and return the scores for all as a table, and the value of the optimal shift.
 
   # Shift extremes are defined s.t. at least 5 points are compared.
 
-  # do.rescale == TRUE, means apply "scale" to compared points for each shift. ==FALSE, means use original mean expression data
+  # do_rescale == TRUE, means apply "scale" to compared points for each shift. ==FALSE, means use original mean expression data
 
   num.shifts <- 10 # the number of different shifts to be considered.
 
@@ -2355,7 +2355,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.s
     compared <- test[test$is.compared==TRUE, ]
 
     # renormalise expression using just these timepoints?
-    if (do.rescale==TRUE) {
+    if (do_rescale==TRUE) {
       # record the mean and sd of the compared points, used for rescaling
       # in "apply shift" function
       ara.mean <- mean(compared$mean.cpm[compared$accession=='Col0'])

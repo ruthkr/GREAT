@@ -160,7 +160,7 @@ shifted_stretched_all <- prepare_scaled_and_registered_data(
   all.data.df,
   stretch, 
   initial.rescale = TRUE, 
-  do.rescale = FALSE,
+  do_rescale = FALSE,
   min.num.overlapping.points,
   shift.extreme, 
   transformed.timecourse

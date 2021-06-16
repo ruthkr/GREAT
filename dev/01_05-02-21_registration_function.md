@@ -472,7 +472,7 @@ The main function:
 # calculate the best registration. Returns all tried registrations, best stretch and shift combo,
 # and AIC/BIC stats for comparison of best registration model to seperate models for expression of
 # each gene in Ro18 and Col0.
-best_stretch_and_shift <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches = stretch, do.rescale = should.rescale, min.num.overlapping.points, shift.extreme)
+best_stretch_and_shift <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches = stretch, do_rescale = should.rescale, min.num.overlapping.points, shift.extreme)
 ```
 
     ## testing models for stretch factor = 2
@@ -526,11 +526,11 @@ Break down Step 3. Main function:
 
 ``` r
 # call in script
-calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do.rescale=FALSE, min.num.overlapping.points, shift.extreme)
+calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do_rescale=FALSE, min.num.overlapping.points, shift.extreme)
 ```
 
     # original function
-    calculate_all_best_shifts(mean.df, stretch_factor, do.rescale, min.num.overlapping.points, shift.extreme)
+    calculate_all_best_shifts(mean.df, stretch_factor, do_rescale, min.num.overlapping.points, shift.extreme)
 
 #### Step 3a.1 : Get extreme shift for all
 
@@ -577,7 +577,7 @@ for (i in 1:length(unique(to.shift.df$locus_name))) {
 
   ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
   ### if timepoints don't line up, brassica value is linearly imputed
-  out <- get_best_shift_new(curr_sym, to.shift.df, stretch_factor = 2, do.rescale = FALSE, min.shift, max.shift, testing = FALSE)
+  out <- get_best_shift_new(curr_sym, to.shift.df, stretch_factor = 2, do_rescale = FALSE, min.shift, max.shift, testing = FALSE)
 
   best_shift <- out$shift[out$score == min(out$score)]
   if (length(best_shift) > 1) {

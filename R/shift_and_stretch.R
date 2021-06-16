@@ -310,9 +310,9 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
 # backward, with the extremes defined by allowing 5 overlapping points for comparison.
 # mean.df <- to.shift.df
 # stretch_factor <- 2
-# do.rescale=F
+# do_rescale=F
 #' @export
-calculate_all_best_shifts <- function(mean.df, stretch_factor, do.rescale, min.num.overlapping.points, shift.extreme) {
+calculate_all_best_shifts <- function(mean.df, stretch_factor, do_rescale, min.num.overlapping.points, shift.extreme) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
 
   # Initialize vectors
@@ -342,7 +342,7 @@ calculate_all_best_shifts <- function(mean.df, stretch_factor, do.rescale, min.n
 
     ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
     ### if timepoints don't line up, brassica value is linearly imputed
-    out <- get_best_shift_new(curr_sym, mean.df, stretch_factor, do.rescale, min.shift, max.shift, testing=FALSE)
+    out <- get_best_shift_new(curr_sym, mean.df, stretch_factor, do_rescale, min.shift, max.shift, testing=FALSE)
 
     best_shift <- out$shift[out$score==min(out$score)]
     if (length(best_shift) > 1) {
@@ -443,18 +443,18 @@ calc_extreme_shifts <- function(test, min.num.overlapping.points, shift.extreme)
 # curr_sym <- 'BRAA02G015410.3C'
 #test <- mean.df
 # stretch_factor <- 1
-# do.rescale <- TRUE
+# do_rescale <- TRUE
 #testing=T
 
 #' @export
-get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.shift, max.shift, testing=FALSE) {
+get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min.shift, max.shift, testing=FALSE) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # for the current gene, and current stretch_factor, calculate the score for all
   # shifts, and return the scores for all as a table, and the value of the optimal shift.
 
   # Shift extremes are defined s.t. at least 5 points are compared.
 
-  # do.rescale == TRUE, means apply "scale" to compared points for each shift. ==FALSE, means use original mean expression data
+  # do_rescale == TRUE, means apply "scale" to compared points for each shift. ==FALSE, means use original mean expression data
 
   num.shifts <- 25 # the number of different shifts to be considered.
 
@@ -506,7 +506,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do.rescale, min.s
     compared <- test[test$is.compared==TRUE, ]
 
     # Renormalise expression using just these timepoints?
-    if (do.rescale == TRUE) {
+    if (do_rescale == TRUE) {
       # record the mean and sd of the compared points, used for rescaling
       # in "apply shift" function
       ara.mean <- mean(compared$mean.cpm[compared$accession=='Col0'])

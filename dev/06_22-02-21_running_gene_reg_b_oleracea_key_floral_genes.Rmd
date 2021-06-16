@@ -406,8 +406,8 @@ shifted_stretched_all <- prepare_scaled_and_registered_data(
   all.data.df,
   stretch, 
   initial.rescale = TRUE, 
-  # do.rescale = should.rescale,
-  do.rescale = TRUE,
+  # do_rescale = should.rescale,
+  do_rescale = TRUE,
   min.num.overlapping.points,
   shift.extreme, 
   transformed.timecourse
@@ -605,7 +605,7 @@ to.shift.df
 #### Until here is okay ---------
 
 ```r
-L <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches = stretch, do.rescale = should.rescale, min.num.overlapping.points, shift.extreme)
+L <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches = stretch, do_rescale = should.rescale, min.num.overlapping.points, shift.extreme)
 ```
 
 ```r

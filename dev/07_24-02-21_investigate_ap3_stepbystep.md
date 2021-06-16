@@ -554,7 +554,7 @@ score
     ## [1] 0.1010474
 
 ``` r
-out <- get_best_shift_new(curr_sym = "BO8G083600", to.shift.df, stretch_factor = 3.5, do.rescale = TRUE, -4, 4, testing=FALSE)
+out <- get_best_shift_new(curr_sym = "BO8G083600", to.shift.df, stretch_factor = 3.5, do_rescale = TRUE, -4, 4, testing=FALSE)
 
 
 out
@@ -668,7 +668,7 @@ out
     ##     bra.compared.mean ara.compared.sd bra.compared.sd
 
 ``` r
-all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor = 3.5, do.rescale = TRUE, min.num.overlapping.points = 4, shift.extreme = 4)
+all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor = 3.5, do_rescale = TRUE, min.num.overlapping.points = 4, shift.extreme = 4)
 ```
 
     ## [1] "min shift:-4max shift:4"

@@ -318,7 +318,7 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
   # Initialize vectors
   symbols <- c()
   num_points <- c()
-  all.scores.list <- rep(list(0), length(unique(mean_df$locus_name)))
+  all_scores_list <- rep(list(0), length(unique(mean_df$locus_name)))
 
   # Get the extreme shifts which can be applied to the genes
   M <- get_extreme_shifts_for_all(mean_df, stretch_factor, min_num_overlapping_points, shift_extreme)
@@ -355,13 +355,13 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
     }
 
     all.scores <- out
-    all.scores.list[[i]] <- all.scores
+    all_scores_list[[i]] <- all.scores
     symbols <- c(symbols, curr_sym)
 
     count <- count + 1
   }
 
-  all.scores.df <- do.call('rbind', all.scores.list)
+  all.scores.df <- do.call('rbind', all_scores_list)
 
   return(all.scores.df)
 }

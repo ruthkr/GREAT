@@ -552,7 +552,7 @@ max.shift
 symbols <- c()
 num_points <- c()
 #curr_sym <- 'TT16'
-all.scores.list <- rep(list(0), length(unique(to.shift.df$locus_name)))
+all_scores_list <- rep(list(0), length(unique(to.shift.df$locus_name)))
 length(unique(to.shift.df$locus_name))
 ```
 
@@ -590,7 +590,7 @@ for (i in 1:length(unique(to.shift.df$locus_name))) {
   }
 
   all.scores <- out
-  all.scores.list[[i]] <- all.scores
+  all_scores_list[[i]] <- all.scores
   symbols <- c(symbols, curr_sym)
   # num_points <- c(num_points, best_shift)
   # print(best_shift)
@@ -603,7 +603,7 @@ for (i in 1:length(unique(to.shift.df$locus_name))) {
 
 ``` r
 # shift_results <- data.frame(symbol=symbols, num.points = num_points)
-all.scores.df <- do.call("rbind", all.scores.list)
+all.scores.df <- do.call("rbind", all_scores_list)
 ```
 
 ``` r

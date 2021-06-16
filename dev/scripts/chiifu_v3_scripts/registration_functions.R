@@ -2177,7 +2177,7 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
   symbols <- c()
   num_points <- c()
   #curr_sym <- 'TT16'
-  all.scores.list <- rep(list(0), length(unique(mean_df$locus_name)))
+  all_scores_list <- rep(list(0), length(unique(mean_df$locus_name)))
   length(unique(mean_df$locus_name))
 
 
@@ -2216,7 +2216,7 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
     }
 
     all.scores <- out
-    all.scores.list[[i]] <- all.scores
+    all_scores_list[[i]] <- all.scores
     symbols <- c(symbols, curr_sym)
     #num_points <- c(num_points, best_shift)
     #print(best_shift)
@@ -2224,7 +2224,7 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
     count <- count + 1
   }
   #shift_results <- data.frame(symbol=symbols, num.points = num_points)
-  all.scores.df <- do.call('rbind', all.scores.list)
+  all.scores.df <- do.call('rbind', all_scores_list)
 
   return(all.scores.df)
 }

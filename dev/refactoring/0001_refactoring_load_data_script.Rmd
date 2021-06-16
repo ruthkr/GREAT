@@ -121,6 +121,10 @@ test_load_mean_df_copy <- load_mean_df_copy(file_path_brassica = brassica_rapa_e
 ```
 
 ```{r}
-setdiff(test_load_mean_df, test_load_mean_df_copy)
+setdiff(test_load_mean_df[[1]], test_load_mean_df_copy[[1]])
 ```
 
+
+```{r}
+setdiff(test_load_mean_df[[2]], test_load_mean_df_copy[[2]])
+```

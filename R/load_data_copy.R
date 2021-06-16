@@ -6,40 +6,40 @@ load_mean_df_copy <- function(file_path_brassica, file_path_arabidopsis, file_pa
 
   # Calculate mean of each timepoint by adding a column called "mean.cpm"
   exp[, mean.cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
-  mean.df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
+  mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
 
-  # Filter mean.df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed greater than 1
-  # bra_df <- mean.df[mean.df$accession != 'Col0']
+  # Filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed greater than 1
+  # bra_df <- mean_df[mean_df$accession != 'Col0']
   # bra_df[, keep:=(max(mean.cpm) > 5 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
   # keep.genes <- unique(bra_df$locus_name[bra_df$keep==TRUE])
   # discard.genes <- unique(bra_df$locus_name[bra_df$keep==FALSE])
-  bra_df <- mean.df[mean.df$accession != 'Col0']
+  bra_df <- mean_df[mean_df$accession != 'Col0']
   bra_df[, keep:=(max(mean.cpm) > 5 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
   keep_bra_genes <- unique(bra_df$locus_name[bra_df$keep==TRUE])
   discard_bra_genes <- unique(bra_df$locus_name[bra_df$keep==FALSE])
 
-  # Filter mean.df to remove all arabidopsis genes with all zeros values
-  ara_df <- mean.df[mean.df$locus_name %in% keep_bra_genes & mean.df$accession == 'Col0']
+  # Filter mean_df to remove all arabidopsis genes with all zeros values
+  ara_df <- mean_df[mean_df$locus_name %in% keep_bra_genes & mean_df$accession == 'Col0']
   ara_df[, keep_final:=(mean(mean.cpm) != 0 & sd(mean.cpm) != 0), by=.(locus_name)]
   keep_final_genes <- unique(ara_df$locus_name[ara_df$keep_final==TRUE])
   discard_final_genes <- unique(ara_df$locus_name[ara_df$keep_final==FALSE])
 
-  mean.df <- mean.df[mean.df$locus_name %in% keep_final_genes,]
+  mean_df <- mean_df[mean_df$locus_name %in% keep_final_genes,]
 
   # Printing the keep genes
   print(paste0(length(keep_bra_genes), ' brassica genes considered in the comparison'))
   print(paste0(length(keep_final_genes), ' all genes considered in the comparison'))
 
 
-  # print(paste0(length(unique(mean.df$locus_name)), ' brassica genes considered in the comparison'))
+  # print(paste0(length(unique(mean_df$locus_name)), ' brassica genes considered in the comparison'))
   # print(paste(c("Discarded genes:", paste(discard.genes, collapse = ", ")), collapse = " "))
 
-  # Get mean.df, including column "group"
-  exp <- exp[exp$locus_name %in% unique(mean.df$locus_name)]
+  # Get mean_df, including column "group"
+  exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
   exp <- subset(exp, select=c('locus_name', 'accession', 'tissue', 'timepoint',
                               'norm.cpm', 'group'))
   names(exp)[names(exp)=='norm.cpm'] <- 'mean.cpm'
-  return(list(mean.df, exp))
+  return(list(mean_df, exp))
 }
 
 #' @export
@@ -136,7 +136,7 @@ shorten_groups <- function(exp) {
 
   # Get the last element of "sample_id" of Brassica data
   B <- exp[exp$accession != 'Col0']
-  B[, c('j1', 'j2', 'j3', 'j4', 'j5', 'j6', 'rep'):=data.table::tstrsplit(sample_id, split='_')]
+  B[, c('j1', 'j2', 'j3', 'j4', 'j5', 'j6', 'rep') := data.table::tstrsplit(sample_id, split='_')]
   B$rep[is.na(B$rep)] <- 1
   B[, c('j1', 'j2', 'j3', 'j4', 'j5', 'j6')] <- NULL
 

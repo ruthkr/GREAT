@@ -29,9 +29,6 @@ load_mean_df <- function(filepath_data_target,
 
   # Calculate mean of each timepoint by adding a column called "mean.cpm"
   exp[, mean.cpm := mean(norm.cpm), by = list(locus_name, accession, tissue, timepoint)]
-  # exp <- exp %>%
-  #   dplyr::group_by(locus_name, accession, tissue, timepoint) %>%
-  #   dplyr::mutate(mean.cpm = mean(norm.cpm))
   mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
 
   # Filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed greater than 1
@@ -47,19 +44,15 @@ load_mean_df <- function(filepath_data_target,
   keep_final_genes <- unique(data_to_align_df$locus_name[data_to_align_df$keep_final==TRUE])
   discard_final_genes <- unique(data_to_align_df$locus_name[data_to_align_df$keep_final==FALSE])
 
-  mean_df <- mean_df[mean_df$locus_name %in% keep_final_genes,]
+  mean_df <- mean_df[mean_df$locus_name %in% keep_final_genes, ]
 
   # Printing the keep genes
   print(paste0(length(keep_data_target_genes), ' brassica genes considered in the comparison'))
   print(paste0(length(keep_final_genes), ' all genes considered in the comparison'))
 
-
-  # print(paste0(length(unique(mean_df$locus_name)), ' brassica genes considered in the comparison'))
-  # print(paste(c("Discarded genes:", paste(discard.genes, collapse = ", ")), collapse = " "))
-
   # Get mean_df, including column "group"
   exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
-  exp <- subset(exp, select=c('locus_name', 'accession', 'tissue', 'timepoint',
+  exp <- subset(exp, select = c('locus_name', 'accession', 'tissue', 'timepoint',
                               'norm.cpm', 'group'))
   names(exp)[names(exp) == 'norm.cpm'] <- 'mean.cpm'
   return(list(mean_df, exp))

@@ -1,7 +1,7 @@
 # stretches=c(1, 1.5, 2.0)
 # initial.rescale=FALSE
 # do_rescale=FALSE
-# min.num.overlapping.points = 4
+# min_num_overlapping_points = 4
 # test.genes <- unique(mean_df$locus_name)[1:101]
 # #test.genes <- 'MSTRG.10244'
 # mean_df <- mean_df[mean_df$locus_name %in% test.genes,]
@@ -10,7 +10,7 @@
 # transformed.timecourse <- 'Ro18'
 
 #' @export
-prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, initial.rescale, do_rescale, min.num.overlapping.points, shift.extreme, transformed.timecourse) {
+prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, initial.rescale, do_rescale, min_num_overlapping_points, shift.extreme, transformed.timecourse) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   ## APPLY NORMALISATION OF EXPRESSION FOR EACH GENE ACROSS ALL TIMEPOINTS ##
 
@@ -69,7 +69,7 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
   # calculate the best registration. Returns all tried registrations, best stretch and shift combo,
   # and AIC/BIC stats for comparison of best registration model to seperate models for expression of
   # each gene in Ro18 and Col0.
-  L <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches, do_rescale, min.num.overlapping.points, shift.extreme)
+  L <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches, do_rescale, min_num_overlapping_points, shift.extreme)
   all_shifts <- L[['all_shifts']]
   best_shifts <- L[['best_shifts']]
   model.comparison.dt <- L[['model.comparison.dt']]
@@ -214,10 +214,10 @@ scale_all_rep_data <- function(mean_df, all.rep.data, scale.func) {
 # all.data.df
 # stretches
 # do_rescale
-# min.num.overlapping.points
+# min_num_overlapping_points
 # shift.extreme
 #' @export
-get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_rescale, min.num.overlapping.points, shift.extreme) {
+get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_rescale, min_num_overlapping_points, shift.extreme) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
 
   # for each stretch in stretches, calculates best shift, by comparing SUM of squares difference.
@@ -247,7 +247,7 @@ get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_r
     # calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points
     # if do_rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
 
-    all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do_rescale, min.num.overlapping.points, shift.extreme)
+    all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do_rescale, min_num_overlapping_points, shift.extreme)
 
     all_shifts <- unique(all_shifts) # ensure no duplicated rows
 

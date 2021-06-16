@@ -150,7 +150,7 @@ outdir.string <- 'TESTING_B_Oleracea_key_floral_genes_AP3'
 # lots of spurious overlaps detected when too extreme shifts allowed
 stretch = c(6, 5.5, 5, 4.5, 4, 3.5, 3, 2.5)
 # stretch = c(2, 1.5)
-min.num.overlapping.points = 4
+min_num_overlapping_points = 4
 shift.extreme = 4
 transformed.timecourse = 'Col0'
 num.shuffled <- 1 
@@ -668,7 +668,7 @@ out
     ##     bra.compared.mean ara.compared.sd bra.compared.sd
 
 ``` r
-all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor = 3.5, do_rescale = TRUE, min.num.overlapping.points = 4, shift.extreme = 4)
+all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor = 3.5, do_rescale = TRUE, min_num_overlapping_points = 4, shift.extreme = 4)
 ```
 
     ## [1] "min shift:-4max shift:4"

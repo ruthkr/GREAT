@@ -115,7 +115,7 @@ do.initial.rescale <- 'TRUE'
 do.register.rescale <- 'rescale'
 
 stretch = c(7, 6.5, 6, 5.5, 5, 4.5, 4, 3.5, 3, 2.5)
-min.num.overlapping.points = 4
+min_num_overlapping_points = 4
 shift.extreme = 4
 transformed.timecourse = 'Col0'
 num.shuffled <- 1 
@@ -140,7 +140,7 @@ shifted_stretched_all <- prepare_scaled_and_registered_data(
   stretch, 
   initial.rescale = TRUE, 
   do_rescale = TRUE,
-  min.num.overlapping.points,
+  min_num_overlapping_points,
   shift.extreme, 
   transformed.timecourse
 )

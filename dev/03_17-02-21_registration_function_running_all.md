@@ -42,7 +42,7 @@ outdir.string <- 'TESTING_rescale_as_register___shuffled_g_v4__'
 
 # lots of spurious overlaps detected when too extreme shifts allowed
 stretch = c(2, 1.5, 1) 
-min.num.overlapping.points = 4
+min_num_overlapping_points = 4
 shift.extreme  = 4 
 transformed.timecourse = 'Col0' 
 num.shuffled <- 1 
@@ -112,7 +112,7 @@ all.data.df <- L[[2]]
 ``` r
 ## PREPARE, AND REGISTER AND SCALE THE DATA
 O <- prepare_scaled_and_registered_data(mean_df, all.data.df,
-  stretch = stretch, initial.rescale, should.rescale, min.num.overlapping.points,
+  stretch = stretch, initial.rescale, should.rescale, min_num_overlapping_points,
   shift.extreme, transformed.timecourse
 )
 

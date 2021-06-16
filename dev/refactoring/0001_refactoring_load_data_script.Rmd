@@ -94,4 +94,33 @@ test_get_expression_of_interest_copy
 ```{r}
 setdiff(test_get_expression_of_interest, test_get_expression_of_interest_copy)
 ```
+## Comparing the function load_mean_df
+
+```{r}
+test_load_mean_df <- load_mean_df(
+  filepath_data_target = brassica_rapa_expression_path,
+  filepath_data_to_align = arabidopsis_expression_path,
+  filepath_id_table = id_table_path,
+  target_id_table_shared_colname = "CDS.model",
+  target_and_to_align_data_shared_colname = "locus_name",
+  colnames_id_table = c("CDS.model", "symbol", "locus_name"),
+  colnames_wanted = NULL,
+  tissue_wanted = "apex",
+  curr_GoIs = c("AT1G69120", "AT5G61850", "AT2G45660"),
+  sum_exp_data_target = F, 
+  accession_data_to_align = "Col0",
+  ids_data_target_colnames = c("CDS.model", "locus_name")
+)
+
+test_load_mean_df
+```
+
+
+```{r}
+test_load_mean_df_copy <- load_mean_df_copy(file_path_brassica = brassica_rapa_expression_path, file_path_arabidopsis = arabidopsis_expression_path, file_path_id_table = id_table_path, tissue_wanted = "apex", curr_GoIs =  c("AT1G69120", "AT5G61850", "AT2G45660"), sum_brassicas)
+```
+
+```{r}
+setdiff(test_load_mean_df, test_load_mean_df_copy)
+```
 

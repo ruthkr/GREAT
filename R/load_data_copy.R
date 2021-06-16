@@ -1,8 +1,8 @@
 #' @export
-load_mean_df <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F) {
+load_mean_df_copy <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F) {
 
   # Load the expression data for all the curr_GoIs gene models, for arabidopsis, and for the specified brassica
-  exp <- get_expression_of_interest(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F)
+  exp <- get_expression_of_interest_copy(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F)
 
   # Calculate mean of each timepoint by adding a column called "mean.cpm"
   exp[, mean.cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
@@ -46,7 +46,7 @@ load_mean_df <- function(file_path_brassica, file_path_arabidopsis, file_path_id
 get_expression_of_interest_copy <- function(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F) {
 
   # Load rds and arabidopsis gene expression data into single df.
-  master_exp <- get_all_data(file_path_brassica, file_path_arabidopsis, file_path_id_table)
+  master_exp <- get_all_data_copy(file_path_brassica, file_path_arabidopsis, file_path_id_table)
   master_exp <- unique(master_exp)
 
   # Cut down to common tissue

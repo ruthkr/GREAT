@@ -603,11 +603,11 @@ for (i in 1:length(unique(to.shift.df$locus_name))) {
 
 ``` r
 # shift_results <- data.frame(symbol=symbols, num.points = num_points)
-all_scores.df <- do.call("rbind", all_scores_list)
+all_scores_df <- do.call("rbind", all_scores_list)
 ```
 
 ``` r
-all_scores.df %>% 
+all_scores_df %>% 
   knitr::kable()
 ```
 

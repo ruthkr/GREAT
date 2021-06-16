@@ -482,18 +482,18 @@ for (i in 1:length(unique(to.shift.df$locus_name))) {
   count <- count + 1
 }
 # shift_results <- data.frame(symbol=symbols, num.points = num_points)
-all_scores.df <- do.call("rbind", all_scores_list)
+all_scores_df <- do.call("rbind", all_scores_list)
 ```
 
 ```{r}
-all_scores.df %>% 
+all_scores_df %>% 
   head(5)
 ```
 ### Step 3b 
 
 ```{r}
 # All is already unique
-all_shifts <- unique(all_scores.df)
+all_shifts <- unique(all_scores_df)
 
 
 all_shifts %>% 

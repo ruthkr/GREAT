@@ -2224,9 +2224,9 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
     count <- count + 1
   }
   #shift_results <- data.frame(symbol=symbols, num.points = num_points)
-  all_scores.df <- do.call('rbind', all_scores_list)
+  all_scores_df <- do.call('rbind', all_scores_list)
 
-  return(all_scores.df)
+  return(all_scores_df)
 }
 
 #test <- mean_df

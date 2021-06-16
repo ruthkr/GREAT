@@ -82,7 +82,7 @@ outdir.string <- 'TESTING_B_Oleracea_key_floral_genes_AP3'
 stretch = c(6, 5.5, 5, 4.5, 4, 3.5, 3, 2.5)
 # stretch = c(2, 1.5)
 min_num_overlapping_points = 4
-shift.extreme = 4
+shift_extreme = 4
 transformed.timecourse = 'Col0'
 num.shuffled <- 1 
 jobNum <- 1
@@ -285,7 +285,7 @@ out
 
 
 ```{r}
-all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor = 3.5, do_rescale = TRUE, min_num_overlapping_points = 4, shift.extreme = 4)
+all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor = 3.5, do_rescale = TRUE, min_num_overlapping_points = 4, shift_extreme = 4)
 ```
 
 ```{r}

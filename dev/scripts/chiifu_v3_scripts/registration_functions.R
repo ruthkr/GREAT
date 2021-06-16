@@ -876,12 +876,12 @@ change.accession.names <- function(mean_df, all.data.df, transformed.timecourse)
 # #test.genes <- 'MSTRG.10244'
 # mean_df <- mean_df[mean_df$locus_name %in% test.genes,]
 # all.data.df <- all.data.df[all.data.df$locus_name %in% test.genes,]
-# shift.extreme=4
+# shift_extreme=4
 # transformed.timecourse <- 'Ro18'
 
 prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches,
                                                initial.rescale, do_rescale,
-                                               min_num_overlapping_points, shift.extreme,
+                                               min_num_overlapping_points, shift_extreme,
                                                transformed.timecourse) {
   ## APPLY NORMALISATION OF EXPRESSION FOR EACH GENE ACROSS ALL TIMEPOINTS ##
 
@@ -933,7 +933,7 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches,
   # calculate the best registration. Returns all tried registrations, best stretch and shift combo,
   # and AIC/BIC stats for comparison of best registration model to seperate models for expression of
   # each gene in Ro18 and Col0.
-  L <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches, do_rescale, min_num_overlapping_points, shift.extreme)
+  L <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches, do_rescale, min_num_overlapping_points, shift_extreme)
   all_shifts <- L[['all_shifts']]
   best_shifts <- L[['best_shifts']]
   model.comparison.dt <- L[['model.comparison.dt']]
@@ -1042,8 +1042,8 @@ get_best_result <- function(df) {
 # stretches
 # do_rescale
 # min_num_overlapping_points
-# shift.extreme
-get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_rescale, min_num_overlapping_points, shift.extreme) {
+# shift_extreme
+get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_rescale, min_num_overlapping_points, shift_extreme) {
   # for each stretch in stretches, calculates best shift, by comparing SUM of squares difference.
   # for the best shift in each stretch, compares to seperate models to calculate AIC/BIC under registration,
   # / no registration.
@@ -1073,7 +1073,7 @@ get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_r
     # ggplot(to.shift.df[to.shift.df$locus_name=='MSTRG.12467',], aes(x=timepoint, y=mean.cpm, color=accession))+
     #   geom_point()
 
-    all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do_rescale, min_num_overlapping_points, shift.extreme)
+    all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do_rescale, min_num_overlapping_points, shift_extreme)
 
     all_shifts <- unique(all_shifts) # ensure no dulicated rows
 
@@ -2140,8 +2140,8 @@ impute_arabidopsis_values <- function(shifted.mean_df) {
 # test <- mean_df
 # stretch_factor
 # min_num_overlapping_points
-# shift.extreme
-get_extreme_shifts_for_all <- function(test, stretch_factor, min_num_overlapping_points, shift.extreme) {
+# shift_extreme
+get_extreme_shifts_for_all <- function(test, stretch_factor, min_num_overlapping_points, shift_extreme) {
   # wrapper for calc_extreme_shifts to be able to move it out of the loop so don't calculate for every gene.
 
   #min_num_overlapping_points <- 5 # bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
@@ -2161,7 +2161,7 @@ get_extreme_shifts_for_all <- function(test, stretch_factor, min_num_overlapping
   #min.shift <- min(test$delta.time[test$accession=='Ro18']) - test$delta.time[test$accession=='Col0'][length(test$delta.time[test$accession=='Col0'])-4]
   #max.shift <- max(test$delta.time[test$accession=='Ro18']) - test$delta.time[test$accession=='Col0'][5]
 
-  M <- calc_extreme_shifts(test, min_num_overlapping_points, shift.extreme)
+  M <- calc_extreme_shifts(test, min_num_overlapping_points, shift_extreme)
   return(M)
 }
 
@@ -2173,7 +2173,7 @@ get_extreme_shifts_for_all <- function(test, stretch_factor, min_num_overlapping
 # mean_df <- to.shift.df
 # stretch_factor <- 2
 # do_rescale=F
-calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_num_overlapping_points, shift.extreme) {
+calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_num_overlapping_points, shift_extreme) {
   symbols <- c()
   num_points <- c()
   #curr_sym <- 'TT16'
@@ -2182,7 +2182,7 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
 
 
   # get the extreme shifts which can be applied to the genes
-  M <- get_extreme_shifts_for_all(mean_df, stretch_factor, min_num_overlapping_points, shift.extreme)
+  M <- get_extreme_shifts_for_all(mean_df, stretch_factor, min_num_overlapping_points, shift_extreme)
   min.shift <- M[[1]]
   max.shift <- M[[2]]
 
@@ -2436,7 +2436,7 @@ calc_num_overlapping_points <- function(shift, original) {
   return(min(original$num.compared))
 }
 
-calc_extreme_shifts <- function(test, min_num_overlapping_points, shift.extreme) {
+calc_extreme_shifts <- function(test, min_num_overlapping_points, shift_extreme) {
   # calculate the minimum and maximum shifts can apply to Col-0 after the stretch transformation, whilst
   # preserving the criteria that at least min_num_overlapping_points are being compared from both accessions.
 
@@ -2466,11 +2466,11 @@ calc_extreme_shifts <- function(test, min_num_overlapping_points, shift.extreme)
 
   # hard code maximum and minimum allowed shifts, as noticed spurious registrations when too extreme shifts
   # allowed
-  if (neg.extreme < (-1*shift.extreme)) {
-    neg.extreme <- -1 * shift.extreme
+  if (neg.extreme < (-1*shift_extreme)) {
+    neg.extreme <- -1 * shift_extreme
   }
-  if (pos.extreme > 1*shift.extreme) {
-    pos.extreme <- shift.extreme
+  if (pos.extreme > 1*shift_extreme) {
+    pos.extreme <- shift_extreme
   }
 
   return(list(neg.extreme, pos.extreme))

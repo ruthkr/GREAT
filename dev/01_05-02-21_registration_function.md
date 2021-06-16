@@ -38,7 +38,7 @@ List of all main functions
 load_mean.df()
 shuffle_ro18_timepoints(mean.df, all.data.df)
 shuffle_ro18_gene_names(mean.df, all.data.df)
-prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min_num_overlapping_points, shift.extreme, transformed.timecourse)
+prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min_num_overlapping_points, shift_extreme, transformed.timecourse)
 calculate_between_sample_distance(mean.df, mean.df.sc, imputed.mean.df)
 make_data_heatmaps(D.mean, D.scaled, D.registered, D.scaled.onlyNR, D.scaled.onlyR, D.registered.onlyR)
 ```
@@ -64,7 +64,7 @@ outdir.string <- 'TESTING_rescale_as_register___shuffled_g_v4__'
 # lots of spurious overlaps detected when too extreme shifts allowed
 stretch = c(2, 1.5, 1) # the stretch which lines up the start and end points.
 min_num_overlapping_points = 4 # will only allow shifts which leave this many overlapping points after applying the stretch
-shift.extreme  = 4 # the absolute maximum value which can be applied as a shift. Noticed that in the shuffled genes,
+shift_extreme  = 4 # the absolute maximum value which can be applied as a shift. Noticed that in the shuffled genes,
 transformed.timecourse = 'Col0' # the name of the timecourse to apply the registratsion to (one of the names in the mean.df$accession column)
                                 # which is loaded at line 133.
 
@@ -472,7 +472,7 @@ The main function:
 # calculate the best registration. Returns all tried registrations, best stretch and shift combo,
 # and AIC/BIC stats for comparison of best registration model to seperate models for expression of
 # each gene in Ro18 and Col0.
-best_stretch_and_shift <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches = stretch, do_rescale = should.rescale, min_num_overlapping_points, shift.extreme)
+best_stretch_and_shift <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches = stretch, do_rescale = should.rescale, min_num_overlapping_points, shift_extreme)
 ```
 
     ## testing models for stretch factor = 2
@@ -526,11 +526,11 @@ Break down Step 3. Main function:
 
 ``` r
 # call in script
-calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do_rescale=FALSE, min_num_overlapping_points, shift.extreme)
+calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do_rescale=FALSE, min_num_overlapping_points, shift_extreme)
 ```
 
     # original function
-    calculate_all_best_shifts(mean.df, stretch_factor, do_rescale, min_num_overlapping_points, shift.extreme)
+    calculate_all_best_shifts(mean.df, stretch_factor, do_rescale, min_num_overlapping_points, shift_extreme)
 
 #### Step 3a.1 : Get extreme shift for all
 
@@ -671,7 +671,7 @@ all.scores.df %>%
 
 ``` r
   ## PREPARE, AND REGISTER AND SCALE THE DATA
-  O <- prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min_num_overlapping_points, shift.extreme, transformed.timecourse)
+  O <- prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min_num_overlapping_points, shift_extreme, transformed.timecourse)
 
   mean.df <- O[['mean.df']] # mean.df is unchanged
   mean.df.sc <- O[['mean.df.sc']] # mean.df.sc : data is scaled(center=T, scale=T)

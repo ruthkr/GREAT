@@ -116,7 +116,7 @@ do.register.rescale <- 'rescale'
 
 stretch = c(7, 6.5, 6, 5.5, 5, 4.5, 4, 3.5, 3, 2.5)
 min_num_overlapping_points = 4
-shift.extreme = 4
+shift_extreme = 4
 transformed.timecourse = 'Col0'
 num.shuffled <- 1 
 jobNum <- 1
@@ -141,7 +141,7 @@ shifted_stretched_all <- prepare_scaled_and_registered_data(
   initial.rescale = TRUE, 
   do_rescale = TRUE,
   min_num_overlapping_points,
-  shift.extreme, 
+  shift_extreme, 
   transformed.timecourse
 )
 ```

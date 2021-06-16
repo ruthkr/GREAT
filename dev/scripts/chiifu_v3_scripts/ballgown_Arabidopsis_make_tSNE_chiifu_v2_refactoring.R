@@ -49,7 +49,7 @@ outdir.string <- 'TESTING_rescale_as_register___shuffled_g_v4__'
 # lots of spurious overlaps detected when too extreme shifts allowed
 stretch = c(2, 1.5, 1) # the stretch which lines up the start and end points.
 min_num_overlapping_points = 4 # will only allow shifts which leave this many overlapping points after applying the stretch
-shift.extreme  = 4 # the absolute maximum value which can be applied as a shift. Noticed that in the shuffled genes,
+shift_extreme  = 4 # the absolute maximum value which can be applied as a shift. Noticed that in the shuffled genes,
 transformed.timecourse = 'Col0' # the name of the timecourse to apply the registratsion to (one of the names in the mean_df$accession column)
                                 # which is loaded at line 133.
 
@@ -161,7 +161,7 @@ for (i in real.and.shuffled) {
 
   ## PREPARE, AND REGISTER AND SCALE THE DATA
   O <- prepare_scaled_and_registered_data(mean_df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min_num_overlapping_points,
-                                          shift.extreme, transformed.timecourse)
+                                          shift_extreme, transformed.timecourse)
 
   mean_df <- O[['mean_df']] # mean_df is unchanged
   mean_df.sc <- O[['mean_df.sc']] # mean_df.sc : data is scaled(center=T, scale=T)

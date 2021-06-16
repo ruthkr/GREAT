@@ -312,7 +312,7 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
 # stretch_factor <- 2
 # do_rescale=F
 #' @export
-calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_num_overlapping_points, shift.extreme) {
+calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_num_overlapping_points, shift_extreme) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
 
   # Initialize vectors
@@ -321,7 +321,7 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
   all.scores.list <- rep(list(0), length(unique(mean_df$locus_name)))
 
   # Get the extreme shifts which can be applied to the genes
-  M <- get_extreme_shifts_for_all(mean_df, stretch_factor, min_num_overlapping_points, shift.extreme)
+  M <- get_extreme_shifts_for_all(mean_df, stretch_factor, min_num_overlapping_points, shift_extreme)
   min.shift <- M[[1]]
   max.shift <- M[[2]]
   print(paste0("min shift:", min.shift, "max shift:", max.shift))
@@ -369,9 +369,9 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
 # test <- mean_df
 # stretch_factor
 # min_num_overlapping_points
-# shift.extreme
+# shift_extreme
 #' @export
-get_extreme_shifts_for_all <- function(test, stretch_factor, min_num_overlapping_points, shift.extreme) {
+get_extreme_shifts_for_all <- function(test, stretch_factor, min_num_overlapping_points, shift_extreme) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # wrapper for calc_extreme_shifts to be able to move it out of the loop so don't calculate for every gene.
 
@@ -392,12 +392,12 @@ get_extreme_shifts_for_all <- function(test, stretch_factor, min_num_overlapping
   #min.shift <- min(test$delta.time[test$accession=='Ro18']) - test$delta.time[test$accession=='Col0'][length(test$delta.time[test$accession=='Col0'])-4]
   #max.shift <- max(test$delta.time[test$accession=='Ro18']) - test$delta.time[test$accession=='Col0'][5]
 
-  M <- calc_extreme_shifts(test, min_num_overlapping_points, shift.extreme)
+  M <- calc_extreme_shifts(test, min_num_overlapping_points, shift_extreme)
   return(M)
 }
 
 #' @export
-calc_extreme_shifts <- function(test, min_num_overlapping_points, shift.extreme) {
+calc_extreme_shifts <- function(test, min_num_overlapping_points, shift_extreme) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # calculate the minimum and maximum shifts can apply to Col-0 after the stretch transformation, whilst
   # preserving the criteria that at least min_num_overlapping_points are being compared from both accessions.
@@ -428,11 +428,11 @@ calc_extreme_shifts <- function(test, min_num_overlapping_points, shift.extreme)
 
   # hard code maximum and minimum allowed shifts, as noticed spurious registrations when too extreme shifts
   # allowed
-  if (neg.extreme < (-1*shift.extreme)) {
-    neg.extreme <- -1 * shift.extreme
+  if (neg.extreme < (-1*shift_extreme)) {
+    neg.extreme <- -1 * shift_extreme
   }
-  if (pos.extreme > 1*shift.extreme) {
-    pos.extreme <- shift.extreme
+  if (pos.extreme > 1*shift_extreme) {
+    pos.extreme <- shift_extreme
   }
 
   return(list(neg.extreme, pos.extreme))

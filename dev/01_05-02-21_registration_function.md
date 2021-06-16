@@ -589,8 +589,8 @@ for (i in 1:length(unique(to.shift.df$locus_name))) {
     }
   }
 
-  all.scores <- out
-  all_scores_list[[i]] <- all.scores
+  all_scores <- out
+  all_scores_list[[i]] <- all_scores
   symbols <- c(symbols, curr_sym)
   # num_points <- c(num_points, best_shift)
   # print(best_shift)
@@ -603,11 +603,11 @@ for (i in 1:length(unique(to.shift.df$locus_name))) {
 
 ``` r
 # shift_results <- data.frame(symbol=symbols, num.points = num_points)
-all.scores.df <- do.call("rbind", all_scores_list)
+all_scores.df <- do.call("rbind", all_scores_list)
 ```
 
 ``` r
-all.scores.df %>% 
+all_scores.df %>% 
   knitr::kable()
 ```
 

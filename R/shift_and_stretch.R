@@ -354,16 +354,16 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
       }
     }
 
-    all.scores <- out
-    all_scores_list[[i]] <- all.scores
+    all_scores <- out
+    all_scores_list[[i]] <- all_scores
     symbols <- c(symbols, curr_sym)
 
     count <- count + 1
   }
 
-  all.scores.df <- do.call('rbind', all_scores_list)
+  all_scores.df <- do.call('rbind', all_scores_list)
 
-  return(all.scores.df)
+  return(all_scores.df)
 }
 
 # test <- mean_df
@@ -471,7 +471,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
   # test$delta.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0'] + 7
   # test$delta.time[test$accession=='Ro18'] <- test$delta.time[test$accession=='Ro18'] + 14
 
-  all.scores <- rep(0, num.shifts)
+  all_scores <- rep(0, num.shifts)
   all.ara.mean <- rep(0, num.shifts)
   all.bra.mean <- rep(0, num.shifts)
   all.ara.sd <- rep(0, num.shifts)
@@ -566,14 +566,14 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
       stop()
     }
 
-    all.scores[i] <- score
+    all_scores[i] <- score
     all.ara.mean[i] <- ara.mean
     all.bra.mean[i] <- bra.mean
     all.ara.sd[i] <- ara.sd
     all.bra.sd[i] <- bra.sd
   }
 
-  out <- data.table::data.table(data.frame('gene'=curr_sym, 'stretch'=stretch_factor, 'shift'=all.shifts, 'score'=all.scores,
+  out <- data.table::data.table(data.frame('gene'=curr_sym, 'stretch'=stretch_factor, 'shift'=all.shifts, 'score'=all_scores,
                                            'ara.compared.mean'=all.ara.mean, 'bra.compared.mean'=all.bra.mean,
                                            'ara.compared.sd'=all.ara.sd, 'bra.compared.sd'=all.bra.sd))
   return(out)

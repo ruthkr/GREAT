@@ -2215,8 +2215,8 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
       }
     }
 
-    all.scores <- out
-    all_scores_list[[i]] <- all.scores
+    all_scores <- out
+    all_scores_list[[i]] <- all_scores
     symbols <- c(symbols, curr_sym)
     #num_points <- c(num_points, best_shift)
     #print(best_shift)
@@ -2224,9 +2224,9 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
     count <- count + 1
   }
   #shift_results <- data.frame(symbol=symbols, num.points = num_points)
-  all.scores.df <- do.call('rbind', all_scores_list)
+  all_scores.df <- do.call('rbind', all_scores_list)
 
-  return(all.scores.df)
+  return(all_scores.df)
 }
 
 #test <- mean_df
@@ -2285,10 +2285,10 @@ get_best_shift <- function(curr_sym, test) {
   best_num_points <- seq(min_shift, length(BrVec))[best_ind]
 
   # scores for all shifts (want to check how robust optimal is for key genes):
-  all.scores <- data.frame('shift'=seq(min_shift, length(BrVec)), 'score'=scores/sum(scores))
-  all.scores$locus_name <- curr_sym
+  all_scores <- data.frame('shift'=seq(min_shift, length(BrVec)), 'score'=scores/sum(scores))
+  all_scores$locus_name <- curr_sym
 
-  out <- list(best_num_points, all.scores)
+  out <- list(best_num_points, all_scores)
   #return(best_num_points)
   return(out)
 }
@@ -2318,7 +2318,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
   # apply stretch_factor to the arabidopsis, leave the rapa as is
   test$delta.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0']*stretch_factor
 
-  all.scores <- rep(0, num.shifts)
+  all_scores <- rep(0, num.shifts)
   all.ara.mean <- rep(0, num.shifts)
   all.bra.mean <- rep(0, num.shifts)
   all.ara.sd <- rep(0, num.shifts)
@@ -2412,14 +2412,14 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
       stop()
     }
 
-    all.scores[i] <- score
+    all_scores[i] <- score
     all.ara.mean[i] <- ara.mean
     all.bra.mean[i] <- bra.mean
     all.ara.sd[i] <- ara.sd
     all.bra.sd[i] <- bra.sd
   }
 
-  out <- data.table(data.frame('gene'=curr_sym, 'stretch'=stretch_factor, 'shift'=all.shifts, 'score'=all.scores,
+  out <- data.table(data.frame('gene'=curr_sym, 'stretch'=stretch_factor, 'shift'=all.shifts, 'score'=all_scores,
                                'ara.compared.mean'=all.ara.mean, 'bra.compared.mean'=all.bra.mean,
                                'ara.compared.sd'=all.ara.sd, 'bra.compared.sd'=all.bra.sd))
   return(out)

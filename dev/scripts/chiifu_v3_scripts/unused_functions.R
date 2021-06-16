@@ -772,10 +772,10 @@ get_best_shift <- function(curr_sym, test) {
   best_num_points <- seq(min_shift, length(BrVec))[best_ind]
 
   # scores for all shifts (want to check how robust optimal is for key genes):
-  all.scores <- data.frame('shift'=seq(min_shift, length(BrVec)), 'score'=scores/sum(scores))
-  all.scores$locus_name <- curr_sym
+  all_scores <- data.frame('shift'=seq(min_shift, length(BrVec)), 'score'=scores/sum(scores))
+  all_scores$locus_name <- curr_sym
 
-  out <- list(best_num_points, all.scores)
+  out <- list(best_num_points, all_scores)
   #return(best_num_points)
   return(out)
 }

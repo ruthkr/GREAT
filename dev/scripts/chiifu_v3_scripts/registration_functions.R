@@ -1026,8 +1026,8 @@ get_best_result <- function(df) {
       return(is.best)
     } else {
       cand.shifts <- df$shift[is.best]
-      min.shift <- unique(cand.shifts[cand.shifts==min(cand.shifts)])
-      is.best[df$shift != min.shift] <- FALSE
+      min_shift <- unique(cand.shifts[cand.shifts==min(cand.shifts)])
+      is.best[df$shift != min_shift] <- FALSE
       if (sum(is.best)==1) {
         return(is.best)
       } else {
@@ -2158,8 +2158,8 @@ get_extreme_shifts_for_all <- function(test, stretch_factor, min_num_overlapping
   # Shift is applied to the arabidopsis - so the 5th largest arabidopsis time is the biggest -ve shift can be applied
   # and the biggest shift which can be applied is to make the 5th smallest arabidopsis time == largest brassica time
   #setorder(test, delta.time)
-  #min.shift <- min(test$delta.time[test$accession=='Ro18']) - test$delta.time[test$accession=='Col0'][length(test$delta.time[test$accession=='Col0'])-4]
-  #max.shift <- max(test$delta.time[test$accession=='Ro18']) - test$delta.time[test$accession=='Col0'][5]
+  #min_shift <- min(test$delta.time[test$accession=='Ro18']) - test$delta.time[test$accession=='Col0'][length(test$delta.time[test$accession=='Col0'])-4]
+  #max_shift <- max(test$delta.time[test$accession=='Ro18']) - test$delta.time[test$accession=='Col0'][5]
 
   M <- calc_extreme_shifts(test, min_num_overlapping_points, shift_extreme)
   return(M)
@@ -2183,8 +2183,8 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
 
   # get the extreme shifts which can be applied to the genes
   M <- get_extreme_shifts_for_all(mean_df, stretch_factor, min_num_overlapping_points, shift_extreme)
-  min.shift <- M[[1]]
-  max.shift <- M[[2]]
+  min_shift <- M[[1]]
+  max_shift <- M[[2]]
 
   count <- 0
   curr_sym <- unique(mean_df$locus_name)[2]
@@ -2203,7 +2203,7 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
 
     ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
     ### if timepoints don't line up, brassica value is linearly imputed
-    out <- get_best_shift_new(curr_sym, mean_df, stretch_factor, do_rescale, min.shift, max.shift, testing=FALSE)
+    out <- get_best_shift_new(curr_sym, mean_df, stretch_factor, do_rescale, min_shift, max_shift, testing=FALSE)
 
     best_shift <- out$shift[out$score==min(out$score)]
     if (length(best_shift) > 1) {
@@ -2300,7 +2300,7 @@ get_best_shift <- function(curr_sym, test) {
 # do_rescale <- TRUE
 #testing=T
 
-get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min.shift, max.shift, testing=FALSE) {
+get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_shift, max_shift, testing=FALSE) {
   # for the current gene, and current stretch_factor, calculate the score for all
   # shifts, and return the scores for all as a table, and the value of the optimal shift.
 
@@ -2324,7 +2324,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min.s
   all.ara.sd <- rep(0, num.shifts)
   all.bra.sd <- rep(0, num.shifts)
 
-  all.shifts <- seq(min.shift, max.shift, length.out=num.shifts)
+  all.shifts <- seq(min_shift, max_shift, length.out=num.shifts)
   if (!(0 %in% all.shifts)) {
     all.shifts <- c(all.shifts, 0) # include 0 shift in candidates.
   }

@@ -411,17 +411,17 @@ calculate_all_best_shifts(mean.df, stretch_factor, do_rescale, min_num_overlappi
 ```{r include=FALSE}
 # get the extreme shifts which can be applied to the genes
 M <- get_extreme_shifts_for_all(to.shift.df, stretch_factor = stretch, min_num_overlapping_points = 4, shift_extreme = 4)
-min.shift <- M[[1]]
-max.shift <- M[[2]]
+min_shift <- M[[1]]
+max_shift <- M[[2]]
 ```
 
 ```{r}
-min.shift
+min_shift
 ```
 
 
 ```{r}
-max.shift
+max_shift
 ```
 
 #### Step 3a.2 onwards
@@ -438,7 +438,7 @@ length(unique(to.shift.df$locus_name))
 
 ```{r}
 curr_sym <- unique(to.shift.df$locus_name)[2]
-get_best_shift_new(curr_sym, to.shift.df, stretch_factor = 2, do_rescale = TRUE, min.shift, max.shift, testing = FALSE)
+get_best_shift_new(curr_sym, to.shift.df, stretch_factor = 2, do_rescale = TRUE, min_shift, max_shift, testing = FALSE)
 ```
 
 
@@ -461,7 +461,7 @@ for (i in 1:length(unique(to.shift.df$locus_name))) {
 
   ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
   ### if timepoints don't line up, brassica value is linearly imputed
-  out <- get_best_shift_new(curr_sym, to.shift.df, stretch_factor = 2, do_rescale = FALSE, min.shift, max.shift, testing = FALSE)
+  out <- get_best_shift_new(curr_sym, to.shift.df, stretch_factor = 2, do_rescale = FALSE, min_shift, max_shift, testing = FALSE)
 
   best_shift <- out$shift[out$score == min(out$score)]
   if (length(best_shift) > 1) {

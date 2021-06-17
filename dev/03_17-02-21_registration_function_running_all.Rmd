@@ -290,13 +290,13 @@ model.comparison %>%
 ```
 
 ```{r}
-seq(-4, 4, length.out = 10)
+seq(-4, 4, length_out = 10)
 ```
 
 The paramater used by alex 
 
 ```{r}
-seq(-4, 4, length.out = 13)
+seq(-4, 4, length_out = 13)
 ```
 
 

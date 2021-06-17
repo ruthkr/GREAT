@@ -2324,7 +2324,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
   all.ara.sd <- rep(0, num_shifts)
   all.bra.sd <- rep(0, num_shifts)
 
-  all.shifts <- seq(min_shift, max_shift, length.out=num_shifts)
+  all.shifts <- seq(min_shift, max_shift, length_out=num_shifts)
   if (!(0 %in% all.shifts)) {
     all.shifts <- c(all.shifts, 0) # include 0 shift in candidates.
   }

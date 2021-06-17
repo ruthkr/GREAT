@@ -200,14 +200,14 @@ original$shifted_time <- original$delta_time
 
   # -ve extreme shift will be -1*exactly the difference between 1 of the stretched Col0 timepoints, and the smallest Ro18 timepoint
   # +ve extreme will be the difference between 1 of the col0 timepoints, and the maximum Ro18 timepoint
-neg.extreme.candidates <- -1*(original$delta_time[original$accession=='Col0'] - min(original$delta_time[original$accession=='Ro18']))
+neg_extreme_candidate <- -1*(original$delta_time[original$accession=='Col0'] - min(original$delta_time[original$accession=='Ro18']))
 
 
 pos.extreme.candidates <- max(original$delta_time[original$accession=='Ro18']) - original$delta_time[original$accession=='Col0']
 ```
 
 ```{r}
-neg.extreme.candidates
+neg_extreme_candidate
 ```
 
 ```{r}
@@ -216,13 +216,13 @@ pos.extreme.candidates
 
 
 ```{r}
-num.overlapping.points <- sapply(neg.extreme.candidates, FUN=calc_num_overlapping_points, original=original)
+num.overlapping.points <- sapply(neg_extreme_candidate, FUN=calc_num_overlapping_points, original=original)
 
 num.overlapping.points
 ```
 
 ```{r}
-neg.extreme <- min(neg.extreme.candidates[num.overlapping.points >= min_num_overlapping_points])
+neg.extreme <- min(neg_extreme_candidate[num.overlapping.points >= min_num_overlapping_points])
 neg.extreme
 
 num.overlapping.points <- sapply(pos.extreme.candidates, FUN=calc_num_overlapping_points, original=original)

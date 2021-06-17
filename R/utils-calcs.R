@@ -78,7 +78,7 @@ calc_num_overlapping_points <- function(shift, original) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # calculate the number of overlapping points for the species with the fewer overlapping points if the current "shift" is
   # applied to the col0 delta timepoints.
-  original$shifted.time[original$accession == "Col0"] <- original$delta.time[original$accession == "Col0"] + shift
+  original$shifted.time[original$accession == "Col0"] <- original$delta_time[original$accession == "Col0"] + shift
   original <- get_compared_timepoints(original)
   original[, num.compared := sum(is.compared), by = .(accession)]
 

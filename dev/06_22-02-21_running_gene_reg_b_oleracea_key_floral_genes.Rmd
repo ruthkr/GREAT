@@ -693,21 +693,21 @@ test <- test[test$locus_name==curr_sym, ]
 
 ```r
 # transform timepoint to be time from first timepoint
-test[, delta.time:=timepoint - min(timepoint), by=.(accession)]
+test[, delta_time:=timepoint - min(timepoint), by=.(accession)]
 # test
 ```
 
 
 ```r
 ggplot(test[test$locus_name=='BO2G161690',],
-       aes(x=delta.time, y=mean.cpm, color=accession))+
+       aes(x=delta_time, y=mean.cpm, color=accession))+
   geom_point()+
   geom_line()
 ```
 
 ```r
 # apply stretch_factor to the arabidopsis, leave the rapa as is
-test$delta.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0'] * 6
+test$delta_time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0'] * 6
 
 # test
 ```
@@ -715,7 +715,7 @@ test$delta.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0
 
 ```r
 ggplot(test,
-       aes(x=delta.time, y=mean.cpm, color=accession))+
+       aes(x=delta_time, y=mean.cpm, color=accession))+
   geom_point()+
   geom_line()
 ```

@@ -152,36 +152,36 @@ ggplot2::ggplot(test)+
 ```
 
 ```{r get delta timepoint}
-test[, delta.time:=timepoint - min(timepoint), by=.(accession)]
+test[, delta_time:=timepoint - min(timepoint), by=.(accession)]
 ```
 
 ```{r plot after finding delta point}
 ggplot2::ggplot(test)+
-  ggplot2::aes(x=delta.time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=delta_time, y=mean.cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
 
 ```{r stretch it}
-test$delta.time[test$accession == 'Col0'] <- test$delta.time[test$accession=='Col0'] * 3.5
+test$delta_time[test$accession == 'Col0'] <- test$delta_time[test$accession=='Col0'] * 3.5
 ```
 
 ```{r plot stretch result}
 ggplot2::ggplot(test)+
-  ggplot2::aes(x=delta.time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=delta_time, y=mean.cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
 
 ```r
 # Try to make it consistent as in apply stretch
-test$delta.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0'] + 7
-test$delta.time[test$accession=='Ro18'] <- test$delta.time[test$accession=='Ro18'] + 14
+test$delta_time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0'] + 7
+test$delta_time[test$accession=='Ro18'] <- test$delta_time[test$accession=='Ro18'] + 14
 ```
 
 ```{r plot after return it to original time}
 ggplot2::ggplot(test)+
-  ggplot2::aes(x=delta.time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=delta_time, y=mean.cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -190,8 +190,8 @@ ggplot2::ggplot(test)+
 
 
 ```{r shift the time}
-test$shifted.time <- test$delta.time
-test$shifted.time[test$accession == 'Col0'] <- test$delta.time[test$accession == 'Col0'] + 0.6
+test$shifted.time <- test$delta_time
+test$shifted.time[test$accession == 'Col0'] <- test$delta_time[test$accession == 'Col0'] + 0.6
 ```
 
 ```{r plot after shifting time}

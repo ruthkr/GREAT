@@ -69,7 +69,7 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
               'D.registered.onlyR'=D.registered.registered.genes))
 }
 
-# sample.id.cols <- c('accession','delta.time')
+# sample.id.cols <- c('accession','delta_time')
 # gene.col <- c('locus_name')
 # expression.col <- 'mean.cpm'
 # dt <- mean_df

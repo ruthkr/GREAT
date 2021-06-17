@@ -228,12 +228,12 @@ ggplot2::ggplot(test)+
 ![](07_24-02-21_investigate_ap3_stepbystep_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
-test[, delta.time:=timepoint - min(timepoint), by=.(accession)]
+test[, delta_time:=timepoint - min(timepoint), by=.(accession)]
 ```
 
 ``` r
 ggplot2::ggplot(test)+
-  ggplot2::aes(x=delta.time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=delta_time, y=mean.cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -241,12 +241,12 @@ ggplot2::ggplot(test)+
 ![](07_24-02-21_investigate_ap3_stepbystep_files/figure-gfm/plot%20after%20finding%20delta%20point-1.png)<!-- -->
 
 ``` r
-test$delta.time[test$accession == 'Col0'] <- test$delta.time[test$accession=='Col0'] * 3.5
+test$delta_time[test$accession == 'Col0'] <- test$delta_time[test$accession=='Col0'] * 3.5
 ```
 
 ``` r
 ggplot2::ggplot(test)+
-  ggplot2::aes(x=delta.time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=delta_time, y=mean.cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -255,13 +255,13 @@ ggplot2::ggplot(test)+
 
 ``` r
 # Try to make it consistent as in apply stretch
-test$delta.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0'] + 7
-test$delta.time[test$accession=='Ro18'] <- test$delta.time[test$accession=='Ro18'] + 14
+test$delta_time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0'] + 7
+test$delta_time[test$accession=='Ro18'] <- test$delta_time[test$accession=='Ro18'] + 14
 ```
 
 ``` r
 ggplot2::ggplot(test)+
-  ggplot2::aes(x=delta.time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=delta_time, y=mean.cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -269,8 +269,8 @@ ggplot2::ggplot(test)+
 ![](07_24-02-21_investigate_ap3_stepbystep_files/figure-gfm/plot%20after%20return%20it%20to%20original%20time-1.png)<!-- -->
 
 ``` r
-test$shifted.time <- test$delta.time
-test$shifted.time[test$accession == 'Col0'] <- test$delta.time[test$accession == 'Col0'] + 0.6
+test$shifted.time <- test$delta_time
+test$shifted.time[test$accession == 'Col0'] <- test$delta_time[test$accession == 'Col0'] + 0.6
 ```
 
 ``` r
@@ -287,7 +287,7 @@ test <- get_compared_timepoints(test)
 test
 ```
 
-    ##     locus_name accession tissue timepoint    mean.cpm delta.time shifted.time
+    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted.time
     ##  1: BO8G083600      Ro18   apex        37 -0.42962365       23.0         23.0
     ##  2: BO8G083600      Ro18   apex        39 -0.39946884       25.0         25.0
     ##  3: BO8G083600      Ro18   apex        40 -0.16223574       26.0         26.0
@@ -313,7 +313,7 @@ test
     ## 23: BO8G083600      Col0   apex        14 -0.43889838       24.5         25.1
     ## 24: BO8G083600      Col0   apex        15  1.92138994       28.0         28.6
     ## 25: BO8G083600      Col0   apex        16  1.87279025       31.5         32.1
-    ##     locus_name accession tissue timepoint    mean.cpm delta.time shifted.time
+    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted.time
     ##     is.compared
     ##  1:        TRUE
     ##  2:        TRUE
@@ -348,7 +348,7 @@ compared <- test[test$is.compared==TRUE, ]
 compared
 ```
 
-    ##     locus_name accession tissue timepoint    mean.cpm delta.time shifted.time
+    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted.time
     ##  1: BO8G083600      Ro18   apex        37 -0.42962365       23.0         23.0
     ##  2: BO8G083600      Ro18   apex        39 -0.39946884       25.0         25.0
     ##  3: BO8G083600      Ro18   apex        40 -0.16223574       26.0         26.0
@@ -373,7 +373,7 @@ compared
     ## 22: BO8G083600      Col0   apex        14 -0.43889838       24.5         25.1
     ## 23: BO8G083600      Col0   apex        15  1.92138994       28.0         28.6
     ## 24: BO8G083600      Col0   apex        16  1.87279025       31.5         32.1
-    ##     locus_name accession tissue timepoint    mean.cpm delta.time shifted.time
+    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted.time
     ##     is.compared
     ##  1:        TRUE
     ##  2:        TRUE
@@ -436,7 +436,7 @@ if ((ara.sd != 0) & (bra.sd != 0)) {
 compared
 ```
 
-    ##     locus_name accession tissue timepoint    mean.cpm delta.time shifted.time
+    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted.time
     ##  1: BO8G083600      Ro18   apex        37 -0.35838798       23.0         23.0
     ##  2: BO8G083600      Ro18   apex        39 -0.30991942       25.0         25.0
     ##  3: BO8G083600      Ro18   apex        40  0.07139121       26.0         26.0
@@ -461,7 +461,7 @@ compared
     ## 22: BO8G083600      Col0   apex        14 -0.43889838       24.5         25.1
     ## 23: BO8G083600      Col0   apex        15  1.92138994       28.0         28.6
     ## 24: BO8G083600      Col0   apex        16  1.87279025       31.5         32.1
-    ##     locus_name accession tissue timepoint    mean.cpm delta.time shifted.time
+    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted.time
     ##     is.compared
     ##  1:        TRUE
     ##  2:        TRUE
@@ -510,7 +510,7 @@ ara.compared$pred.bra.expression <- sapply(ara.compared$shifted.time, interpolat
 ara.compared
 ```
 
-    ##     locus_name accession tissue timepoint   mean.cpm delta.time shifted.time
+    ##     locus_name accession tissue timepoint   mean.cpm delta_time shifted.time
     ##  1: BO8G083600      Col0   apex         7 -0.4801254        0.0          0.6
     ##  2: BO8G083600      Col0   apex         8 -0.4809492        3.5          4.1
     ##  3: BO8G083600      Col0   apex         9 -0.4779303        7.0          7.6

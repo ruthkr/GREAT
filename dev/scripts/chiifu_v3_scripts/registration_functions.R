@@ -1897,7 +1897,7 @@ get_expression_oI <- function(rds_file, curr_GoIs, sumBrassicas) {
   return(exp)
 }
 
-# sample.id.cols <- c('accession','delta.time')
+# sample.id.cols <- c('accession','delta_time')
 # gene.col <- c('locus_name')
 # expression.col <- 'mean.cpm'
 # dt <- mean_df
@@ -2150,16 +2150,16 @@ get_extreme_shifts_for_all <- function(test, stretch_factor, min_num_overlapping
   test <- test[test$locus_name==curr_sym, ]
 
   # transform timepoint to be time from first timepoint
-  test[, delta.time:=timepoint - min(timepoint), by=.(accession)]
+  test[, delta_time:=timepoint - min(timepoint), by=.(accession)]
   # apply stretch_factor to the arabidopsis, leave the rapa as is
-  test$delta.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0']*stretch_factor
+  test$delta_time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0']*stretch_factor
 
   # calculate min shift and max time shift, which still allows overlap of at least 5 times to be compared from whichever accession will be considering fewer timepoints from.
   # Shift is applied to the arabidopsis - so the 5th largest arabidopsis time is the biggest -ve shift can be applied
   # and the biggest shift which can be applied is to make the 5th smallest arabidopsis time == largest brassica time
-  #setorder(test, delta.time)
-  #min_shift <- min(test$delta.time[test$accession=='Ro18']) - test$delta.time[test$accession=='Col0'][length(test$delta.time[test$accession=='Col0'])-4]
-  #max_shift <- max(test$delta.time[test$accession=='Ro18']) - test$delta.time[test$accession=='Col0'][5]
+  #setorder(test, delta_time)
+  #min_shift <- min(test$delta_time[test$accession=='Ro18']) - test$delta_time[test$accession=='Col0'][length(test$delta_time[test$accession=='Col0'])-4]
+  #max_shift <- max(test$delta_time[test$accession=='Ro18']) - test$delta_time[test$accession=='Col0'][5]
 
   M <- calc_extreme_shifts(test, min_num_overlapping_points, shift_extreme)
   return(M)
@@ -2314,9 +2314,9 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
   test <- test[test$locus_name==curr_sym, ]
 
   # transform timepoint to be time from first timepoint
-  test[, delta.time:=timepoint - min(timepoint), by=.(accession)]
+  test[, delta_time:=timepoint - min(timepoint), by=.(accession)]
   # apply stretch_factor to the arabidopsis, leave the rapa as is
-  test$delta.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0']*stretch_factor
+  test$delta_time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0']*stretch_factor
 
   all_scores <- rep(0, num.shifts)
   all.ara.mean <- rep(0, num.shifts)
@@ -2337,8 +2337,8 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
     #print(curr.shift)
 
     # shift the arabidopsis expression timeings
-    test$shifted.time <- test$delta.time
-    test$shifted.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0'] + curr.shift
+    test$shifted.time <- test$delta_time
+    test$shifted.time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0'] + curr.shift
 
     #### test plot - of shifted, UNNORMALISED gene expression
     # if (testing==TRUE) {
@@ -2429,7 +2429,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
 calc_num_overlapping_points <- function(shift, original) {
   # calculate the number of overlapping points for the species with the fewer overlapping points if the current "shift" is
   # applied to the col0 delta timepoints.
-  original$shifted.time[original$accession=='Col0'] <- original$delta.time[original$accession=='Col0'] + shift
+  original$shifted.time[original$accession=='Col0'] <- original$delta_time[original$accession=='Col0'] + shift
   original <- get_compared_timepoints(original)
   original[, num.compared:=sum(is.compared), by=.(accession)]
 
@@ -2441,15 +2441,15 @@ calc_extreme_shifts <- function(test, min_num_overlapping_points, shift_extreme)
   # preserving the criteria that at least min_num_overlapping_points are being compared from both accessions.
 
   original <- copy(test)
-  original$shifted.time <- original$delta.time
+  original$shifted.time <- original$delta_time
 
   # print('line 1803')
   # print(original)
 
   # -ve extreme shift will be -1*exactly the difference between 1 of the stretched Col0 timepoints, and the smallest ro18 timepoint
   # +ve extreme will be the difference between 1 of the col0 timepoints, and the maximum Ro18 timepoint
-  neg.extreme.candidates <- -1*(original$delta.time[original$accession=='Col0'] - min(original$delta.time[original$accession=='Ro18']))
-  pos.extreme.candidates <- max(original$delta.time[original$accession=='Ro18']) - original$delta.time[original$accession=='Col0']
+  neg.extreme.candidates <- -1*(original$delta_time[original$accession=='Col0'] - min(original$delta_time[original$accession=='Ro18']))
+  pos.extreme.candidates <- max(original$delta_time[original$accession=='Ro18']) - original$delta_time[original$accession=='Col0']
 
   # of these candidates, find the most extreme values which mainting the required number of overlapping timepoints to be considered.
   num.overlapping.points <- sapply(neg.extreme.candidates, FUN=calc_num_overlapping_points, original=original)
@@ -2496,22 +2496,22 @@ apply_stretch <- function(mean_df, best_shifts) {
 
 
   # stretch the arabidopsis expression data, leave the rapa as is
-  test[, delta.time:=timepoint - min(timepoint), by=.(accession)]
+  test[, delta_time:=timepoint - min(timepoint), by=.(accession)]
   ro18.test <- test[test$accession=='Ro18',]
   col0.test <- test[test$accession=='Col0']
-  #test$delta.time[test$accession=='Col0'] <- test$delta.time[test$accession=='Col0']*stretch_factor
+  #test$delta_time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0']*stretch_factor
   col0.test <- merge(col0.test, best_shifts[, c('gene', 'stretch')], by.x='locus_name', by.y='gene')
-  col0.test$delta.time <- col0.test$delta.time * col0.test$stretch
+  col0.test$delta_time <- col0.test$delta_time * col0.test$stretch
   col0.test$stretch <- NULL
   test <- rbind(ro18.test, col0.test)
 
   # record the stretched times (before indiv shifting applied)
-  test$stretched.time.delta <- test$delta.time # record the time (from start of timecourse) after stretching,
-  test$shifted.time <- test$delta.time
+  test$stretched.time.delta <- test$delta_time # record the time (from start of timecourse) after stretching,
+  test$shifted.time <- test$delta_time
   # after stretching, add the time to the first datapoint (7d for ara, 11d for ro18) back on
   test$shifted.time[test$accession=='Col0'] <- test$shifted.time[test$accession=='Col0'] + 11 #7
   test$shifted.time[test$accession=='Ro18'] <- test$shifted.time[test$accession=='Ro18'] + 11
-  test$delta.time <- NULL
+  test$delta_time <- NULL
 
   return(test)
 }

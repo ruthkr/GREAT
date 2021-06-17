@@ -2331,22 +2331,22 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
   i=1
   for (i in 1:length(all_shifts)) {
 
-    curr.shift <- all_shifts[i]
+    curr_shift <- all_shifts[i]
 
     #print('line 1676')
-    #print(curr.shift)
+    #print(curr_shift)
 
     # shift the arabidopsis expression timeings
     test$shifted_time <- test$delta_time
-    test$shifted_time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0'] + curr.shift
+    test$shifted_time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0'] + curr_shift
 
     #### test plot - of shifted, UNNORMALISED gene expression
     # if (testing==TRUE) {
     #   p <- ggplot(test, aes(x=shifted_time, y=mean.cpm, color=accession))+
     #     geom_point()+
-    #     ggtitle(paste0('shift : ', curr.shift))
+    #     ggtitle(paste0('shift : ', curr_shift))
     #   p
-    #   ggsave(paste0('./testing/', curr.shift, '.pdf'))
+    #   ggsave(paste0('./testing/', curr_shift, '.pdf'))
     # }
 
 
@@ -2391,8 +2391,8 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
     if (testing==TRUE) {
       p <- ggplot(compared, aes(x=shifted_time, y=mean.cpm, color=accession))+
         geom_point()+
-        ggtitle(paste0('shift : ', curr.shift))
-        ggsave(paste0('./testing/',stretch_factor, '-', curr.shift, '.pdf'))
+        ggtitle(paste0('shift : ', curr_shift))
+        ggsave(paste0('./testing/',stretch_factor, '-', curr_shift, '.pdf'))
     }
 
     # for each arabidopsis timepoint, linear interpolate between the two nearest brassica timepoints
@@ -2408,7 +2408,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
     if (is.na(score)) {
       print('error in get_best_shift_new(): got a score of NA for gene:')
       print(curr_sym)
-      print(paste0('with curr.shift=', curr.shift))
+      print(paste0('with curr_shift=', curr_shift))
       stop()
     }
 

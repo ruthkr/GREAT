@@ -222,11 +222,11 @@ num_overlapping_points
 ```
 
 ```{r}
-neg.extreme <- min(neg_extreme_candidate[num_overlapping_points >= min_num_overlapping_points])
-neg.extreme
+neg_extreme <- min(neg_extreme_candidate[num_overlapping_points >= min_num_overlapping_points])
+neg_extreme
 
 num_overlapping_points <- sapply(pos_extreme_candidates, FUN=calc_num_overlapping_points, original=original)
-neg.extreme <- max(pos_extreme_candidates[num_overlapping_points >= min_num_overlapping_points])
-neg.extreme
+neg_extreme <- max(pos_extreme_candidates[num_overlapping_points >= min_num_overlapping_points])
+neg_extreme
 ```
 

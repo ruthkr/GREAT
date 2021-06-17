@@ -2459,21 +2459,21 @@ calc_extreme_shifts <- function(test, min_num_overlapping_points, shift_extreme)
                 "maybe try a smaller stretch, and double check you're applying it to the correct timecourse." ))
   }
 
-  neg.extreme <- min(neg_extreme_candidate[num_overlapping_points >= min_num_overlapping_points])
+  neg_extreme <- min(neg_extreme_candidate[num_overlapping_points >= min_num_overlapping_points])
 
   num_overlapping_points <- sapply(pos_extreme_candidates, FUN=calc_num_overlapping_points, original=original)
   pos_extreme <- max(pos_extreme_candidates[num_overlapping_points >= min_num_overlapping_points])
 
   # hard code maximum and minimum allowed shifts, as noticed spurious registrations when too extreme shifts
   # allowed
-  if (neg.extreme < (-1*shift_extreme)) {
-    neg.extreme <- -1 * shift_extreme
+  if (neg_extreme < (-1*shift_extreme)) {
+    neg_extreme <- -1 * shift_extreme
   }
   if (pos_extreme > 1*shift_extreme) {
     pos_extreme <- shift_extreme
   }
 
-  return(list(neg.extreme, pos_extreme))
+  return(list(neg_extreme, pos_extreme))
 }
 
 

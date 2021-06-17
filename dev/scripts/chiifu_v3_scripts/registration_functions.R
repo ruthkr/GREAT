@@ -2449,7 +2449,7 @@ calc_extreme_shifts <- function(test, min_num_overlapping_points, shift_extreme)
   # -ve extreme shift will be -1*exactly the difference between 1 of the stretched Col0 timepoints, and the smallest ro18 timepoint
   # +ve extreme will be the difference between 1 of the col0 timepoints, and the maximum Ro18 timepoint
   neg_extreme_candidate <- -1*(original$delta_time[original$accession=='Col0'] - min(original$delta_time[original$accession=='Ro18']))
-  pos.extreme.candidates <- max(original$delta_time[original$accession=='Ro18']) - original$delta_time[original$accession=='Col0']
+  pos_extreme_candidates <- max(original$delta_time[original$accession=='Ro18']) - original$delta_time[original$accession=='Col0']
 
   # of these candidates, find the most extreme values which mainting the required number of overlapping timepoints to be considered.
   num.overlapping.points <- sapply(neg_extreme_candidate, FUN=calc_num_overlapping_points, original=original)
@@ -2461,8 +2461,8 @@ calc_extreme_shifts <- function(test, min_num_overlapping_points, shift_extreme)
 
   neg.extreme <- min(neg_extreme_candidate[num.overlapping.points >= min_num_overlapping_points])
 
-  num.overlapping.points <- sapply(pos.extreme.candidates, FUN=calc_num_overlapping_points, original=original)
-  pos.extreme <- max(pos.extreme.candidates[num.overlapping.points >= min_num_overlapping_points])
+  num.overlapping.points <- sapply(pos_extreme_candidates, FUN=calc_num_overlapping_points, original=original)
+  pos.extreme <- max(pos_extreme_candidates[num.overlapping.points >= min_num_overlapping_points])
 
   # hard code maximum and minimum allowed shifts, as noticed spurious registrations when too extreme shifts
   # allowed

@@ -203,7 +203,7 @@ original$shifted_time <- original$delta_time
 neg_extreme_candidate <- -1*(original$delta_time[original$accession=='Col0'] - min(original$delta_time[original$accession=='Ro18']))
 
 
-pos.extreme.candidates <- max(original$delta_time[original$accession=='Ro18']) - original$delta_time[original$accession=='Col0']
+pos_extreme_candidates <- max(original$delta_time[original$accession=='Ro18']) - original$delta_time[original$accession=='Col0']
 ```
 
 ```{r}
@@ -211,7 +211,7 @@ neg_extreme_candidate
 ```
 
 ```{r}
-pos.extreme.candidates
+pos_extreme_candidates
 ```
 
 
@@ -225,8 +225,8 @@ num.overlapping.points
 neg.extreme <- min(neg_extreme_candidate[num.overlapping.points >= min_num_overlapping_points])
 neg.extreme
 
-num.overlapping.points <- sapply(pos.extreme.candidates, FUN=calc_num_overlapping_points, original=original)
-neg.extreme <- max(pos.extreme.candidates[num.overlapping.points >= min_num_overlapping_points])
+num.overlapping.points <- sapply(pos_extreme_candidates, FUN=calc_num_overlapping_points, original=original)
+neg.extreme <- max(pos_extreme_candidates[num.overlapping.points >= min_num_overlapping_points])
 neg.extreme
 ```
 

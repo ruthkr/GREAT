@@ -456,7 +456,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
 
   # do_rescale == TRUE, means apply "scale" to compared points for each shift. ==FALSE, means use original mean expression data
 
-  num.shifts <- 25 # the number of different shifts to be considered.
+  num_shifts <- 25 # the number of different shifts to be considered.
 
 
   test <- test[test$locus_name==curr_sym, ]
@@ -471,13 +471,13 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
   # test$delta_time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0'] + 7
   # test$delta_time[test$accession=='Ro18'] <- test$delta_time[test$accession=='Ro18'] + 14
 
-  all_scores <- rep(0, num.shifts)
-  all.ara.mean <- rep(0, num.shifts)
-  all.bra.mean <- rep(0, num.shifts)
-  all.ara.sd <- rep(0, num.shifts)
-  all.bra.sd <- rep(0, num.shifts)
+  all_scores <- rep(0, num_shifts)
+  all.ara.mean <- rep(0, num_shifts)
+  all.bra.mean <- rep(0, num_shifts)
+  all.ara.sd <- rep(0, num_shifts)
+  all.bra.sd <- rep(0, num_shifts)
 
-  all.shifts <- seq(min_shift, max_shift, length.out=num.shifts)
+  all.shifts <- seq(min_shift, max_shift, length.out=num_shifts)
   if (!(0 %in% all.shifts)) {
     all.shifts <- c(all.shifts, 0) # include 0 shift in candidates.
   }

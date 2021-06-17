@@ -32,7 +32,7 @@ plot_registered_GoIs_for_comparible_timepoints <- function(all.stretched.df) {
   registered.plot.df$accession[registered.plot.df$accession=='Col0'] <- 'Col-0'
   registered.plot.df$accession[registered.plot.df$accession=='Ro18'] <- 'DH'
 
-  p.registered <- ggplot(registered.plot.df, aes(x=shifted.time, y=mean.cpm, color=accession, fill=accession))+
+  p.registered <- ggplot(registered.plot.df, aes(x=shifted_time, y=mean.cpm, color=accession, fill=accession))+
     stat_summary(fun=mean, geom='line', size=1)+
     stat_summary(fun.data=mean_se, fun.args=list(mult=1),geom='ribbon',
                  color=NA, alpha=0.3)+
@@ -288,7 +288,7 @@ imputed.mean_df_floral_genes %>%
     ## 3: BO1G039080      Ro18   apex        40  1.5326964                   26
     ## 4: BO1G039080      Ro18   apex        41  1.1866525                   27
     ## 5: BO1G039080      Ro18   apex        49 -0.1059272                   35
-    ##    shifted.time is.registered symbol locus_name.y
+    ##    shifted_time is.registered symbol locus_name.y
     ## 1:           37          TRUE  AGL24    AT4G24540
     ## 2:           39          TRUE  AGL24    AT4G24540
     ## 3:           40          TRUE  AGL24    AT4G24540
@@ -366,7 +366,7 @@ test_using_sample_symbol %>%
     ## 4: BO00629S160      Ro18   apex        41 0.86574085                   27
     ## 5: BO00629S160      Ro18   apex        49 1.57340197                   35
     ## 6: BO00629S160      Ro18   apex        51 1.98460779                   37
-    ##    shifted.time is.registered symbol locus_name.y
+    ##    shifted_time is.registered symbol locus_name.y
     ## 1:           37         FALSE   SPL7    AT5G18830
     ## 2:           39         FALSE   SPL7    AT5G18830
     ## 3:           40         FALSE   SPL7    AT5G18830

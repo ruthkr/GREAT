@@ -193,7 +193,7 @@ M
 
 ```{r}
 original <- data.table::copy(test)
-original$shifted.time <- original$delta_time
+original$shifted_time <- original$delta_time
 
   # print('line 1803')
   # print(original)

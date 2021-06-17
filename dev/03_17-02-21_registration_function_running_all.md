@@ -124,7 +124,7 @@ model.comparison <- O[["model.comparison"]]
 
 # sanity test plot
 # ggplot(imputed.mean_df[imputed.mean_df$locus_name=='BRAA02G015410.3C',],
-#        aes(x=shifted.time, y=mean.cpm, color=accession))+
+#        aes(x=shifted_time, y=mean.cpm, color=accession))+
 #   geom_point()+
 #   geom_line()
 
@@ -187,7 +187,7 @@ imputed.mean_df %>%
   knitr::kable()
 ```
 
-| locus\_name      | accession | tissue | timepoint |   mean.cpm | stretched.time.delta | shifted.time | is.registered |
+| locus\_name      | accession | tissue | timepoint |   mean.cpm | stretched.time.delta | shifted_time | is.registered |
 |:-----------------|:----------|:-------|----------:|-----------:|---------------------:|-------------:|:--------------|
 | BRAA01G000040.3C | Ro18      | apex   |        11 |  0.0710772 |                    0 |           11 | TRUE          |
 | BRAA01G000040.3C | Ro18      | apex   |        29 |  3.5092531 |                   18 |           29 | TRUE          |

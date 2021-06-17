@@ -223,7 +223,7 @@ seperate.dt$stretched.time.delta <- 0 # in order to ensure that seperate copy
 # print('line 594')
 # print(min(timepoint))
 seperate.dt[, stretched.time.delta:=timepoint - min(timepoint), by=.(locus_name, accession)]
-seperate.dt$shifted.time <- seperate.dt$stretched.time.delta + 11 # add eleven, as this is done for the registered genes
+seperate.dt$shifted_time <- seperate.dt$stretched.time.delta + 11 # add eleven, as this is done for the registered genes
 # to make comparible between Ro18 and Col. Therefore need to to this
 # here, to keep unregistered col0 in same frame as
 # stretch 1, shift 0 registered genes.
@@ -253,12 +253,12 @@ Testing how the data looks after shifted for SOC1
 ```{r}
 # sanity plotting - a registered one
 ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA03G023790.3C', ])+
-  ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
+  ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession)+
   ggplot2::geom_point()
 ```
 ```{r}
 ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA05G005370.3C', ])+
-  ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
+  ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession)+
   ggplot2::geom_point()
 ```
 
@@ -266,7 +266,7 @@ ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA05G005370.3C', 
 Take one gene, just to see how this works
 
 ```{r}
-imputed.timepoints <- round(seq(min(shifted.mean_df$shifted.time), max(shifted.mean_df$shifted.time)))
+imputed.timepoints <- round(seq(min(shifted.mean_df$shifted_time), max(shifted.mean_df$shifted_time)))
 
 curr.gene <- 'BRAA03G023790.3C' #unique(shifted.mean_df$locus_name)[17]
 
@@ -277,7 +277,7 @@ ara.df <- curr.df[curr.df$accession=='Col0',]
 bra.df <- curr.df[curr.df$accession=='Ro18',]
 
 interp.ara.df <- data.table::data.table(data.frame('locus_name'=curr.gene, 'accession'='Col0', 'tissue'='apex', 'timepoint'=NA,
-                                                       'stretched.time.delta'= NA, 'shifted.time'=imputed.timepoints,
+                                                       'stretched.time.delta'= NA, 'shifted_time'=imputed.timepoints,
                                                        'is.registered'= unique(ara.df$is.registered)[1]))
 
 # for each brassica timepoint, interpolate the comparible arabidopsis expression
@@ -290,14 +290,14 @@ interp.ara.df$mean.cpm <- sapply(imputed.timepoints, interpolate_brassica_compar
 ```{r}
 # sanity plotting - a registered one
 ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G000040.3C', ])+
-  ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
+  ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession)+
   ggplot2::geom_point()
 ```
 
 ```{r}
 # sanity testing - line is interpolated.
 ggplot2::ggplot(curr.df)+
-  ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
+  ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession)+
   ggplot2::geom_point()+
   ggplot2::geom_line(data=interp.ara.df)
 ```

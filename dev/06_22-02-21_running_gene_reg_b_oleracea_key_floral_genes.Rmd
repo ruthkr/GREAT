@@ -135,20 +135,20 @@ plot_registered_GoIs_for_comparible_timepoints <- function(all.stretched.df) {
 
   registered.plot.df <- all.stretched.df
   AGL24.df <- registered.plot.df[registered.plot.df$locus_name=='AGL24'] #&
-                                   # (registered.plot.df$shifted.time <=35) &
-                                   # (registered.plot.df$shifted.time >=13),]
+                                   # (registered.plot.df$shifted_time <=35) &
+                                   # (registered.plot.df$shifted_time >=13),]
   AP1.df <- registered.plot.df[registered.plot.df$locus_name=='AP1'] #&
-                                 # (registered.plot.df$shifted.time <=25) &
-                                 # (registered.plot.df$shifted.time >=11),]
+                                 # (registered.plot.df$shifted_time <=25) &
+                                 # (registered.plot.df$shifted_time >=11),]
   AP3.df <- registered.plot.df[registered.plot.df$locus_name=='AP3'] #&
-                                 # (registered.plot.df$shifted.time <=25) &
-                                 # (registered.plot.df$shifted.time >=13),]
+                                 # (registered.plot.df$shifted_time <=25) &
+                                 # (registered.plot.df$shifted_time >=13),]
   LFY.df <- registered.plot.df[registered.plot.df$locus_name=='LFY'] #&
-                                 # (registered.plot.df$shifted.time <=19) &
-                                 # (registered.plot.df$shifted.time >=10),]
+                                 # (registered.plot.df$shifted_time <=19) &
+                                 # (registered.plot.df$shifted_time >=10),]
   SOC1.df <- registered.plot.df[registered.plot.df$locus_name=='SOC1'] #&
-                                  # (registered.plot.df$shifted.time <=31) &
-                                  # (registered.plot.df$shifted.time >=10),]
+                                  # (registered.plot.df$shifted_time <=31) &
+                                  # (registered.plot.df$shifted_time >=10),]
   SPL8.df <- registered.plot.df[registered.plot.df$locus_name=='SPL8']
   SVP.df <- registered.plot.df[registered.plot.df$locus_name=='SVP']
   SPL5.df <- registered.plot.df[registered.plot.df$locus_name=='SPL5']
@@ -158,7 +158,7 @@ plot_registered_GoIs_for_comparible_timepoints <- function(all.stretched.df) {
   registered.plot.df$accession[registered.plot.df$accession=='Col0'] <- 'Col-0'
   registered.plot.df$accession[registered.plot.df$accession=='Ro18'] <- 'DH'
 
-  p.registered <- ggplot(registered.plot.df, aes(x=shifted.time, y=mean.cpm, color=accession, fill=accession))+
+  p.registered <- ggplot(registered.plot.df, aes(x=shifted_time, y=mean.cpm, color=accession, fill=accession))+
     stat_summary(fun=mean, geom='line', size=1)+
     stat_summary(fun.data=mean_se, fun.args=list(mult=1.96),geom='ribbon',
                  color=NA, alpha=0.3)+
@@ -186,7 +186,7 @@ plot_registered_GoIs_for_comparible_timepoints_new <- function(registered.plot.d
   registered.plot.df$accession[registered.plot.df$accession=='Col0'] <- 'Col-0'
   registered.plot.df$accession[registered.plot.df$accession=='Ro18'] <- 'DH'
 
-  p.registered <- ggplot(registered.plot.df, aes(x=shifted.time, y=mean.cpm, color=accession, fill=accession))+
+  p.registered <- ggplot(registered.plot.df, aes(x=shifted_time, y=mean.cpm, color=accession, fill=accession))+
     stat_summary(fun=mean, geom='line', size=1)+
     stat_summary(fun.data=mean_se, fun.args=list(mult=1.96),geom='ribbon',
                  color=NA, alpha=0.3)+
@@ -493,7 +493,7 @@ Plot the results
 
 ```{r plot after stretched}
 ggplot2::ggplot(AP3_shifted_results[AP3_shifted_results$locus_name=='BO8G083600'])+
-  ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```

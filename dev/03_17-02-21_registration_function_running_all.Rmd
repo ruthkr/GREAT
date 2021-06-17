@@ -116,7 +116,7 @@ model.comparison <- O[["model.comparison"]]
 
 # sanity test plot
 # ggplot(imputed.mean.df[imputed.mean.df$locus_name=='BRAA02G015410.3C',],
-#        aes(x=shifted.time, y=mean.cpm, color=accession))+
+#        aes(x=shifted_time, y=mean.cpm, color=accession))+
 #   geom_point()+
 #   geom_line()
 

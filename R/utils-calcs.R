@@ -40,19 +40,19 @@ max_is_compared_to_arabidopsis <- function(arabidopsis.time, bra.dt) {
   # the smallest one greater to or equal to arabidopsis time
 
   # if using for rep data, then repeats of the same points screws it up
-  bra.dt <- unique(subset(bra.dt, select = c("timepoint", "shifted.time")))
+  bra.dt <- unique(subset(bra.dt, select = c("timepoint", "shifted_time")))
 
   # return the bra dt shifted timepoint which is greater than, or equal to the Ara time.
-  bra.dt$diff <- bra.dt$shifted.time - arabidopsis.time
+  bra.dt$diff <- bra.dt$shifted_time - arabidopsis.time
   candidates <- bra.dt[bra.dt$diff >= 0, ]
-  bra.max.time <- candidates$shifted.time[candidates$diff == min(candidates$diff)]
+  bra.max.time <- candidates$shifted_time[candidates$diff == min(candidates$diff)]
 
   return(bra.max.time)
 
   # data.table::setorder(bra.dt, diff)
   # nearest.points <- bra.dt[1:2,]
-  # data.table::setorder(nearest.points, shifted.time)
-  # return(nearest.points$shifted.time[2])
+  # data.table::setorder(nearest.points, shifted_time)
+  # return(nearest.points$shifted_time[2])
 }
 
 # arabidopsis.time=ara.min
@@ -63,11 +63,11 @@ min_is_compared_to_arabidopsis <- function(arabidopsis.time, bra.dt) {
   # the biggest one smaller than or equal to the arabidopsis time
 
   # if using for rep data, then repeats of the same points screws it up
-  bra.dt <- unique(subset(bra.dt, select = c("timepoint", "shifted.time")))
+  bra.dt <- unique(subset(bra.dt, select = c("timepoint", "shifted_time")))
 
-  bra.dt$diff <- bra.dt$shifted.time - arabidopsis.time
+  bra.dt$diff <- bra.dt$shifted_time - arabidopsis.time
   candidates <- bra.dt[bra.dt$diff <= 0, ]
-  bra.min.time <- candidates$shifted.time[candidates$diff == max(candidates$diff)]
+  bra.min.time <- candidates$shifted_time[candidates$diff == max(candidates$diff)]
 
   return(bra.min.time)
 }
@@ -78,7 +78,7 @@ calc_num_overlapping_points <- function(shift, original) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # calculate the number of overlapping points for the species with the fewer overlapping points if the current "shift" is
   # applied to the col0 delta timepoints.
-  original$shifted.time[original$accession == "Col0"] <- original$delta_time[original$accession == "Col0"] + shift
+  original$shifted_time[original$accession == "Col0"] <- original$delta_time[original$accession == "Col0"] + shift
   original <- get_compared_timepoints(original)
   original[, num.compared := sum(is.compared), by = .(accession)]
 

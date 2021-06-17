@@ -269,13 +269,13 @@ ggplot2::ggplot(test)+
 ![](07_24-02-21_investigate_ap3_stepbystep_files/figure-gfm/plot%20after%20return%20it%20to%20original%20time-1.png)<!-- -->
 
 ``` r
-test$shifted.time <- test$delta_time
-test$shifted.time[test$accession == 'Col0'] <- test$delta_time[test$accession == 'Col0'] + 0.6
+test$shifted_time <- test$delta_time
+test$shifted_time[test$accession == 'Col0'] <- test$delta_time[test$accession == 'Col0'] + 0.6
 ```
 
 ``` r
 ggplot2::ggplot(test)+
-  ggplot2::aes(x = shifted.time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x = shifted_time, y=mean.cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -287,7 +287,7 @@ test <- get_compared_timepoints(test)
 test
 ```
 
-    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted.time
+    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted_time
     ##  1: BO8G083600      Ro18   apex        37 -0.42962365       23.0         23.0
     ##  2: BO8G083600      Ro18   apex        39 -0.39946884       25.0         25.0
     ##  3: BO8G083600      Ro18   apex        40 -0.16223574       26.0         26.0
@@ -313,7 +313,7 @@ test
     ## 23: BO8G083600      Col0   apex        14 -0.43889838       24.5         25.1
     ## 24: BO8G083600      Col0   apex        15  1.92138994       28.0         28.6
     ## 25: BO8G083600      Col0   apex        16  1.87279025       31.5         32.1
-    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted.time
+    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted_time
     ##     is.compared
     ##  1:        TRUE
     ##  2:        TRUE
@@ -348,7 +348,7 @@ compared <- test[test$is.compared==TRUE, ]
 compared
 ```
 
-    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted.time
+    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted_time
     ##  1: BO8G083600      Ro18   apex        37 -0.42962365       23.0         23.0
     ##  2: BO8G083600      Ro18   apex        39 -0.39946884       25.0         25.0
     ##  3: BO8G083600      Ro18   apex        40 -0.16223574       26.0         26.0
@@ -373,7 +373,7 @@ compared
     ## 22: BO8G083600      Col0   apex        14 -0.43889838       24.5         25.1
     ## 23: BO8G083600      Col0   apex        15  1.92138994       28.0         28.6
     ## 24: BO8G083600      Col0   apex        16  1.87279025       31.5         32.1
-    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted.time
+    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted_time
     ##     is.compared
     ##  1:        TRUE
     ##  2:        TRUE
@@ -436,7 +436,7 @@ if ((ara.sd != 0) & (bra.sd != 0)) {
 compared
 ```
 
-    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted.time
+    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted_time
     ##  1: BO8G083600      Ro18   apex        37 -0.35838798       23.0         23.0
     ##  2: BO8G083600      Ro18   apex        39 -0.30991942       25.0         25.0
     ##  3: BO8G083600      Ro18   apex        40  0.07139121       26.0         26.0
@@ -461,7 +461,7 @@ compared
     ## 22: BO8G083600      Col0   apex        14 -0.43889838       24.5         25.1
     ## 23: BO8G083600      Col0   apex        15  1.92138994       28.0         28.6
     ## 24: BO8G083600      Col0   apex        16  1.87279025       31.5         32.1
-    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted.time
+    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted_time
     ##     is.compared
     ##  1:        TRUE
     ##  2:        TRUE
@@ -491,7 +491,7 @@ compared
 
 ``` r
 ggplot2::ggplot(compared)+
-  ggplot2::aes(x = shifted.time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x = shifted_time, y=mean.cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -503,14 +503,14 @@ ggplot2::ggplot(compared)+
 ara.compared <- compared[compared$accession == "Col0"]
 bra.compared <- compared[compared$accession == "Ro18"]
 
-ara.compared$pred.bra.expression <- sapply(ara.compared$shifted.time, interpolate_brassica_comparison_expression, bra.dt = bra.compared)
+ara.compared$pred.bra.expression <- sapply(ara.compared$shifted_time, interpolate_brassica_comparison_expression, bra.dt = bra.compared)
 ```
 
 ``` r
 ara.compared
 ```
 
-    ##     locus_name accession tissue timepoint   mean.cpm delta_time shifted.time
+    ##     locus_name accession tissue timepoint   mean.cpm delta_time shifted_time
     ##  1: BO8G083600      Col0   apex         7 -0.4801254        0.0          0.6
     ##  2: BO8G083600      Col0   apex         8 -0.4809492        3.5          4.1
     ##  3: BO8G083600      Col0   apex         9 -0.4779303        7.0          7.6
@@ -534,7 +534,7 @@ ara.compared
     ## 10:        TRUE           2.3196832
 
 ``` r
-ara.compared$shifted.time
+ara.compared$shifted_time
 ```
 
     ##  [1]  0.6  4.1  7.6 11.1 14.6 18.1 21.6 25.1 28.6 32.1
@@ -778,7 +778,7 @@ shifted.all.data.df
     ## 148: BO8G083600      Col0   apex         9 -0.4809492                  7.0
     ## 149: BO8G083600      Col0   apex        12 -0.4809492                 17.5
     ## 150: BO8G083600      Col0   apex        12 -0.4785524                 17.5
-    ##      shifted.time
+    ##      shifted_time
     ##   1:     37.00000
     ##   2:     37.00000
     ##   3:     37.00000
@@ -875,7 +875,7 @@ ggplot2::ggplot(all.data.df[all.data.df$locus_name=='BO4G120010'])+
 
 ``` r
 ggplot2::ggplot(shifted.all.data.df[shifted.all.data.df$locus_name=='BO4G120010'])+
-  ggplot2::aes(x = shifted.time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x = shifted_time, y=mean.cpm, color=accession) +
   ggplot2::geom_point()
 ```
 
@@ -899,7 +899,7 @@ test_stretch
     ## 148: BO8G083600      Col0   apex         9 -0.4809492                  7.0
     ## 149: BO8G083600      Col0   apex        12 -0.4809492                 17.5
     ## 150: BO8G083600      Col0   apex        12 -0.4785524                 17.5
-    ##      shifted.time
+    ##      shifted_time
     ##   1:         37.0
     ##   2:         37.0
     ##   3:         37.0
@@ -914,7 +914,7 @@ test_stretch
 
 ``` r
 ggplot2::ggplot(test_stretch[test_stretch$locus_name=='BO4G120010'])+
-  ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession) +
   ggplot2::geom_point()
 ```
 
@@ -930,7 +930,7 @@ curr.data.df <- shifted.all.data.df[shifted.all.data.df$locus_name == 'BO4G12001
 curr.data.df <- get_compared_timepoints(curr.data.df)
 
 ggplot2::ggplot(curr.data.df)+
-  ggplot2::aes(x=shifted.time, y=mean.cpm, shape=is.compared, color=accession)+
+  ggplot2::aes(x=shifted_time, y=mean.cpm, shape=is.compared, color=accession)+
   ggplot2::geom_point()
 ```
 
@@ -1017,7 +1017,7 @@ curr.data.df
     ## 74: BO4G120010      Col0   apex        12 -0.48094922                 17.5
     ## 75: BO4G120010      Col0   apex        12 -0.47855242                 17.5
     ##     locus_name accession tissue timepoint    mean.cpm stretched.time.delta
-    ##     shifted.time is.compared
+    ##     shifted_time is.compared
     ##  1:      37.0000        TRUE
     ##  2:      37.0000        TRUE
     ##  3:      37.0000        TRUE
@@ -1093,7 +1093,7 @@ curr.data.df
     ## 73:      24.5102        TRUE
     ## 74:      35.0102        TRUE
     ## 75:      35.0102        TRUE
-    ##     shifted.time is.compared
+    ##     shifted_time is.compared
 
 ``` r
 # cut down to the data for each model
@@ -1114,30 +1114,30 @@ num.obs <- nrow(combined.spline.data)
 # print(bra.spline.data)
 
 
-ara.fit <- stats::lm(mean.cpm ~ splines::bs(shifted.time, df = num.spline.params, degree = 3), data = ara.spline.data)
-bra.fit <- stats::lm(mean.cpm ~ splines::bs(shifted.time, df = num.spline.params, degree = 3), data = bra.spline.data)
-combined.fit <- stats::lm(mean.cpm ~ splines::bs(shifted.time, df = num.spline.params, degree = 3), data = combined.spline.data)
+ara.fit <- stats::lm(mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = ara.spline.data)
+bra.fit <- stats::lm(mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = bra.spline.data)
+combined.fit <- stats::lm(mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = combined.spline.data)
 
 ara.fit
 ```
 
     ## 
     ## Call:
-    ## stats::lm(formula = mean.cpm ~ splines::bs(shifted.time, df = num.spline.params, 
+    ## stats::lm(formula = mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, 
     ##     degree = 3), data = ara.spline.data)
     ## 
     ## Coefficients:
     ##                                                    (Intercept)  
     ##                                                        -0.4915  
-    ## splines::bs(shifted.time, df = num.spline.params, degree = 3)1  
+    ## splines::bs(shifted_time, df = num.spline.params, degree = 3)1  
     ##                                                         0.2717  
-    ## splines::bs(shifted.time, df = num.spline.params, degree = 3)2  
+    ## splines::bs(shifted_time, df = num.spline.params, degree = 3)2  
     ##                                                        -0.3638  
-    ## splines::bs(shifted.time, df = num.spline.params, degree = 3)3  
+    ## splines::bs(shifted_time, df = num.spline.params, degree = 3)3  
     ##                                                         0.4822  
-    ## splines::bs(shifted.time, df = num.spline.params, degree = 3)4  
+    ## splines::bs(shifted_time, df = num.spline.params, degree = 3)4  
     ##                                                        -1.1327  
-    ## splines::bs(shifted.time, df = num.spline.params, degree = 3)5  
+    ## splines::bs(shifted_time, df = num.spline.params, degree = 3)5  
     ##                                                         2.5054  
-    ## splines::bs(shifted.time, df = num.spline.params, degree = 3)6  
+    ## splines::bs(shifted_time, df = num.spline.params, degree = 3)6  
     ##                                                         2.4851

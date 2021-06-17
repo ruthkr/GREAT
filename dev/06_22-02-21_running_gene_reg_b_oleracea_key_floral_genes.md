@@ -327,7 +327,7 @@ Plot the results
 
 ``` r
 ggplot2::ggplot(AP3_shifted_results[AP3_shifted_results$locus_name=='BO8G083600'])+
-  ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -336,7 +336,7 @@ ggplot2::ggplot(AP3_shifted_results[AP3_shifted_results$locus_name=='BO8G083600'
 
 ``` r
 ggplot2::ggplot(AP3_shifted_results[AP3_shifted_results$locus_name=='BO4G120010'])+
-  ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -362,17 +362,17 @@ imputed.mean.df_wanted <- imputed.mean.df %>%
 
 ``` r}
 # registered.plot.df <- imputed.mean.df_wanted
-# registered.plot.df <- registered.plot.df[(registered.plot.df$shifted.time >=14),]
+# registered.plot.df <- registered.plot.df[(registered.plot.df$shifted_time >=14),]
 test <- imputed.mean.df_wanted %>% 
-  dplyr::filter(dplyr::case_when(locus_name == "AGL24" ~ shifted.time >= 14 & shifted.time <= 51, 
-                          locus_name == "AP1" ~  shifted.time >= 14 & shifted.time <= 45,
-                          locus_name == "AP3" ~  shifted.time >= 14 & shifted.time <= 51,
-                          locus_name == "AGL24" ~ shifted.time >= 14 & shifted.time <= 51,
-                          locus_name == "LFY" ~ shifted.time >= 14 & shifted.time <= 51,
-                          locus_name == "SOC1" ~ shifted.time >= 14 & shifted.time <= 50,
-                          locus_name == "SPL8" ~ shifted.time >= 14 & shifted.time <= 45,
-                          locus_name == "SPL5" ~ shifted.time >= 14 & shifted.time <= 51,
-                          T ~  shifted.time >= 14 & shifted.time <= 40))
+  dplyr::filter(dplyr::case_when(locus_name == "AGL24" ~ shifted_time >= 14 & shifted_time <= 51, 
+                          locus_name == "AP1" ~  shifted_time >= 14 & shifted_time <= 45,
+                          locus_name == "AP3" ~  shifted_time >= 14 & shifted_time <= 51,
+                          locus_name == "AGL24" ~ shifted_time >= 14 & shifted_time <= 51,
+                          locus_name == "LFY" ~ shifted_time >= 14 & shifted_time <= 51,
+                          locus_name == "SOC1" ~ shifted_time >= 14 & shifted_time <= 50,
+                          locus_name == "SPL8" ~ shifted_time >= 14 & shifted_time <= 45,
+                          locus_name == "SPL5" ~ shifted_time >= 14 & shifted_time <= 51,
+                          T ~  shifted_time >= 14 & shifted_time <= 40))
 ```
 
 ``` r

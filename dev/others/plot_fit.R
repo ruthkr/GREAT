@@ -1,19 +1,19 @@
 plot_fit <- function(results_list, facets = c("arabidopsis", "brassica"), title = NULL) {
   data <- rbind(
     data.frame(
-      shifted_time = results_list$ara.spline.data$shifted.time,
+      shifted_time = results_list$ara.spline.data$shifted_time,
       y_truth = broom::augment(results_list$ara.fit)$mean.cpm,
       y_pred = broom::augment(results_list$ara.fit)$.fitted,
       type = facets[[1]]
     ),
     data.frame(
-      shifted_time = results_list$bra.spline.data$shifted.time,
+      shifted_time = results_list$bra.spline.data$shifted_time,
       y_truth = broom::augment(results_list$bra.fit)$mean.cpm,
       y_pred = broom::augment(results_list$bra.fit)$.fitted,
       type = facets[[2]]
     ),
     data.frame(
-      shifted_time = results_list$combined.spline.data$shifted.time,
+      shifted_time = results_list$combined.spline.data$shifted_time,
       y_truth = broom::augment(results_list$combined.fit)$mean.cpm,
       y_pred = broom::augment(results_list$combined.fit)$.fitted,
       type = "combined"

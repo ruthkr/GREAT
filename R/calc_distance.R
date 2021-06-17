@@ -19,7 +19,7 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
   mean.dt.sc.w <- reformat_for_distance_calculation(mean_df.sc, sample.id.cols, gene.col, expression.col)
 
   # imputed.mean_df - all genes
-  sample.id.cols <- c('accession','shifted.time')
+  sample.id.cols <- c('accession','shifted_time')
   gene.col <- c('locus_name')
   expression.col <- c('mean.cpm')
   imputed.mean.dt.w <- reformat_for_distance_calculation(imputed.mean_df, sample.id.cols, gene.col, expression.col)

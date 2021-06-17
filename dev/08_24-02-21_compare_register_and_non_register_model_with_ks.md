@@ -35,7 +35,7 @@ compare_registered_to_unregistered_model_with_ks <- function(curr.sym, all.data.
   curr.data.df <- get_compared_timepoints(curr.data.df)
 
   # ggplot2::ggplot(curr.data.df)+
-  #   ggplot2::aes(x=shifted.time, y=mean.cpm, shape=is.compared, color=accession)+
+  #   ggplot2::aes(x=shifted_time, y=mean.cpm, shape=is.compared, color=accession)+
   #   ggplot2::geom_point()
 
   # cut down to the data for each model
@@ -58,9 +58,9 @@ compare_registered_to_unregistered_model_with_ks <- function(curr.sym, all.data.
   # print(bra.spline.data)
 
 
-  ara.fit <- stats::lm(mean.cpm ~ splines::bs(shifted.time, df = num.spline.params, degree = 3), data = ara.spline.data)
-  bra.fit <- stats::lm(mean.cpm ~ splines::bs(shifted.time, df = num.spline.params, degree = 3), data = bra.spline.data)
-  combined.fit <- stats::lm(mean.cpm ~ splines::bs(shifted.time, df = num.spline.params, degree = 3), data = combined.spline.data)
+  ara.fit <- stats::lm(mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = ara.spline.data)
+  bra.fit <- stats::lm(mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = bra.spline.data)
+  combined.fit <- stats::lm(mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = combined.spline.data)
   # calculate the log likelihoods
   ara.logLik <- stats::logLik(ara.fit)
   bra.logLik <- stats::logLik(bra.fit)
@@ -83,31 +83,31 @@ compare_registered_to_unregistered_model_with_ks <- function(curr.sym, all.data.
   if (is.testing == TRUE) {
     ara.pred <- stats::predict(ara.fit)
     ara.pred.df <- unique(data.frame(
-      "shifted.time" = ara.spline.data$shifted.time,
+      "shifted_time" = ara.spline.data$shifted_time,
       "mean.cpm" = ara.pred, "accession" = "Col0"
     ))
     bra.pred <- stats::predict(bra.fit)
     bra.pred.df <- unique(data.frame(
-      "shifted.time" = bra.spline.data$shifted.time,
+      "shifted_time" = bra.spline.data$shifted_time,
       "mean.cpm" = bra.pred, "accession" = "Ro18"
     ))
 
     combined.pred <- stats::predict(combined.fit)
     combined.pred.df <- unique(data.frame(
-      "shifted.time" = combined.spline.data$shifted.time,
+      "shifted_time" = combined.spline.data$shifted_time,
       "mean.cpm" = combined.pred, "accession" = "registered"
     ))
     spline.df <- rbind(ara.pred.df, bra.pred.df, combined.pred.df)
 
     p <- ggplot2::ggplot(data = combined.spline.data) +
-      ggplot2::aes(x = shifted.time, y = mean.cpm, colour = accession) +
+      ggplot2::aes(x = shifted_time, y = mean.cpm, colour = accession) +
       ggplot2::geom_point() +
       ggplot2::geom_line(data = spline.df) +
       ggplot2::ggtitle(paste0(
         curr.sym, " : sep AIC:combo AIC=", round(seperate.AIC), ":", round(combined.AIC),
         ", sep BIC: combo BIC=", round(seperate.BIC), ":", round(combined.BIC)
       ))
-    # ggplot2::ggsave(paste0('./testing/fitted_splines/', curr.sym, '_', max(ara.pred.df$shifted.time), '.pdf'))
+    # ggplot2::ggsave(paste0('./testing/fitted_splines/', curr.sym, '_', max(ara.pred.df$shifted_time), '.pdf'))
   }
   # browser()
 
@@ -136,19 +136,19 @@ shifted.all.data.df <- readRDS("others/shifted.all.data.df.RDS")
 plot_fit <- function(results_list, facets = c("arabidopsis", "brassica"), title = NULL) {
   data <- rbind(
     data.frame(
-      shifted_time = results_list$ara.spline.data$shifted.time,
+      shifted_time = results_list$ara.spline.data$shifted_time,
       y_truth = broom::augment(results_list$ara.fit)$mean.cpm,
       y_pred = broom::augment(results_list$ara.fit)$.fitted,
       type = facets[[1]]
     ),
     data.frame(
-      shifted_time = results_list$bra.spline.data$shifted.time,
+      shifted_time = results_list$bra.spline.data$shifted_time,
       y_truth = broom::augment(results_list$bra.fit)$mean.cpm,
       y_pred = broom::augment(results_list$bra.fit)$.fitted,
       type = facets[[2]]
     ),
     data.frame(
-      shifted_time = results_list$combined.spline.data$shifted.time,
+      shifted_time = results_list$combined.spline.data$shifted_time,
       y_truth = broom::augment(results_list$combined.fit)$mean.cpm,
       y_pred = broom::augment(results_list$combined.fit)$.fitted,
       type = "combined"

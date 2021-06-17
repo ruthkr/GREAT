@@ -343,27 +343,27 @@ plot_registered_GoIs_for_comparible_timepoints <- function(all.stretched.df) {
 
   registered.plot.df <- all.stretched.df
   AGL24.df <- registered.plot.df[registered.plot.df$locus_name=='AGL24' &
-                                   (registered.plot.df$shifted.time <=35) &
-                                   (registered.plot.df$shifted.time >=13),]
+                                   (registered.plot.df$shifted_time <=35) &
+                                   (registered.plot.df$shifted_time >=13),]
   AP1.df <- registered.plot.df[registered.plot.df$locus_name=='AP1' &
-                                 (registered.plot.df$shifted.time <=25) &
-                                 (registered.plot.df$shifted.time >=11),]
+                                 (registered.plot.df$shifted_time <=25) &
+                                 (registered.plot.df$shifted_time >=11),]
   AP3.df <- registered.plot.df[registered.plot.df$locus_name=='AP3' &
-                                 (registered.plot.df$shifted.time <=25) &
-                                 (registered.plot.df$shifted.time >=13),]
+                                 (registered.plot.df$shifted_time <=25) &
+                                 (registered.plot.df$shifted_time >=13),]
   LFY.df <- registered.plot.df[registered.plot.df$locus_name=='LFY' &
-                                 (registered.plot.df$shifted.time <=19) &
-                                 (registered.plot.df$shifted.time >=10),]
+                                 (registered.plot.df$shifted_time <=19) &
+                                 (registered.plot.df$shifted_time >=10),]
   SOC1.df <- registered.plot.df[registered.plot.df$locus_name=='SOC1' &
-                                  (registered.plot.df$shifted.time <=31) &
-                                  (registered.plot.df$shifted.time >=10),]
+                                  (registered.plot.df$shifted_time <=31) &
+                                  (registered.plot.df$shifted_time >=10),]
   registered.plot.df <- rbind(AGL24.df, AP1.df, AP3.df, LFY.df, SOC1.df)
 
   registered.plot.df$accession <- as.character(registered.plot.df$accession)
   registered.plot.df$accession[registered.plot.df$accession=='Col0'] <- 'Col-0'
   registered.plot.df$accession[registered.plot.df$accession=='Ro18'] <- 'R-O-18'
 
-  p.registered <- ggplot(registered.plot.df, aes(x=shifted.time, y=mean.cpm, color=accession, fill=accession))+
+  p.registered <- ggplot(registered.plot.df, aes(x=shifted_time, y=mean.cpm, color=accession, fill=accession))+
     stat_summary(fun=mean, geom='line', size=1)+
     stat_summary(fun.data=mean_se, fun.args=list(mult=1.96),geom='ribbon',
                  color=NA, alpha=0.3)+
@@ -963,7 +963,7 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches,
   #
   # #sanity plot that done right
   # ggplot(shifted.mean_df[shifted.mean_df$locus_name==GOI],
-  #        aes(x=shifted.time, y=mean.cpm, color=accession))+
+  #        aes(x=shifted_time, y=mean.cpm, color=accession))+
   #   geom_point()+
   #   geom_line()
 
@@ -976,11 +976,11 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches,
 
   #sanity plot that done right
   # ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G001540.3C'],
-  #        aes(x=shifted.time, y=mean.cpm, color=accession))+
+  #        aes(x=shifted_time, y=mean.cpm, color=accession))+
   #   geom_point()+
   #   geom_line()
   # ggplot(imputed.mean_df[imputed.mean_df$locus_name=='BRAA01G001540.3C'],
-  #        aes(x=shifted.time, y=mean.cpm, color=accession))+
+  #        aes(x=shifted_time, y=mean.cpm, color=accession))+
   #   geom_point()+
   #   geom_line()
 
@@ -1145,7 +1145,7 @@ apply_shift_to_registered_genes_only <- function(to.shift.df, best_shifts, model
   # print('line 594')
   # print(min(timepoint))
   seperate.dt[, stretched.time.delta:=timepoint - min(timepoint), by=.(locus_name, accession)]
-  seperate.dt$shifted.time <- seperate.dt$stretched.time.delta + 11 # add eleven, as this is done for the registered genes
+  seperate.dt$shifted_time <- seperate.dt$stretched.time.delta + 11 # add eleven, as this is done for the registered genes
                                                                     # to make comparible between Ro18 and Col. Therefore need to to this
                                                                     # here, to keep unregistered col0 in same frame as
                                                                     # stretch 1, shift 0 registered genes.
@@ -1178,7 +1178,7 @@ calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
 
   # # check that have now got scaled, stretched time for both genes.
   # tst <- all.data.df
-  # ggplot(tst[tst$locus_name=='BRAA01G000040.3C'], aes(x=shifted.time, y=mean.cpm, color=accession))+
+  # ggplot(tst[tst$locus_name=='BRAA01G000040.3C'], aes(x=shifted_time, y=mean.cpm, color=accession))+
   #   geom_point()
   # ggplot(tst[tst$locus_name=='BRAA01G000040.3C'], aes(x=timepoint, y=mean.cpm, color=accession))+
   #   geom_point()
@@ -1229,7 +1229,7 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
   # flag the timepoints to be used in the modelling, only the ones which overlap!
   curr.data.df <- get_compared_timepoints(curr.data.df)
 
-  # ggplot(curr.data.df, aes(x=shifted.time, y=mean.cpm, shape=is.compared, color=accession))+
+  # ggplot(curr.data.df, aes(x=shifted_time, y=mean.cpm, shape=is.compared, color=accession))+
   #   geom_point()
 
   # cut down to the data for each model
@@ -1252,9 +1252,9 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
   # print(bra.spline.data)
 
 
-  ara.fit <- lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=ara.spline.data)
-  bra.fit <- lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=bra.spline.data)
-  combined.fit <- lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=combined.spline.data)
+  ara.fit <- lm(mean.cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=ara.spline.data)
+  bra.fit <- lm(mean.cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=bra.spline.data)
+  combined.fit <- lm(mean.cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=combined.spline.data)
   # calculate the log likelihoods
   ara.logLik <- logLik(ara.fit)
   bra.logLik <- logLik(bra.fit)
@@ -1272,24 +1272,24 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
 
   if (is.testing==TRUE) {
     ara.pred <- predict(ara.fit)
-    ara.pred.df <- unique(data.frame('shifted.time'=ara.spline.data$shifted.time,
+    ara.pred.df <- unique(data.frame('shifted_time'=ara.spline.data$shifted_time,
                                      'mean.cpm'=ara.pred, 'accession'='Col0'))
     bra.pred <- predict(bra.fit)
-    bra.pred.df <- unique(data.frame('shifted.time'=bra.spline.data$shifted.time,
+    bra.pred.df <- unique(data.frame('shifted_time'=bra.spline.data$shifted_time,
                                      'mean.cpm'=bra.pred, 'accession'='Ro18'))
 
     combined.pred <- predict(combined.fit)
-    combined.pred.df <- unique(data.frame('shifted.time'=combined.spline.data$shifted.time,
+    combined.pred.df <- unique(data.frame('shifted_time'=combined.spline.data$shifted_time,
                                           'mean.cpm'=combined.pred, 'accession'='registered'))
     spline.df <- rbind(ara.pred.df, bra.pred.df, combined.pred.df)
 
-    ggplot(data=combined.spline.data, aes(x=shifted.time, y=mean.cpm,
+    ggplot(data=combined.spline.data, aes(x=shifted_time, y=mean.cpm,
                                           colour=accession))+
       geom_point()+
       geom_line(data=spline.df)+
       ggtitle(paste0(curr.sym, ' : sep AIC:combo AIC=', round(seperate.AIC), ':', round(combined.AIC),
                      ', sep BIC: combo BIC=', round(seperate.BIC), ':', round(combined.BIC)))
-    ggsave(paste0('./testing/fitted_splines/', curr.sym, '_', max(ara.pred.df$shifted.time), '.pdf'))
+    ggsave(paste0('./testing/fitted_splines/', curr.sym, '_', max(ara.pred.df$shifted_time), '.pdf'))
   }
 
   return(list(seperate.AIC, combined.AIC, seperate.BIC,combined.BIC))
@@ -1405,7 +1405,7 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
   mean.dt.sc.w <- reformat_for_distance_calculation(mean_df.sc, sample.id.cols, gene.col, expression.col)
 
   # imputed.mean_df - all genes
-  sample.id.cols <- c('accession','shifted.time')
+  sample.id.cols <- c('accession','shifted_time')
   gene.col <- c('locus_name')
   expression.col <- c('mean.cpm')
   imputed.mean.dt.w <- reformat_for_distance_calculation(imputed.mean_df, sample.id.cols, gene.col, expression.col)
@@ -1555,7 +1555,7 @@ plot_registration_for_exemplar_genes <- function(all.rep.shifted.data, GoIs) {
 
 
   tmp$label <- 'Registered'
-  p.shifted <- ggplot(tmp, aes(x=shifted.time, y=mean.cpm,
+  p.shifted <- ggplot(tmp, aes(x=shifted_time, y=mean.cpm,
                                color=locus_name, fill=locus_name,
                                shape=accession, linetype=accession))+
     stat_summary(fun=mean, geom='line', size=1)+
@@ -2085,14 +2085,14 @@ impute_arabidopsis_values <- function(shifted.mean_df) {
 
 
   # sanity plotting - a registered one
-  # ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G001090.3C', ], aes(x=shifted.time, y=mean.cpm, color=accession))+
+  # ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G001090.3C', ], aes(x=shifted_time, y=mean.cpm, color=accession))+
   #   geom_point()
   # # an unregistered one
-  # ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G003140.3C', ], aes(x=shifted.time, y=mean.cpm, color=accession))+
+  # ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G003140.3C', ], aes(x=shifted_time, y=mean.cpm, color=accession))+
   #   geom_point()
 
   # The imputed col0 times going to extimate gene expression for
-  imputed.timepoints <- round(seq(min(shifted.mean_df$shifted.time), max(shifted.mean_df$shifted.time)))
+  imputed.timepoints <- round(seq(min(shifted.mean_df$shifted_time), max(shifted.mean_df$shifted_time)))
 
   out.list <- list()
   out.list <- c(out.list, list(shifted.mean_df[shifted.mean_df$accession=='Ro18']))
@@ -2116,7 +2116,7 @@ impute_arabidopsis_values <- function(shifted.mean_df) {
     bra.df <- curr.df[curr.df$accession=='Ro18',]
 
     interp.ara.df <- data.table(data.frame('locus_name'=curr.gene, 'accession'='Col0', 'tissue'='apex', 'timepoint'=NA,
-                                           'stretched.time.delta'= NA, 'shifted.time'=imputed.timepoints,
+                                           'stretched.time.delta'= NA, 'shifted_time'=imputed.timepoints,
                                            'is.registered'= unique(ara.df$is.registered)[1]))
 
     # for each brassica timepoint, interpolate the comparible arabidopsis expression
@@ -2126,7 +2126,7 @@ impute_arabidopsis_values <- function(shifted.mean_df) {
 
 
     # sanity testing - line is interpolated.
-    # ggplot(curr.df, aes(x=shifted.time, y=mean.cpm, color=accession))+
+    # ggplot(curr.df, aes(x=shifted_time, y=mean.cpm, color=accession))+
     #   geom_point()+
     #   geom_line(data=interp.ara.df)
 
@@ -2337,12 +2337,12 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
     #print(curr.shift)
 
     # shift the arabidopsis expression timeings
-    test$shifted.time <- test$delta_time
-    test$shifted.time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0'] + curr.shift
+    test$shifted_time <- test$delta_time
+    test$shifted_time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0'] + curr.shift
 
     #### test plot - of shifted, UNNORMALISED gene expression
     # if (testing==TRUE) {
-    #   p <- ggplot(test, aes(x=shifted.time, y=mean.cpm, color=accession))+
+    #   p <- ggplot(test, aes(x=shifted_time, y=mean.cpm, color=accession))+
     #     geom_point()+
     #     ggtitle(paste0('shift : ', curr.shift))
     #   p
@@ -2389,7 +2389,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
 
     ### test plot of shifted, and normalised gene expression
     if (testing==TRUE) {
-      p <- ggplot(compared, aes(x=shifted.time, y=mean.cpm, color=accession))+
+      p <- ggplot(compared, aes(x=shifted_time, y=mean.cpm, color=accession))+
         geom_point()+
         ggtitle(paste0('shift : ', curr.shift))
         ggsave(paste0('./testing/',stretch_factor, '-', curr.shift, '.pdf'))
@@ -2399,7 +2399,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
     ara.compared <- compared[compared$accession=='Col0']
     bra.compared <- compared[compared$accession=='Ro18']
 
-    ara.compared$pred.bra.expression <- sapply(ara.compared$shifted.time, interpolate_brassica_comparison_expression, bra.dt=bra.compared)
+    ara.compared$pred.bra.expression <- sapply(ara.compared$shifted_time, interpolate_brassica_comparison_expression, bra.dt=bra.compared)
 
     # calculate the score, using the (interpolated) predicted.bra.expression, and the observed arabidopsis expression
     # score = mean ((observed - expected)**2 )
@@ -2429,7 +2429,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
 calc_num_overlapping_points <- function(shift, original) {
   # calculate the number of overlapping points for the species with the fewer overlapping points if the current "shift" is
   # applied to the col0 delta timepoints.
-  original$shifted.time[original$accession=='Col0'] <- original$delta_time[original$accession=='Col0'] + shift
+  original$shifted_time[original$accession=='Col0'] <- original$delta_time[original$accession=='Col0'] + shift
   original <- get_compared_timepoints(original)
   original[, num.compared:=sum(is.compared), by=.(accession)]
 
@@ -2441,7 +2441,7 @@ calc_extreme_shifts <- function(test, min_num_overlapping_points, shift_extreme)
   # preserving the criteria that at least min_num_overlapping_points are being compared from both accessions.
 
   original <- copy(test)
-  original$shifted.time <- original$delta_time
+  original$shifted_time <- original$delta_time
 
   # print('line 1803')
   # print(original)
@@ -2507,10 +2507,10 @@ apply_stretch <- function(mean_df, best_shifts) {
 
   # record the stretched times (before indiv shifting applied)
   test$stretched.time.delta <- test$delta_time # record the time (from start of timecourse) after stretching,
-  test$shifted.time <- test$delta_time
+  test$shifted_time <- test$delta_time
   # after stretching, add the time to the first datapoint (7d for ara, 11d for ro18) back on
-  test$shifted.time[test$accession=='Col0'] <- test$shifted.time[test$accession=='Col0'] + 11 #7
-  test$shifted.time[test$accession=='Ro18'] <- test$shifted.time[test$accession=='Ro18'] + 11
+  test$shifted_time[test$accession=='Col0'] <- test$shifted_time[test$accession=='Col0'] + 11 #7
+  test$shifted_time[test$accession=='Ro18'] <- test$shifted_time[test$accession=='Ro18'] + 11
   test$delta_time <- NULL
 
   return(test)
@@ -2549,10 +2549,10 @@ apply_best_shift <- function(mean_df, best_shifts) {
   for (curr.gene in unique(test$locus_name)) {
     #print(curr.gene)
     curr.best.shift <- best_shifts$shift[best_shifts$gene==curr.gene]
-    test$shifted.time[test$accession=='Col0' & test$locus_name==curr.gene] <- test$shifted.time[test$accession=='Col0' & test$locus_name==curr.gene] + curr.best.shift
+    test$shifted_time[test$accession=='Col0' & test$locus_name==curr.gene] <- test$shifted_time[test$accession=='Col0' & test$locus_name==curr.gene] + curr.best.shift
 
     # tmp <- test[test$locus_name==curr.gene]
-    # ggplot(tmp, aes(x=shifted.time, y=mean.cpm, color=accession))+
+    # ggplot(tmp, aes(x=shifted_time, y=mean.cpm, color=accession))+
     #    geom_point()
   }
 
@@ -2615,22 +2615,22 @@ apply_best_normalisation <- function(test, best_shifts) {
 # test <- curr.data.df
 get_compared_timepoints <- function(test) {
   # flag the arabidopsis timepoints which overlap the brassica timecourse, and so will be compared
-  bra.min <- min(test$shifted.time[test$accession=='Ro18'])
-  bra.max <- max(test$shifted.time[test$accession=='Ro18'])
+  bra.min <- min(test$shifted_time[test$accession=='Ro18'])
+  bra.max <- max(test$shifted_time[test$accession=='Ro18'])
 
   # get the arabidopsis times which used
   test$is.compared <- FALSE
-  test$is.compared[(test$accession=='Col0' & (test$shifted.time >= bra.min & test$shifted.time <=bra.max))] <- TRUE
+  test$is.compared[(test$accession=='Col0' & (test$shifted_time >= bra.min & test$shifted_time <=bra.max))] <- TRUE
 
   # get the extreme brassica times which used - bigger or equal than Ara max, and smaller or equal than Ara min, because have to project
   #  Ara onto Bra
-  ara.max <- max(test$shifted.time[test$accession=='Col0' & test$is.compared==TRUE])
-  ara.min <- min(test$shifted.time[test$accession=='Col0' & test$is.compared==TRUE])
+  ara.max <- max(test$shifted_time[test$accession=='Col0' & test$is.compared==TRUE])
+  ara.min <- min(test$shifted_time[test$accession=='Col0' & test$is.compared==TRUE])
   bra.max <- max_is_compared_to_arabidopsis(ara.max, test[test$accession=='Ro18', ])
   bra.min <- min_is_compared_to_arabidopsis(ara.min, test[test$accession=='Ro18', ])
 
   # use these to get all the brassica times which used
-  test$is.compared[(test$accession=='Ro18' & (test$shifted.time >= bra.min & test$shifted.time <=bra.max))] <- TRUE
+  test$is.compared[(test$accession=='Ro18' & (test$shifted_time >= bra.min & test$shifted_time <=bra.max))] <- TRUE
 
   return(test)
 }
@@ -2656,19 +2656,19 @@ max_is_compared_to_arabidopsis <- function(arabidopsis.time, bra.dt) {
   # the smallest one greater to or equal to arabidopsis time
 
   # if using for rep data, then repeats of the same points screws it up
-  bra.dt <- unique(subset(bra.dt, select=c('timepoint', 'shifted.time')))
+  bra.dt <- unique(subset(bra.dt, select=c('timepoint', 'shifted_time')))
 
   # return the bra dt shifted timepoint which is greater than, or equal to the Ara time.
-  bra.dt$diff <- bra.dt$shifted.time - arabidopsis.time
+  bra.dt$diff <- bra.dt$shifted_time - arabidopsis.time
   candidates <- bra.dt[bra.dt$diff>=0,]
-  bra.max.time <- candidates$shifted.time[candidates$diff==min(candidates$diff)]
+  bra.max.time <- candidates$shifted_time[candidates$diff==min(candidates$diff)]
 
   return(bra.max.time)
 
   #setorder(bra.dt, diff)
   #nearest.points <- bra.dt[1:2,]
-  #setorder(nearest.points, shifted.time)
-  #return(nearest.points$shifted.time[2])
+  #setorder(nearest.points, shifted_time)
+  #return(nearest.points$shifted_time[2])
 }
 
 #arabidopsis.time=ara.min
@@ -2677,11 +2677,11 @@ min_is_compared_to_arabidopsis <- function(arabidopsis.time, bra.dt) {
   # the biggest one smaller than or equal to the arabidopsis time
 
   # if using for rep data, then repeats of the same points screws it up
-  bra.dt <- unique(subset(bra.dt, select=c('timepoint', 'shifted.time')))
+  bra.dt <- unique(subset(bra.dt, select=c('timepoint', 'shifted_time')))
 
-  bra.dt$diff <- bra.dt$shifted.time - arabidopsis.time
+  bra.dt$diff <- bra.dt$shifted_time - arabidopsis.time
   candidates <- bra.dt[bra.dt$diff<=0,]
-  bra.min.time <- candidates$shifted.time[candidates$diff==max(candidates$diff)]
+  bra.min.time <- candidates$shifted_time[candidates$diff==max(candidates$diff)]
   return(bra.min.time)
 
 }
@@ -2691,7 +2691,7 @@ min_is_compared_to_arabidopsis <- function(arabidopsis.time, bra.dt) {
 interpolate_brassica_comparison_expression <- function(arabidopsis.time, bra.dt) {
 
   # arabidopsis time is outside of the range of the bra.dt shifted timepoints
-  bra.dt$diff <- bra.dt$shifted.time - arabidopsis.time
+  bra.dt$diff <- bra.dt$shifted_time - arabidopsis.time
 
   # if outside of comparible range (time is smaller than all bra.dt time or bigger than all)
   if (all(bra.dt$diff > 0) | all(bra.dt$diff < 0) ) {
@@ -2699,13 +2699,13 @@ interpolate_brassica_comparison_expression <- function(arabidopsis.time, bra.dt)
   }
 
   # otherwise,  cut down brassica observations to the two nearest timepoints to the arabidopsis time
-  bra.dt$diff <- abs(bra.dt$shifted.time - arabidopsis.time)
+  bra.dt$diff <- abs(bra.dt$shifted_time - arabidopsis.time)
   setorder(bra.dt, diff)
   nearest.points <- bra.dt[1:2,]
 
   # linearly interpolate between these points to estimate the comparison expression value
-  setorder(nearest.points, shifted.time) # so [1] is earlier time
-  time.diff <- nearest.points$shifted.time[2] - nearest.points$shifted.time[1] #
+  setorder(nearest.points, shifted_time) # so [1] is earlier time
+  time.diff <- nearest.points$shifted_time[2] - nearest.points$shifted_time[1] #
   expression.diff <- nearest.points$mean.cpm[2] - nearest.points$mean.cpm[1]
   grad <- expression.diff / time.diff
   pred.expression <- nearest.points$mean.cpm[1] + (nearest.points$diff[1]) * grad

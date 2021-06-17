@@ -68,8 +68,8 @@ expand_y_space <- function(data, x_var, y_var, n) {
 #
 # new_data <- shifted.all.data.df %>%
 #   dplyr::filter(accession == "Col0") %>%
-#   dplyr::select(shifted.time, mean.cpm) %>%
-#   expand_y_space(shifted.time, mean.cpm, 0) %>%
+#   dplyr::select(shifted_time, mean.cpm) %>%
+#   expand_y_space(shifted_time, mean.cpm, 0) %>%
 #   distinct()
 #
 #
@@ -77,7 +77,7 @@ expand_y_space <- function(data, x_var, y_var, n) {
 # # num.registration.params <- 2 # stretch, shift
 # # num.obs <- nrow(combined.spline.data)
 # stats::lm(
-#   mean.cpm ~ splines::bs(shifted.time, df = num.spline.params, degree = 3),
+#   mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3),
 #   # data = ara.spline.data
 #   data = new_data
 #   # data = shifted.all.data.df %>% dplyr::filter(accession == "Col0")

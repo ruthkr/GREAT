@@ -171,7 +171,7 @@ for (i in real.and.shuffled) {
 
   # sanity test plot
   # ggplot(imputed.mean_df[imputed.mean_df$locus_name=='BRAA02G015410.3C',],
-  #        aes(x=shifted.time, y=mean.cpm, color=accession))+
+  #        aes(x=shifted_time, y=mean.cpm, color=accession))+
   #   geom_point()+
   #   geom_line()
 

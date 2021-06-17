@@ -50,7 +50,7 @@ calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
   # # check that have now got scaled, stretched time for both genes.
   # tst <- all.data.df
   # ggplot2::ggplot(tst[tst$locus_name=='BRAA01G000040.3C'])+
-  #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession) +
+  #   ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession) +
   #   ggplot2::geom_point()
   # ggplot2::ggplot(tst[tst$locus_name=='BRAA01G000040.3C'])+
   #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
@@ -119,11 +119,11 @@ apply_best_shift <- function(mean_df, best_shifts) {
   for (curr.gene in unique(test$locus_name)) {
     #print(curr.gene)
     curr.best.shift <- best_shifts$shift[best_shifts$gene==curr.gene]
-    test$shifted.time[test$accession=='Col0' & test$locus_name==curr.gene] <- test$shifted.time[test$accession=='Col0' & test$locus_name==curr.gene] + curr.best.shift
+    test$shifted_time[test$accession=='Col0' & test$locus_name==curr.gene] <- test$shifted_time[test$accession=='Col0' & test$locus_name==curr.gene] + curr.best.shift
 
     # tmp <- test[test$locus_name==curr.gene]
     # ggplot2::ggplot(tmp)+
-    #   ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession) +
+    #   ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession) +
     #   ggplot2::geom_point()
   }
 
@@ -163,10 +163,10 @@ apply_stretch <- function(mean_df, best_shifts) {
 
   # record the stretched times (before indiv shifting applied)
   test$stretched.time.delta <- test$delta_time # record the time (from start of timecourse) after stretching,
-  test$shifted.time <- test$delta_time
+  test$shifted_time <- test$delta_time
   # after stretching, add the time to the first datapoint (7d for ara, 11d for Ro18) back on
-  test$shifted.time[test$accession=='Col0'] <- test$shifted.time[test$accession=='Col0'] + 14
-  test$shifted.time[test$accession=='Ro18'] <- test$shifted.time[test$accession=='Ro18'] + 14
+  test$shifted_time[test$accession=='Col0'] <- test$shifted_time[test$accession=='Col0'] + 14
+  test$shifted_time[test$accession=='Ro18'] <- test$shifted_time[test$accession=='Ro18'] + 14
   test$delta_time <- NULL
 
   return(test)
@@ -237,7 +237,7 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
   curr.data.df <- get_compared_timepoints(curr.data.df)
 
   # ggplot2::ggplot(curr.data.df)+
-  #   ggplot2::aes(x=shifted.time, y=mean.cpm, shape=is.compared, color=accession)+
+  #   ggplot2::aes(x=shifted_time, y=mean.cpm, shape=is.compared, color=accession)+
   #   ggplot2::geom_point()
 
   # cut down to the data for each model
@@ -260,9 +260,9 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
   # print(bra.spline.data)
 
 
-  ara.fit <- stats::lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=ara.spline.data)
-  bra.fit <- stats::lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=bra.spline.data)
-  combined.fit <- stats::lm(mean.cpm~splines::bs(shifted.time, df=num.spline.params, degree=3), data=combined.spline.data)
+  ara.fit <- stats::lm(mean.cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=ara.spline.data)
+  bra.fit <- stats::lm(mean.cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=bra.spline.data)
+  combined.fit <- stats::lm(mean.cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=combined.spline.data)
   # calculate the log likelihoods
   ara.logLik <- stats::logLik(ara.fit)
   bra.logLik <- stats::logLik(bra.fit)
@@ -280,24 +280,24 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
 
   if (is.testing==TRUE) {
     ara.pred <- stats::predict(ara.fit)
-    ara.pred.df <- unique(data.frame('shifted.time'=ara.spline.data$shifted.time,
+    ara.pred.df <- unique(data.frame('shifted_time'=ara.spline.data$shifted_time,
                                      'mean.cpm'=ara.pred, 'accession'='Col0'))
     bra.pred <- stats::predict(bra.fit)
-    bra.pred.df <- unique(data.frame('shifted.time'=bra.spline.data$shifted.time,
+    bra.pred.df <- unique(data.frame('shifted_time'=bra.spline.data$shifted_time,
                                      'mean.cpm'=bra.pred, 'accession'='Ro18'))
 
     combined.pred <- stats::predict(combined.fit)
-    combined.pred.df <- unique(data.frame('shifted.time'=combined.spline.data$shifted.time,
+    combined.pred.df <- unique(data.frame('shifted_time'=combined.spline.data$shifted_time,
                                           'mean.cpm'=combined.pred, 'accession'='registered'))
     spline.df <- rbind(ara.pred.df, bra.pred.df, combined.pred.df)
 
     p <- ggplot2::ggplot(data=combined.spline.data)+
-      ggplot2::aes(x=shifted.time, y=mean.cpm, colour=accession) +
+      ggplot2::aes(x=shifted_time, y=mean.cpm, colour=accession) +
       ggplot2::geom_point()+
       ggplot2::geom_line(data=spline.df)+
       ggplot2::ggtitle(paste0(curr.sym, ' : sep AIC:combo AIC=', round(seperate.AIC), ':', round(combined.AIC),
                               ', sep BIC: combo BIC=', round(seperate.BIC), ':', round(combined.BIC)))
-    # ggplot2::ggsave(paste0('./testing/fitted_splines/', curr.sym, '_', max(ara.pred.df$shifted.time), '.pdf'))
+    # ggplot2::ggsave(paste0('./testing/fitted_splines/', curr.sym, '_', max(ara.pred.df$shifted_time), '.pdf'))
   }
 
   return(list(seperate.AIC, combined.AIC, seperate.BIC,combined.BIC))
@@ -403,7 +403,7 @@ calc_extreme_shifts <- function(test, min_num_overlapping_points, shift_extreme)
   # preserving the criteria that at least min_num_overlapping_points are being compared from both accessions.
 
   original <- data.table::copy(test)
-  original$shifted.time <- original$delta_time
+  original$shifted_time <- original$delta_time
 
   # print('line 1803')
   # print(original)
@@ -487,13 +487,13 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
     curr.shift <- all.shifts[i]
 
     # shift the arabidopsis expression timings
-    test$shifted.time <- test$delta_time
-    test$shifted.time[test$accession == 'Col0'] <- test$delta_time[test$accession == 'Col0'] + curr.shift
+    test$shifted_time <- test$delta_time
+    test$shifted_time[test$accession == 'Col0'] <- test$delta_time[test$accession == 'Col0'] + curr.shift
 
     #### test plot - of shifted, UNNORMALISED gene expression
     # if (testing==TRUE) {
     #   p <- ggplot2::ggplot(test)+
-    #     ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
+    #     ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession)+
     #     ggplot2::geom_point()+
     #     ggplot2::ggtitle(paste0('shift : ', curr.shift))
     #   p
@@ -541,7 +541,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
     ### test plot of shifted, and normalised gene expression
     if (testing==TRUE) {
       p <- ggplot2::ggplot(compared)+
-        ggplot2::aes(x=shifted.time, y=mean.cpm, color=accession)+
+        ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession)+
         ggplot2::geom_point()+
         ggplot2::ggtitle(paste0('shift : ', curr.shift))
       ggplot2::ggsave(paste0('./testing/',stretch_factor, '-', curr.shift, '.pdf'))
@@ -551,7 +551,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
     ara.compared <- compared[compared$accession=='Col0']
     bra.compared <- compared[compared$accession=='Ro18']
 
-    ara.compared$pred.bra.expression <- sapply(ara.compared$shifted.time, interpolate_brassica_comparison_expression, bra.dt=bra.compared)
+    ara.compared$pred.bra.expression <- sapply(ara.compared$shifted_time, interpolate_brassica_comparison_expression, bra.dt=bra.compared)
 
     # calculate the score, using the (interpolated) predicted.bra.expression, and the observed arabidopsis expression
     # score = mean ((observed - expected)**2 )

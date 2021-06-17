@@ -1,39 +1,52 @@
-# mean_df <- mean_df
-# stretch_factor
-# min_num_overlapping_points
-# shift_extreme
+#' Calculate extreme shifts after the stretch transformation
+#'
+#' `get_extreme_shifts_for_all` is used to calculate the minimum and maximum shifts can apply to data after the stretch transformation.
+#'
+#' @param mean_df Input dataframe containing data to align and data target.
+#' @param stretch_factor Stretch transformation factor wanted.
+#' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
+#' @param shift_extreme Approximation of maximum and minimum shifts allowed.
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_target Accession name of data target.
+#'
+#' @return minimum and maximum values of shifts
 #' @export
-get_extreme_shifts_for_all <- function(mean_df, stretch_factor, min_num_overlapping_points, shift_extreme) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-  # wrapper for calc_extreme_shifts to be able to move it out of the loop so don't calculate for every gene.
+get_extreme_shifts_for_all <- function(mean_df,
+                                       stretch_factor,
+                                       min_num_overlapping_points,
+                                       shift_extreme,
+                                       accession_data_to_align,
+                                       accession_data_target) {
 
-  #min_num_overlapping_points <- 5 # bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
-  # cut data.table to a single gene
+  # This function is a wrapper for calc_extreme_shifts() to be able to move it out of the loop so don't calculate for every gene.
+  # Cut dataframe to a single gene.
   curr_sym <- unique(mean_df$locus_name)[1]
-  mean_df <- mean_df[mean_df$locus_name==curr_sym, ]
+  mean_df <- mean_df[mean_df$locus_name == curr_sym, ]
 
-  # transform timepoint to be time from first timepoint
-  mean_df[, delta_time:=timepoint - min(timepoint), by=.(accession)]
-  # apply stretch_factor to the arabidopsis, leave the rapa as is
-  mean_df$delta_time[mean_df$accession=='Col0'] <- mean_df$delta_time[mean_df$accession=='Col0']*stretch_factor
+  # Transform timepoint to be time from first timepoint
+  mean_df[, delta_time := timepoint - min(timepoint), by = .(accession)]
 
-  # calculate min shift and max time shift, which still allows overlap of at least 5 times to be compared from whichever accession will be considering fewer timepoints from.
-  # Shift is applied to the arabidopsis - so the 5th largest arabidopsis time is the biggest -ve shift can be applied
-  # and the biggest shift which can be applied is to make the 5th smallest arabidopsis time == largest brassica time
-  #data.table::setorder(mean_df, delta_time)
-  #min_shift <- min(mean_df$delta_time[mean_df$accession=='Ro18']) - mean_df$delta_time[mean_df$accession=='Col0'][length(mean_df$delta_time[mean_df$accession=='Col0'])-4]
-  #max_shift <- max(mean_df$delta_time[mean_df$accession=='Ro18']) - mean_df$delta_time[mean_df$accession=='Col0'][5]
+  # Apply stretch_factor to the data to align, leave the data target as it is
+  mean_df$delta_time[mean_df$accession == accession_data_to_align] <- mean_df$delta_time[mean_df$accession == accession_data_to_align] * stretch_factor
 
-  M <- calc_extreme_shifts(mean_df, min_num_overlapping_points, shift_extreme)
-  return(M)
+  # Calculate max and min shifts
+  max_min_shifts <- calc_extreme_shifts(
+    mean_df,
+    min_num_overlapping_points,
+    shift_extreme,
+    accession_data_to_align,
+    accession_data_target
+  )
+
+  return(max_min_shifts)
 }
 
 #' Calculate extreme shifts
 #'
-#' `calc_extreme_shifts` is used to calculate the minimum and maximum shifts can apply to data after the stretch transformation, whilst preserving the criteria that at least min_num_overlapping_points are being compared from both accessions.
+#' `calc_extreme_shifts` is used to calculate the minimum and maximum shifts, whilst preserving the criteria that at least min_num_overlapping_points are being compared from both accessions.
 #'
 #' @param mean_df Input dataframe containing data to align and data target.
-#' @param min_num_overlapping_points Minimum number of overlapping points allowed.
+#' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
 #' @param shift_extreme Approximation of maximum and minimum shifts allowed.
 #' @param accession_data_to_align Accession name of data which will be aligned.
 #' @param accession_data_target Accession name of data target.

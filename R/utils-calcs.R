@@ -15,7 +15,7 @@ calc.BIC <- function(logL, num.params, num.obs) {
   return((-2 * logL) + log(num.obs) * num.params)
 }
 
-# ara.expression <- ara.compared$mean.cpm
+# ara.expression <- ara.compared$mean_cpm
 # bra.expression <- ara.compared$pred.bra.expression
 #' @export
 calc_score <- function(ara.expression, bra.expression) {

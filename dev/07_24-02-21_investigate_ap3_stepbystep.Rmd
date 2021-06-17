@@ -128,9 +128,9 @@ if (!(dir.exists(real.expression.dir))) {
 
 ```{r scaling}
 mean.df.sc <- data.table::copy(mean.df)
-mean.df.sc[, sc.mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
+mean.df.sc[, sc.mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
 to.shift.df <- data.table::copy(mean.df.sc)
-to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
+to.shift.df$mean_cpm <- to.shift.df$sc.mean_cpm
 to.shift.df$sc.mean.cpm <- NULL
 
 all.data.df <- scale_all_rep_data(mean.df, all.data.df, 'scale')

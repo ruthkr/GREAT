@@ -4,23 +4,23 @@ load_mean_df_copy <- function(file_path_brassica, file_path_arabidopsis, file_pa
   # Load the expression data for all the curr_GoIs gene models, for arabidopsis, and for the specified brassica
   exp <- get_expression_of_interest_copy(file_path_brassica, file_path_arabidopsis, file_path_id_table, tissue_wanted, curr_GoIs, sum_brassicas = F)
 
-  # Calculate mean of each timepoint by adding a column called "mean.cpm"
-  exp[, mean.cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
-  mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
+  # Calculate mean of each timepoint by adding a column called "mean_cpm"
+  exp[, mean_cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
+  mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean_cpm')])
 
   # Filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed greater than 1
   # bra_df <- mean_df[mean_df$accession != 'Col0']
-  # bra_df[, keep:=(max(mean.cpm) > 5 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
+  # bra_df[, keep:=(max(mean_cpm) > 5 | mean(mean_cpm > 1) > 0.5) , by=.(locus_name)]
   # keep.genes <- unique(bra_df$locus_name[bra_df$keep==TRUE])
   # discard.genes <- unique(bra_df$locus_name[bra_df$keep==FALSE])
   bra_df <- mean_df[mean_df$accession != 'Col0']
-  bra_df[, keep:=(max(mean.cpm) > 5 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
+  bra_df[, keep:=(max(mean_cpm) > 5 | mean(mean_cpm > 1) > 0.5) , by=.(locus_name)]
   keep_bra_genes <- unique(bra_df$locus_name[bra_df$keep==TRUE])
   discard_bra_genes <- unique(bra_df$locus_name[bra_df$keep==FALSE])
 
   # Filter mean_df to remove all arabidopsis genes with all zeros values
   ara_df <- mean_df[mean_df$locus_name %in% keep_bra_genes & mean_df$accession == 'Col0']
-  ara_df[, keep_final:=(mean(mean.cpm) != 0 & sd(mean.cpm) != 0), by=.(locus_name)]
+  ara_df[, keep_final:=(mean(mean_cpm) != 0 & sd(mean_cpm) != 0), by=.(locus_name)]
   keep_final_genes <- unique(ara_df$locus_name[ara_df$keep_final==TRUE])
   discard_final_genes <- unique(ara_df$locus_name[ara_df$keep_final==FALSE])
 
@@ -38,7 +38,7 @@ load_mean_df_copy <- function(file_path_brassica, file_path_arabidopsis, file_pa
   exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
   exp <- subset(exp, select=c('locus_name', 'accession', 'tissue', 'timepoint',
                               'norm.cpm', 'group'))
-  names(exp)[names(exp)=='norm.cpm'] <- 'mean.cpm'
+  names(exp)[names(exp)=='norm.cpm'] <- 'mean_cpm'
   return(list(mean_df, exp))
 }
 

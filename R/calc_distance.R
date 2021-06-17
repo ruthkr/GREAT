@@ -9,19 +9,19 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
   # mean_df
   sample.id.cols <- c('accession','timepoint')
   gene.col <- c('locus_name')
-  expression.col <- 'mean.cpm'
+  expression.col <- 'mean_cpm'
   mean.dt.w <- reformat_for_distance_calculation(mean_df, sample.id.cols, gene.col, expression.col)
 
   # normalised mean_df
   sample.id.cols <- c('accession','timepoint')
   gene.col <- c('locus_name')
-  expression.col <- c('sc.mean.cpm')
+  expression.col <- c('sc.mean_cpm')
   mean.dt.sc.w <- reformat_for_distance_calculation(mean_df.sc, sample.id.cols, gene.col, expression.col)
 
   # imputed.mean_df - all genes
   sample.id.cols <- c('accession','shifted_time')
   gene.col <- c('locus_name')
-  expression.col <- c('mean.cpm')
+  expression.col <- c('mean_cpm')
   imputed.mean.dt.w <- reformat_for_distance_calculation(imputed.mean_df, sample.id.cols, gene.col, expression.col)
 
   # same, but for subsets of REGISTERED / NOT REGISTERED genes.
@@ -71,7 +71,7 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
 
 # sample.id.cols <- c('accession','delta_time')
 # gene.col <- c('locus_name')
-# expression.col <- 'mean.cpm'
+# expression.col <- 'mean_cpm'
 # dt <- mean_df
 #' @export
 reformat_for_distance_calculation <- function(dt, sample.id.cols, gene.col, expression.col) {

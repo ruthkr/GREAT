@@ -190,7 +190,7 @@ plot_goI_expression <- function(summed.GoIs.df) {
   # truncate data so can see expression nicely on the same scale
   summed.GoIs.df <- summed.GoIs.df[summed.GoIs.df$timepoint <=21,]
 
-  summed.GoIs.df[, scaled.cpm:=my.scale(mean.cpm), by=.(Ara.id, accession)]
+  summed.GoIs.df[, scaled.cpm:=my.scale(mean_cpm), by=.(Ara.id, accession)]
   morphology.equiv.df <- data.frame('accession'=c('Col-0', 'R-O-18'), 'floral.transition.time'=c(14, 35))
   summed.GoIs.df$accession <- as.character(summed.GoIs.df$accession)
   summed.GoIs.df$accession[summed.GoIs.df$accession=='Col0'] <- 'Col-0'
@@ -201,7 +201,7 @@ plot_goI_expression <- function(summed.GoIs.df) {
   for (curr.acc in c('Col-0', 'R-O-18')) {
 
     curr.p <- ggplot(summed.GoIs.df[summed.GoIs.df$accession==curr.acc,],
-                     aes(x=timepoint, y=mean.cpm, color=Ara.name, fill=Ara.name))+
+                     aes(x=timepoint, y=mean_cpm, color=Ara.name, fill=Ara.name))+
       #geom_vline(data=summed.GoIs.df[summed.GoIs.df$accession=='Col-0' & summed.GoIs.df$accession==curr.acc,], aes(xintercept=floral.transition.time), size=1)+
       #geom_vline(data=summed.GoIs.df[summed.GoIs.df$accession=='R-O-18' & summed.GoIs.df$accession==curr.acc,,], aes(xintercept=floral.transition.time), size=1)+
       geom_vline(data=morphology.equiv.df[morphology.equiv.df==curr.acc,], aes(xintercept=floral.transition.time), size=1)+
@@ -270,7 +270,7 @@ plot_registered_GoIs_for_comparible_timepoints <- function(all.stretched.df) {
   registered.plot.df$accession[registered.plot.df$accession=='Col0'] <- 'Col-0'
   registered.plot.df$accession[registered.plot.df$accession=='Ro18'] <- 'DH'
 
-  p.registered <- ggplot(registered.plot.df, aes(x=shifted_time, y=mean.cpm, color=accession, fill=accession))+
+  p.registered <- ggplot(registered.plot.df, aes(x=shifted_time, y=mean_cpm, color=accession, fill=accession))+
     stat_summary(fun=mean, geom='line', size=1)+
     stat_summary(fun.data=mean_se, fun.args=list(mult=1.96),geom='ribbon',
                  color=NA, alpha=0.3)+
@@ -413,12 +413,12 @@ load_mean_df_sari_ro18 <- function(ro18_rds_file, sari_rds_file, pCor.th) {
   }
 
   # get the mean of each gene at each timepoint
-  ro18.exp[, mean.cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
-  sari14.exp[, mean.cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
+  ro18.exp[, mean_cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
+  sari14.exp[, mean_cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
 
   exp <- rbind(ro18.exp, sari14.exp)
-  mean_df <- unique(exp[, c('CDS.model', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
-  names(mean_df) <-  c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')
+  mean_df <- unique(exp[, c('CDS.model', 'accession', 'tissue', 'timepoint', 'mean_cpm')])
+  names(mean_df) <-  c('locus_name', 'accession', 'tissue', 'timepoint', 'mean_cpm')
   names(exp)[names(exp)=='CDS.model'] <- 'locus_name'
   # checking not cutting out key genes - need to know what they're called now
   # FT
@@ -428,18 +428,18 @@ load_mean_df_sari_ro18 <- function(ro18_rds_file, sari_rds_file, pCor.th) {
   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.15712'),]
   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.26487'),]
 
-  # ggplot(tmp, aes(x=timepoint, y=mean.cpm))+
+  # ggplot(tmp, aes(x=timepoint, y=mean_cpm))+
   #   geom_line()
 
   # filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
   # greater than 1 in both accessions
   ro18.df <- mean_df[mean_df$accession=='Ro18']
-  ro18.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
+  ro18.df[, keep:=(max(mean_cpm) > 2 | mean(mean_cpm > 1) > 0.5) , by=.(locus_name)]
   ro18.keep.genes <- unique(ro18.df$locus_name[ro18.df$keep==TRUE])
   #'MSTRG.8543' %in% ro18.keep.genes
 
   sari14.df <- mean_df[mean_df$accession=='sarisha14']
-  sari14.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
+  sari14.df[, keep:=(max(mean_cpm) > 2 | mean(mean_cpm > 1) > 0.5) , by=.(locus_name)]
   sari14.keep.genes <- unique(sari14.df$locus_name[sari14.df$keep==TRUE])
   #'MSTRG.8543' %in% sari14.keep.genes
 
@@ -470,7 +470,7 @@ load_mean_df_sari_ro18 <- function(ro18_rds_file, sari_rds_file, pCor.th) {
   exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
   exp <- subset(exp, select=c('locus_name', 'accession', 'tissue', 'timepoint',
                               'norm.cpm', 'group'))
-  names(exp)[names(exp)=='norm.cpm'] <- 'mean.cpm'
+  names(exp)[names(exp)=='norm.cpm'] <- 'mean_cpm'
   return(list(mean_df, exp))
 }
 
@@ -532,7 +532,7 @@ plot_registration_for_exemplar_genes <- function(all.rep.shifted.data, GoIs) {
   # cut down to genes to plot
   tmp <- all.rep.shifted.data[all.rep.shifted.data$locus_name %in% GoIs]
 
-  p.seperate <- ggplot(tmp, aes(x=timepoint, y=mean.cpm, color=locus_name, fill=locus_name,
+  p.seperate <- ggplot(tmp, aes(x=timepoint, y=mean_cpm, color=locus_name, fill=locus_name,
                                 shape=accession, linetype=accession))+
     stat_summary(fun=mean, geom='line', size=1)+
     #stat_summary(fun=mean, geom='point')+
@@ -561,7 +561,7 @@ plot_registration_for_exemplar_genes <- function(all.rep.shifted.data, GoIs) {
 
 
   tmp$label <- 'Registered'
-  p.shifted <- ggplot(tmp, aes(x=shifted_time, y=mean.cpm,
+  p.shifted <- ggplot(tmp, aes(x=shifted_time, y=mean_cpm,
                                color=locus_name, fill=locus_name,
                                shape=accession, linetype=accession))+
     stat_summary(fun=mean, geom='line', size=1)+
@@ -726,8 +726,8 @@ get_best_shift <- function(curr_sym, test) {
   test <- test[test$locus_name==curr_sym, ]
 
   # get the mean expression vectors for the current gene
-  AtVec <- test$mean.cpm[test$accession=='Col0']
-  BrVec <- test$mean.cpm[test$accession=='Ro18']
+  AtVec <- test$mean_cpm[test$accession=='Col0']
+  BrVec <- test$mean_cpm[test$accession=='Ro18']
 
   # get the arabidopsis, brassica timepoints will to compare to Col0 to
   # braMin = 1
@@ -841,7 +841,7 @@ filter.low.variability <- function(exp, c.th) {
   # between indiv replicate points, and mean df point
 
   # calculate correlation
-  exp[, C:=stats::cor(mean.cpm, norm.cpm, method='pearson'), by=.(locus_name, accession, tissue)]
+  exp[, C:=stats::cor(mean_cpm, norm.cpm, method='pearson'), by=.(locus_name, accession, tissue)]
 
   #tmp <- exp[exp$locus_name.model=='MSTRG.8543',]
 
@@ -1034,12 +1034,12 @@ get_shifted_expression <- function(shift_results, exp) {
 #'   }
 #'
 #'   # get the mean of each gene at each timepoint
-#'   ro18.exp[, mean.cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
-#'   sari14.exp[, mean.cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
+#'   ro18.exp[, mean_cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
+#'   sari14.exp[, mean_cpm:=mean(norm.cpm), by=.(CDS.model, accession, tissue, timepoint)]
 #'
 #'   exp <- rbind(ro18.exp, sari14.exp)
-#'   mean_df <- unique(exp[, c('CDS.model', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
-#'   names(mean_df) <-  c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')
+#'   mean_df <- unique(exp[, c('CDS.model', 'accession', 'tissue', 'timepoint', 'mean_cpm')])
+#'   names(mean_df) <-  c('locus_name', 'accession', 'tissue', 'timepoint', 'mean_cpm')
 #'   names(exp)[names(exp)=='CDS.model'] <- 'locus_name'
 #'   # checking not cutting out key genes - need to know what they're called now
 #'   # FT
@@ -1049,18 +1049,18 @@ get_shifted_expression <- function(shift_results, exp) {
 #'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.15712'),]
 #'   # tmp <- mean_df[mean_df$locus_name %in% c('MSTRG.26487'),]
 #'
-#'   # ggplot(tmp, aes(x=timepoint, y=mean.cpm))+
+#'   # ggplot(tmp, aes(x=timepoint, y=mean_cpm))+
 #'   #   geom_line()
 #'
 #'   # filter mean.df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
 #'   # greater than 1 in both accessions
 #'   ro18.df <- mean.df[mean.df$accession=='Ro18']
-#'   ro18.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
+#'   ro18.df[, keep:=(max(mean_cpm) > 2 | mean(mean_cpm > 1) > 0.5) , by=.(locus_name)]
 #'   ro18.keep.genes <- unique(ro18.df$locus_name[ro18.df$keep==TRUE])
 #'   #'MSTRG.8543' %in% ro18.keep.genes
 #'
 #'   sari14.df <- mean.df[mean.df$accession=='sarisha14']
-#'   sari14.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
+#'   sari14.df[, keep:=(max(mean_cpm) > 2 | mean(mean_cpm > 1) > 0.5) , by=.(locus_name)]
 #'   sari14.keep.genes <- unique(sari14.df$locus_name[sari14.df$keep==TRUE])
 #'   #'MSTRG.8543' %in% sari14.keep.genes
 #'
@@ -1091,7 +1091,7 @@ get_shifted_expression <- function(shift_results, exp) {
 #'   exp <- exp[exp$locus_name %in% unique(mean.df$locus_name)]
 #'   exp <- subset(exp, select=c('locus_name', 'accession', 'tissue', 'timepoint',
 #'                               'norm.cpm', 'group'))
-#'   names(exp)[names(exp)=='norm.cpm'] <- 'mean.cpm'
+#'   names(exp)[names(exp)=='norm.cpm'] <- 'mean_cpm'
 #'   return(list(mean.df, exp))
 #' }
 

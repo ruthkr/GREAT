@@ -82,7 +82,7 @@ all.data.df <- b_oleracea_mean_df_AP3[[2]] %>%
 mean_df
 ```
 
-    ##     locus_name accession tissue timepoint     mean.cpm
+    ##     locus_name accession tissue timepoint     mean_cpm
     ##  1: BO4G120010      Ro18   apex        37 1.285588e-01
     ##  2: BO4G120010      Ro18   apex        39 9.283968e-01
     ##  3: BO4G120010      Ro18   apex        40 6.475194e+00
@@ -133,7 +133,7 @@ mean_df
     ## 48: BO8G083600      Col0   apex        14 1.893566e+00
     ## 49: BO8G083600      Col0   apex        15 1.081783e+02
     ## 50: BO8G083600      Col0   apex        16 1.059899e+02
-    ##     locus_name accession tissue timepoint     mean.cpm
+    ##     locus_name accession tissue timepoint     mean_cpm
 
 ## Specify all parameters
 
@@ -196,10 +196,10 @@ if (!(dir.exists(real.expression.dir))) {
 
 ``` r
 mean_df.sc <- data.table::copy(mean_df)
-mean_df.sc[, sc.mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
+mean_df.sc[, sc.mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
 to.shift.df <- data.table::copy(mean_df.sc)
-to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
-to.shift.df$sc.mean.cpm <- NULL
+to.shift.df$mean_cpm <- to.shift.df$sc.mean_cpm
+to.shift.df$sc.mean_cpm <- NULL
 
 all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'scale')
 ```
@@ -211,7 +211,7 @@ test %>%
   head(5)
 ```
 
-    ##    locus_name accession tissue timepoint    mean.cpm
+    ##    locus_name accession tissue timepoint    mean_cpm
     ## 1: BO8G083600      Ro18   apex        37 -0.42962365
     ## 2: BO8G083600      Ro18   apex        39 -0.39946884
     ## 3: BO8G083600      Ro18   apex        40 -0.16223574
@@ -220,7 +220,7 @@ test %>%
 
 ``` r
 ggplot2::ggplot(test)+
-  ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -233,7 +233,7 @@ test[, delta_time:=timepoint - min(timepoint), by=.(accession)]
 
 ``` r
 ggplot2::ggplot(test)+
-  ggplot2::aes(x=delta_time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=delta_time, y=mean_cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -246,7 +246,7 @@ test$delta_time[test$accession == 'Col0'] <- test$delta_time[test$accession=='Co
 
 ``` r
 ggplot2::ggplot(test)+
-  ggplot2::aes(x=delta_time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=delta_time, y=mean_cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -261,7 +261,7 @@ test$delta_time[test$accession=='Ro18'] <- test$delta_time[test$accession=='Ro18
 
 ``` r
 ggplot2::ggplot(test)+
-  ggplot2::aes(x=delta_time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=delta_time, y=mean_cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -275,7 +275,7 @@ test$shifted_time[test$accession == 'Col0'] <- test$delta_time[test$accession ==
 
 ``` r
 ggplot2::ggplot(test)+
-  ggplot2::aes(x = shifted_time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x = shifted_time, y=mean_cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -287,7 +287,7 @@ test <- get_compared_timepoints(test)
 test
 ```
 
-    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted_time
+    ##     locus_name accession tissue timepoint    mean_cpm delta_time shifted_time
     ##  1: BO8G083600      Ro18   apex        37 -0.42962365       23.0         23.0
     ##  2: BO8G083600      Ro18   apex        39 -0.39946884       25.0         25.0
     ##  3: BO8G083600      Ro18   apex        40 -0.16223574       26.0         26.0
@@ -313,7 +313,7 @@ test
     ## 23: BO8G083600      Col0   apex        14 -0.43889838       24.5         25.1
     ## 24: BO8G083600      Col0   apex        15  1.92138994       28.0         28.6
     ## 25: BO8G083600      Col0   apex        16  1.87279025       31.5         32.1
-    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted_time
+    ##     locus_name accession tissue timepoint    mean_cpm delta_time shifted_time
     ##     is.compared
     ##  1:        TRUE
     ##  2:        TRUE
@@ -348,7 +348,7 @@ compared <- test[test$is.compared==TRUE, ]
 compared
 ```
 
-    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted_time
+    ##     locus_name accession tissue timepoint    mean_cpm delta_time shifted_time
     ##  1: BO8G083600      Ro18   apex        37 -0.42962365       23.0         23.0
     ##  2: BO8G083600      Ro18   apex        39 -0.39946884       25.0         25.0
     ##  3: BO8G083600      Ro18   apex        40 -0.16223574       26.0         26.0
@@ -373,7 +373,7 @@ compared
     ## 22: BO8G083600      Col0   apex        14 -0.43889838       24.5         25.1
     ## 23: BO8G083600      Col0   apex        15  1.92138994       28.0         28.6
     ## 24: BO8G083600      Col0   apex        16  1.87279025       31.5         32.1
-    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted_time
+    ##     locus_name accession tissue timepoint    mean_cpm delta_time shifted_time
     ##     is.compared
     ##  1:        TRUE
     ##  2:        TRUE
@@ -402,10 +402,10 @@ compared
     ##     is.compared
 
 ``` r
-ara.mean <- mean(compared$mean.cpm[compared$accession == "Col0"])
-bra.mean <- mean(compared$mean.cpm[compared$accession == "Ro18"])
-ara.sd <- stats::sd(compared$mean.cpm[compared$accession == "Col0"])
-bra.sd <- stats::sd(compared$mean.cpm[compared$accession == "Ro18"])
+ara.mean <- mean(compared$mean_cpm[compared$accession == "Col0"])
+bra.mean <- mean(compared$mean_cpm[compared$accession == "Ro18"])
+ara.sd <- stats::sd(compared$mean_cpm[compared$accession == "Col0"])
+bra.sd <- stats::sd(compared$mean_cpm[compared$accession == "Ro18"])
 
 bra.sd
 ```
@@ -416,16 +416,16 @@ bra.sd
 # do the transformation for here
 if ((ara.sd != 0) & (bra.sd != 0)) { 
   # if neither are 0, so won't be dividing by 0 (which gives NaNs)
-  compared[, mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(accession)]
+  compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
 } else { 
   # if at least one of them is all 0
   ara.compared <- compared[compared$accession == "Col0", ]
   bra.compared <- compared[compared$accession == "Ro18", ]
   if ((ara.sd == 0) & (bra.sd != 0)) { # if only ara.sd==0
-    bra.compared[, mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(accession)]
+    bra.compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
   }
   if ((ara.sd != 0) & (bra.sd == 0)) { # if only bra.sd == 0
-    ara.compared[, mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(accession)]
+    ara.compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
   }
   # if both are all 0, then do nothing.
   compared <- rbind(ara.compared, bra.compared)
@@ -436,7 +436,7 @@ if ((ara.sd != 0) & (bra.sd != 0)) {
 compared
 ```
 
-    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted_time
+    ##     locus_name accession tissue timepoint    mean_cpm delta_time shifted_time
     ##  1: BO8G083600      Ro18   apex        37 -0.35838798       23.0         23.0
     ##  2: BO8G083600      Ro18   apex        39 -0.30991942       25.0         25.0
     ##  3: BO8G083600      Ro18   apex        40  0.07139121       26.0         26.0
@@ -461,7 +461,7 @@ compared
     ## 22: BO8G083600      Col0   apex        14 -0.43889838       24.5         25.1
     ## 23: BO8G083600      Col0   apex        15  1.92138994       28.0         28.6
     ## 24: BO8G083600      Col0   apex        16  1.87279025       31.5         32.1
-    ##     locus_name accession tissue timepoint    mean.cpm delta_time shifted_time
+    ##     locus_name accession tissue timepoint    mean_cpm delta_time shifted_time
     ##     is.compared
     ##  1:        TRUE
     ##  2:        TRUE
@@ -491,7 +491,7 @@ compared
 
 ``` r
 ggplot2::ggplot(compared)+
-  ggplot2::aes(x = shifted_time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x = shifted_time, y=mean_cpm, color=accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -510,7 +510,7 @@ ara.compared$pred.bra.expression <- sapply(ara.compared$shifted_time, interpolat
 ara.compared
 ```
 
-    ##     locus_name accession tissue timepoint   mean.cpm delta_time shifted_time
+    ##     locus_name accession tissue timepoint   mean_cpm delta_time shifted_time
     ##  1: BO8G083600      Col0   apex         7 -0.4801254        0.0          0.6
     ##  2: BO8G083600      Col0   apex         8 -0.4809492        3.5          4.1
     ##  3: BO8G083600      Col0   apex         9 -0.4779303        7.0          7.6
@@ -546,7 +546,7 @@ interpolate_brassica_comparison_expression(4.1, bra.compared)
     ## [1] -0.360722
 
 ``` r
-score <- calc_score(ara.compared$mean.cpm, ara.compared$pred.bra.expression)
+score <- calc_score(ara.compared$mean_cpm, ara.compared$pred.bra.expression)
 
 score
 ```
@@ -766,7 +766,7 @@ shifted.all.data.df <- apply_best_shift(all.data.df, best_shifts)
 shifted.all.data.df 
 ```
 
-    ##      locus_name accession tissue timepoint   mean.cpm stretched.time.delta
+    ##      locus_name accession tissue timepoint   mean_cpm stretched.time.delta
     ##   1: BO4G120010      Ro18   apex        37 -0.4184056                 23.0
     ##   2: BO4G120010      Ro18   apex        37 -0.4130350                 23.0
     ##   3: BO4G120010      Ro18   apex        37 -0.4142394                 23.0
@@ -795,7 +795,7 @@ shifted.all.data.df
 all.data.df
 ```
 
-    ##      locus_name accession tissue timepoint   mean.cpm
+    ##      locus_name accession tissue timepoint   mean_cpm
     ##   1: BO4G120010      Col0   apex         7 -0.4809492
     ##   2: BO4G120010      Col0   apex         7 -0.4793017
     ##   3: BO4G120010      Col0   apex         8 -0.4809492
@@ -812,7 +812,7 @@ all.data.df
 mean_df
 ```
 
-    ##     locus_name accession tissue timepoint     mean.cpm
+    ##     locus_name accession tissue timepoint     mean_cpm
     ##  1: BO4G120010      Ro18   apex        37 1.285588e-01
     ##  2: BO4G120010      Ro18   apex        39 9.283968e-01
     ##  3: BO4G120010      Ro18   apex        40 6.475194e+00
@@ -863,11 +863,11 @@ mean_df
     ## 48: BO8G083600      Col0   apex        14 1.893566e+00
     ## 49: BO8G083600      Col0   apex        15 1.081783e+02
     ## 50: BO8G083600      Col0   apex        16 1.059899e+02
-    ##     locus_name accession tissue timepoint     mean.cpm
+    ##     locus_name accession tissue timepoint     mean_cpm
 
 ``` r
 ggplot2::ggplot(all.data.df[all.data.df$locus_name=='BO4G120010'])+
-  ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
   ggplot2::geom_point()
 ```
 
@@ -875,7 +875,7 @@ ggplot2::ggplot(all.data.df[all.data.df$locus_name=='BO4G120010'])+
 
 ``` r
 ggplot2::ggplot(shifted.all.data.df[shifted.all.data.df$locus_name=='BO4G120010'])+
-  ggplot2::aes(x = shifted_time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x = shifted_time, y=mean_cpm, color=accession) +
   ggplot2::geom_point()
 ```
 
@@ -887,7 +887,7 @@ test_stretch <- apply_stretch(all.data.df, best_shifts)
 test_stretch
 ```
 
-    ##      locus_name accession tissue timepoint   mean.cpm stretched.time.delta
+    ##      locus_name accession tissue timepoint   mean_cpm stretched.time.delta
     ##   1: BO4G120010      Ro18   apex        37 -0.4184056                 23.0
     ##   2: BO4G120010      Ro18   apex        37 -0.4130350                 23.0
     ##   3: BO4G120010      Ro18   apex        37 -0.4142394                 23.0
@@ -914,7 +914,7 @@ test_stretch
 
 ``` r
 ggplot2::ggplot(test_stretch[test_stretch$locus_name=='BO4G120010'])+
-  ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession) +
   ggplot2::geom_point()
 ```
 
@@ -930,7 +930,7 @@ curr.data.df <- shifted.all.data.df[shifted.all.data.df$locus_name == 'BO4G12001
 curr.data.df <- get_compared_timepoints(curr.data.df)
 
 ggplot2::ggplot(curr.data.df)+
-  ggplot2::aes(x=shifted_time, y=mean.cpm, shape=is.compared, color=accession)+
+  ggplot2::aes(x=shifted_time, y=mean_cpm, shape=is.compared, color=accession)+
   ggplot2::geom_point()
 ```
 
@@ -940,7 +940,7 @@ ggplot2::ggplot(curr.data.df)+
 curr.data.df
 ```
 
-    ##     locus_name accession tissue timepoint    mean.cpm stretched.time.delta
+    ##     locus_name accession tissue timepoint    mean_cpm stretched.time.delta
     ##  1: BO4G120010      Ro18   apex        37 -0.41840559                 23.0
     ##  2: BO4G120010      Ro18   apex        37 -0.41303496                 23.0
     ##  3: BO4G120010      Ro18   apex        37 -0.41423938                 23.0
@@ -1016,7 +1016,7 @@ curr.data.df
     ## 73: BO4G120010      Col0   apex         9 -0.48094922                  7.0
     ## 74: BO4G120010      Col0   apex        12 -0.48094922                 17.5
     ## 75: BO4G120010      Col0   apex        12 -0.47855242                 17.5
-    ##     locus_name accession tissue timepoint    mean.cpm stretched.time.delta
+    ##     locus_name accession tissue timepoint    mean_cpm stretched.time.delta
     ##     shifted_time is.compared
     ##  1:      37.0000        TRUE
     ##  2:      37.0000        TRUE
@@ -1114,16 +1114,16 @@ num.obs <- nrow(combined.spline.data)
 # print(bra.spline.data)
 
 
-ara.fit <- stats::lm(mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = ara.spline.data)
-bra.fit <- stats::lm(mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = bra.spline.data)
-combined.fit <- stats::lm(mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = combined.spline.data)
+ara.fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = ara.spline.data)
+bra.fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = bra.spline.data)
+combined.fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = combined.spline.data)
 
 ara.fit
 ```
 
     ## 
     ## Call:
-    ## stats::lm(formula = mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, 
+    ## stats::lm(formula = mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, 
     ##     degree = 3), data = ara.spline.data)
     ## 
     ## Coefficients:

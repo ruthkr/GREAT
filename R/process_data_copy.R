@@ -28,8 +28,8 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
   mean_df.sc <- data.table::copy(mean_df)
   # specify what kind of scaling
   # TODO: handle my.scale in conditional
-  mean_df.sc[, sc.mean.cpm:=scale(mean.cpm, scale=TRUE, center=TRUE), by=.(locus_name, accession)]
-  #mean_df.sc[, sc.mean.cpm:=my.scale(mean.cpm), by=.(locus_name, accession)]
+  mean_df.sc[, sc.mean_cpm:=scale(mean_cpm, scale=TRUE, center=TRUE), by=.(locus_name, accession)]
+  #mean_df.sc[, sc.mean_cpm:=my.scale(mean_cpm), by=.(locus_name, accession)]
 
   ## APPLY INDIVIDUAL SHIFTING ---
   # optimise transformations applied to arabidopsis gene profile to map onto the brassicas - shift in x direction, using mean for mapping,
@@ -40,8 +40,8 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
   if (initial.rescale==TRUE) {
     # apply rescale to mean_df prior to registration
     to.shift.df <- data.table::copy(mean_df.sc)
-    to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
-    to.shift.df$sc.mean.cpm <- NULL
+    to.shift.df$mean_cpm <- to.shift.df$sc.mean_cpm
+    to.shift.df$sc.mean_cpm <- NULL
 
     # apply THE SAME rescale to all.data.df prior to registration
     # TODO: handle my.scale in conditional
@@ -51,19 +51,19 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
 
     # sanity plot that rescale all data worked
     # ggplot2::ggplot(all.data.df[all.data.df$locus_name=='BRAA01G000040.3C'])+
-    #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession)
+    #   ggplot2::aes(x=timepoint, y=mean_cpm, color=accession)
     #   ggplot2::geom_point()
   } else {
     to.shift.df <- data.table::copy(mean_df)
   }
 
-  print(paste0('Max value of mean.cpm of all.data.df :', max(all.data.df$mean.cpm)))
+  print(paste0('Max value of mean_cpm of all.data.df :', max(all.data.df$mean_cpm)))
   # ggplot2::ggplot(to.shift.df[to.shift.df$locus_name=='BRAA03G004600.3C'])+
-  #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession)
+  #   ggplot2::aes(x=timepoint, y=mean_cpm, color=accession)
   #   ggplot2::geom_point()
   # tst <- all.data.df
   # ggplot2::ggplot(tst[tst$locus_name=='BRAA01G000040.3C'])+
-  #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  #   ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
   #   ggplot2::geom_point()
 
   # calculate the best registration. Returns all tried registrations, best stretch and shift combo,
@@ -74,7 +74,7 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
   best_shifts <- L[['best_shifts']]
   model.comparison.dt <- L[['model.comparison.dt']]
 
-  print(paste0('Max value of all_shifts mean.cpm :', max(all_shifts$mean.cpm)))
+  print(paste0('Max value of all_shifts mean_cpm :', max(all_shifts$mean_cpm)))
 
 
   # report model comparison results
@@ -93,17 +93,17 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
   # registration is applied to col0.
   shifted.mean_df <- apply_shift_to_registered_genes_only(to.shift.df, best_shifts, model.comparison.dt)
   # shifted.mean_df <- apply_shift_to_all(to.shift.df, best_shifts, model.comparison.dt)
-  print(paste0('Max value of mean.cpm :', max(shifted.mean_df$mean.cpm)))
+  print(paste0('Max value of mean_cpm :', max(shifted.mean_df$mean_cpm)))
   # shifted.mean_df <- apply_best_shift(to.shift.df, best_shifts) # can be NA if exactly tied for what the best shift was
 
   # GOI <- 'MSTRG.11237'
   # ggplot2::ggplot(all.data.df[all.data.df$locus_name==GOI])+
-  #   ggplot2::aes(x=timepoint, y= mean.cpm, color=accession) +
+  #   ggplot2::aes(x=timepoint, y= mean_cpm, color=accession) +
   #   ggplot2::geom_point()
   #
   # #sanity plot that done right
   # ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name==GOI])+
-  #   ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession) +
+  #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession) +
   #   ggplot2::geom_point()+
   #   ggplot2::geom_line()
 
@@ -116,11 +116,11 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
 
   #sanity plot that done right
   # ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G001540.3C'])+
-  #   ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession) +
+  #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession) +
   #   ggplot2::geom_point()+
   #   ggplot2::geom_line()
   # ggplot2::ggplot(imputed.mean_df[imputed.mean_df$locus_name=='BRAA01G001540.3C'])+
-  #   ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession)+
+  #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession)+
   #   ggplot2::geom_point()+
   #   ggplot2::geom_line()
 
@@ -183,15 +183,15 @@ scale_all_rep_data <- function(mean_df, all.rep.data, scale.func) {
 
   # calculate the summary stats to use for the rescaling
   gene.expression.stats <- unique(mean_df[,
-                                          .(mean_val=mean(mean.cpm),
-                                            sd_val=stats::sd(mean.cpm)),
+                                          .(mean_val=mean(mean_cpm),
+                                            sd_val=stats::sd(mean_cpm)),
                                           by=.(locus_name, accession)])
 
   all.rep.data <- merge(all.rep.data, gene.expression.stats, by=c('locus_name', 'accession'))
   if (scale.func == 'scale') {
-    all.rep.data$scaled.norm.cpm <- (all.rep.data$mean.cpm - all.rep.data$mean_val) / all.rep.data$sd_val
+    all.rep.data$scaled.norm.cpm <- (all.rep.data$mean_cpm - all.rep.data$mean_val) / all.rep.data$sd_val
   } else if (scale.func == 'my.scale') {
-    all.rep.data$scaled.norm.cpm <- (all.rep.data$mean.cpm / all.rep.data$mean_val)
+    all.rep.data$scaled.norm.cpm <- (all.rep.data$mean_cpm / all.rep.data$mean_val)
   } else {
     print('invalid scale option for scale_all_rep_data')
     stop()
@@ -200,10 +200,10 @@ scale_all_rep_data <- function(mean_df, all.rep.data, scale.func) {
   out <- subset(all.rep.data, select=c('locus_name', 'accession', 'tissue', 'timepoint',
                                        'scaled.norm.cpm'))
 
-  names(out)[names(out)=='scaled.norm.cpm'] <- 'mean.cpm'
+  names(out)[names(out)=='scaled.norm.cpm'] <- 'mean_cpm'
 
   # ggplot2::ggplot(mean_df[mean_df$locus_name=='BRAA01G000040.3C', ], ) +
-  #  ggplot2::aes(x=timepoint, y=mean.cpm, color=accession
+  #  ggplot2::aes(x=timepoint, y=mean_cpm, color=accession
   #  ggplot2::geom_point()
 
 
@@ -367,11 +367,11 @@ impute_arabidopsis_values <- function(shifted.mean_df) {
 
   # sanity plotting - a registered one
   # ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G001090.3C', ])+
-  #   ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession)+
+  #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession)+
   #   ggplot2::geom_point()
   # # an unregistered one
   # ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G003140.3C', ])+
-  #   ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession)+
+  #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession)+
   #   ggplot2::geom_point()
 
   # The imputed col0 times going to extimate gene expression for
@@ -391,7 +391,7 @@ impute_arabidopsis_values <- function(shifted.mean_df) {
     curr.df <- shifted.mean_df[shifted.mean_df$locus_name==curr.gene, ]
 
     # skip over this one, if not assigned a best shift value, because brassica gene not expressed
-    # if (all(is.na(curr.df$mean.cpm))) {
+    # if (all(is.na(curr.df$mean_cpm))) {
     #   next
     # }
 
@@ -405,12 +405,12 @@ impute_arabidopsis_values <- function(shifted.mean_df) {
     # for each brassica timepoint, interpolate the comparible arabidopsis expression
     # by linear interpolation between the neighbouring 2 ara values. If not between 2 ara values
     # because shifted outside comparible range, set to NA
-    interp.ara.df$mean.cpm <- sapply(imputed.timepoints, interpolate_brassica_comparison_expression, bra.dt=ara.df)
+    interp.ara.df$mean_cpm <- sapply(imputed.timepoints, interpolate_brassica_comparison_expression, bra.dt=ara.df)
 
 
     # sanity testing - line is interpolated.
     # ggplot2::ggplot(curr.df)+
-    #   ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession)+
+    #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession)+
     #   ggplot2::geom_point()+
     #   ggplot2::geom_line(data=interp.ara.df)
 

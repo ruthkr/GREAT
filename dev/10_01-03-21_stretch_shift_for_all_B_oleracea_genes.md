@@ -32,7 +32,7 @@ plot_registered_GoIs_for_comparible_timepoints <- function(all.stretched.df) {
   registered.plot.df$accession[registered.plot.df$accession=='Col0'] <- 'Col-0'
   registered.plot.df$accession[registered.plot.df$accession=='Ro18'] <- 'DH'
 
-  p.registered <- ggplot(registered.plot.df, aes(x=shifted_time, y=mean.cpm, color=accession, fill=accession))+
+  p.registered <- ggplot(registered.plot.df, aes(x=shifted_time, y=mean_cpm, color=accession, fill=accession))+
     stat_summary(fun=mean, geom='line', size=1)+
     stat_summary(fun.data=mean_se, fun.args=list(mult=1),geom='ribbon',
                  color=NA, alpha=0.3)+
@@ -282,7 +282,7 @@ imputed.mean_df_floral_genes %>%
   head(5)
 ```
 
-    ##    locus_name accession tissue timepoint   mean.cpm stretched.time.delta
+    ##    locus_name accession tissue timepoint   mean_cpm stretched.time.delta
     ## 1: BO1G039080      Ro18   apex        37  1.5648746                   23
     ## 2: BO1G039080      Ro18   apex        39  1.1181460                   25
     ## 3: BO1G039080      Ro18   apex        40  1.5326964                   26
@@ -359,7 +359,7 @@ test_using_sample_symbol %>%
   head()
 ```
 
-    ##     locus_name accession tissue timepoint   mean.cpm stretched.time.delta
+    ##     locus_name accession tissue timepoint   mean_cpm stretched.time.delta
     ## 1: BO00629S160      Ro18   apex        37 0.09992795                   23
     ## 2: BO00629S160      Ro18   apex        39 0.31501986                   25
     ## 3: BO00629S160      Ro18   apex        40 0.29796084                   26

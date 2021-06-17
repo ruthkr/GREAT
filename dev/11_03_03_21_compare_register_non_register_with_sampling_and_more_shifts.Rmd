@@ -100,7 +100,7 @@ rbind(
   L_ara_bra_shifted$bra.spline.data
 ) %>%
   ggplot() +
-  aes(x = shifted_time, y = mean.cpm, group = accession, color = accession) +
+  aes(x = shifted_time, y = mean_cpm, group = accession, color = accession) +
   geom_line() +
   geom_point()
 ```

@@ -27,20 +27,20 @@ load_mean_df <- function(filepath_data_target,
                                     accession_data_to_align = "Col0",
                                     ids_data_target_colnames = c("CDS.model", "locus_name"))
 
-  # Calculate mean of each timepoint by adding a column called "mean.cpm"
-  exp[, mean.cpm := mean(norm.cpm), by = list(locus_name, accession, tissue, timepoint)]
-  mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
+  # Calculate mean of each timepoint by adding a column called "mean_cpm"
+  exp[, mean_cpm := mean(norm.cpm), by = list(locus_name, accession, tissue, timepoint)]
+  mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean_cpm')])
 
   # Filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed greater than 1
   data_target_df <- mean_df[mean_df$accession != accession_data_to_align]
-  data_target_df[, keep := (max(mean.cpm) > max_mean_cpm_wanted | mean(mean.cpm > 1) > 0.5) , by = .(locus_name)]
+  data_target_df[, keep := (max(mean_cpm) > max_mean_cpm_wanted | mean(mean_cpm > 1) > 0.5) , by = .(locus_name)]
 
   keep_data_target_genes <- unique(data_target_df$locus_name[data_target_df$keep == TRUE])
   discard_data_target_genes <- unique(data_target_df$locus_name[data_target_df$keep == FALSE])
 
   # Filter mean_df to remove all data to align genes with all zeros values
   data_to_align_df <- mean_df[mean_df$locus_name %in% keep_data_target_genes & mean_df$accession == accession_data_to_align]
-  data_to_align_df[, keep_final:=(mean(mean.cpm) != 0 & sd(mean.cpm) != 0), by=.(locus_name)]
+  data_to_align_df[, keep_final:=(mean(mean_cpm) != 0 & sd(mean_cpm) != 0), by=.(locus_name)]
   keep_final_genes <- unique(data_to_align_df$locus_name[data_to_align_df$keep_final==TRUE])
   discard_final_genes <- unique(data_to_align_df$locus_name[data_to_align_df$keep_final==FALSE])
 
@@ -54,7 +54,7 @@ load_mean_df <- function(filepath_data_target,
   exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
   exp <- subset(exp, select = c('locus_name', 'accession', 'tissue', 'timepoint',
                               'norm.cpm', 'group'))
-  names(exp)[names(exp) == 'norm.cpm'] <- 'mean.cpm'
+  names(exp)[names(exp) == 'norm.cpm'] <- 'mean_cpm'
   return(list(mean_df, exp))
 }
 

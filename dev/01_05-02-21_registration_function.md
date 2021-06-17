@@ -194,7 +194,7 @@ mean.df %>%
   knitr::kable()
 ```
 
-| locus\_name      | accession | tissue | timepoint |  mean.cpm |
+| locus\_name      | accession | tissue | timepoint |  mean_cpm |
 |:-----------------|:----------|:-------|----------:|----------:|
 | BRAA01G000040.3C | Ro18      | apex   |        11 | 240.36628 |
 | BRAA01G000040.3C | Ro18      | apex   |        29 | 353.93869 |
@@ -225,7 +225,7 @@ all.data.df %>%
   knitr::kable()
 ```
 
-| locus\_name      | accession | tissue | timepoint | mean.cpm | group     |
+| locus\_name      | accession | tissue | timepoint | mean_cpm | group     |
 |:-----------------|:----------|:-------|----------:|---------:|:----------|
 | BRAA01G000040.3C | Ro18      | apex   |        11 | 243.7133 | Ro18-11-a |
 | BRAA01G000040.3C | Ro18      | apex   |        11 | 222.4201 | Ro18-11-b |
@@ -339,7 +339,7 @@ mean_df_shuff_expression %>%
   head(5)
 ```
 
-    ##          locus_name accession tissue timepoint mean.cpm
+    ##          locus_name accession tissue timepoint mean_cpm
     ## 1: BRAA01G000040.3C      Col0   apex         7 44.33938
     ## 2: BRAA01G000040.3C      Col0   apex         8 88.68734
     ## 3: BRAA01G000040.3C      Col0   apex         9 99.36219
@@ -351,7 +351,7 @@ mean_df_shuff_genes %>%
   head(5)
 ```
 
-    ##          locus_name accession tissue timepoint mean.cpm
+    ##          locus_name accession tissue timepoint mean_cpm
     ## 1: BRAA01G000700.3C      Ro18   apex        11 240.3663
     ## 2: BRAA01G000700.3C      Ro18   apex        29 353.9387
     ## 3: BRAA01G000700.3C      Ro18   apex        31 334.7666
@@ -363,7 +363,7 @@ mean.df %>%
   head(5)
 ```
 
-    ##          locus_name accession tissue timepoint mean.cpm
+    ##          locus_name accession tissue timepoint mean_cpm
     ## 1: BRAA01G000040.3C      Ro18   apex        11 240.3663
     ## 2: BRAA01G000040.3C      Ro18   apex        29 353.9387
     ## 3: BRAA01G000040.3C      Ro18   apex        31 334.7666
@@ -388,7 +388,7 @@ mean.df_change_accession_names %>%
   head(5)
 ```
 
-    ##          locus_name accession tissue timepoint mean.cpm
+    ##          locus_name accession tissue timepoint mean_cpm
     ## 1: BRAA01G000040.3C      Ro18   apex        11 240.3663
     ## 2: BRAA01G000040.3C      Ro18   apex        29 353.9387
     ## 3: BRAA01G000040.3C      Ro18   apex        31 334.7666
@@ -400,13 +400,13 @@ mean.df_change_accession_names %>%
 ``` r
 mean.df.sc <- data.table::copy(mean.df_change_accession_names)
 # specify what kind of scaling
-mean.df.sc[, sc.mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
+mean.df.sc[, sc.mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
 
 mean.df.sc %>% 
   head(5)
 ```
 
-    ##          locus_name accession tissue timepoint mean.cpm sc.mean.cpm
+    ##          locus_name accession tissue timepoint mean_cpm sc.mean_cpm
     ## 1: BRAA01G000040.3C      Ro18   apex        11 240.3663  -0.6501871
     ## 2: BRAA01G000040.3C      Ro18   apex        29 353.9387   1.1073447
     ## 3: BRAA01G000040.3C      Ro18   apex        31 334.7666   0.8106565
@@ -418,8 +418,8 @@ initial.rescale = "TRUE"
 if (initial.rescale == TRUE) {
   # apply rescale to mean.df prior to registration
   to.shift.df <- data.table::copy(mean.df.sc)
-  to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
-  to.shift.df$sc.mean.cpm <- NULL
+  to.shift.df$mean_cpm <- to.shift.df$sc.mean_cpm
+  to.shift.df$sc.mean_cpm <- NULL
   all.data.df <- scale_all_rep_data(mean.df, all.data.df, "scale")
     
 } else {
@@ -429,7 +429,7 @@ if (initial.rescale == TRUE) {
 
 ``` r
 ggplot2::ggplot(to.shift.df[to.shift.df$locus_name=='BRAA01G000040.3C'])+
-  ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
   ggplot2::geom_point()
 ```
 
@@ -441,7 +441,7 @@ all.data.df %>%
   knitr::kable()
 ```
 
-| locus\_name      | accession | tissue | timepoint |   mean.cpm |
+| locus\_name      | accession | tissue | timepoint |   mean_cpm |
 |:-----------------|:----------|:-------|----------:|-----------:|
 | BRAA01G000040.3C | Col0      | apex   |         7 | -1.2751929 |
 | BRAA01G000040.3C | Col0      | apex   |         7 | -2.6450054 |
@@ -452,7 +452,7 @@ all.data.df %>%
 ``` r
 # sanity plot that rescale all data worked
 ggplot2::ggplot(all.data.df[all.data.df$locus_name=='BRAA01G000040.3C']) +
-  ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
   ggplot2::geom_point()
 ```
 
@@ -572,7 +572,7 @@ for (i in 1:length(unique(to.shift.df$locus_name))) {
 
   # out is mean SSD between arabidopsis, and interpolated brassica (interpolated between 2 nearest points)
   # ggplot2::ggplot(to.shift.df[to.shift.df$locus_name==curr_sym,])+
-  #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  #   ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
   #   ggplot2::geom_point()
 
   ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.

@@ -146,7 +146,7 @@ shifted_stretched_all <- prepare_scaled_and_registered_data(
 )
 ```
 
-    ## [1] "Max value of mean.cpm of all.data.df :NaN"
+    ## [1] "Max value of mean_cpm of all.data.df :NaN"
 
     ## testing models for stretch factor = 7
 
@@ -159,16 +159,16 @@ shifted_stretched_all <- prepare_scaled_and_registered_data(
 
 ``` r
 mean_df.sc <- data.table::copy(mean_df)
-mean_df.sc[, sc.mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
+mean_df.sc[, sc.mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
 to.shift.df <- data.table::copy(mean_df.sc)
-to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
-to.shift.df$sc.mean.cpm <- NULL
+to.shift.df$mean_cpm <- to.shift.df$sc.mean_cpm
+to.shift.df$sc.mean_cpm <- NULL
 
 df_BO00578S060 <- mean_df[mean_df$locus_name == "BO00578S060", ] %>% 
   dplyr::mutate(accession = ifelse(accession == "Ro18", "DH", "Col0"))
 
 ggplot2::ggplot(df_BO00578S060) +
-  ggplot2::aes(x = timepoint, y = mean.cpm, color = accession) +
+  ggplot2::aes(x = timepoint, y = mean_cpm, color = accession) +
   ggplot2::geom_point() +
   ggplot2::geom_line()
 ```
@@ -179,7 +179,7 @@ ggplot2::ggplot(df_BO00578S060) +
 df_BO00578S060
 ```
 
-    ##      locus_name accession tissue timepoint mean.cpm
+    ##      locus_name accession tissue timepoint mean_cpm
     ##  1: BO00578S060        DH   apex        37 3.782476
     ##  2: BO00578S060        DH   apex        39 2.824860
     ##  3: BO00578S060        DH   apex        40 3.874816
@@ -205,7 +205,7 @@ df_BO00578S060
     ## 23: BO00578S060      Col0   apex        14 0.000000
     ## 24: BO00578S060      Col0   apex        15 0.000000
     ## 25: BO00578S060      Col0   apex        16 0.000000
-    ##      locus_name accession tissue timepoint mean.cpm
+    ##      locus_name accession tissue timepoint mean_cpm
 
 #### What is the effect of having all zeros after scaling?
 
@@ -213,7 +213,7 @@ df_BO00578S060
 to.shift.df[to.shift.df$locus_name == "BO00578S060", ]
 ```
 
-    ##      locus_name accession tissue timepoint    mean.cpm
+    ##      locus_name accession tissue timepoint    mean_cpm
     ##  1: BO00578S060      Ro18   apex        37  1.17082907
     ##  2: BO00578S060      Ro18   apex        39 -0.31097891
     ##  3: BO00578S060      Ro18   apex        40  1.31371527
@@ -239,7 +239,7 @@ to.shift.df[to.shift.df$locus_name == "BO00578S060", ]
     ## 23: BO00578S060      Col0   apex        14         NaN
     ## 24: BO00578S060      Col0   apex        15         NaN
     ## 25: BO00578S060      Col0   apex        16         NaN
-    ##      locus_name accession tissue timepoint    mean.cpm
+    ##      locus_name accession tissue timepoint    mean_cpm
 
 #### What the formula of R scale is
 
@@ -284,8 +284,8 @@ exp <- get_expression_of_interest(file_path_brassica = b_oleracea_path,
   curr_GoIs = list_all_ara_locus_name,
   sum_brassicas = F)
 
-exp[, mean.cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
-mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
+exp[, mean_cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
+mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean_cpm')])
 ```
 
 ``` r
@@ -298,7 +298,7 @@ mean_df %>%
   dplyr::filter(locus_name == "BO00578S060")
 ```
 
-    ##      locus_name accession tissue timepoint mean.cpm
+    ##      locus_name accession tissue timepoint mean_cpm
     ##  1: BO00578S060        DH   apex        37 3.782476
     ##  2: BO00578S060        DH   apex        39 2.824860
     ##  3: BO00578S060        DH   apex        40 3.874816
@@ -324,7 +324,7 @@ mean_df %>%
     ## 23: BO00578S060      Col0   apex        14 0.000000
     ## 24: BO00578S060      Col0   apex        15 0.000000
     ## 25: BO00578S060      Col0   apex        16 0.000000
-    ##      locus_name accession tissue timepoint mean.cpm
+    ##      locus_name accession tissue timepoint mean_cpm
 
 ``` r
 mean_df <- mean_df %>% 
@@ -334,20 +334,20 @@ mean_df <- mean_df %>%
 ``` r
 # discard.genes <- unique(bra_df$locus_name[bra_df$keep==FALSE])
 bra_df <- mean_df[mean_df$accession != "Col0"]
-bra_df[, keep := (max(mean.cpm) > 5 | mean(mean.cpm > 1) > 0.5), by = .(locus_name)]
+bra_df[, keep := (max(mean_cpm) > 5 | mean(mean_cpm > 1) > 0.5), by = .(locus_name)]
 keep_bra_genes <- unique(bra_df$locus_name[bra_df$keep == TRUE])
 discard_bra_genes <- unique(bra_df$locus_name[bra_df$keep == FALSE])
 
 # Filter mean_df to remove all arabidopsis genes with all zeros values
 ara_df <- mean_df[mean_df$locus_name == keep_bra_genes & mean_df$accession == "Col0"]
-ara_df[, keep_final := (mean(mean.cpm) != 0 & sd(mean.cpm) != 0), by = .(locus_name)]
+ara_df[, keep_final := (mean(mean_cpm) != 0 & sd(mean_cpm) != 0), by = .(locus_name)]
 keep_ara_genes <- unique(ara_df$locus_name[ara_df$keep_final == TRUE])
 discard_ara_genes <- unique(ara_df$locus_name[ara_df$keep_final == TRUE])
 
 ara_df
 ```
 
-    ##      locus_name accession tissue timepoint mean.cpm keep_final
+    ##      locus_name accession tissue timepoint mean_cpm keep_final
     ##  1: BO00578S060      Col0   apex         7        0      FALSE
     ##  2: BO00578S060      Col0   apex         8        0      FALSE
     ##  3: BO00578S060      Col0   apex         9        0      FALSE

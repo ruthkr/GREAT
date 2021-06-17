@@ -162,7 +162,7 @@ test
 
 ```{r}
 ggplot(test[test$locus_name=='BRAA02G018970.3C',],
-       aes(x=delta_time, y=mean.cpm, color=accession))+
+       aes(x=delta_time, y=mean_cpm, color=accession))+
   geom_point()+
   geom_line()
 ```
@@ -177,7 +177,7 @@ test
 
 ```{r}
 ggplot(test[test$locus_name=='BRAA02G018970.3C',],
-       aes(x=delta_time, y=mean.cpm, color=accession))+
+       aes(x=delta_time, y=mean_cpm, color=accession))+
   geom_point()+
   geom_line()
 ```

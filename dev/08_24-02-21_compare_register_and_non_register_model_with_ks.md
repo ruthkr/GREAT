@@ -35,7 +35,7 @@ compare_registered_to_unregistered_model_with_ks <- function(curr.sym, all.data.
   curr.data.df <- get_compared_timepoints(curr.data.df)
 
   # ggplot2::ggplot(curr.data.df)+
-  #   ggplot2::aes(x=shifted_time, y=mean.cpm, shape=is.compared, color=accession)+
+  #   ggplot2::aes(x=shifted_time, y=mean_cpm, shape=is.compared, color=accession)+
   #   ggplot2::geom_point()
 
   # cut down to the data for each model
@@ -58,9 +58,9 @@ compare_registered_to_unregistered_model_with_ks <- function(curr.sym, all.data.
   # print(bra.spline.data)
 
 
-  ara.fit <- stats::lm(mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = ara.spline.data)
-  bra.fit <- stats::lm(mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = bra.spline.data)
-  combined.fit <- stats::lm(mean.cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = combined.spline.data)
+  ara.fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = ara.spline.data)
+  bra.fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = bra.spline.data)
+  combined.fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = combined.spline.data)
   # calculate the log likelihoods
   ara.logLik <- stats::logLik(ara.fit)
   bra.logLik <- stats::logLik(bra.fit)
@@ -77,30 +77,30 @@ compare_registered_to_unregistered_model_with_ks <- function(curr.sym, all.data.
 
   # Kolmogorov-Smirnov test
 
-  ks <- stats::ks.test(ara.spline.data$mean.cpm, bra.spline.data$mean.cpm)
+  ks <- stats::ks.test(ara.spline.data$mean_cpm, bra.spline.data$mean_cpm)
 
 
   if (is.testing == TRUE) {
     ara.pred <- stats::predict(ara.fit)
     ara.pred.df <- unique(data.frame(
       "shifted_time" = ara.spline.data$shifted_time,
-      "mean.cpm" = ara.pred, "accession" = "Col0"
+      "mean_cpm" = ara.pred, "accession" = "Col0"
     ))
     bra.pred <- stats::predict(bra.fit)
     bra.pred.df <- unique(data.frame(
       "shifted_time" = bra.spline.data$shifted_time,
-      "mean.cpm" = bra.pred, "accession" = "Ro18"
+      "mean_cpm" = bra.pred, "accession" = "Ro18"
     ))
 
     combined.pred <- stats::predict(combined.fit)
     combined.pred.df <- unique(data.frame(
       "shifted_time" = combined.spline.data$shifted_time,
-      "mean.cpm" = combined.pred, "accession" = "registered"
+      "mean_cpm" = combined.pred, "accession" = "registered"
     ))
     spline.df <- rbind(ara.pred.df, bra.pred.df, combined.pred.df)
 
     p <- ggplot2::ggplot(data = combined.spline.data) +
-      ggplot2::aes(x = shifted_time, y = mean.cpm, colour = accession) +
+      ggplot2::aes(x = shifted_time, y = mean_cpm, colour = accession) +
       ggplot2::geom_point() +
       ggplot2::geom_line(data = spline.df) +
       ggplot2::ggtitle(paste0(
@@ -137,19 +137,19 @@ plot_fit <- function(results_list, facets = c("arabidopsis", "brassica"), title 
   data <- rbind(
     data.frame(
       shifted_time = results_list$ara.spline.data$shifted_time,
-      y_truth = broom::augment(results_list$ara.fit)$mean.cpm,
+      y_truth = broom::augment(results_list$ara.fit)$mean_cpm,
       y_pred = broom::augment(results_list$ara.fit)$.fitted,
       type = facets[[1]]
     ),
     data.frame(
       shifted_time = results_list$bra.spline.data$shifted_time,
-      y_truth = broom::augment(results_list$bra.fit)$mean.cpm,
+      y_truth = broom::augment(results_list$bra.fit)$mean_cpm,
       y_pred = broom::augment(results_list$bra.fit)$.fitted,
       type = facets[[2]]
     ),
     data.frame(
       shifted_time = results_list$combined.spline.data$shifted_time,
-      y_truth = broom::augment(results_list$combined.fit)$mean.cpm,
+      y_truth = broom::augment(results_list$combined.fit)$mean_cpm,
       y_pred = broom::augment(results_list$combined.fit)$.fitted,
       type = "combined"
     )
@@ -180,7 +180,7 @@ plot_fit <- function(results_list, facets = c("arabidopsis", "brassica"), title 
         ", p-value=", signif(results_list$ks$p.value, 3)
       ),
       x = "Shifted time",
-      y = "mean.cpm"
+      y = "mean_cpm"
     )
 }
 

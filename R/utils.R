@@ -45,9 +45,9 @@ interpolate_brassica_comparison_expression <- function(arabidopsis.time, bra.dt)
   # linearly interpolate between these points to estimate the comparison expression value
   data.table::setorder(nearest.points, shifted_time) # so [1] is earlier time
   time.diff <- nearest.points$shifted_time[2] - nearest.points$shifted_time[1] #
-  expression.diff <- nearest.points$mean.cpm[2] - nearest.points$mean.cpm[1]
+  expression.diff <- nearest.points$mean_cpm[2] - nearest.points$mean_cpm[1]
   grad <- expression.diff / time.diff
-  pred.expression <- nearest.points$mean.cpm[1] + (nearest.points$diff[1]) * grad
+  pred.expression <- nearest.points$mean_cpm[1] + (nearest.points$diff[1]) * grad
 
   return(pred.expression)
 }

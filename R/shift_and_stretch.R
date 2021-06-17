@@ -50,10 +50,10 @@ calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
   # # check that have now got scaled, stretched time for both genes.
   # tst <- all.data.df
   # ggplot2::ggplot(tst[tst$locus_name=='BRAA01G000040.3C'])+
-  #   ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession) +
+  #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession) +
   #   ggplot2::geom_point()
   # ggplot2::ggplot(tst[tst$locus_name=='BRAA01G000040.3C'])+
-  #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  #   ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
   #   ggplot2::geom_point()
 
   print('calculating registration vs different expression comparison AIC & BIC...')
@@ -123,7 +123,7 @@ apply_best_shift <- function(mean_df, best_shifts) {
 
     # tmp <- test[test$locus_name==curr.gene]
     # ggplot2::ggplot(tmp)+
-    #   ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession) +
+    #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession) +
     #   ggplot2::geom_point()
   }
 
@@ -192,24 +192,24 @@ apply_best_normalisation <- function(test, best_shifts) {
     # if was compared
     if (length(ara.mean) != 0) {
       if (ara.sd != 0) { # don't want to divide by 0
-        test$mean.cpm[test$locus_name==curr.gene & test$accession=='Col0'] <- (test$mean.cpm[test$locus_name==curr.gene & test$accession=='Col0'] - ara.mean) / ara.sd
+        test$mean_cpm[test$locus_name==curr.gene & test$accession=='Col0'] <- (test$mean_cpm[test$locus_name==curr.gene & test$accession=='Col0'] - ara.mean) / ara.sd
       } else {
-        test$mean.cpm[test$locus_name==curr.gene & test$accession=='Col0'] <- (test$mean.cpm[test$locus_name==curr.gene & test$accession=='Col0'] - ara.mean)
+        test$mean_cpm[test$locus_name==curr.gene & test$accession=='Col0'] <- (test$mean_cpm[test$locus_name==curr.gene & test$accession=='Col0'] - ara.mean)
       }
 
       if (bra.sd !=0) { # don't want to divide by 0
-        test$mean.cpm[test$locus_name==curr.gene & test$accession=='Ro18'] <- (test$mean.cpm[test$locus_name==curr.gene & test$accession=='Ro18'] - bra.mean) / bra.sd
+        test$mean_cpm[test$locus_name==curr.gene & test$accession=='Ro18'] <- (test$mean_cpm[test$locus_name==curr.gene & test$accession=='Ro18'] - bra.mean) / bra.sd
       } else {
-        test$mean.cpm[test$locus_name==curr.gene & test$accession=='Ro18'] <- (test$mean.cpm[test$locus_name==curr.gene & test$accession=='Ro18'] - bra.mean)
+        test$mean_cpm[test$locus_name==curr.gene & test$accession=='Ro18'] <- (test$mean_cpm[test$locus_name==curr.gene & test$accession=='Ro18'] - bra.mean)
       }
-      if (any(is.na(test$mean.cpm))) {
-        print('have NAs in mean.cpm after rescaling in apply best_normalisation() for gene :')
+      if (any(is.na(test$mean_cpm))) {
+        print('have NAs in mean_cpm after rescaling in apply best_normalisation() for gene :')
         print(unique(test$locus_name))
         stop()
       }
     } else {
-      test$mean.cpm[test$locus_name==curr.gene & test$accession=='Col0'] <- NA
-      test$mean.cpm[test$locus_name==curr.gene & test$accession=='Ro18'] <- NA
+      test$mean_cpm[test$locus_name==curr.gene & test$accession=='Col0'] <- NA
+      test$mean_cpm[test$locus_name==curr.gene & test$accession=='Ro18'] <- NA
     }
     count <- count + 1
   }
@@ -237,7 +237,7 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
   curr.data.df <- get_compared_timepoints(curr.data.df)
 
   # ggplot2::ggplot(curr.data.df)+
-  #   ggplot2::aes(x=shifted_time, y=mean.cpm, shape=is.compared, color=accession)+
+  #   ggplot2::aes(x=shifted_time, y=mean_cpm, shape=is.compared, color=accession)+
   #   ggplot2::geom_point()
 
   # cut down to the data for each model
@@ -260,9 +260,9 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
   # print(bra.spline.data)
 
 
-  ara.fit <- stats::lm(mean.cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=ara.spline.data)
-  bra.fit <- stats::lm(mean.cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=bra.spline.data)
-  combined.fit <- stats::lm(mean.cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=combined.spline.data)
+  ara.fit <- stats::lm(mean_cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=ara.spline.data)
+  bra.fit <- stats::lm(mean_cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=bra.spline.data)
+  combined.fit <- stats::lm(mean_cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=combined.spline.data)
   # calculate the log likelihoods
   ara.logLik <- stats::logLik(ara.fit)
   bra.logLik <- stats::logLik(bra.fit)
@@ -281,18 +281,18 @@ compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.t
   if (is.testing==TRUE) {
     ara.pred <- stats::predict(ara.fit)
     ara.pred.df <- unique(data.frame('shifted_time'=ara.spline.data$shifted_time,
-                                     'mean.cpm'=ara.pred, 'accession'='Col0'))
+                                     'mean_cpm'=ara.pred, 'accession'='Col0'))
     bra.pred <- stats::predict(bra.fit)
     bra.pred.df <- unique(data.frame('shifted_time'=bra.spline.data$shifted_time,
-                                     'mean.cpm'=bra.pred, 'accession'='Ro18'))
+                                     'mean_cpm'=bra.pred, 'accession'='Ro18'))
 
     combined.pred <- stats::predict(combined.fit)
     combined.pred.df <- unique(data.frame('shifted_time'=combined.spline.data$shifted_time,
-                                          'mean.cpm'=combined.pred, 'accession'='registered'))
+                                          'mean_cpm'=combined.pred, 'accession'='registered'))
     spline.df <- rbind(ara.pred.df, bra.pred.df, combined.pred.df)
 
     p <- ggplot2::ggplot(data=combined.spline.data)+
-      ggplot2::aes(x=shifted_time, y=mean.cpm, colour=accession) +
+      ggplot2::aes(x=shifted_time, y=mean_cpm, colour=accession) +
       ggplot2::geom_point()+
       ggplot2::geom_line(data=spline.df)+
       ggplot2::ggtitle(paste0(curr.sym, ' : sep AIC:combo AIC=', round(seperate.AIC), ':', round(combined.AIC),
@@ -337,7 +337,7 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
 
     # out is mean SSD between arabidopsis, and interpolated brassica (interpolated between 2 nearest points)
     # ggplot2::ggplot(mean_df[mean_df$locus_name==curr_sym,])+
-    #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+    #   ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
     #   ggplot2::geom_point()
 
     ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
@@ -493,7 +493,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
     #### test plot - of shifted, UNNORMALISED gene expression
     # if (testing==TRUE) {
     #   p <- ggplot2::ggplot(test)+
-    #     ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession)+
+    #     ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession)+
     #     ggplot2::geom_point()+
     #     ggplot2::ggtitle(paste0('shift : ', curr_shift))
     #   p
@@ -509,22 +509,22 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
     if (do_rescale == TRUE) {
       # record the mean and sd of the compared points, used for rescaling
       # in "apply shift" function
-      ara.mean <- mean(compared$mean.cpm[compared$accession=='Col0'])
-      bra.mean <- mean(compared$mean.cpm[compared$accession=='Ro18'])
-      ara.sd <- stats::sd(compared$mean.cpm[compared$accession=='Col0'])
-      bra.sd<- stats::sd(compared$mean.cpm[compared$accession=='Ro18'])
+      ara.mean <- mean(compared$mean_cpm[compared$accession=='Col0'])
+      bra.mean <- mean(compared$mean_cpm[compared$accession=='Ro18'])
+      ara.sd <- stats::sd(compared$mean_cpm[compared$accession=='Col0'])
+      bra.sd<- stats::sd(compared$mean_cpm[compared$accession=='Ro18'])
 
       # do the transformation for here
       if ((ara.sd != 0 | !is.nan(ara.sd)) & (bra.sd != 0 | !is.nan(bra.sd))) { # if neither are 0, so won't be dividing by 0 (which gives NaNs)
-        compared[, mean.cpm:=scale(mean.cpm, scale=TRUE, center=TRUE), by=.(accession)]
+        compared[, mean_cpm:=scale(mean_cpm, scale=TRUE, center=TRUE), by=.(accession)]
       } else { # if at least one of them is all 0
         ara.compared <- compared[compared$accession=='Col0',]
         bra.compared <- compared[compared$accession=='Ro18',]
         if((ara.sd == 0) & (bra.sd != 0 | !is.nan(bra.sd))) { # if only ara.sd==0
-          bra.compared[, mean.cpm:=scale(mean.cpm, scale=TRUE, center=TRUE), by=.(accession)]
+          bra.compared[, mean_cpm:=scale(mean_cpm, scale=TRUE, center=TRUE), by=.(accession)]
         }
         if ((ara.sd != 0 | !is.nan(ara.sd))  & (bra.sd == 0)) { # if only bra.sd == 0
-          ara.compared[, mean.cpm:=scale(mean.cpm, scale=TRUE, center=TRUE), by=.(accession)]
+          ara.compared[, mean_cpm:=scale(mean_cpm, scale=TRUE, center=TRUE), by=.(accession)]
         }
         # if both are all 0, then do nothing.
         compared <- rbind(ara.compared, bra.compared)
@@ -541,7 +541,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
     ### test plot of shifted, and normalised gene expression
     if (testing==TRUE) {
       p <- ggplot2::ggplot(compared)+
-        ggplot2::aes(x=shifted_time, y=mean.cpm, color=accession)+
+        ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession)+
         ggplot2::geom_point()+
         ggplot2::ggtitle(paste0('shift : ', curr_shift))
       ggplot2::ggsave(paste0('./testing/',stretch_factor, '-', curr_shift, '.pdf'))
@@ -555,11 +555,11 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
 
     # calculate the score, using the (interpolated) predicted.bra.expression, and the observed arabidopsis expression
     # score = mean ((observed - expected)**2 )
-    score <- calc_score(ara.compared$mean.cpm, ara.compared$pred.bra.expression)
+    score <- calc_score(ara.compared$mean_cpm, ara.compared$pred.bra.expression)
 
     if (is.na(score)) {
       print('error in get_best_shift_new(): got a score of NA for gene:')
-      print(paste("ara.compared$mean.cpm:", ara.compared$mean.cpm))
+      print(paste("ara.compared$mean_cpm:", ara.compared$mean_cpm))
       print(ara.compared$pred.bra.expression)
       print(curr_sym)
       print(paste0('with curr_shift=', curr_shift))

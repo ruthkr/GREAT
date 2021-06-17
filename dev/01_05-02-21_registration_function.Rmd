@@ -308,7 +308,7 @@ all.data.df_change_accession_names %>%
 ```{r}
 mean.df.sc <- data.table::copy(mean.df_change_accession_names)
 # specify what kind of scaling
-mean.df.sc[, sc.mean.cpm := scale(mean.cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
+mean.df.sc[, sc.mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
 
 mean.df.sc %>% 
   head(5)
@@ -331,8 +331,8 @@ initial.rescale = "TRUE"
 if (initial.rescale == TRUE) {
   # apply rescale to mean.df prior to registration
   to.shift.df <- data.table::copy(mean.df.sc)
-  to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
-  to.shift.df$sc.mean.cpm <- NULL
+  to.shift.df$mean_cpm <- to.shift.df$sc.mean_cpm
+  to.shift.df$sc.mean_cpm <- NULL
   all.data.df <- scale_all_rep_data(mean.df, all.data.df, "scale")
 } else {
   to.shift.df <- data.table::copy(mean.df)
@@ -347,14 +347,14 @@ saveRDS(all.data.df, "all_data_df_all_genes.RDS")
 
 ```{r}
 ggplot2::ggplot(to.shift.df[to.shift.df$locus_name=='BRAA03G023790.3C'])+
-  ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
   ggplot2::geom_point()
 ```
 
 ```{r}
 # sanity plot that rescale all data worked
 ggplot2::ggplot(all.data.df[all.data.df$locus_name=='BRAA03G023790.3C']) +
-  ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
   ggplot2::geom_point()
 ```
 
@@ -456,7 +456,7 @@ for (i in 1:length(unique(to.shift.df$locus_name))) {
 
   # out is mean SSD between arabidopsis, and interpolated brassica (interpolated between 2 nearest points)
   # ggplot2::ggplot(to.shift.df[to.shift.df$locus_name==curr_sym,])+
-  #   ggplot2::aes(x=timepoint, y=mean.cpm, color=accession) +
+  #   ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
   #   ggplot2::geom_point()
 
   ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.

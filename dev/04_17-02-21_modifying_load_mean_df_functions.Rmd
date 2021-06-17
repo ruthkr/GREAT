@@ -410,15 +410,15 @@ load_mean_df <- function(file_path_brassica, file_path_arabidopsis, file_path_id
   exp <- filt_models
 
   # get mean of each timepoint
-  exp[, mean.cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
-  mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean.cpm')])
+  exp[, mean_cpm:=mean(norm.cpm), by=list(locus_name, accession, tissue, timepoint)]
+  mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean_cpm')])
 
 
 
   # filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed
   # greater than 1
   ro18.df <- mean_df[mean_df$accession=='Ro18']
-  ro18.df[, keep:=(max(mean.cpm) > 2 | mean(mean.cpm > 1) > 0.5) , by=.(locus_name)]
+  ro18.df[, keep:=(max(mean_cpm) > 2 | mean(mean_cpm > 1) > 0.5) , by=.(locus_name)]
   keep.genes <- unique(ro18.df$locus_name[ro18.df$keep==TRUE])
   mean_df <- mean_df[mean_df$locus_name %in% keep.genes,]
   print(paste0(length(unique(mean_df$locus_name)), ' genes considered in the comparison'))
@@ -427,7 +427,7 @@ load_mean_df <- function(file_path_brassica, file_path_arabidopsis, file_path_id
   exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
   # exp <- subset(exp, select=c('locus_name', 'accession', 'tissue', 'timepoint',
   #                             'norm.cpm', 'group'))
-  # names(exp)[names(exp)=='norm.cpm'] <- 'mean.cpm'
+  # names(exp)[names(exp)=='norm.cpm'] <- 'mean_cpm'
   return(list(mean_df, exp))
 }
 ```

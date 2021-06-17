@@ -38,7 +38,7 @@ L_ara_ara <- compare_registered_to_unregistered_model_with_ks(
 )
 ```
 
-    ## Warning in stats::ks.test(ara.spline.data$mean.cpm, bra.spline.data$mean.cpm):
+    ## Warning in stats::ks.test(ara.spline.data$mean_cpm, bra.spline.data$mean_cpm):
     ## cannot compute exact p-value with ties
 
 ``` r
@@ -49,7 +49,7 @@ L_bra_bra <- compare_registered_to_unregistered_model_with_ks(
 )
 ```
 
-    ## Warning in stats::ks.test(ara.spline.data$mean.cpm, bra.spline.data$mean.cpm):
+    ## Warning in stats::ks.test(ara.spline.data$mean_cpm, bra.spline.data$mean_cpm):
     ## cannot compute exact p-value with ties
 
 ``` r
@@ -59,7 +59,7 @@ L_ara_bra <- compare_registered_to_unregistered_model_with_ks(
 )
 ```
 
-    ## Warning in stats::ks.test(ara.spline.data$mean.cpm, bra.spline.data$mean.cpm):
+    ## Warning in stats::ks.test(ara.spline.data$mean_cpm, bra.spline.data$mean_cpm):
     ## cannot compute exact p-value with ties
 
 ``` r
@@ -74,7 +74,7 @@ L_ara_bra_imp_3<- compare_registered_to_unregistered_model_with_ks(
     ##   method            from
     ##   as.zoo.data.frame zoo
 
-    ## Warning in stats::ks.test(ara.spline.data$mean.cpm, bra.spline.data$mean.cpm):
+    ## Warning in stats::ks.test(ara.spline.data$mean_cpm, bra.spline.data$mean_cpm):
     ## cannot compute exact p-value with ties
 
 ``` r
@@ -85,7 +85,7 @@ L_ara_bra_imp_20 <- compare_registered_to_unregistered_model_with_ks(
 )
 ```
 
-    ## Warning in stats::ks.test(ara.spline.data$mean.cpm, bra.spline.data$mean.cpm):
+    ## Warning in stats::ks.test(ara.spline.data$mean_cpm, bra.spline.data$mean_cpm):
     ## cannot compute exact p-value with ties
 
 ``` r
@@ -98,7 +98,7 @@ L_ara_bra_shifted <- compare_registered_to_unregistered_model_with_ks(
 )
 ```
 
-    ## Warning in stats::ks.test(ara.spline.data$mean.cpm, bra.spline.data$mean.cpm):
+    ## Warning in stats::ks.test(ara.spline.data$mean_cpm, bra.spline.data$mean_cpm):
     ## cannot compute exact p-value with ties
 
 ## Plots
@@ -131,7 +131,7 @@ rbind(
   L_ara_bra_shifted$bra.spline.data
 ) %>%
   ggplot() +
-  aes(x = shifted_time, y = mean.cpm, group = accession, color = accession) +
+  aes(x = shifted_time, y = mean_cpm, group = accession, color = accession) +
   geom_line() +
   geom_point()
 ```

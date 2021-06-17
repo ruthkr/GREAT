@@ -4,7 +4,7 @@ plot_goI_expression <- function(summed.GoIs.df) {
   # truncate data so can see expression nicely on the same scale
   # summed.GoIs.df <- summed.GoIs.df[summed.GoIs.df$timepoint <=21,]
 
-  summed.GoIs.df[, scaled.cpm:=my.scale(mean.cpm), by=.(Ara.id, accession)]
+  summed.GoIs.df[, scaled.cpm:=my.scale(mean_cpm), by=.(Ara.id, accession)]
   morphology.equiv.df <- data.frame('accession'=c('Col-0', 'DH'), 'floral.transition.time'=c(14, 35))
   summed.GoIs.df$accession <- as.character(summed.GoIs.df$accession)
   summed.GoIs.df$accession[summed.GoIs.df$accession=='Col0'] <- 'Col-0'
@@ -15,7 +15,7 @@ plot_goI_expression <- function(summed.GoIs.df) {
   for (curr.acc in c('Col-0', 'DH')) {
 
     curr.p <- ggplot(summed.GoIs.df[summed.GoIs.df$accession==curr.acc,],
-                     aes(x=timepoint, y=mean.cpm, color=Ara.name, fill=Ara.name))+
+                     aes(x=timepoint, y=mean_cpm, color=Ara.name, fill=Ara.name))+
       #geom_vline(data=summed.GoIs.df[summed.GoIs.df$accession=='Col-0' & summed.GoIs.df$accession==curr.acc,], aes(xintercept=floral.transition.time), size=1)+
       #geom_vline(data=summed.GoIs.df[summed.GoIs.df$accession=='R-O-18' & summed.GoIs.df$accession==curr.acc,,], aes(xintercept=floral.transition.time), size=1)+
       geom_vline(data=morphology.equiv.df[morphology.equiv.df==curr.acc,], aes(xintercept=floral.transition.time), size=1)+
@@ -63,7 +63,7 @@ plot_goI_expression_scaled <- function(summed.GoIs.df) {
   # truncate data so can see expression nicely on the same scale
   # summed.GoIs.df <- summed.GoIs.df[summed.GoIs.df$timepoint <=21,]
 
-  summed.GoIs.df[, scaled.cpm:=my.scale(mean.cpm), by=.(Ara.id, accession)]
+  summed.GoIs.df[, scaled.cpm:=my.scale(mean_cpm), by=.(Ara.id, accession)]
   morphology.equiv.df <- data.frame('accession'=c('Col-0', 'DH'), 'floral.transition.time'=c(14, 35))
   summed.GoIs.df$accession <- as.character(summed.GoIs.df$accession)
   summed.GoIs.df$accession[summed.GoIs.df$accession=='Col0'] <- 'Col-0'
@@ -144,7 +144,7 @@ plot_registered_GoIs_for_comparible_timepoints <- function(all.stretched.df) {
   registered.plot.df$accession[registered.plot.df$accession=='Col0'] <- 'Col-0'
   registered.plot.df$accession[registered.plot.df$accession=='Ro18'] <- 'DH'
 
-  p.registered <- ggplot(registered.plot.df, aes(x=shifted_time, y=mean.cpm, color=accession, fill=accession))+
+  p.registered <- ggplot(registered.plot.df, aes(x=shifted_time, y=mean_cpm, color=accession, fill=accession))+
     stat_summary(fun=mean, geom='line', size=1)+
     stat_summary(fun.data=mean_se, fun.args=list(mult=1.96),geom='ribbon',
                  color=NA, alpha=0.3)+
@@ -172,7 +172,7 @@ plot_registered_GoIs_for_comparible_timepoints_new <- function(registered.plot.d
   registered.plot.df$accession[registered.plot.df$accession=='Col0'] <- 'Col-0'
   registered.plot.df$accession[registered.plot.df$accession=='Ro18'] <- 'DH'
 
-  p.registered <- ggplot(registered.plot.df, aes(x=shifted_time, y=mean.cpm, color=accession, fill=accession))+
+  p.registered <- ggplot(registered.plot.df, aes(x=shifted_time, y=mean_cpm, color=accession, fill=accession))+
     stat_summary(fun=mean, geom='line', size=1)+
     stat_summary(fun.data=mean_se, fun.args=list(mult=1.96),geom='ribbon',
                  color=NA, alpha=0.3)+

@@ -111,7 +111,7 @@ O <- prepare_scaled_and_registered_data(mean.df, all.data.df,
 mean.df <- O[["mean.df"]] # mean.df is unchanged
 mean.df.sc <- O[["mean.df.sc"]] # mean.df.sc : data is scaled(center=T, scale=T)
 imputed.mean.df <- O[["imputed.mean.df"]] # imputed.mean.df is registered data, Col0 values imputed to make a single timepoint.
-all.shifts <- O[["all.shifts"]] # all.shifts is data.table of score for each shift for each gene.
+all_shifts <- O[["all_shifts"]] # all_shifts is data.table of score for each shift for each gene.
 model.comparison <- O[["model.comparison"]]
 
 # sanity test plot
@@ -134,7 +134,7 @@ D.registered.onlyR <- O[["D.registered.onlyR"]]
 saveRDS(mean.df, file = paste0(real.expression.dir, "mean.df.rds"))
 saveRDS(mean.df.sc, file = paste0(real.expression.dir, "mean.df.sc.rds"))
 saveRDS(imputed.mean.df, file = paste0(real.expression.dir, "imputed.mean.df.rds"))
-saveRDS(all.shifts, file = paste0(real.expression.dir, "all.shifts.rds"))
+saveRDS(all_shifts, file = paste0(real.expression.dir, "all_shifts.rds"))
 saveRDS(model.comparison, file = paste0(real.expression.dir, "model.comparison.rds"))
 
 # save the distances calculated

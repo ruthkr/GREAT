@@ -153,7 +153,7 @@ load_shuffled_data <- function(shuffled.data.dir, file.type) {
   # "mean.sc": for mean_df.sc files
   # "mean_df" : for mean_df files
   # "imputed.mean_df" for them
-  # "shifts" for all.shifts
+  # "shifts" for all_shifts
 
   allowed.types <- c('comparison', 'mean.sc', 'mean_df', 'imputed.mean_df', 'shifts')
   if (!(file.type %in% allowed.types)) {
@@ -190,7 +190,7 @@ load_shuffled_data <- function(shuffled.data.dir, file.type) {
     }
 
 
-    #all.shifts <- readRDS(paste0(shuffled.data.dir, shift.file))
+    #all_shifts <- readRDS(paste0(shuffled.data.dir, shift.file))
 
     # model comparison only has the best registration used for each gene, so can use
     # to get best shift
@@ -994,7 +994,7 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches,
   OUT <- list('mean_df'=mean_df,
               'mean_df.sc'=mean_df.sc,
               'imputed.mean_df'=imputed.mean_df,
-              'all.shifts'=all_shifts,
+              'all_shifts'=all_shifts,
               'model.comparison'=model.comparison.dt)
 }
 
@@ -2324,14 +2324,14 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
   all.ara.sd <- rep(0, num_shifts)
   all.bra.sd <- rep(0, num_shifts)
 
-  all.shifts <- seq(min_shift, max_shift, length_out=num_shifts)
-  if (!(0 %in% all.shifts)) {
-    all.shifts <- c(all.shifts, 0) # include 0 shift in candidates.
+  all_shifts <- seq(min_shift, max_shift, length_out=num_shifts)
+  if (!(0 %in% all_shifts)) {
+    all_shifts <- c(all_shifts, 0) # include 0 shift in candidates.
   }
   i=1
-  for (i in 1:length(all.shifts)) {
+  for (i in 1:length(all_shifts)) {
 
-    curr.shift <- all.shifts[i]
+    curr.shift <- all_shifts[i]
 
     #print('line 1676')
     #print(curr.shift)
@@ -2419,7 +2419,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
     all.bra.sd[i] <- bra.sd
   }
 
-  out <- data.table(data.frame('gene'=curr_sym, 'stretch'=stretch_factor, 'shift'=all.shifts, 'score'=all_scores,
+  out <- data.table(data.frame('gene'=curr_sym, 'stretch'=stretch_factor, 'shift'=all_shifts, 'score'=all_scores,
                                'ara.compared.mean'=all.ara.mean, 'bra.compared.mean'=all.bra.mean,
                                'ara.compared.sd'=all.ara.sd, 'bra.compared.sd'=all.bra.sd))
   return(out)

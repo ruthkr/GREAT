@@ -894,7 +894,7 @@ load_shuffled_data <- function(shuffled.data.dir, file.type) {
   # "mean.sc": for mean_df.sc files
   # "mean_df" : for mean_df files
   # "imputed.mean_df" for them
-  # "shifts" for all.shifts
+  # "shifts" for all_shifts
 
   allowed.types <- c('comparison', 'mean.sc', 'mean_df', 'imputed.mean_df', 'shifts')
   if (!(file.type %in% allowed.types)) {
@@ -931,7 +931,7 @@ load_shuffled_data <- function(shuffled.data.dir, file.type) {
     }
 
 
-    #all.shifts <- readRDS(paste0(shuffled.data.dir, shift.file))
+    #all_shifts <- readRDS(paste0(shuffled.data.dir, shift.file))
 
     # model comparison only has the best registration used for each gene, so can use
     # to get best shift

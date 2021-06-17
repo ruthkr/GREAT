@@ -24,7 +24,7 @@ shifted_stretched_all <- readRDS("dev/others/shifted_stretched_all.rds")
 mean_df <- shifted_stretched_all[["mean_df"]] 
 mean_df.sc <- shifted_stretched_all[["mean_df.sc"]]
 imputed.mean_df <- shifted_stretched_all[["imputed.mean_df"]] 
-all.shifts <- shifted_stretched_all[["all.shifts"]] 
+all_shifts <- shifted_stretched_all[["all_shifts"]] 
 model.comparison <- shifted_stretched_all[["model.comparison"]]
 ```
 

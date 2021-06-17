@@ -294,7 +294,7 @@ bra_genes_AP3
     ## [1] "BO4G120010" "BO8G083600"
 
 ``` r
-all.shifts <- readRDS("intermediate_data/gene_registration/all.shifts_b_oleracea_from_original_14_14.RDS")
+all_shifts <- readRDS("intermediate_data/gene_registration/all_shifts_b_oleracea_from_original_14_14.RDS")
 model.comparison.dt <- readRDS("intermediate_data/gene_registration/model.comparison_b_oleracea_from_original_14_14.RDS")
 
 best_shift_stretch_AP3 <- model.comparison.dt %>% 
@@ -347,7 +347,7 @@ ggplot2::ggplot(AP3_shifted_results[AP3_shifted_results$locus_name=='BO4G120010'
 mean_df <- shifted_stretched_all[["mean.df"]] 
 mean.df.sc <- shifted_stretched_all[["mean.df.sc"]]
 imputed.mean.df <- shifted_stretched_all[["imputed.mean.df"]] 
-all.shifts <- shifted_stretched_all[["all.shifts"]] 
+all_shifts <- shifted_stretched_all[["all_shifts"]] 
 model.comparison <- shifted_stretched_all[["model.comparison"]]
 ```
 

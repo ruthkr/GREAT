@@ -134,7 +134,7 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
   OUT <- list('mean_df'=mean_df,
               'mean_df.sc'=mean_df.sc,
               'imputed.mean_df'=imputed.mean_df,
-              'all.shifts'=all_shifts,
+              'all_shifts'=all_shifts,
               'model.comparison'=model.comparison.dt)
 }
 

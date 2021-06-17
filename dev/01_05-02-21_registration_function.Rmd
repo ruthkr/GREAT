@@ -559,7 +559,7 @@ model.comparison.dt %>%
   mean.df <- O[['mean.df']] # mean.df is unchanged
   mean.df.sc <- O[['mean.df.sc']] # mean.df.sc : data is scaled(center=T, scale=T)
   imputed.mean.df <- O[['imputed.mean.df']] # imputed.mean.df is registered data, Col0 values imputed to make a single timepoint.
-  all.shifts <- O[['all.shifts']] # all.shifts is data.table of score for each shift for each gene. 
+  all_shifts <- O[['all_shifts']] # all_shifts is data.table of score for each shift for each gene. 
   model.comparison <- O[['model.comparison']]
 
   
@@ -579,7 +579,7 @@ model.comparison.dt %>%
     saveRDS(mean.df, file=paste0(real.expression.dir, 'mean.df.rds'))
     saveRDS(mean.df.sc, file=paste0(real.expression.dir, 'mean.df.sc.rds'))
     saveRDS(imputed.mean.df, file=paste0(real.expression.dir, 'imputed.mean.df.rds'))
-    saveRDS(all.shifts, file=paste0(real.expression.dir, 'all.shifts.rds'))
+    saveRDS(all_shifts, file=paste0(real.expression.dir, 'all_shifts.rds'))
     saveRDS(model.comparison, file=paste0(real.expression.dir, 'model.comparison.rds'))
     
     # save the distances calculated
@@ -595,7 +595,7 @@ model.comparison.dt %>%
     saveRDS(mean.df, file=paste0(shuffled.expression.dir, 'mean.df_', jobNum, '_', i, '.rds'))
     saveRDS(mean.df.sc, file=paste0(shuffled.expression.dir, 'mean.df.sc_', jobNum, '_', i, '.rds'))
     saveRDS(imputed.mean.df, file=paste0(shuffled.expression.dir, 'imputed.mean.df_', jobNum, '_', i, '.rds'))
-    saveRDS(all.shifts, file=paste0(shuffled.expression.dir, 'all.shifts_', jobNum, '_', i, '.rds'))
+    saveRDS(all_shifts, file=paste0(shuffled.expression.dir, 'all_shifts_', jobNum, '_', i, '.rds'))
     saveRDS(model.comparison, file=paste0(shuffled.expression.dir, 'model.comparison_', jobNum, '_', i,'.rds'))
     
     

@@ -577,7 +577,7 @@ for (i in 1:length(unique(to.shift.df$locus_name))) {
 
   ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
   ### if timepoints don't line up, brassica value is linearly imputed
-  out <- get_best_shift_new(curr_sym, to.shift.df, stretch_factor = 2, do_rescale = FALSE, min_shift, max_shift, testing = FALSE)
+  out <- get_best_shift(curr_sym, to.shift.df, stretch_factor = 2, do_rescale = FALSE, min_shift, max_shift, testing = FALSE)
 
   best_shift <- out$shift[out$score == min(out$score)]
   if (length(best_shift) > 1) {

@@ -554,7 +554,7 @@ score
     ## [1] 0.1010474
 
 ``` r
-out <- get_best_shift_new(curr_sym = "BO8G083600", to.shift.df, stretch_factor = 3.5, do_rescale = TRUE, -4, 4, testing=FALSE)
+out <- get_best_shift(curr_sym = "BO8G083600", to.shift.df, stretch_factor = 3.5, do_rescale = TRUE, -4, 4, testing=FALSE)
 
 
 out

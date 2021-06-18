@@ -35,7 +35,7 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
 
     ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
     ### if timepoints don't line up, brassica value is linearly imputed
-    out <- get_best_shift_new(curr_sym, mean_df, stretch_factor, do_rescale, min_shift, max_shift, testing=FALSE)
+    out <- get_best_shift(curr_sym, mean_df, stretch_factor, do_rescale, min_shift, max_shift, testing=FALSE)
 
     best_shift <- out$shift[out$score==min(out$score)]
     if (length(best_shift) > 1) {
@@ -69,7 +69,7 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
 #testing=T
 
 #' @export
-get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_shift, max_shift, testing=FALSE) {
+get_best_shift <- function(curr_sym, test, stretch_factor, do_rescale, min_shift, max_shift, testing=FALSE) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # for the current gene, and current stretch_factor, calculate the score for all
   # shifts, and return the scores for all as a table, and the value of the optimal shift.
@@ -180,7 +180,7 @@ get_best_shift_new <- function(curr_sym, test, stretch_factor, do_rescale, min_s
     score <- calc_score(ara.compared$mean_cpm, ara.compared$pred.bra.expression)
 
     if (is.na(score)) {
-      print('error in get_best_shift_new(): got a score of NA for gene:')
+      print('error in get_best_shift(): got a score of NA for gene:')
       print(paste("ara.compared$mean_cpm:", ara.compared$mean_cpm))
       print(ara.compared$pred.bra.expression)
       print(curr_sym)

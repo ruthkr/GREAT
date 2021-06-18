@@ -717,7 +717,7 @@ calculate_sample_distance <- function(exp) {
 }
 
 #test <- mean_df
-get_best_shift <- function(curr_sym, test) {
+get_best_shift_old <- function(curr_sym, test) {
   # here statistic used to assess best is 1 / mean(squared difference)
 
   min_shift <- 5

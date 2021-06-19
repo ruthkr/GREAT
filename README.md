@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# GREAT <img src="dev/hexagon_logo/logo1.png" align="right" width="120"/>
+# GREAT <img src="man/figures/logo.png" align="right" width="120"/>
 
 <!-- badges: start -->
 

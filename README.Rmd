@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# GREAT <img src="dev/hexagon_logo/logo1.png" align="right" width="120"/>
+# GREAT <img src="man/figures/logo.png" align="right" width="120"/>
 
 <!-- badges: start -->
 `r badgecreatr::badge_lifecycle("experimental")`

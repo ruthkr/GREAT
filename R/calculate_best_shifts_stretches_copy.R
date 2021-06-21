@@ -67,31 +67,43 @@ calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_n
 # stretch_factor <- 1
 # do_rescale <- TRUE
 #testing=T
-
+#' Calculate the score for all shifts
+#'
+#' `get_best_shift` is used to calculate the score for all shifts for current gene and stretch_factor, and return the scores for all as a table, and the value of the optimal shift.
+#'
+#' @param curr_sym Current gene accession
+#' @param data Input data.
+#' @param stretch_factor Stretch transformation factor wanted.
+#' @param do_rescale Apply "scale" to compared points for each shift if TRUE, and means use original mean expression data if FALSE.
+#' @param min_shift Minimum values of shifts.
+#' @param max_shift Maximum values of shifts.
+#' @param testing Make plot of shifted, and normalised gene expression if TRUE.
+#' @param num_shifts Number of different shifts to be considered.
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#'
 #' @export
-get_best_shift <- function(curr_sym, test, stretch_factor, do_rescale, min_shift, max_shift, testing=FALSE) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-  # for the current gene, and current stretch_factor, calculate the score for all
-  # shifts, and return the scores for all as a table, and the value of the optimal shift.
+get_best_shift <- function(curr_sym,
+                           data,
+                           stretch_factor,
+                           do_rescale,
+                           min_shift,
+                           max_shift,
+                           testing=FALSE,
+                           num_shifts = 25,
+                           accession_data_to_align = "Col0") {
 
   # Shift extremes are defined s.t. at least 5 points are compared.
+  data <- data[data$locus_name == curr_sym, ]
 
-  # do_rescale == TRUE, means apply "scale" to compared points for each shift. ==FALSE, means use original mean expression data
+  # Transform timepoint to be time from first timepoint
+  data[, delta_time := timepoint - min(timepoint), by = .(accession)]
 
-  num_shifts <- 25 # the number of different shifts to be considered.
-
-
-  test <- test[test$locus_name==curr_sym, ]
-
-  # transform timepoint to be time from first timepoint
-  test[, delta_time:=timepoint - min(timepoint), by=.(accession)]
-  # apply stretch_factor to the arabidopsis, leave the rapa as is
-  test$delta_time[test$accession == 'Col0'] <- test$delta_time[test$accession=='Col0'] * stretch_factor
-
+  # Apply stretch_factor to the arabidopsis, leave the rapa as is
+  data$delta_time[data$accession == accession_data_to_align] <- data$delta_time[data$accession == accession_data_to_align] * stretch_factor
 
   # # Try to make it consistent as in apply stretch
-  # test$delta_time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0'] + 7
-  # test$delta_time[test$accession=='Ro18'] <- test$delta_time[test$accession=='Ro18'] + 14
+  # data$delta_time[data$accession=='Col0'] <- data$delta_time[data$accession=='Col0'] + 7
+  # data$delta_time[data$accession=='Ro18'] <- data$delta_time[data$accession=='Ro18'] + 14
 
   all_scores <- rep(0, num_shifts)
   all.ara.mean <- rep(0, num_shifts)
@@ -109,8 +121,8 @@ get_best_shift <- function(curr_sym, test, stretch_factor, do_rescale, min_shift
     curr_shift <- all_shifts[i]
 
     # shift the arabidopsis expression timings
-    test$shifted_time <- test$delta_time
-    test$shifted_time[test$accession == 'Col0'] <- test$delta_time[test$accession == 'Col0'] + curr_shift
+    data$shifted_time <- data$delta_time
+    data$shifted_time[data$accession == 'Col0'] <- data$delta_time[data$accession == 'Col0'] + curr_shift
 
     #### test plot - of shifted, UNNORMALISED gene expression
     # if (testing==TRUE) {
@@ -124,8 +136,8 @@ get_best_shift <- function(curr_sym, test, stretch_factor, do_rescale, min_shift
 
 
     # Cut down to just the arabidopsis and brassica timepoints which compared
-    test <- get_compared_timepoints(test)
-    compared <- test[test$is.compared==TRUE, ]
+    data <- get_compared_timepoints(data)
+    compared <- data[data$is.compared==TRUE, ]
 
     # Renormalise expression using just these timepoints?
     if (do_rescale == TRUE) {

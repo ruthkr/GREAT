@@ -80,12 +80,14 @@ calculate_all_best_shifts <- function(mean_df,
 
 #' @export
 get_best_shift <- function(curr_sym,
-                               test,
-                               stretch_factor,
-                               do_rescale,
-                               min_shift,
-                               max_shift,
-                               testing = FALSE) {
+                           test,
+                           stretch_factor,
+                           do_rescale,
+                           min_shift,
+                           max_shift,
+                           testing = FALSE,
+                           accession_data_to_align = "Col0",
+                           accession_data_target = "Ro18") {
 
   # for the current gene, and current stretch_factor, calculate the score for all
   # shifts, and return the scores for all as a table, and the value of the optimal shift.

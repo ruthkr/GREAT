@@ -1,4 +1,3 @@
-
 #' @export
 get_compared_timepoints <- function(test) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])

@@ -45,7 +45,7 @@ calculate_all_best_shifts <- function(mean_df,
 
     ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
     ### if timepoints don't line up, brassica value is linearly imputed
-    out <- get_best_shift(curr_sym, mean_df, stretch_factor, do_rescale, min_shift, max_shift, testing=FALSE)
+    out <- get_best_shift(curr_sym, mean_df, stretch_factor, do_rescale, min_shift, max_shift,testing=FALSE)
 
     best_shift <- out$shift[out$score==min(out$score)]
     if (length(best_shift) > 1) {
@@ -71,45 +71,41 @@ calculate_all_best_shifts <- function(mean_df,
 
 
 
-# wroking on new implementation of the funciton
-# curr_sym <- 'BRAA02G015410.3C'
-#test <- mean_df
-# stretch_factor <- 1
-# do_rescale <- TRUE
-#testing=T
-
+#' Calculate the score for all shifts
+#'
+#' `get_best_shift` is used to calculate the score for all shifts (for the current gene, and current stretch_factor), and return the scores for all as a table, and the value of the optimal shift. Shift extremes are defined s.t. at least 5 points are compared.
+#'
+#' @param num_shifts Number of different shifts to be considered.
+#' @param curr_sym
+#' @param data
+#' @param stretch_factor
+#' @param do_rescale Apply "scale" to compared points for each shift if TRUE, use original mean expression data if FALSE.
+#' @param min_shift
+#' @param max_shift
+#' @param testing
+#' @param accession_data_to_align
+#' @param accession_data_target
+#'
 #' @export
-get_best_shift <- function(curr_sym,
-                           test,
+get_best_shift <- function(num_shifts = 25,
+                           curr_sym,
+                           data,
                            stretch_factor,
                            do_rescale,
                            min_shift,
                            max_shift,
-                           testing = FALSE,
+                          testing = FALSE,
                            accession_data_to_align = "Col0",
                            accession_data_target = "Ro18") {
 
-  # for the current gene, and current stretch_factor, calculate the score for all
-  # shifts, and return the scores for all as a table, and the value of the optimal shift.
 
-  # Shift extremes are defined s.t. at least 5 points are compared.
-
-  # do_rescale == TRUE, means apply "scale" to compared points for each shift. ==FALSE, means use original mean expression data
-
-  num_shifts <- 25 # the number of different shifts to be considered.
-
-
-  test <- test[test$locus_name == curr_sym, ]
+ data <-data[test$locus_name == curr_sym, ]
 
   # transform timepoint to be time from first timepoint
-  test[, delta_time := timepoint - min(timepoint), by = .(accession)]
+ data[, delta_time := timepoint - min(timepoint), by = .(accession)]
   # apply stretch_factor to the arabidopsis, leave the rapa as is
-  test$delta_time[test$accession == accession_data_to_align] <- test$delta_time[test$accession == accession_data_to_align] * stretch_factor
+ data$delta_time[test$accession == accession_data_to_align] <-data$delta_time[test$accession == accession_data_to_align] * stretch_factor
 
-
-  # # Try to make it consistent as in apply stretch
-  # test$delta_time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0'] + 7
-  # test$delta_time[test$accession=='Ro18'] <- test$delta_time[test$accession=='Ro18'] + 14
 
   all_scores <- rep(0, num_shifts)
   all_data_align_mean <- rep(0, num_shifts)
@@ -126,23 +122,12 @@ get_best_shift <- function(curr_sym,
     curr_shift <- all_shifts[i]
 
     # shift the arabidopsis expression timings
-    test$shifted_time <- test$delta_time
-    test$shifted_time[test$accession == accession_data_to_align] <- test$delta_time[test$accession == accession_data_to_align] + curr_shift
-
-    #### test plot - of shifted, UNNORMALISED gene expression
-    # if (testing==TRUE) {
-    #   p <- ggplot2::ggplot(test)+
-    #     ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession)+
-    #     ggplot2::geom_point()+
-    #     ggplot2::ggtitle(paste0('shift : ', curr_shift))
-    #   p
-    #   ggplot2::ggsave(paste0('./testing/', curr_shift, '.pdf'))
-    # }
-
+   data$shifted_time <-data$delta_time
+   data$shifted_time[test$accession == accession_data_to_align] <-data$delta_time[test$accession == accession_data_to_align] + curr_shift
 
     # Cut down to just the arabidopsis and brassica timepoints which compared
-    test <- get_compared_timepoints(test)
-    compared <- test[test$is.compared == TRUE, ]
+   data <- get_compared_timepoints(test)
+    compared <-data[test$is.compared == TRUE, ]
 
     # Renormalise expression using just these timepoints?
     if (do_rescale == TRUE) {
@@ -176,7 +161,7 @@ get_best_shift <- function(curr_sym,
       data_target_sd <- 1
     }
 
-    ### test plot of shifted, and normalised gene expression
+    ###data plot of shifted, and normalised gene expression
     if (testing == TRUE) {
       p <- ggplot2::ggplot(compared) +
         ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
@@ -191,8 +176,7 @@ get_best_shift <- function(curr_sym,
 
     ara.compared$pred.bra.expression <- sapply(ara.compared$shifted_time, interpolate_brassica_comparison_expression, bra.dt = bra.compared)
 
-    # calculate the score, using the (interpolated) predicted.bra.expression, and the observed arabidopsis expression
-    # score = mean ((observed - expected)**2 )
+    # Calculate the score, using the (interpolated) predicted.bra.expression, and the observed arabidopsis expression
     score <- calc_score(ara.compared$mean_cpm, ara.compared$pred.bra.expression)
 
     if (is.na(score)) {

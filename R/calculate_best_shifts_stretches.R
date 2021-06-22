@@ -142,16 +142,16 @@ get_best_shift <- function(num_shifts = 25,
       if ((data_align_sd != 0 | !is.nan(data_align_sd)) & (data_target_sd != 0 | !is.nan(data_target_sd))) { # if neither are 0, so won't be dividing by 0 (which gives NaNs)
         compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
       } else { # if at least one of them is all 0
-        ara.compared <- compared[compared$accession == accession_data_to_align, ]
-        bra.compared <- compared[compared$accession == accession_data_target, ]
+        data_align_compared <- compared[compared$accession == accession_data_to_align, ]
+        data_target_compared <- compared[compared$accession == accession_data_target, ]
         if ((data_align_sd == 0) & (data_target_sd != 0 | !is.nan(data_target_sd))) { # if only data_align_sd==0
-          bra.compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
+          data_target_compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
         }
         if ((data_align_sd != 0 | !is.nan(data_align_sd)) & (data_target_sd == 0)) { # if only data_target_sd == 0
-          ara.compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
+          data_align_compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
         }
         # if both are all 0, then do nothing.
-        compared <- rbind(ara.compared, bra.compared)
+        compared <- rbind(data_align_compared, data_target_compared)
       }
     } else {
       # if didn't rescale expression for comparison, record values s.t. (x - xmean) / x_sd = x
@@ -171,18 +171,18 @@ get_best_shift <- function(num_shifts = 25,
     }
 
     # for each arabidopsis timepoint, linear interpolate between the two nearest brassica timepoints
-    ara.compared <- compared[compared$accession == accession_data_to_align]
-    bra.compared <- compared[compared$accession == accession_data_target]
+    data_align_compared <- compared[compared$accession == accession_data_to_align]
+    data_target_compared <- compared[compared$accession == accession_data_target]
 
-    ara.compared$pred.bra.expression <- sapply(ara.compared$shifted_time, interpolate_brassica_comparison_expression, bra.dt = bra.compared)
+    data_align_compared$pred.bra.expression <- sapply(data_align_compared$shifted_time, interpolate_brassica_comparison_expression, bra.dt = data_target_compared)
 
     # Calculate the score, using the (interpolated) predicted.bra.expression, and the observed arabidopsis expression
-    score <- calc_score(ara.compared$mean_cpm, ara.compared$pred.bra.expression)
+    score <- calc_score(data_align_compared$mean_cpm, data_align_compared$pred.bra.expression)
 
     if (is.na(score)) {
       print("error in get_best_shift(): got a score of NA for gene:")
-      print(paste("ara.compared$mean_cpm:", ara.compared$mean_cpm))
-      print(ara.compared$pred.bra.expression)
+      print(paste("data_align_compared$mean_cpm:", data_align_compared$mean_cpm))
+      print(data_align_compared$pred.bra.expression)
       print(curr_sym)
       print(paste0("with curr_shift=", curr_shift))
       stop()
@@ -197,8 +197,8 @@ get_best_shift <- function(num_shifts = 25,
 
   out <- data.table::data.table(data.frame(
     "gene" = curr_sym, "stretch" = stretch_factor, "shift" = all_shifts, "score" = all_scores,
-    "ara.compared.mean" = all_data_align_mean, "bra.compared.mean" = all_data_target_mean,
-    "ara.compared.sd" = all_data_align_sd, "bra.compared.sd" = all_data_target_sd
+    "data_align_compared.mean" = all_data_align_mean, "data_target_compared.mean" = all_data_target_mean,
+    "data_align_compared.sd" = all_data_align_sd, "data_target_compared.sd" = all_data_target_sd
   ))
   return(out)
 }

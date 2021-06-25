@@ -5,7 +5,7 @@
 # stretch_factor <- 2
 # do_rescale=F
 #' @export
-calculate_all_best_shifts <- function(mean_df, stretch_factor, do_rescale, min_num_overlapping_points, shift_extreme) {
+calculate_all_best_shifts_copy <- function(mean_df, stretch_factor, do_rescale, min_num_overlapping_points, shift_extreme) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
 
   # Initialize vectors

@@ -1,25 +1,25 @@
 #' @export
-get_compared_timepoints <- function(test) {
+get_compared_timepoints <- function(data) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # flag the arabidopsis timepoints which overlap the brassica timecourse, and so will be compared
-  bra.min <- min(test$shifted_time[test$accession=='Ro18'])
-  bra.max <- max(test$shifted_time[test$accession=='Ro18'])
+  bra.min <- min(data$shifted_time[data$accession=='Ro18'])
+  bra.max <- max(data$shifted_time[data$accession=='Ro18'])
 
   # get the arabidopsis times which used
-  test$is.compared <- FALSE
-  test$is.compared[(test$accession=='Col0' & (test$shifted_time >= bra.min & test$shifted_time <=bra.max))] <- TRUE
+  data$is.compared <- FALSE
+  data$is.compared[(data$accession=='Col0' & (data$shifted_time >= bra.min & data$shifted_time <=bra.max))] <- TRUE
 
   # get the extreme brassica times which used - bigger or equal than Ara max, and smaller or equal than Ara min, because have to project
   #  Ara onto Bra
-  ara.max <- max(test$shifted_time[test$accession=='Col0' & test$is.compared==TRUE])
-  ara.min <- min(test$shifted_time[test$accession=='Col0' & test$is.compared==TRUE])
-  bra.max <- max_is_compared_to_arabidopsis(ara.max, test[test$accession=='Ro18', ])
-  bra.min <- min_is_compared_to_arabidopsis(ara.min, test[test$accession=='Ro18', ])
+  ara.max <- max(data$shifted_time[data$accession=='Col0' & data$is.compared==TRUE])
+  ara.min <- min(data$shifted_time[data$accession=='Col0' & data$is.compared==TRUE])
+  bra.max <- max_is_compared_to_arabidopsis(ara.max, data[data$accession=='Ro18', ])
+  bra.min <- min_is_compared_to_arabidopsis(ara.min, data[data$accession=='Ro18', ])
 
   # use these to get all the brassica times which used
-  test$is.compared[(test$accession=='Ro18' & (test$shifted_time >= bra.min & test$shifted_time <=bra.max))] <- TRUE
+  data$is.compared[(data$accession=='Ro18' & (data$shifted_time >= bra.min & data$shifted_time <=bra.max))] <- TRUE
 
-  return(test)
+  return(data)
 }
 
 

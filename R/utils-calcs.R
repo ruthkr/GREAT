@@ -73,14 +73,21 @@ min_is_compared_to_arabidopsis <- function(arabidopsis.time, bra.dt) {
 }
 
 
+#' Calculate the number of overlapping points
+#'
+#' `calc_num_overlapping_points` is used to calculate the number of overlapping points for the species with the fewer overlapping points if the current "shift" is applied to the data to alined delta timepoints.
+#'
+#' @param data Input data.
+#' @param shift Current shift value
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#'
 #' @export
-calc_num_overlapping_points <- function(shift, original) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-  # calculate the number of overlapping points for the species with the fewer overlapping points if the current "shift" is
-  # applied to the col0 delta timepoints.
-  original$shifted_time[original$accession == "Col0"] <- original$delta_time[original$accession == "Col0"] + shift
-  original <- get_compared_timepoints(original)
-  original[, num.compared := sum(is_compared), by = .(accession)]
+calc_num_overlapping_points <- function(shift, data, accession_data_to_align = "Col0") {
 
-  return(min(original$num.compared))
+  data$shifted_time[data$accession == accession_data_to_align] <- data$delta_time[data$accession == accession_data_to_align] + shift
+  data <- get_compared_timepoints(data)
+
+  data[, num.compared := sum(is_compared), by = .(accession)]
+
+  return(min(data$num.compared))
 }

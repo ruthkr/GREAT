@@ -80,7 +80,7 @@ calc_num_overlapping_points <- function(shift, original) {
   # applied to the col0 delta timepoints.
   original$shifted_time[original$accession == "Col0"] <- original$delta_time[original$accession == "Col0"] + shift
   original <- get_compared_timepoints(original)
-  original[, num.compared := sum(is.compared), by = .(accession)]
+  original[, num.compared := sum(is_compared), by = .(accession)]
 
   return(min(original$num.compared))
 }

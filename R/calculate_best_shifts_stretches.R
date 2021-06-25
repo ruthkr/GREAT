@@ -76,13 +76,13 @@ calculate_all_best_shifts <- function(mean_df,
 #' `get_best_shift` is used to calculate the score for all shifts (for the current gene, and current stretch_factor), and return the scores for all as a table, and the value of the optimal shift. Shift extremes are defined s.t. at least 5 points are compared.
 #'
 #' @param num_shifts Number of different shifts to be considered.
-#' @param curr_sym
-#' @param data
-#' @param stretch_factor
+#' @param curr_sym Current gene accession.
+#' @param data Input data.
+#' @param stretch_factor Current stretch factor.
 #' @param do_rescale Apply "scale" to compared points for each shift if TRUE, use original mean expression data if FALSE.
-#' @param min_shift
-#' @param max_shift
-#' @param testing
+#' @param min_shift Minimum extreme value of shift.
+#' @param max_shift Maximum extreme value of shift.
+#' @param testing Showing a plot of the progress if TRUE, otherwise if FALSE
 #' @param accession_data_to_align
 #' @param accession_data_target
 #'
@@ -94,16 +94,17 @@ get_best_shift <- function(num_shifts = 25,
                            do_rescale,
                            min_shift,
                            max_shift,
-                          testing = FALSE,
+                           testing = FALSE,
                            accession_data_to_align = "Col0",
                            accession_data_target = "Ro18") {
 
 
  data <-data[test$locus_name == curr_sym, ]
 
-  # transform timepoint to be time from first timepoint
+  # Transform timepoint to be time from first timepoint
  data[, delta_time := timepoint - min(timepoint), by = .(accession)]
-  # apply stretch_factor to the arabidopsis, leave the rapa as is
+
+  # Apply stretch_factor to the arabidopsis, leave the rapa as is
  data$delta_time[test$accession == accession_data_to_align] <-data$delta_time[test$accession == accession_data_to_align] * stretch_factor
 
 
@@ -121,7 +122,7 @@ get_best_shift <- function(num_shifts = 25,
   for (i in 1:length(all_shifts)) {
     curr_shift <- all_shifts[i]
 
-    # shift the arabidopsis expression timings
+    # Shift the arabidopsis expression timings
    data$shifted_time <-data$delta_time
    data$shifted_time[test$accession == accession_data_to_align] <-data$delta_time[test$accession == accession_data_to_align] + curr_shift
 
@@ -139,7 +140,8 @@ get_best_shift <- function(num_shifts = 25,
       data_target_sd <- stats::sd(compared$mean_cpm[compared$accession == accession_data_target])
 
       # do the transformation for here
-      if ((data_align_sd != 0 | !is.nan(data_align_sd)) & (data_target_sd != 0 | !is.nan(data_target_sd))) { # if neither are 0, so won't be dividing by 0 (which gives NaNs)
+      if ((data_align_sd != 0 | !is.nan(data_align_sd)) & (data_target_sd != 0 | !is.nan(data_target_sd))) {
+        # if neither are 0, so won't be dividing by 0 (which gives NaNs)
         compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
       } else { # if at least one of them is all 0
         data_align_compared <- compared[compared$accession == accession_data_to_align, ]
@@ -196,9 +198,14 @@ get_best_shift <- function(num_shifts = 25,
   }
 
   out <- data.table::data.table(data.frame(
-    "gene" = curr_sym, "stretch" = stretch_factor, "shift" = all_shifts, "score" = all_scores,
-    "data_align_compared.mean" = all_data_align_mean, "data_target_compared.mean" = all_data_target_mean,
-    "data_align_compared.sd" = all_data_align_sd, "data_target_compared.sd" = all_data_target_sd
+    "gene" = curr_sym,
+    "stretch" = stretch_factor,
+    "shift" = all_shifts,
+    "score" = all_scores,
+    "data_align_compared.mean" = all_data_align_mean,
+    "data_target_compared.mean" = all_data_target_mean,
+    "data_align_compared.sd" = all_data_align_sd,
+    "data_target_compared.sd" = all_data_target_sd
   ))
   return(out)
 }

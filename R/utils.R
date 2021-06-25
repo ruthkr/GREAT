@@ -1,25 +1,31 @@
+#' Flag data to align time points which overlap to data target timecourse
+#'
+#' `get_compared_timepoints` flags data to align time points which overlap to data target timecourse by comparing each data to align time points to minimum and maximum value of data target.
+#'
+#' @param data Input data containing both data to align and data target.
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_target Accession name of data target.
+#'
 #' @export
 get_compared_timepoints <- function(data,
                                     accession_data_to_align = "Col0",
                                     accession_data_target = "Ro18") {
 
-  # flag the arabidopsis timepoints which overlap the brassica timecourse, and so will be compared
   # Filter data target from the whole dataset
   data_target <- data$shifted_time[data$accession == accession_data_target]
 
   min_data_target <- min(data_target)
   max_data_target <- max(data_target)
 
-  # get the arabidopsis times which used
+  # Get time points of data to align which are used
   data$is_compared <- FALSE
-  data$is_compared[(data$accession== accession_data_to_align & (data$shifted_time >= min_data_target & data$shifted_time <=max_data_target))] <- TRUE
+  data$is_compared[(data$accession == accession_data_to_align & (data$shifted_time >= min_data_target & data$shifted_time <= max_data_target))] <- TRUE
 
-  # get the extreme brassica times which used - bigger or equal than Ara max, and smaller or equal than Ara min, because have to project
-  #  Ara onto Bra
-  ara.max <- max(data$shifted_time[data$accession == accession_data_to_align & data$is_compared==TRUE])
-  ara.min <- min(data$shifted_time[data$accession == accession_data_to_align & data$is_compared==TRUE])
-  max_data_target <- max_is_compared_to_arabidopsis(ara.max, data[data$accession == accession_data_target, ])
-  min_data_target <- min_is_compared_to_arabidopsis(ara.min, data[data$accession == accession_data_target, ])
+  # Get the extreme data target times which used - bigger or equal than max of data to align, and smaller or equal than  min data to align, because have to project data to align onto data target
+  max_data_to_align <- max(data$shifted_time[data$accession == accession_data_to_align & data$is_compared==TRUE])
+  min_data_to_align <- min(data$shifted_time[data$accession == accession_data_to_align & data$is_compared==TRUE])
+  max_data_target <- max_is_compared_to_arabidopsis(max_data_to_align, data[data$accession == accession_data_target, ])
+  min_data_target <- min_is_compared_to_arabidopsis(min_data_to_align, data[data$accession == accession_data_target, ])
 
   # use these to get all the brassica times which used
   data$is_compared[(data$accession == accession_data_target & (data$shifted_time >= min_data_target & data$shifted_time <=max_data_target))] <- TRUE

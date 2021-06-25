@@ -18,6 +18,7 @@ get_extreme_shifts_for_all <- function(mean_df,
                                        accession_data_to_align,
                                        accession_data_target) {
 
+
   # This function is a wrapper for calc_extreme_shifts() to be able to move it out of the loop so don't calculate for every gene.
   # Cut dataframe to a single gene.
   curr_sym <- unique(mean_df$locus_name)[1]
@@ -73,7 +74,8 @@ calc_extreme_shifts <- function(mean_df,
   # Among of these candidates, find the most extreme values which maintaining the required number of overlapping time-points to be considered.
   num_overlapping_points <- sapply(neg_extreme_candidate,
     FUN = calc_num_overlapping_points,
-    original = original
+    data = original,
+    accession_data_to_align = accession_data_to_align
   )
   if (all(num_overlapping_points < min_num_overlapping_points)) {
     stop(paste0(
@@ -84,7 +86,10 @@ calc_extreme_shifts <- function(mean_df,
   }
   neg_extreme <- min(neg_extreme_candidate[num_overlapping_points >= min_num_overlapping_points])
 
-  num_overlapping_points <- sapply(pos_extreme_candidates, FUN = calc_num_overlapping_points, original = original)
+  num_overlapping_points <- sapply(pos_extreme_candidates,
+                                   FUN = calc_num_overlapping_points,
+                                   data = original,
+                                   accession_data_to_align = accession_data_to_align)
   pos_extreme <- max(pos_extreme_candidates[num_overlapping_points >= min_num_overlapping_points])
 
   # Hard code maximum and minimum allowed shifts, as noticed spurious registrations when too extreme shifts allowed

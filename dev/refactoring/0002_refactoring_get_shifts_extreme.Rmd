@@ -1,0 +1,70 @@
+---
+title: "Refactoring get_shifts_extreme.R"
+output: 
+  github_document:
+    toc: true
+---
+
+```{r setup}
+knitr::opts_chunk$set()
+library(GREAT)
+library(ggplot2)
+library(data.table)
+library(cowplot)
+library(ggpubr)
+
+source("../../R/get_shifts_extreme.R")
+source("../../R/get_shifts_extreme_copy.R")
+```
+
+# Load data 
+
+```{r}
+# Define data sample path 
+
+id_table_path <- system.file("extdata/sample_data/id_table.RDS", package = "GREAT")
+arabidopsis_expression_path <- system.file("extdata/sample_data/arabidopsis_expression.RDS", package = "GREAT")
+brassica_rapa_expression_path <- system.file("extdata/sample_data/brassica_rapa_expression.RDS", package = "GREAT")
+```
+
+```{r}
+ID_table <- readRDS(id_table_path)
+ID_table
+```
+
+```{r}
+test_load_mean_df <- load_mean_df(
+  filepath_data_target = brassica_rapa_expression_path,
+  filepath_data_to_align = arabidopsis_expression_path,
+  filepath_id_table = id_table_path,
+  target_id_table_shared_colname = "CDS.model",
+  target_and_to_align_data_shared_colname = "locus_name",
+  colnames_id_table = c("CDS.model", "symbol", "locus_name"),
+  colnames_wanted = NULL,
+  tissue_wanted = "apex",
+  curr_GoIs = c("AT1G69120", "AT5G61850", "AT2G45660"),
+  sum_exp_data_target = F, 
+  accession_data_to_align = "Col0",
+  ids_data_target_colnames = c("CDS.model", "locus_name")
+)
+
+test_load_mean_df
+```
+
+
+```{r}
+get_extreme_shifts_for_all(
+  mean_df = test_load_mean_df[[1]],
+  stretch_factor = 2,
+  min_num_overlapping_points = 7,
+  shift_extreme = 4,
+  accession_data_to_align = "Col0",
+  accession_data_target = "Ro18"
+)
+```
+
+```{r}
+unique(test_load_mean_df$locus_name)
+```
+
+

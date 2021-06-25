@@ -3,7 +3,7 @@
 # min_num_overlapping_points
 # shift_extreme
 #' @export
-get_extreme_shifts_for_all <- function(test, stretch_factor, min_num_overlapping_points, shift_extreme) {
+get_extreme_shifts_for_all_copy <- function(test, stretch_factor, min_num_overlapping_points, shift_extreme) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # wrapper for calc_extreme_shifts to be able to move it out of the loop so don't calculate for every gene.
 
@@ -29,7 +29,7 @@ get_extreme_shifts_for_all <- function(test, stretch_factor, min_num_overlapping
 }
 
 #' @export
-calc_extreme_shifts <- function(test, min_num_overlapping_points, shift_extreme) {
+calc_extreme_shifts_copy <- function(test, min_num_overlapping_points, shift_extreme) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # calculate the minimum and maximum shifts can apply to Col-0 after the stretch transformation, whilst
   # preserving the criteria that at least min_num_overlapping_points are being compared from both accessions.
@@ -46,7 +46,7 @@ calc_extreme_shifts <- function(test, min_num_overlapping_points, shift_extreme)
   pos_extreme_candidates <- max(original$delta_time[original$accession=='Ro18']) - original$delta_time[original$accession=='Col0']
 
   # of these candidates, find the most extreme values which mainting the required number of overlapping timepoints to be considered.
-  num_overlapping_points <- sapply(neg_extreme_candidate, FUN=calc_num_overlapping_points, original=original)
+  num_overlapping_points <- sapply(neg_extreme_candidate, FUN=calc_num_overlapping_points, data = original)
   if (all(num_overlapping_points < min_num_overlapping_points)) {
     stop(paste0('calc_extreme_shifts():\nafter applying stretch factor:', stretch, ' to ', transformed.timecourse, ', none of the considered shifts have ',
                 'min_num_overlapping_points (', min_num_overlapping_points, ') overlapping timepoints with the other timecourse!\n',

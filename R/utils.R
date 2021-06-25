@@ -11,18 +11,18 @@ get_compared_timepoints <- function(data,
   max_data_target <- max(data_target)
 
   # get the arabidopsis times which used
-  data$is.compared <- FALSE
-  data$is.compared[(data$accession== accession_data_to_align & (data$shifted_time >= min_data_target & data$shifted_time <=max_data_target))] <- TRUE
+  data$is_compared <- FALSE
+  data$is_compared[(data$accession== accession_data_to_align & (data$shifted_time >= min_data_target & data$shifted_time <=max_data_target))] <- TRUE
 
   # get the extreme brassica times which used - bigger or equal than Ara max, and smaller or equal than Ara min, because have to project
   #  Ara onto Bra
-  ara.max <- max(data$shifted_time[data$accession == accession_data_to_align & data$is.compared==TRUE])
-  ara.min <- min(data$shifted_time[data$accession == accession_data_to_align & data$is.compared==TRUE])
+  ara.max <- max(data$shifted_time[data$accession == accession_data_to_align & data$is_compared==TRUE])
+  ara.min <- min(data$shifted_time[data$accession == accession_data_to_align & data$is_compared==TRUE])
   max_data_target <- max_is_compared_to_arabidopsis(ara.max, data[data$accession == accession_data_target, ])
   min_data_target <- min_is_compared_to_arabidopsis(ara.min, data[data$accession == accession_data_target, ])
 
   # use these to get all the brassica times which used
-  data$is.compared[(data$accession == accession_data_target & (data$shifted_time >= min_data_target & data$shifted_time <=max_data_target))] <- TRUE
+  data$is_compared[(data$accession == accession_data_target & (data$shifted_time >= min_data_target & data$shifted_time <=max_data_target))] <- TRUE
 
   return(data)
 }

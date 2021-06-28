@@ -69,4 +69,18 @@ get_extreme_shifts_for_all(
 unique(test_load_mean_df$locus_name)
 ```
 
+```{r}
+test_get_best_shift <- get_best_shift(num_shifts = 10,
+                           # curr_sym = "BRAA02G018970.3C",
+                           curr_sym = "BRAA03G023790.3C",
+                           data = test_load_mean_df[[1]],
+                           stretch_factor = 4,
+                           do_rescale = TRUE,
+                           min_shift = 4,
+                           max_shift = -4,
+                           testing = FALSE,
+                           accession_data_to_align = "Col0",
+                           accession_data_target = "Ro18")
+```
+
 

@@ -41,19 +41,25 @@ calc_BIC <- function(logL, num_params, num_obs) {
   return((-2 * logL) + log(num_obs) * num_params)
 }
 
-# ara.expression <- ara.compared$mean_cpm
-# bra.expression <- ara.compared$pred.bra.expression
+
+#' Calculate mean score of observed expression data and expected value
+#'
+#' `calc_score` is a function to calculate a mean of a score of difference of observed expression data and expected expression value, by executing score = (sum(observed-expected)**2). The mean is taken to compare the variable number of datapoints.
+#'
+#' @param data_to_align_expression Input expression of data_to_align.
+#' @param data_target_expression Input expression of data_target.
+#'
+#' @return Mean of score value.
 #' @export
-calc_score <- function(ara.expression, bra.expression) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-  # (sum(observed-expected)**2)
-  # take mean, because going to be comparing variable number of datapoints.
+calc_score <- function(data_to_align_expression, data_target_expression) {
+
   # if don't regularise / penalise for shift applied, then like uniform prior on it.
   # maybe should penalise for comparing fewer timepoints?
-  # divide by the ara.expression as filtered already to make sure expressed
+  # divide by the data_to_align_expression as filtered already to make sure expressed
 
-  d <- (ara.expression - bra.expression)**2 # / abs(ara.expression)
-  return(mean(d))
+  score <- (data_to_align_expression - data_target_expression)**2 # / abs(data_to_align_expression)
+
+  return(mean(score))
 }
 
 #' Get the largest time point of data target

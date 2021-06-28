@@ -24,8 +24,8 @@ get_compared_timepoints <- function(data,
   # Get the extreme data target times which used - bigger or equal than max of data to align, and smaller or equal than  min data to align, because have to project data to align onto data target
   max_data_to_align <- max(data$shifted_time[data$accession == accession_data_to_align & data$is_compared==TRUE])
   min_data_to_align <- min(data$shifted_time[data$accession == accession_data_to_align & data$is_compared==TRUE])
-  max_data_target <- max_is_compared_to_arabidopsis(max_data_to_align, data[data$accession == accession_data_target, ])
-  min_data_target <- min_is_compared_to_arabidopsis(min_data_to_align, data[data$accession == accession_data_target, ])
+  max_data_target <- max_is_compared_to_data_to_align(max_data_to_align, data[data$accession == accession_data_target, ])
+  min_data_target <- min_is_compared_to_data_to_align(min_data_to_align, data[data$accession == accession_data_target, ])
 
   # use these to get all the brassica times which used
   data$is_compared[(data$accession == accession_data_target & (data$shifted_time >= min_data_target & data$shifted_time <=max_data_target))] <- TRUE

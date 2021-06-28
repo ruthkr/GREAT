@@ -1,5 +1,13 @@
-my_scale <- function(v) {
-  return(v / max(v))
+#' Scaling value
+#'
+#' `my_scale` is a function to get a scaled value of an input by dividing the maximum value.
+#'
+#' @param input Input data.
+#'
+#' @return Scaled value.
+#' @export
+my_scale <- function(input) {
+  return(input / max(input))
 }
 
 # calculate the comparison stats

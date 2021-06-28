@@ -69,11 +69,11 @@ compare_registered_to_unregistered_model_with_ks <- function(curr.sym, all.data.
 
   # calculate the comparison.stats - - AIC, BIC, smaller is better!
   # 2*num.spline.params as fitting seperate models for Ara * Col
-  seperate.AIC <- calc.AIC(seperate.logLik, 2 * num.spline.params)
-  combined.AIC <- calc.AIC(combined.logLik, num.spline.params + num.registration.params)
+  seperate.AIC <- calc_AIC(seperate.logLik, 2 * num.spline.params)
+  combined.AIC <- calc_AIC(combined.logLik, num.spline.params + num.registration.params)
 
-  seperate.BIC <- calc.BIC(seperate.logLik, 2 * num.spline.params, num.obs)
-  combined.BIC <- calc.BIC(combined.logLik, num.spline.params + num.registration.params, num.obs)
+  seperate.BIC <- calc_BIC(seperate.logLik, 2 * num.spline.params, num.obs)
+  combined.BIC <- calc_BIC(combined.logLik, num.spline.params + num.registration.params, num.obs)
 
   # Kolmogorov-Smirnov test
 

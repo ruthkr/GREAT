@@ -12,13 +12,13 @@ my_scale <- function(input) {
 
 # calculate the comparison stats
 #' @export
-calc.AIC <- function(logL, num.params) {
+calc_AIC <- function(logL, num.params) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   return((-2 * logL) + 2 * num.params)
 }
 
 #' @export
-calc.BIC <- function(logL, num.params, num.obs) {
+calc_BIC <- function(logL, num.params, num.obs) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   return((-2 * logL) + log(num.obs) * num.params)
 }

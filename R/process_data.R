@@ -405,7 +405,7 @@ impute_arabidopsis_values <- function(shifted.mean_df) {
     # for each brassica timepoint, interpolate the comparible arabidopsis expression
     # by linear interpolation between the neighbouring 2 ara values. If not between 2 ara values
     # because shifted outside comparible range, set to NA
-    interp.ara.df$mean_cpm <- sapply(imputed.timepoints, interpolate_brassica_comparison_expression, bra.dt=ara.df)
+    interp.ara.df$mean_cpm <- sapply(imputed.timepoints, interpolate_data_target_comparison_expression, bra.dt=ara.df)
 
 
     # sanity testing - line is interpolated.

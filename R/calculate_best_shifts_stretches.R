@@ -176,7 +176,7 @@ get_best_shift <- function(num_shifts = 25,
     data_align_compared <- compared[compared$accession == accession_data_to_align]
     data_target_compared <- compared[compared$accession == accession_data_target]
 
-    data_align_compared$pred.bra.expression <- sapply(data_align_compared$shifted_time, interpolate_brassica_comparison_expression, bra.dt = data_target_compared)
+    data_align_compared$pred.bra.expression <- sapply(data_align_compared$shifted_time, interpolate_data_target_comparison_expression, bra.dt = data_target_compared)
 
     # Calculate the score, using the (interpolated) predicted.bra.expression, and the observed arabidopsis expression
     score <- calc_score(data_align_compared$mean_cpm, data_align_compared$pred.bra.expression)

@@ -5,13 +5,15 @@
 # stretch_factor <- 2
 # do_rescale=F
 #' @export
-calculate_all_best_shifts <- function(mean_df,
+calculate_all_best_shifts <- function(num_shifts,
+                                      mean_df,
                                       stretch_factor,
-                                      min_num_overlapping_points,
+                                      do_rescale,
                                       shift_extreme,
-                                      accession_data_to_align,
-                                      accession_data_target,
-                                      do_rescale) {
+                                      min_num_overlapping_points,
+                                      testing = FALSE,
+                                      accession_data_to_align = "Col0",
+                                      accession_data_target = "Ro18") {
 
   # Initialize vectors
   symbols <- c()
@@ -45,7 +47,16 @@ calculate_all_best_shifts <- function(mean_df,
 
     ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
     ### if timepoints don't line up, brassica value is linearly imputed
-    out <- get_best_shift(curr_sym, mean_df, stretch_factor, do_rescale, min_shift, max_shift,testing=FALSE)
+    out <- get_best_shift(num_shifts,
+                          curr_sym,
+                          data = mean_df,
+                          stretch_factor,
+                          do_rescale,
+                          min_shift,
+                          max_shift,
+                          testing = FALSE,
+                          accession_data_to_align = "Col0",
+                          accession_data_target = "Ro18")
 
     best_shift <- out$shift[out$score==min(out$score)]
     if (length(best_shift) > 1) {

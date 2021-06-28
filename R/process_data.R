@@ -27,9 +27,9 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
 
   mean_df.sc <- data.table::copy(mean_df)
   # specify what kind of scaling
-  # TODO: handle my.scale in conditional
+  # TODO: handle my_scale in conditional
   mean_df.sc[, sc.mean_cpm:=scale(mean_cpm, scale=TRUE, center=TRUE), by=.(locus_name, accession)]
-  #mean_df.sc[, sc.mean_cpm:=my.scale(mean_cpm), by=.(locus_name, accession)]
+  #mean_df.sc[, sc.mean_cpm:=my_scale(mean_cpm), by=.(locus_name, accession)]
 
   ## APPLY INDIVIDUAL SHIFTING ---
   # optimise transformations applied to arabidopsis gene profile to map onto the brassicas - shift in x direction, using mean for mapping,
@@ -44,9 +44,9 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
     to.shift.df$sc.mean_cpm <- NULL
 
     # apply THE SAME rescale to all.data.df prior to registration
-    # TODO: handle my.scale in conditional
+    # TODO: handle my_scale in conditional
     all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'scale')
-    #all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'my.scale')
+    #all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'my_scale')
 
 
     # sanity plot that rescale all data worked
@@ -190,7 +190,7 @@ scale_all_rep_data <- function(mean_df, all.rep.data, scale.func) {
   all.rep.data <- merge(all.rep.data, gene.expression.stats, by=c('locus_name', 'accession'))
   if (scale.func == 'scale') {
     all.rep.data$scaled.norm.cpm <- (all.rep.data$mean_cpm - all.rep.data$mean_val) / all.rep.data$sd_val
-  } else if (scale.func == 'my.scale') {
+  } else if (scale.func == 'my_scale') {
     all.rep.data$scaled.norm.cpm <- (all.rep.data$mean_cpm / all.rep.data$mean_val)
   } else {
     print('invalid scale option for scale_all_rep_data')

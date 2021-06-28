@@ -4,7 +4,7 @@ plot_goI_expression <- function(summed.GoIs.df) {
   # truncate data so can see expression nicely on the same scale
   # summed.GoIs.df <- summed.GoIs.df[summed.GoIs.df$timepoint <=21,]
 
-  summed.GoIs.df[, scaled.cpm:=my.scale(mean_cpm), by=.(Ara.id, accession)]
+  summed.GoIs.df[, scaled.cpm:=my_scale(mean_cpm), by=.(Ara.id, accession)]
   morphology.equiv.df <- data.frame('accession'=c('Col-0', 'DH'), 'floral.transition.time'=c(14, 35))
   summed.GoIs.df$accession <- as.character(summed.GoIs.df$accession)
   summed.GoIs.df$accession[summed.GoIs.df$accession=='Col0'] <- 'Col-0'
@@ -63,7 +63,7 @@ plot_goI_expression_scaled <- function(summed.GoIs.df) {
   # truncate data so can see expression nicely on the same scale
   # summed.GoIs.df <- summed.GoIs.df[summed.GoIs.df$timepoint <=21,]
 
-  summed.GoIs.df[, scaled.cpm:=my.scale(mean_cpm), by=.(Ara.id, accession)]
+  summed.GoIs.df[, scaled.cpm:=my_scale(mean_cpm), by=.(Ara.id, accession)]
   morphology.equiv.df <- data.frame('accession'=c('Col-0', 'DH'), 'floral.transition.time'=c(14, 35))
   summed.GoIs.df$accession <- as.character(summed.GoIs.df$accession)
   summed.GoIs.df$accession[summed.GoIs.df$accession=='Col0'] <- 'Col-0'

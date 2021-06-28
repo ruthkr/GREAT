@@ -413,7 +413,7 @@ mean.df.sc
 
 ``` r
 # specify what kind of scaling
-# TODO: handle my.scale in conditional
+# TODO: handle my_scale in conditional
 mean.df.sc[, sc.mean.cpm:=scale(mean.cpm, scale=TRUE, center=TRUE), by=.(locus_name, accession)]
 mean.df.sc
 ```
@@ -424,7 +424,7 @@ to.shift.df <- data.table::copy(mean.df.sc)
 to.shift.df$mean.cpm <- to.shift.df$sc.mean.cpm
 to.shift.df$sc.mean.cpm <- NULL
 # apply THE SAME rescale to all.data.df prior to registration
-# TODO: handle my.scale in conditional
+# TODO: handle my_scale in conditional
 all.data.df <- scale_all_rep_data(mean.df, all.data.df, 'scale')
 ```
 

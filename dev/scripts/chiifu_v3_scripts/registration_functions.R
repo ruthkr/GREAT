@@ -283,7 +283,7 @@ plot_goI_expression <- function(summed.GoIs.df) {
   # truncate data so can see expression nicely on the same scale
   summed.GoIs.df <- summed.GoIs.df[summed.GoIs.df$timepoint <=21,]
 
-  summed.GoIs.df[, scaled.cpm:=my.scale(mean_cpm), by=.(Ara.id, accession)]
+  summed.GoIs.df[, scaled.cpm:=my_scale(mean_cpm), by=.(Ara.id, accession)]
   morphology.equiv.df <- data.frame('accession'=c('Col-0', 'R-O-18'), 'floral.transition.time'=c(14, 17))
   summed.GoIs.df$accession <- as.character(summed.GoIs.df$accession)
   summed.GoIs.df$accession[summed.GoIs.df$accession=='Col0'] <- 'Col-0'
@@ -402,7 +402,7 @@ scale_all_rep_data <- function(mean_df, all.rep.data, scale.func) {
   all.rep.data <- merge(all.rep.data, gene.expression.stats, by=c('locus_name', 'accession'))
   if (scale.func == 'scale') {
     all.rep.data$scaled.norm.cpm <- (all.rep.data$mean_cpm - all.rep.data$mean_val) / all.rep.data$sd_val
-  } else if (scale.func == 'my.scale') {
+  } else if (scale.func == 'my_scale') {
     all.rep.data$scaled.norm.cpm <- (all.rep.data$mean_cpm / all.rep.data$mean_val)
   } else {
     print('invalid scale option for scale_all_rep_data')
@@ -421,7 +421,7 @@ scale_all_rep_data <- function(mean_df, all.rep.data, scale.func) {
   return(out)
 }
 
-my.scale <- function(v) {
+my_scale <- function(v) {
   return(v / max(v))
 }
 
@@ -899,7 +899,7 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches,
   mean_df.sc <- copy(mean_df)
   # specify what kind of scaling
   mean_df.sc[, sc.mean_cpm:=scale(mean_cpm, scale=TRUE, center=TRUE), by=.(locus_name, accession)]
-  #mean_df.sc[, sc.mean_cpm:=my.scale(mean_cpm), by=.(locus_name, accession)]
+  #mean_df.sc[, sc.mean_cpm:=my_scale(mean_cpm), by=.(locus_name, accession)]
 
   ## APPLY INDIVIDUAL SHIFTING ######
   # optimise transformations applied to arabidopsis gene profile to map onto the brassicas - shift in x direction, using mean for mapping,
@@ -914,7 +914,7 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches,
     to.shift.df$sc.mean_cpm <- NULL
 
     # apply THE SAME rescale to all.data.df prior to registration
-    #all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'my.scale')
+    #all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'my_scale')
     all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'scale')
 
 
@@ -2607,7 +2607,7 @@ apply_best_normalisation <- function(test, best_shifts) {
   return(test)
 }
 
-# my.scale <- function(V) {
+# my_scale <- function(V) {
 #   V <- (V - mean(V)) / sd(V)
 #   return(V)
 # }

@@ -1,4 +1,4 @@
-my.scale <- function(v) {
+my_scale <- function(v) {
   return(v / max(v))
 }
 

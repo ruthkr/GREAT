@@ -7,14 +7,15 @@ output:
 
 ```{r setup}
 knitr::opts_chunk$set()
-library(GREAT)
+# library(GREAT)
+load_all()
 library(ggplot2)
 library(data.table)
 library(cowplot)
 library(ggpubr)
-
-source("../../R/get_shifts_extreme.R")
-source("../../R/get_shifts_extreme_copy.R")
+# 
+# source("../../R/get_shifts_extreme.R")
+# source("../../R/get_shifts_extreme_copy.R")
 ```
 
 # Load data 
@@ -51,6 +52,7 @@ test_load_mean_df <- load_mean_df(
 test_load_mean_df
 ```
 
+## get_extreme_shifts_for_all
 
 ```{r}
 get_extreme_shifts_for_all(

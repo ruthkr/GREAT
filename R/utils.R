@@ -34,27 +34,31 @@ get_compared_timepoints <- function(data,
 }
 
 
-# arabidopsis.time <- 2
-# bra.dt <- ara.df
-#' @export
-interpolate_brassica_comparison_expression <- function(arabidopsis.time, bra.dt) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-  # arabidopsis time is outside of the range of the bra.dt shifted timepoints
-  bra.dt$diff <- bra.dt$shifted_time - arabidopsis.time
 
-  # if outside of comparible range (time is smaller than all bra.dt time or bigger than all)
-  if (all(bra.dt$diff > 0) | all(bra.dt$diff < 0) ) {
+#' Calculate prediction of data target expression value
+#'
+#' @param data_to_align_time Input time from data to align.
+#' @param data_target_dt Input data target data frame.
+#'
+#' @return Expression prediction.
+interpolate_data_target_comparison_expression <- function(data_to_align_time,
+                                                          data_target_dt) {
+
+  data_target_dt$diff <- data_target_dt$shifted_time - data_to_align_time
+
+  # If outside of comparable range (time is smaller than all data_target_dt time or bigger than all)
+  if (all(data_target_dt$diff > 0) | all(data_target_dt$diff < 0)) {
     return(NA)
   }
 
-  # otherwise,  cut down brassica observations to the two nearest timepoints to the arabidopsis time
-  bra.dt$diff <- abs(bra.dt$shifted_time - arabidopsis.time)
-  data.table::setorder(bra.dt, diff)
-  nearest.points <- bra.dt[1:2,]
+  # Otherwise, cut down data_target observations to the two nearest timepoints to the data_to_align time
+  data_target_dt$diff <- abs(data_target_dt$shifted_time - data_to_align_time)
+  data.table::setorder(data_target_dt, diff)
+  nearest.points <- data_target_dt[1:2, ]
 
-  # linearly interpolate between these points to estimate the comparison expression value
+  # Linearly interpolate between these points to estimate the comparison expression value
   data.table::setorder(nearest.points, shifted_time) # so [1] is earlier time
-  time.diff <- nearest.points$shifted_time[2] - nearest.points$shifted_time[1] #
+  time.diff <- nearest.points$shifted_time[2] - nearest.points$shifted_time[1]
   expression.diff <- nearest.points$mean_cpm[2] - nearest.points$mean_cpm[1]
   grad <- expression.diff / time.diff
   pred.expression <- nearest.points$mean_cpm[1] + (nearest.points$diff[1]) * grad

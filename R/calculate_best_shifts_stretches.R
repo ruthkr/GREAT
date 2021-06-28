@@ -83,8 +83,8 @@ calculate_all_best_shifts <- function(mean_df,
 #' @param min_shift Minimum extreme value of shift.
 #' @param max_shift Maximum extreme value of shift.
 #' @param testing Showing a plot of the progress if TRUE, otherwise if FALSE
-#' @param accession_data_to_align
-#' @param accession_data_target
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_target Accession name of data target.
 #'
 #' @export
 get_best_shift <- function(num_shifts = 25,
@@ -98,14 +98,13 @@ get_best_shift <- function(num_shifts = 25,
                            accession_data_to_align = "Col0",
                            accession_data_target = "Ro18") {
 
-
- data <-data[test$locus_name == curr_sym, ]
+  data <- data[data$locus_name == curr_sym, ]
 
   # Transform timepoint to be time from first timepoint
- data[, delta_time := timepoint - min(timepoint), by = .(accession)]
+  data[, delta_time := timepoint - min(timepoint), by = .(accession)]
 
-  # Apply stretch_factor to the arabidopsis, leave the rapa as is
- data$delta_time[test$accession == accession_data_to_align] <-data$delta_time[test$accession == accession_data_to_align] * stretch_factor
+  # Apply stretch_factor to the data to align, leave the data target as it is
+  data$delta_time[data$accession == accession_data_to_align] <- data$delta_time[data$accession == accession_data_to_align] * stretch_factor
 
 
   all_scores <- rep(0, num_shifts)
@@ -114,69 +113,85 @@ get_best_shift <- function(num_shifts = 25,
   all_data_align_sd <- rep(0, num_shifts)
   all_data_target_sd <- rep(0, num_shifts)
 
-  all_shifts <- seq(min_shift, max_shift, length_out = num_shifts)
+  all_shifts <- seq(min_shift, max_shift, length.out = num_shifts)
+
   if (!(0 %in% all_shifts)) {
-    all_shifts <- c(all_shifts, 0) # include 0 shift in candidates.
+    # Include 0 shift in candidates
+    all_shifts <- c(all_shifts, 0)
   }
+
+  # Start the iteration to calculate score for each shift for all shifts in the list
   i <- 1
   for (i in 1:length(all_shifts)) {
     curr_shift <- all_shifts[i]
 
-    # Shift the arabidopsis expression timings
-   data$shifted_time <-data$delta_time
-   data$shifted_time[test$accession == accession_data_to_align] <-data$delta_time[test$accession == accession_data_to_align] + curr_shift
+    # Shift the data to align expression timings
+    data$shifted_time <- data$delta_time
+    data$shifted_time[data$accession == accession_data_to_align] <- data$delta_time[data$accession == accession_data_to_align] + curr_shift
 
-    # Cut down to just the arabidopsis and brassica timepoints which compared
-   data <- get_compared_timepoints(test)
-    compared <-data[test$is.compared == TRUE, ]
+    # Cut down to just the data to align and data target timepoints which compared
+    data <- get_compared_timepoints(data)
+    compared <- data[data$is_compared == TRUE, ]
 
     # Renormalise expression using just these timepoints?
     if (do_rescale == TRUE) {
-      # record the mean and sd of the compared points, used for rescaling
-      # in "apply shift" function
+      # Record the mean and sd of the compared points, used for rescaling in "apply shift" function
       data_align_mean <- mean(compared$mean_cpm[compared$accession == accession_data_to_align])
       data_target_mean <- mean(compared$mean_cpm[compared$accession == accession_data_target])
       data_align_sd <- stats::sd(compared$mean_cpm[compared$accession == accession_data_to_align])
       data_target_sd <- stats::sd(compared$mean_cpm[compared$accession == accession_data_target])
 
-      # do the transformation for here
+      # Do the transformation started from here
       if ((data_align_sd != 0 | !is.nan(data_align_sd)) & (data_target_sd != 0 | !is.nan(data_target_sd))) {
-        # if neither are 0, so won't be dividing by 0 (which gives NaNs)
+        # If neither are 0, so won't be dividing by 0 (which gives NaNs)
         compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
-      } else { # if at least one of them is all 0
+      } else { # If at least one of them is all 0
         data_align_compared <- compared[compared$accession == accession_data_to_align, ]
         data_target_compared <- compared[compared$accession == accession_data_target, ]
-        if ((data_align_sd == 0) & (data_target_sd != 0 | !is.nan(data_target_sd))) { # if only data_align_sd==0
+        if ((data_align_sd == 0) & (data_target_sd != 0 | !is.nan(data_target_sd))) {
+          # If only data_align_sd==0
           data_target_compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
         }
-        if ((data_align_sd != 0 | !is.nan(data_align_sd)) & (data_target_sd == 0)) { # if only data_target_sd == 0
+        if ((data_align_sd != 0 | !is.nan(data_align_sd)) & (data_target_sd == 0)) {
+          # If only data_target_sd == 0
           data_align_compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
         }
-        # if both are all 0, then do nothing.
+        # If both are all 0, then do nothing.
         compared <- rbind(data_align_compared, data_target_compared)
       }
     } else {
-      # if didn't rescale expression for comparison, record values s.t. (x - xmean) / x_sd = x
+      # If didn't rescale expression for comparison, record values s.t. (x - xmean) / x_sd = x
       data_align_mean <- 0
       data_target_mean <- 0
       data_align_sd <- 1
       data_target_sd <- 1
     }
 
-    ###data plot of shifted, and normalised gene expression
+    # Data plot of shifted, and normalised gene expression
     if (testing == TRUE) {
       p <- ggplot2::ggplot(compared) +
         ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
         ggplot2::geom_point() +
+        ggplot2::geom_line() +
         ggplot2::ggtitle(paste0("shift : ", curr_shift))
-      ggplot2::ggsave(paste0("./testing/", stretch_factor, "-", curr_shift, ".pdf"))
+      ggplot2::ggsave(paste0(curr_sym, stretch_factor, "-", curr_shift, ".pdf"))
     }
 
-    # for each arabidopsis timepoint, linear interpolate between the two nearest brassica timepoints
+    # For each data to align timepoint, linear interpolate between the two nearest data target timepoints
     data_align_compared <- compared[compared$accession == accession_data_to_align]
     data_target_compared <- compared[compared$accession == accession_data_target]
 
-    data_align_compared$pred.bra.expression <- sapply(data_align_compared$shifted_time, interpolate_data_target_comparison_expression, bra.dt = data_target_compared)
+    data_align_compared$pred.bra.expression <- sapply(data_align_compared$shifted_time, interpolate_data_target_comparison_expression, data_target_dt = data_target_compared)
+
+    if (testing == TRUE) {
+      interpolate_res <- ggplot2::ggplot(compared) +
+        ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
+        ggplot2::geom_point() +
+        ggplot2::geom_line() +
+        ggplot2::geom_point(data = data_align_compared, aes(x = shifted_time, y = pred.bra.expression), color = "purple") +
+        ggplot2::geom_line(data = data_align_compared, aes(x = shifted_time, y = pred.bra.expression), color = "purple") +
+        ggplot2::ggsave(paste0(curr_sym, stretch_factor, "-", curr_shift, "with_interpolation.pdf"))
+    }
 
     # Calculate the score, using the (interpolated) predicted.bra.expression, and the observed arabidopsis expression
     score <- calc_score(data_align_compared$mean_cpm, data_align_compared$pred.bra.expression)
@@ -207,5 +222,7 @@ get_best_shift <- function(num_shifts = 25,
     "data_align_compared.sd" = all_data_align_sd,
     "data_target_compared.sd" = all_data_target_sd
   ))
+
   return(out)
+
 }

@@ -10,17 +10,35 @@ my_scale <- function(input) {
   return(input / max(input))
 }
 
-# calculate the comparison stats
+
+
+#' Calculate Akaike's ‘An Information Criterion’
+#'
+#' `calc_AIC` is a generic function calculating Akaike's ‘An Information Criterion’ for one or several fitted model objects for which a log-likelihood value can be obtained.
+#'
+#' @param logL Loglikelihoods value obtained by stats::logLik().
+#' @param num_params Number of parameters in the fitted model.
+#'
+#' @return AIC criterion value.
 #' @export
-calc_AIC <- function(logL, num.params) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-  return((-2 * logL) + 2 * num.params)
+calc_AIC <- function(logL, num_params) {
+
+  return((-2 * logL) + 2 * num_params)
 }
 
+#' Calculate Bayesian Information Criterion
+#'
+#' `calc_BIC` is a function calculating Bayesian Information Criterion, which is a special case of AIC when k = log(n), where n being the number of observations.
+#'
+#' @param logL Loglikelihoods value obtained by stats::logLik().
+#' @param num_params Number of parameters in the fitted model.
+#' @param num_obs Number of observations.
+#'
+#' @return AIC criterion value.
 #' @export
-calc_BIC <- function(logL, num.params, num.obs) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-  return((-2 * logL) + log(num.obs) * num.params)
+calc_BIC <- function(logL, num_params, num_obs) {
+
+  return((-2 * logL) + log(num_obs) * num_params)
 }
 
 # ara.expression <- ara.compared$mean_cpm

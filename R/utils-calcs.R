@@ -30,46 +30,49 @@ calc_score <- function(ara.expression, bra.expression) {
   return(mean(d))
 }
 
-# arabidopsis.time <- ara.max
-# arabidopsis.time <- ara.max
-# bra.dt <- test[test$accession=='Ro18',]
+#' Get the largest time point of data target
+#'
+#' `max_is_compared_to_data_to_align` is used to get the largest time data target which is used in comparison t the data_to_align time.
+#'
+#' @param data_to_align_time Maximum time points of candidate data to align.
+#' @param data_target A data frame containing data target.
+#'
 #' @export
-max_is_compared_to_arabidopsis <- function(arabidopsis.time, bra.dt) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-  # return the largest brassica time which is used in comparison t the arabidopsis time
-  # the smallest one greater to or equal to arabidopsis time
+max_is_compared_to_data_to_align <- function(data_to_align_time,
+                                             data_target) {
 
-  # if using for rep data, then repeats of the same points screws it up
-  bra.dt <- unique(subset(bra.dt, select = c("timepoint", "shifted_time")))
+  # If using for rep data, then repeats of the same points screws it up
+  data_target <- unique(subset(data_target, select = c("timepoint", "shifted_time")))
 
-  # return the bra dt shifted timepoint which is greater than, or equal to the Ara time.
-  bra.dt$diff <- bra.dt$shifted_time - arabidopsis.time
-  candidates <- bra.dt[bra.dt$diff >= 0, ]
-  bra.max.time <- candidates$shifted_time[candidates$diff == min(candidates$diff)]
+  # Return the data target dt shifted timepoint which is greater than, or equal to the data to align time.
+  data_target$diff <- data_target$shifted_time - data_to_align_time
+  candidates <- data_target[data_target$diff >= 0, ]
+  data_target_max_time <- candidates$shifted_time[candidates$diff == min(candidates$diff)]
 
-  return(bra.max.time)
+  return(data_target_max_time)
 
-  # data.table::setorder(bra.dt, diff)
-  # nearest.points <- bra.dt[1:2,]
-  # data.table::setorder(nearest.points, shifted_time)
-  # return(nearest.points$shifted_time[2])
 }
 
-# arabidopsis.time=ara.min
+
+#' Get the smallest time point of data target
+#'
+#' `min_is_compared_to_data_to_align` is used to get the smallest time data target which is used in comparison t the data_to_align time.
+#'
+#' @param data_to_align_time Minimum time points of candidate data to align.
+#' @param data_target A data frame containing data target.
+#'
 #' @export
-min_is_compared_to_arabidopsis <- function(arabidopsis.time, bra.dt) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-  # return the smallest brassica time which is used in comparison t the arabidopsis time
-  # the biggest one smaller than or equal to the arabidopsis time
+min_is_compared_to_data_to_align <- function(data_to_align_time,
+                                             data_target) {
 
-  # if using for rep data, then repeats of the same points screws it up
-  bra.dt <- unique(subset(bra.dt, select = c("timepoint", "shifted_time")))
+  # If using for rep data, then repeats of the same points screws it up
+  data_target <- unique(subset(data_target, select = c("timepoint", "shifted_time")))
 
-  bra.dt$diff <- bra.dt$shifted_time - arabidopsis.time
-  candidates <- bra.dt[bra.dt$diff <= 0, ]
-  bra.min.time <- candidates$shifted_time[candidates$diff == max(candidates$diff)]
+  data_target$diff <- data_target$shifted_time - data_to_align_time
+  candidates <- data_target[data_target$diff <= 0, ]
+  data_target_min_time <- candidates$shifted_time[candidates$diff == max(candidates$diff)]
 
-  return(bra.min.time)
+  return(data_target_min_time)
 }
 
 

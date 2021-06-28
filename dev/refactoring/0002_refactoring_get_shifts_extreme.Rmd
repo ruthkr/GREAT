@@ -84,3 +84,16 @@ test_get_best_shift <- get_best_shift(num_shifts = 10,
 ```
 
 
+```{r}
+calculate_all_best_shifts(num_shifts = 10,
+                                      mean_df = test_load_mean_df[[1]],
+                                      stretch_factor = 4,
+                                      do_rescale = TRUE,
+                                      shift_extreme = 4, 
+                                      min_num_overlapping_points = 5, 
+                                      testing = FALSE,
+                                      accession_data_to_align = "Col0",
+                                      accession_data_target = "Ro18")
+```
+
+

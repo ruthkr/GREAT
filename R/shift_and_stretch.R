@@ -132,44 +132,34 @@ apply_best_shift <- function(mean_df, best_shifts) {
   return(test)
 }
 
-#' @export
-apply_stretch <- function(mean_df, best_shifts) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-  # gets the applied stretch from the best_shifts df
-  test <- data.table::copy(mean_df)
 
-  # get the stretch factor applied in the best_shifts
-  #stopifnot(length(unique(best_shifts$stretch))==1)
-  #stretch_factor <- unique(best_shifts$stretch)
+apply_stretch <- function(mean_df,
+                          best_shifts,
+                          accession_data_to_align,
+                          accession_data_target) {
 
-  #stopifnot(length(unique(mean_df$locus_name))==length(best_shifts$gene)) # best_shifts should have 1 row per gene
-  # if (length(unique(mean_df$locus_name)) != length(best_shifts$gene)) {
-  #   print('ERROR!:')
-  #   print(length(unique(mean_df$locus_name)))
-  #   print(length(best_shifts$gene))
-  #   stop()
-  # }
-
+  data <- data.table::copy(mean_df)
 
   # stretch the arabidopsis expression data, leave the rapa as is
-  test[, delta_time:=timepoint - min(timepoint), by=.(accession)]
-  Ro18.test <- test[test$accession=='Ro18',]
-  col0.test <- test[test$accession=='Col0']
-  #test$delta_time[test$accession=='Col0'] <- test$delta_time[test$accession=='Col0']*stretch_factor
-  col0.test <- merge(col0.test, best_shifts[, c('gene', 'stretch')], by.x='locus_name', by.y='gene')
-  col0.test$delta_time <- col0.test$delta_time * col0.test$stretch
-  col0.test$stretch <- NULL
-  test <- rbind(Ro18.test, col0.test)
+  data[, delta_time:=timepoint - min(timepoint), by=.(accession)]
+  data_target <- data[data$accession == accession_data_target,]
+  data_to_align <- data[data$accession == accession_data_to_align]
+  #data$delta_time[data$accession=='Col0'] <- data$delta_time[data$accession=='Col0']*stretch_factor
+  data_to_align <- merge(data_to_align, best_shifts[, c('gene', 'stretch')], by.x='locus_name', by.y='gene')
+  data_to_align$delta_time <- data_to_align$delta_time * data_to_align$stretch
+  data_to_align$stretch <- NULL
+  data <- rbind(data_target, data_to_align)
 
   # record the stretched times (before indiv shifting applied)
-  test$stretched.time.delta <- test$delta_time # record the time (from start of timecourse) after stretching,
-  test$shifted_time <- test$delta_time
-  # after stretching, add the time to the first datapoint (7d for ara, 11d for Ro18) back on
-  test$shifted_time[test$accession=='Col0'] <- test$shifted_time[test$accession=='Col0'] + 14
-  test$shifted_time[test$accession=='Ro18'] <- test$shifted_time[test$accession=='Ro18'] + 14
-  test$delta_time <- NULL
+  data$stretched.time.delta <- data$delta_time # record the time (from start of timecourse) after stretching,
+  data$shifted_time <- data$delta_time
 
-  return(test)
+  # after stretching, add the time to the first datapoint (7d for ara, 11d for Ro18) back on
+  data$shifted_time[data$accession == 'Col0'] <- data$shifted_time[data$accession=='Col0'] + 14
+  data$shifted_time[data$accession == accession_data_target] <- data$shifted_time[data$accession== accession_data_target] + 14
+  data$delta_time <- NULL
+
+  return(data)
 }
 
 #' @export

@@ -1,10 +1,21 @@
-# for all genes, in mean_df, get the scores, and the shifts which result in them after
-# stretching arabidopsis by "stretch_factor, and applying shifts forward and
-# backward, with the extremes defined by allowing 5 overlapping points for comparison.
-# mean_df <- to.shift.df
-# stretch_factor <- 2
-# do_rescale=F
+#' Calculate scores for all candidate shifts for all genes in data frame.
+#'
+#' `calculate_all_best_shifts` is a function to get score for all shifts value after stretching with a particular stretch factor. The extremes shift values were defined by allowing 5 overlapping points for comparison.
+#'
+#' @param num_shifts Number of different shifts to be considered.
+#' @param mean_df Input data.
+#' @param stretch_factor Current stretch factor.
+#' @param do_rescale Apply "scale" to compared points for each shift if TRUE, use original mean expression data if FALSE.
+#' @param shift_extreme Approximation of maximum and minimum shifts allowed.
+#' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
+#' @param testing Showing a plot of the progress if TRUE, otherwise if FALSE.
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_target Accession name of data target.
+#'
+#' @return
 #' @export
+#'
+#' @examples
 calculate_all_best_shifts <- function(num_shifts,
                                       mean_df,
                                       stretch_factor,
@@ -21,49 +32,46 @@ calculate_all_best_shifts <- function(num_shifts,
   all_scores_list <- rep(list(0), length(unique(mean_df$locus_name)))
 
   # Get the extreme shifts which can be applied to the genes
-  extreme_shift <- get_extreme_shifts_for_all(mean_df,
+  extreme_shift <- get_extreme_shifts_for_all(
+    mean_df,
     stretch_factor,
     min_num_overlapping_points,
     shift_extreme,
     accession_data_to_align,
-    accession_data_target)
+    accession_data_target
+  )
 
   min_shift <- extreme_shift[[1]]
   max_shift <- extreme_shift[[2]]
-
-  print(paste0("min shift:", min_shift, "max shift:", max_shift))
 
   count <- 0
   for (i in 1:length(unique(mean_df$locus_name))) {
     curr_sym <- unique(mean_df$locus_name)[i]
     if (count %% 100 == 0) {
-      print(paste0(count, ' / ', length(unique(mean_df$locus_name))))
+      print(paste0(count, " / ", length(unique(mean_df$locus_name))))
     }
 
-    # out is mean SSD between arabidopsis, and interpolated brassica (interpolated between 2 nearest points)
-    # ggplot2::ggplot(mean_df[mean_df$locus_name==curr_sym,])+
-    #   ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
-    #   ggplot2::geom_point()
-
-    ### get "score" for all the candidate shifts - score is mean error / brassica expression for compared points.
-    ### if timepoints don't line up, brassica value is linearly imputed
+    # Out is mean SSD between data to align (e.g. arabidopsis), and interpolated data target (interpolated between 2 nearest points, e.g. Brassica)
+    # Get "score" for all the candidate shifts. Score is mean error / data target expression for compared points. If timepoints don't line up, brassica value is linearly imputed
     out <- get_best_shift(num_shifts,
-                          curr_sym,
-                          data = mean_df,
-                          stretch_factor,
-                          do_rescale,
-                          min_shift,
-                          max_shift,
-                          testing = FALSE,
-                          accession_data_to_align = "Col0",
-                          accession_data_target = "Ro18")
+      curr_sym,
+      data = mean_df,
+      stretch_factor,
+      do_rescale,
+      min_shift,
+      max_shift,
+      testing = FALSE,
+      accession_data_to_align = "Col0",
+      accession_data_target = "Ro18"
+    )
 
-    best_shift <- out$shift[out$score==min(out$score)]
+    best_shift <- out$shift[out$score == min(out$score)]
     if (length(best_shift) > 1) {
-      if (max(out$score)=='Inf') { # can get inf score if brassica gene note expressed in the comparison
+      if (max(out$score) == "Inf") {
+        # Can get inf score if data target gene note expressed in the comparison
         next
       } else {
-        # if ties for the best shift applied, apply the smaller absolute one
+        # If ties for the best shift applied, apply the smaller absolute one
         best_shift <- best_shift[abs(best_shift) == min(abs(best_shift))]
       }
     }
@@ -75,7 +83,7 @@ calculate_all_best_shifts <- function(num_shifts,
     count <- count + 1
   }
 
-  all_scores_df <- do.call('rbind', all_scores_list)
+  all_scores_df <- do.call("rbind", all_scores_list)
 
   return(all_scores_df)
 }

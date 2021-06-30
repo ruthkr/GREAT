@@ -133,10 +133,25 @@ apply_best_shift <- function(mean_df, best_shifts) {
 }
 
 
+#' Apply stretch factor
+#'
+#' @param mean_df Input data.
+#' @param best_shifts Input dataframe containing information of best shifts.
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_target Accession name of data target.
+#' @param data_to_align_time_added Time points to be added in data to align.
+#' @param data_target_time_added Time points to be added in data target.
+#'
+#' @return
+#' @export
+#'
+#' @examples
 apply_stretch <- function(mean_df,
                           best_shifts,
                           accession_data_to_align,
-                          accession_data_target) {
+                          accession_data_target,
+                          data_to_align_time_added = 14,
+                          data_target_time_added = 14) {
 
   data <- data.table::copy(mean_df)
 
@@ -148,7 +163,12 @@ apply_stretch <- function(mean_df,
   data_to_align <- data[data$accession == accession_data_to_align, ]
 
   # Get the info of the strecth factor and merge data into one single data frame
-  data_to_align <- merge(data_to_align, best_shifts[, c('gene', 'stretch')], by.x='locus_name', by.y='gene')
+  data_to_align <- merge(data_to_align,
+    best_shifts[, c("gene", "stretch")],
+    by.x = "locus_name",
+    by.y = "gene"
+  )
+
   data_to_align$delta_time <- data_to_align$delta_time * data_to_align$stretch
   data_to_align$stretch <- NULL
 
@@ -159,11 +179,10 @@ apply_stretch <- function(mean_df,
   data$stretched_time_delta <- data$delta_time # record the time (from start of timecourse) after stretching,
   data$shifted_time <- data$delta_time
 
-  # after stretching, add the time to the first datapoint (7d for ara, 11d for Ro18) back on
-  # still not sure, need to be found out
-  # data$shifted_time[data$accession == accession_data_to_align] <- data$shifted_time[data$accession == accession_data_to_align] + 14
-  # data$shifted_time[data$accession == accession_data_target] <- data$shifted_time[data$accession == accession_data_target] + 14
-  # data$delta_time <- NULL
+  # After stretching, add the time to the first datapoint back on
+  data$shifted_time[data$accession == accession_data_to_align] <- data$shifted_time[data$accession == accession_data_to_align] + data_to_align_time_added
+  data$shifted_time[data$accession == accession_data_target] <- data$shifted_time[data$accession == accession_data_target] + data_target_time_added
+  data$delta_time <- NULL
 
   return(data)
 }

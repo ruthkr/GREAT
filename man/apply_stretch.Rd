@@ -22,9 +22,9 @@ apply_stretch(
 
 \item{accession_data_target}{Accession name of data target.}
 
-\item{data_to_align_time_added}{Time points to be added}
+\item{data_to_align_time_added}{Time points to be added in data to align.}
 
-\item{data_target_time_added}{}
+\item{data_target_time_added}{Time points to be added in data target.}
 }
 \value{
 

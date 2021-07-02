@@ -82,7 +82,7 @@ calculate_all_best_shifts_copy <- function(mean_df, stretch_factor, do_rescale, 
 #' @param accession_data_to_align Accession name of data which will be aligned.
 #'
 #' @export
-get_best_shift <- function(curr_sym,
+get_best_shift_copy <- function(curr_sym,
                            data,
                            stretch_factor,
                            do_rescale,

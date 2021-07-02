@@ -717,9 +717,9 @@ all_shifts
 all_shifts <- unique(all_shifts) # ensure no duplicated rows
 
 # cut down to single best shift for each gene
-all_shifts[, is.best:=get_best_result(.SD), by=.(gene)]
-best_shifts <- all_shifts[is.best==TRUE,]
-all_shifts$is.best <- NULL
+all_shifts[, is_best:=get_best_result(.SD), by=.(gene)]
+best_shifts <- all_shifts[is_best==TRUE,]
+all_shifts$is_best <- NULL
 
 best_shifts
 ```
@@ -727,7 +727,7 @@ best_shifts
     ##          gene stretch     shift      score ara.compared.mean bra.compared.mean
     ## 1: BO4G120010     3.5 3.5102041 0.11547260      1.112391e-17     -2.130457e-17
     ## 2: BO8G083600     3.5 0.8979592 0.09898943      1.112391e-17     -2.066519e-01
-    ##    ara.compared.sd bra.compared.sd is.best
+    ##    ara.compared.sd bra.compared.sd is_best
     ## 1:               1       1.0000000    TRUE
     ## 2:               1       0.6221518    TRUE
 

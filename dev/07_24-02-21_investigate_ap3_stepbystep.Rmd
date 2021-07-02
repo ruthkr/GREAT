@@ -299,9 +299,9 @@ all_shifts
 all_shifts <- unique(all_shifts) # ensure no duplicated rows
 
 # cut down to single best shift for each gene
-all_shifts[, is.best:=get_best_result(.SD), by=.(gene)]
-best_shifts <- all_shifts[is.best==TRUE,]
-all_shifts$is.best <- NULL
+all_shifts[, is_best:=get_best_result(.SD), by=.(gene)]
+best_shifts <- all_shifts[is_best==TRUE,]
+all_shifts$is_best <- NULL
 
 best_shifts
 ```

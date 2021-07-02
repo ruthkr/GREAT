@@ -4,14 +4,20 @@
 \alias{calc_extreme_shifts}
 \title{Calculate extreme shifts}
 \usage{
-calc_extreme_shifts(test, min_num_overlapping_points, shift_extreme)
+calc_extreme_shifts(
+  mean_df,
+  min_num_overlapping_points,
+  shift_extreme,
+  accession_data_to_align = "Col0",
+  accession_data_target = "Ro18"
+)
 }
 \arguments{
+\item{mean_df}{Input dataframe containing data to align and data target.}
+
 \item{min_num_overlapping_points}{Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.}
 
 \item{shift_extreme}{Approximation of maximum and minimum shifts allowed.}
-
-\item{mean_df}{Input dataframe containing data to align and data target.}
 
 \item{accession_data_to_align}{Accession name of data which will be aligned.}
 

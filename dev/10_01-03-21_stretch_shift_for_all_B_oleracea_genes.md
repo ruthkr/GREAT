@@ -197,7 +197,7 @@ model.comparison %>%
     ## 3: BO00534S090     268.6059       272.3236     294.6986       289.7187       7
     ## 4: BO00578S040     203.1160       207.7300     228.2482       224.4848       7
     ## 5: BO00578S180     179.4130       179.2294     204.1384       195.7129       7
-    ##        shift is.best BIC.registered.is.better AIC.registered.is.better
+    ##        shift is_best BIC.registered.is.better AIC.registered.is.better
     ## 1:  2.666667    TRUE                    FALSE                    FALSE
     ## 2:  3.666667    TRUE                     TRUE                    FALSE
     ## 3:  1.000000    TRUE                     TRUE                    FALSE
@@ -324,7 +324,7 @@ model.comparison %>%
     ##          gene seperate.AIC registered.AIC seperate.BIC registered.BIC stretch
     ## 1: BO4G120010    -79.92564      -20.41745    -52.44013      -2.093772     4.0
     ## 2: BO8G083600    -64.05853      -24.77898    -36.73854      -6.565651     3.5
-    ##         shift is.best BIC.registered.is.better AIC.registered.is.better
+    ##         shift is_best BIC.registered.is.better AIC.registered.is.better
     ## 1: -0.6666667    TRUE                    FALSE                    FALSE
     ## 2:  3.3333333    TRUE                    FALSE                    FALSE
     ##    ABIC.registered.is.better

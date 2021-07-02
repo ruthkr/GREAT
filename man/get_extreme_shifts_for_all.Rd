@@ -5,20 +5,22 @@
 \title{Calculate extreme shifts after the stretch transformation}
 \usage{
 get_extreme_shifts_for_all(
-  test,
+  mean_df,
   stretch_factor,
   min_num_overlapping_points,
-  shift_extreme
+  shift_extreme,
+  accession_data_to_align,
+  accession_data_target
 )
 }
 \arguments{
+\item{mean_df}{Input dataframe containing data to align and data target.}
+
 \item{stretch_factor}{Stretch transformation factor wanted.}
 
 \item{min_num_overlapping_points}{Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.}
 
 \item{shift_extreme}{Approximation of maximum and minimum shifts allowed.}
-
-\item{mean_df}{Input dataframe containing data to align and data target.}
 
 \item{accession_data_to_align}{Accession name of data which will be aligned.}
 

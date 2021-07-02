@@ -252,9 +252,9 @@ get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_r
     all_shifts <- unique(all_shifts) # ensure no duplicated rows
 
     # cut down to single best shift for each gene
-    all_shifts[, is.best:=get_best_result(.SD), by=.(gene)]
-    best_shifts <- all_shifts[is.best==TRUE,]
-    all_shifts$is.best <- NULL
+    all_shifts[, is_best:=get_best_result(.SD), by=.(gene)]
+    best_shifts <- all_shifts[is_best==TRUE,]
+    all_shifts$is_best <- NULL
 
     if (nrow(best_shifts)!= length(unique(all.data.df$locus_name))) {
       stop('get_best_stretch_and_shift() : got non-unique best shifts in best_shifts')
@@ -282,8 +282,8 @@ get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_r
   # picking by bic alone will favour fewer overlapping (considered) datapoints. Pick best in order to maximise
   # how much better register.BIC is than seperate.BIC
   all_model_comparison.dt$delta.BIC <- all_model_comparison.dt$registered.BIC - all_model_comparison.dt$seperate.BIC
-  all_model_comparison.dt[, is.best:=(delta.BIC==min(delta.BIC)), by=.(gene)] # best is one for which registered.BIC is as small as possible compared to seperate.BIC
-  best_model_comparison.dt <- all_model_comparison.dt[all_model_comparison.dt$is.best==TRUE]
+  all_model_comparison.dt[, is_best:=(delta.BIC==min(delta.BIC)), by=.(gene)] # best is one for which registered.BIC is as small as possible compared to seperate.BIC
+  best_model_comparison.dt <- all_model_comparison.dt[all_model_comparison.dt$is_best==TRUE]
   # if there's a tie for best registration for a gene, keep the first one as the best
   if (any(duplicated(best_model_comparison.dt$gene))) {
     print(paste0('found ', sum(duplicated(best_model_comparison.dt$gene)), ' tied optimal registrations. Removing dupliates'))

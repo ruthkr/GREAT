@@ -501,7 +501,7 @@ all_shifts %>%
 ```
 
 ```{r}
-all_shifts[, is.best:=get_best_result(.SD), by=.(gene)]
+all_shifts[, is_best:=get_best_result(.SD), by=.(gene)]
 
 all_shifts %>% 
   head(10) 
@@ -510,14 +510,14 @@ all_shifts %>%
 ```{r}
 # Get all of the best shifts 
 
-best_shifts <- all_shifts[is.best==TRUE,]
+best_shifts <- all_shifts[is_best==TRUE,]
 
 best_shifts
 ```
 
 ```{r}
-# Delete column "is.best"
-all_shifts$is.best <- NULL
+# Delete column "is_best"
+all_shifts$is_best <- NULL
 
 all_shifts
 ```

@@ -11,7 +11,6 @@ my_scale <- function(input) {
 }
 
 
-
 #' Calculate Akaike's ‘An Information Criterion’
 #'
 #' `calc_AIC` is a generic function calculating Akaike's ‘An Information Criterion’ for one or several fitted model objects for which a log-likelihood value can be obtained.

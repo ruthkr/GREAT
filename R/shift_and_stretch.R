@@ -1,4 +1,11 @@
-
+#' Get the best result
+#'
+#' `get_best_result` is a function to get best result obtained from score calculated from applied shifts and stretch factors.
+#'
+#' @param df Input data frame containing value of applied shifts, stretches, and calculated score.
+#'
+#' @return Original data frame input with additional column indicating whether a pair of stretch and shift gives the best score.
+#' @export
 get_best_result <- function(df) {
 
   # return TRUE/FALSE vector. TRUE for the smallest score
@@ -12,8 +19,9 @@ get_best_result <- function(df) {
   } else {
     cand_stretches <- df$stretch[is_best]
     # get the stretch with the best score, with the smallest divergence from 1
-    min_stretch <- unique(cand_stretches[abs(cand_stretches-1) == min(abs(cand_stretches-1))])
+    min_stretch <- unique(cand_stretches[abs(cand_stretches - 1) == min(abs(cand_stretches - 1))])
     is_best[df$stretch != min_stretch] <- FALSE
+
     if(sum(is_best) == 1) {
       return(is_best)
     } else {
@@ -27,6 +35,7 @@ get_best_result <- function(df) {
       }
     }
   }
+
 }
 
 #' @export
@@ -148,8 +157,8 @@ apply_stretch <- function(mean_df,
                           best_shifts,
                           accession_data_to_align,
                           accession_data_target,
-                          data_to_align_time_added = 14,
-                          data_target_time_added = 14) {
+                          data_to_align_time_added = 11,
+                          data_target_time_added = 11) {
 
   data <- data.table::copy(mean_df)
 
@@ -160,14 +169,11 @@ apply_stretch <- function(mean_df,
   data_target <- data[data$accession == accession_data_target, ]
   data_to_align <- data[data$accession == accession_data_to_align, ]
 
-  browser()
-
   # Get the info of the strecth factor and merge data into one single data frame
   data_to_align <- merge(data_to_align,
     best_shifts[, c("gene", "stretch")],
     by.x = "locus_name",
-    by.y = "gene",
-    allow.cartesian=T
+    by.y = "gene"
   )
 
   data_to_align$delta_time <- data_to_align$delta_time * data_to_align$stretch

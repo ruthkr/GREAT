@@ -1,27 +1,27 @@
 
-#' @export
 get_best_result <- function(df) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
+
   # return TRUE/FALSE vector. TRUE for the smallest score
   # if tied for this, true for the one with the smallest stretch. (1x is smaller than 0.75x though)
   # if tied, then the one with the smallest shift
 
-  is.best <- df$score==min(df$score)
-  if(sum(is.best)==1) {
-    return(is.best)
+  is_best <- df$score == min(df$score)
+
+  if(sum(is_best) == 1) {
+    return(is_best)
   } else {
-    cand.stretches <- df$stretch[is.best]
+    cand_stretches <- df$stretch[is_best]
     # get the stretch with the best score, with the smallest divergence from 1
-    min.stretch <- unique(cand.stretches[abs(cand.stretches-1)==min(abs(cand.stretches-1))])
-    is.best[df$stretch != min.stretch] <- FALSE
-    if(sum(is.best)==1) {
-      return(is.best)
+    min_stretch <- unique(cand_stretches[abs(cand_stretches-1) == min(abs(cand_stretches-1))])
+    is_best[df$stretch != min_stretch] <- FALSE
+    if(sum(is_best) == 1) {
+      return(is_best)
     } else {
-      cand.shifts <- df$shift[is.best]
-      min_shift <- unique(cand.shifts[cand.shifts==min(cand.shifts)])
-      is.best[df$shift != min_shift] <- FALSE
-      if (sum(is.best)==1) {
-        return(is.best)
+      cand_shifts <- df$shift[is_best]
+      min_shift <- unique(cand_shifts[cand_shifts == min(cand_shifts)])
+      is_best[df$shift != min_shift] <- FALSE
+      if (sum(is_best) == 1) {
+        return(is_best)
       } else {
         stop('error in get_best_result, somehow STILL more than one best shift tied..?')
       }
@@ -144,8 +144,6 @@ apply_best_shift <- function(mean_df, best_shifts) {
 #'
 #' @return
 #' @export
-#'
-#' @examples
 apply_stretch <- function(mean_df,
                           best_shifts,
                           accession_data_to_align,
@@ -162,11 +160,14 @@ apply_stretch <- function(mean_df,
   data_target <- data[data$accession == accession_data_target, ]
   data_to_align <- data[data$accession == accession_data_to_align, ]
 
+  browser()
+
   # Get the info of the strecth factor and merge data into one single data frame
   data_to_align <- merge(data_to_align,
     best_shifts[, c("gene", "stretch")],
     by.x = "locus_name",
-    by.y = "gene"
+    by.y = "gene",
+    allow.cartesian=T
   )
 
   data_to_align$delta_time <- data_to_align$delta_time * data_to_align$stretch
@@ -187,17 +188,20 @@ apply_stretch <- function(mean_df,
   return(data)
 }
 
+
 #' @export
-apply_best_normalisation <- function(test, best_shifts) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
+apply_best_normalisation <- function(data,
+                                     best_shifts,
+                                     accession_data_to_align = "Col0",
+                                     accession_data_target = "Ro18") {
+
   # for each gene, in each accession (Ro18 and COl0) normalise by the mean and standard deviation of the compared points.
   # if the gene wasn't compared, set the expresion value to NA
 
-  # curr.gene <- 'BRAA01G001470.3C'
   count = 0
-  for (curr.gene in unique(test$locus_name)) {
+  for (curr.gene in unique(data$locus_name)) {
     if (count %% 100 == 0) {
-      print(paste0(count, ' / ', length(unique(test$locus_name))))
+      print(paste0(count, ' / ', length(unique(data$locus_name))))
     }
     ara.mean <- best_shifts$ara.compared.mean[best_shifts$gene==curr.gene]
     bra.mean <- best_shifts$bra.compared.mean[best_shifts$gene==curr.gene]
@@ -207,29 +211,29 @@ apply_best_normalisation <- function(test, best_shifts) {
     # if was compared
     if (length(ara.mean) != 0) {
       if (ara.sd != 0) { # don't want to divide by 0
-        test$mean_cpm[test$locus_name==curr.gene & test$accession=='Col0'] <- (test$mean_cpm[test$locus_name==curr.gene & test$accession=='Col0'] - ara.mean) / ara.sd
+        data$mean_cpm[data$locus_name == curr.gene & data$accession == accession_data_to_align] <- (data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_to_align] - ara.mean) / ara.sd
       } else {
-        test$mean_cpm[test$locus_name==curr.gene & test$accession=='Col0'] <- (test$mean_cpm[test$locus_name==curr.gene & test$accession=='Col0'] - ara.mean)
+        data$mean_cpm[data$locus_name == curr.gene & data$accession == accession_data_to_align] <- (data$mean_cpm[data$locus_name == curr.gene & data$accession == accession_data_to_align] - ara.mean)
       }
 
       if (bra.sd !=0) { # don't want to divide by 0
-        test$mean_cpm[test$locus_name==curr.gene & test$accession=='Ro18'] <- (test$mean_cpm[test$locus_name==curr.gene & test$accession=='Ro18'] - bra.mean) / bra.sd
+        data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_target] <- (data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_target] - bra.mean) / bra.sd
       } else {
-        test$mean_cpm[test$locus_name==curr.gene & test$accession=='Ro18'] <- (test$mean_cpm[test$locus_name==curr.gene & test$accession=='Ro18'] - bra.mean)
+        data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_target] <- (data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_target] - bra.mean)
       }
-      if (any(is.na(test$mean_cpm))) {
+      if (any(is.na(data$mean_cpm))) {
         print('have NAs in mean_cpm after rescaling in apply best_normalisation() for gene :')
-        print(unique(test$locus_name))
+        print(unique(data$locus_name))
         stop()
       }
     } else {
-      test$mean_cpm[test$locus_name==curr.gene & test$accession=='Col0'] <- NA
-      test$mean_cpm[test$locus_name==curr.gene & test$accession=='Ro18'] <- NA
+      data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_to_align] <- NA
+      data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_target] <- NA
     }
     count <- count + 1
   }
 
-  return(test)
+  return(data)
 }
 
 # curr.sym <- 'BRAA01G001320.3C'

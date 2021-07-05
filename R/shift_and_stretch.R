@@ -94,59 +94,85 @@ calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
   return(out)
 }
 
-# mean_df <- all.data.df
-# best_shifts
+
+#' Register all expression over time using optimal shift found
+#'
+#' `apply_best_shift` is a function to register all unregistered expression overtime using the best/optimal shifts found.
+#'
+#' @param data Input data (all data).
+#' @param best_shifts Input data frame containing information of best shifts.
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_target Accession name of data target.
+#' @param data_to_align_time_added Time points to be added in data to align.
+#' @param data_target_time_added Time points to be added in data target.
+#'
+#' @return The registered expression over time for each gene.
 #' @export
-apply_best_shift <- function(data, best_shifts) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-  # take unregistered expression over time, and the best shifts, and
-  # return the registered expression over time for each gene
+apply_best_shift <- function(data,
+                             best_shifts,
+                             accession_data_to_align,
+                             accession_data_target,
+                             data_to_align_time_added,
+                             data_target_time_added) {
 
   processed_data <- data.table::copy(data)
-  processed_data <- apply_stretch(processed_data, best_shifts)
 
-  # normalise the expression data (if was normalised when calculating the expression data, is recorder in the
-  # .compared.mean, and .compared.sd columns. If no normalisation was carried out, then these should have values of 0,
-  # and 1).
+  processed_data <- apply_stretch(
+    data = processed_data,
+    best_shifts,
+    accession_data_to_align,
+    accession_data_target,
+    data_to_align_time_added,
+    data_target_time_added
+  )
+
+  # Normalise the expression data (If was normalised when calculating the expression data, is recorder in the _compared_mean, and _compared_sd columns. If no normalisation was carried out, then these should have values of 0 and 1. This was done using get_best_shift()).
 
 
-  if (!(all(unique(best_shifts$data_align_compared_mean) == 0)) |
-      !(all(unique(best_shifts$data_target_compared_mean) == 0))) {
-    message('Normalising expression by mean and sd of compared values...')
+  if (!(all(unique(best_shifts$data_align_compared_mean) == 0)) | !(all(unique(best_shifts$data_target_compared_mean) == 0))) {
 
-    processed_data <- apply_best_normalisation(data,
-                                     best_shifts,
-                                     accession_data_to_align = "Col0",
-                                     accession_data_target = "Ro18")
+    message("Normalising expression by mean and sd of compared values...")
 
-    message('done!')
+    processed_data <- apply_best_normalisation(
+      data,
+      best_shifts,
+      accession_data_to_align,
+      accession_data_target
+    )
 
-  } else { # if no scaling carried out DURING the registration step
-    message('No normalisation was carried out DURING registration (though may have been, prior to Col-Ro18 comparison)')
+    message("Done!")
+
+  } else {
+
+    # If no scaling carried out DURING the registration step
+    message("No normalisation was carried out DURING registration (though may have been, prior to Col-Ro18 comparison)")
+
     processed_data <- processed_data
+
   }
 
-  message('applying best shift...')
+  message("Applying best shift...")
 
-  # for each gene, shift the arabidopsis expression by the optimal shift found previously
+  # For each gene, shift the data to align expression by the optimal shift found previously
 
   for (curr_gene in unique(processed_data$locus_name)) {
 
-    curr.best.shift <- best_shifts$shift[best_shifts$gene==curr_gene]
-    processed_data$shifted_time[processed_data$accession=='Col0' & processed_data$locus_name==curr_gene] <- processed_data$shifted_time[processed_data$accession=='Col0' & processed_data$locus_name==curr_gene] + curr.best.shift
+    curr_best_shift <- best_shifts$shift[best_shifts$gene == curr_gene]
+    processed_data$shifted_time[processed_data$accession == accession_data_to_align & processed_data$locus_name == curr_gene] <- processed_data$shifted_time[processed_data$accession == accession_data_to_align & processed_data$locus_name == curr_gene] + curr_best_shift
 
   }
 
-  print('done!')
+  print("Done!")
 
   return(processed_data)
+
 }
 
 
 #' Apply stretch factor
 #'
 #' @param data Input data.
-#' @param best_shifts Input dataframe containing information of best shifts.
+#' @param best_shifts Input data frame containing information of best shifts.
 #' @param accession_data_to_align Accession name of data which will be aligned.
 #' @param accession_data_target Accession name of data target.
 #' @param data_to_align_time_added Time points to be added in data to align.
@@ -156,8 +182,8 @@ apply_best_shift <- function(data, best_shifts) {
 #' @export
 apply_stretch <- function(data,
                           best_shifts,
-                          accession_data_to_align,
-                          accession_data_target,
+                          accession_data_to_align = "Col0",
+                          accession_data_target = "Ro18",
                           data_to_align_time_added = 11,
                           data_target_time_added = 11) {
 

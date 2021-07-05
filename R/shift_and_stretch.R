@@ -97,20 +97,22 @@ calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
 # mean_df <- all.data.df
 # best_shifts
 #' @export
-apply_best_shift <- function(mean_df, best_shifts) {
+apply_best_shift <- function(data, best_shifts) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # take unregistered expression over time, and the best shifts, and
   # return the registered expression over time for each gene
 
-  test <- data.table::copy(mean_df)
+  test <- data.table::copy(data)
 
-  test <- apply_stretch(mean_df, best_shifts)
+  test <- apply_stretch(data, best_shifts)
 
   # normalise the expression data (if was normalised when calculating the expression data, is recorder in the
   # .compared.mean, and .compared.sd columns. If no normalisation was carried out, then these should have values of 0,
   # and 1).
-  if (!(all(unique(best_shifts$ara.compared.mean) == 0)) |
-      !(all(unique(best_shifts$bra.compared.mean) == 0))) {
+
+
+  if (!(all(unique(best_shifts$data_align_compared_mean) == 0)) |
+      !(all(unique(best_shifts$data_target_compared_mean) == 0))) {
     print('Normalising expression by mean and sd of compared values...')
     test <- apply_best_normalisation(test, best_shifts)
     print('done!')
@@ -123,14 +125,14 @@ apply_best_shift <- function(mean_df, best_shifts) {
   print('applying best shift...')
 
   # for each gene, shift the arabidopsis expression by the optimal shift found previously
-  # curr.gene <- 'BRAA01G000040.3C'
-  #curr.gene <- unique(test$locus_name)[1]
-  for (curr.gene in unique(test$locus_name)) {
-    #print(curr.gene)
-    curr.best.shift <- best_shifts$shift[best_shifts$gene==curr.gene]
-    test$shifted_time[test$accession=='Col0' & test$locus_name==curr.gene] <- test$shifted_time[test$accession=='Col0' & test$locus_name==curr.gene] + curr.best.shift
+  # curr_gene <- 'BRAA01G000040.3C'
+  #curr_gene <- unique(test$locus_name)[1]
+  for (curr_gene in unique(test$locus_name)) {
+    #print(curr_gene)
+    curr.best.shift <- best_shifts$shift[best_shifts$gene==curr_gene]
+    test$shifted_time[test$accession=='Col0' & test$locus_name==curr_gene] <- test$shifted_time[test$accession=='Col0' & test$locus_name==curr_gene] + curr.best.shift
 
-    # tmp <- test[test$locus_name==curr.gene]
+    # tmp <- test[test$locus_name==curr_gene]
     # ggplot2::ggplot(tmp)+
     #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession) +
     #   ggplot2::geom_point()
@@ -144,7 +146,7 @@ apply_best_shift <- function(mean_df, best_shifts) {
 
 #' Apply stretch factor
 #'
-#' @param mean_df Input data.
+#' @param data Input data.
 #' @param best_shifts Input dataframe containing information of best shifts.
 #' @param accession_data_to_align Accession name of data which will be aligned.
 #' @param accession_data_target Accession name of data target.
@@ -153,14 +155,14 @@ apply_best_shift <- function(mean_df, best_shifts) {
 #'
 #' @return
 #' @export
-apply_stretch <- function(mean_df,
+apply_stretch <- function(data,
                           best_shifts,
                           accession_data_to_align,
                           accession_data_target,
                           data_to_align_time_added = 11,
                           data_target_time_added = 11) {
 
-  data <- data.table::copy(mean_df)
+  data <- data.table::copy(data)
 
   # Stretch the expression of data to align, leave data target as is
   data[, delta_time := timepoint - min(timepoint), by = .(accession)]
@@ -195,51 +197,71 @@ apply_stretch <- function(mean_df,
 }
 
 
+
+#' Apply normalisation (after applying stretch)
+#'
+#' `apply_best_normalisation` is a function to normalise by the mean and standard deviation of the compared points (after applying stretching) for each gene, in each accesion (data target and data to align). If the gene wasn't compared, set the expression value to NA.
+#'
+#' @param data Input data (after applying stretching).
+#' @param best_shifts Input dataframe containing information of best shifts.
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_target Accession name of data target.
+#'
+#' @return Normalised data.
 #' @export
 apply_best_normalisation <- function(data,
                                      best_shifts,
                                      accession_data_to_align = "Col0",
                                      accession_data_target = "Ro18") {
 
-  # for each gene, in each accession (Ro18 and COl0) normalise by the mean and standard deviation of the compared points.
-  # if the gene wasn't compared, set the expresion value to NA
+  count <- 0
+  for (curr_gene in unique(data$locus_name)) {
 
-  count = 0
-  for (curr.gene in unique(data$locus_name)) {
     if (count %% 100 == 0) {
-      print(paste0(count, ' / ', length(unique(data$locus_name))))
+      message(count, " / ", length(unique(data$locus_name)))
     }
-    ara.mean <- best_shifts$ara.compared.mean[best_shifts$gene==curr.gene]
-    bra.mean <- best_shifts$bra.compared.mean[best_shifts$gene==curr.gene]
-    ara.sd<- best_shifts$ara.compared.sd[best_shifts$gene==curr.gene]
-    bra.sd<- best_shifts$bra.compared.sd[best_shifts$gene==curr.gene]
 
-    # if was compared
-    if (length(ara.mean) != 0) {
-      if (ara.sd != 0) { # don't want to divide by 0
-        data$mean_cpm[data$locus_name == curr.gene & data$accession == accession_data_to_align] <- (data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_to_align] - ara.mean) / ara.sd
+    data_align_mean <- best_shifts$data_align_compared_mean[best_shifts$gene == curr_gene]
+    data_target_mean <- best_shifts$data_target_compared_mean[best_shifts$gene == curr_gene]
+    data_align_sd <- best_shifts$data_align_compared_sd[best_shifts$gene == curr_gene]
+    data_target_sd <- best_shifts$data_target_compared_sd[best_shifts$gene == curr_gene]
+
+    # If was compared
+    if (length(data_align_mean) != 0) {
+
+      # Make sure that sd is not 0, since we do not want to divide by 0 ---------------
+      if (data_align_sd != 0) {
+        data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_to_align] <- (data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_to_align] - data_align_mean) / data_align_sd
       } else {
-        data$mean_cpm[data$locus_name == curr.gene & data$accession == accession_data_to_align] <- (data$mean_cpm[data$locus_name == curr.gene & data$accession == accession_data_to_align] - ara.mean)
+        data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_to_align] <- (data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_to_align] - data_align_mean)
       }
 
-      if (bra.sd !=0) { # don't want to divide by 0
-        data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_target] <- (data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_target] - bra.mean) / bra.sd
+      # Make sure that sd is not 0, since we do not want to divide by 0 ---------------
+      if (data_target_sd != 0) {
+        data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_target] <- (data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_target] - data_target_mean) / data_target_sd
       } else {
-        data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_target] <- (data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_target] - bra.mean)
+        data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_target] <- (data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_target] - data_target_mean)
       }
+
       if (any(is.na(data$mean_cpm))) {
-        print('have NAs in mean_cpm after rescaling in apply best_normalisation() for gene :')
-        print(unique(data$locus_name))
+        message("Have NAs in mean_cpm after rescaling in apply best_normalisation() for gene :")
+        message(unique(data$locus_name))
         stop()
       }
+
     } else {
-      data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_to_align] <- NA
-      data$mean_cpm[data$locus_name==curr.gene & data$accession == accession_data_target] <- NA
+
+      data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_to_align] <- NA
+      data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_target] <- NA
+
     }
+
     count <- count + 1
+
   }
 
   return(data)
+
 }
 
 # curr.sym <- 'BRAA01G001320.3C'

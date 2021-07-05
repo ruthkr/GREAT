@@ -14,8 +14,6 @@
 #'
 #' @return
 #' @export
-#'
-#' @examples
 calculate_all_best_shifts <- function(num_shifts,
                                       mean_df,
                                       stretch_factor,
@@ -236,10 +234,10 @@ get_best_shift <- function(num_shifts = 25,
     "stretch" = stretch_factor,
     "shift" = all_shifts,
     "score" = all_scores,
-    "data_align_compared.mean" = all_data_align_mean,
-    "data_target_compared.mean" = all_data_target_mean,
-    "data_align_compared.sd" = all_data_align_sd,
-    "data_target_compared.sd" = all_data_target_sd
+    "data_align_compared_mean" = all_data_align_mean,
+    "data_target_compared_mean" = all_data_target_mean,
+    "data_align_compared_sd" = all_data_align_sd,
+    "data_target_compared_sd" = all_data_target_sd
   ))
 
   return(out)

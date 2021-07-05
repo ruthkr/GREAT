@@ -102,9 +102,8 @@ apply_best_shift <- function(data, best_shifts) {
   # take unregistered expression over time, and the best shifts, and
   # return the registered expression over time for each gene
 
-  test <- data.table::copy(data)
-
-  test <- apply_stretch(data, best_shifts)
+  processed_data <- data.table::copy(data)
+  processed_data <- apply_stretch(processed_data, best_shifts)
 
   # normalise the expression data (if was normalised when calculating the expression data, is recorder in the
   # .compared.mean, and .compared.sd columns. If no normalisation was carried out, then these should have values of 0,
@@ -113,34 +112,34 @@ apply_best_shift <- function(data, best_shifts) {
 
   if (!(all(unique(best_shifts$data_align_compared_mean) == 0)) |
       !(all(unique(best_shifts$data_target_compared_mean) == 0))) {
-    print('Normalising expression by mean and sd of compared values...')
-    test <- apply_best_normalisation(test, best_shifts)
-    print('done!')
+    message('Normalising expression by mean and sd of compared values...')
+
+    processed_data <- apply_best_normalisation(data,
+                                     best_shifts,
+                                     accession_data_to_align = "Col0",
+                                     accession_data_target = "Ro18")
+
+    message('done!')
 
   } else { # if no scaling carried out DURING the registration step
-    print('No normalisation was carried out DURING registration (though may have been, prior to Col-Ro18 comparison)')
-    test <- test
+    message('No normalisation was carried out DURING registration (though may have been, prior to Col-Ro18 comparison)')
+    processed_data <- processed_data
   }
 
-  print('applying best shift...')
+  message('applying best shift...')
 
   # for each gene, shift the arabidopsis expression by the optimal shift found previously
-  # curr_gene <- 'BRAA01G000040.3C'
-  #curr_gene <- unique(test$locus_name)[1]
-  for (curr_gene in unique(test$locus_name)) {
-    #print(curr_gene)
-    curr.best.shift <- best_shifts$shift[best_shifts$gene==curr_gene]
-    test$shifted_time[test$accession=='Col0' & test$locus_name==curr_gene] <- test$shifted_time[test$accession=='Col0' & test$locus_name==curr_gene] + curr.best.shift
 
-    # tmp <- test[test$locus_name==curr_gene]
-    # ggplot2::ggplot(tmp)+
-    #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession) +
-    #   ggplot2::geom_point()
+  for (curr_gene in unique(processed_data$locus_name)) {
+
+    curr.best.shift <- best_shifts$shift[best_shifts$gene==curr_gene]
+    processed_data$shifted_time[processed_data$accession=='Col0' & processed_data$locus_name==curr_gene] <- processed_data$shifted_time[processed_data$accession=='Col0' & processed_data$locus_name==curr_gene] + curr.best.shift
+
   }
 
   print('done!')
 
-  return(test)
+  return(processed_data)
 }
 
 

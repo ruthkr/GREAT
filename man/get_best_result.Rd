@@ -10,7 +10,7 @@ get_best_result(df)
 \item{df}{Input data frame containing value of applied shifts, stretches, and calculated score.}
 }
 \value{
-
+Original data frame input with additional column indicating whether a pair of stretch and shift gives the best score.
 }
 \description{
 \code{get_best_result} is a function to get best result obtained from score calculated from applied shifts and stretch factors.

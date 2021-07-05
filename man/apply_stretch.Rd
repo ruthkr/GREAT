@@ -5,18 +5,18 @@
 \title{Apply stretch factor}
 \usage{
 apply_stretch(
-  mean_df,
+  data,
   best_shifts,
-  accession_data_to_align,
-  accession_data_target,
-  data_to_align_time_added = 14,
-  data_target_time_added = 14
+  accession_data_to_align = "Col0",
+  accession_data_target = "Ro18",
+  data_to_align_time_added = 11,
+  data_target_time_added = 11
 )
 }
 \arguments{
-\item{mean_df}{Input data.}
+\item{data}{Input data.}
 
-\item{best_shifts}{Input dataframe containing information of best shifts.}
+\item{best_shifts}{Input data frame containing information of best shifts.}
 
 \item{accession_data_to_align}{Accession name of data which will be aligned.}
 

@@ -39,14 +39,14 @@ get_best_result <- function(df) {
 }
 
 #' @export
-calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
+calculate_all_model_comparison_stats <- function(all_data_df, best_shifts) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # wrapper to apply compare_registered_to_unregistered_model() to all the genes
 
-  if (!('Col0' %in% unique(all.data.df$accession) &
-        'Ro18' %in% unique(all.data.df$accession))) {
+  if (!('Col0' %in% unique(all_data_df$accession) &
+        'Ro18' %in% unique(all_data_df$accession))) {
     stop("error in calculate_all_model_comparison_stats() :
-         all.data.df doesn't have the correct accession info - should have been
+         all_data_df doesn't have the correct accession info - should have been
          converted to Ro18 & Col0")
   }
 
@@ -54,10 +54,10 @@ calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
   # apply the registration to the all rep data, so can use for model comparison.
 
 
-  shifted.all.data.df <- apply_best_shift(all.data.df, best_shifts)
+  shifted.all_data_df <- apply_best_shift(all_data_df, best_shifts)
 
   # # check that have now got scaled, stretched time for both genes.
-  # tst <- all.data.df
+  # tst <- all_data_df
   # ggplot2::ggplot(tst[tst$locus_name=='BRAA01G000040.3C'])+
   #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession) +
   #   ggplot2::geom_point()
@@ -67,7 +67,7 @@ calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
 
   print('calculating registration vs different expression comparison AIC & BIC...')
 
-  genes <- unique(shifted.all.data.df$locus_name)
+  genes <- unique(shifted.all_data_df$locus_name)
   out.sepAIC <- rep(0, length(genes))
   out.combAIC <- rep(0, length(genes))
   out.sepBIC <- rep(0, length(genes))
@@ -80,9 +80,9 @@ calculate_all_model_comparison_stats <- function(all.data.df, best_shifts) {
       print(paste0(i, ' / ', length(genes)))
     }
 
-    #curr.sym <- 'BRAA06G010220.3C'
-    curr.sym <- genes[i]
-    L <- compare_registered_to_unregistered_model(curr.sym, shifted.all.data.df, is.testing=FALSE)
+    #curr_sym <- 'BRAA06G010220.3C'
+    curr_sym <- genes[i]
+    L <- compare_registered_to_unregistered_model(curr_sym, shifted.all_data_df, is_testing=FALSE)
     out.sepAIC[i] <- L[[1]]
     out.combAIC[i] <- L[[2]]
     out.sepBIC[i] <- L[[3]]
@@ -134,7 +134,7 @@ apply_best_shift <- function(data,
     message("Normalising expression by mean and sd of compared values...")
 
     processed_data <- apply_best_normalisation(
-      data,
+      data = processed_data,
       best_shifts,
       accession_data_to_align,
       accession_data_target
@@ -162,7 +162,7 @@ apply_best_shift <- function(data,
 
   }
 
-  print("Done!")
+  message("Done!")
 
   return(processed_data)
 
@@ -289,88 +289,97 @@ apply_best_normalisation <- function(data,
 
 }
 
-# curr.sym <- 'BRAA01G001320.3C'
-# all.data.df <- all.data.df
-# is.testing <- TRUE
+
+
+#' Comparing registered to unregistered model
+#'
+#' `compare_registered_to_unregistered_model` is a function to compare the overlapping timepoints in data target and data to align after best registration and without registration. Same timepoints and stretched data were used for both models.
+#'
+#' @param curr_sym A gene accession.
+#' @param all_data_df Input data.
+#' @param is_testing Showing a plot of the progress if TRUE, otherwise if FALSE.
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_target Accession name of data target.
+#'
+#' @return Score of AIC and BIC for both registered and unregistered models.
 #' @export
-compare_registered_to_unregistered_model <- function(curr.sym, all.data.df, is.testing) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-  # compare the overlapping timepoints in brassica and arabidopsis after the best registration,
-  # and without registration (use the same timepoints for both models).
-  # use the stretched data for both models, whether considering as registered or not.
+compare_registered_to_unregistered_model <- function(curr_sym,
+                                                     all_data_df,
+                                                     is_testing = FALSE,
+                                                     accession_data_to_align = "Col0",
+                                                     accession_data_target = "Ro18") {
 
 
-  curr.data.df <- all.data.df[all.data.df$locus_name==curr.sym]
+  curr_data_df <- all_data_df[all_data_df$locus_name == curr_sym]
 
-  # print('line 662')
-  # print(curr.data.df)
 
-  # flag the timepoints to be used in the modelling, only the ones which overlap!
-  curr.data.df <- get_compared_timepoints(curr.data.df)
+  # Flag the timepoints to be used in the modelling, only the ones which overlap!
+  curr_data_df <- get_compared_timepoints(curr_data_df,
+                                          accession_data_to_align,
+                                          accession_data_target)
 
-  # ggplot2::ggplot(curr.data.df)+
-  #   ggplot2::aes(x=shifted_time, y=mean_cpm, shape=is.compared, color=accession)+
-  #   ggplot2::geom_point()
+#   ggplot2::ggplot(curr_data_df)+
+#     ggplot2::aes(x=shifted_time, y=mean_cpm, shape=is_compared, color=accession)+
+#     ggplot2::geom_point()
 
-  # cut down to the data for each model
-  ara.spline.data <- curr.data.df[curr.data.df$is.compared==TRUE &
-                                    curr.data.df$accession=='Col0', ]
-  bra.spline.data <- curr.data.df[curr.data.df$is.compared==TRUE &
-                                    curr.data.df$accession=='Ro18', ]
-  combined.spline.data <- curr.data.df[curr.data.df$is.compared==TRUE, ]
+  # Cut down to the data for each model
+  data_to_align_spline <- curr_data_df[curr_data_df$is_compared == TRUE &
+                                    curr_data_df$accession == accession_data_to_align, ]
+  data_target_spline <- curr_data_df[curr_data_df$is_compared == TRUE &
+                                    curr_data_df$accession == accession_data_target, ]
+  combined_spline_data <- curr_data_df[curr_data_df$is_compared == TRUE, ]
 
-  # fit the models - fit regression splines.
+  # Fit the models - fit regression splines.
   # http://www.utstat.utoronto.ca/reid/sta450/feb23.pdf
   # for cubic spline, K+3 params where K=num.knots
   # as can omit constant term
   num.spline.params <- 6 # number of parameters for each spline fitting (degree and this used to calculate num knots).
   num.registration.params <- 2 # stretch, shift
-  num.obs <- nrow(combined.spline.data)
-
-  # print('line 676')
-  # print(ara.spline.data)
-  # print(bra.spline.data)
+  num.obs <- nrow(combined_spline_data)
 
 
-  ara.fit <- stats::lm(mean_cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=ara.spline.data)
-  bra.fit <- stats::lm(mean_cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=bra.spline.data)
-  combined.fit <- stats::lm(mean_cpm~splines::bs(shifted_time, df=num.spline.params, degree=3), data=combined.spline.data)
-  # calculate the log likelihoods
-  ara.logLik <- stats::logLik(ara.fit)
-  bra.logLik <- stats::logLik(bra.fit)
-  seperate.logLik <- ara.logLik + bra.logLik # logLikelihoods, so sum
-  combined.logLik <- stats::logLik(combined.fit)
+  data_to_align_fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_to_align_spline)
+  data_target_fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_target_spline)
+  combined_fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = combined_spline_data)
 
-  # calculate the comparison.stats - - AIC, BIC, smaller is better!
+  # Calculate the log likelihoods
+  data_to_align_logLik <- stats::logLik(data_to_align_fit)
+  data_target_logLik <- stats::logLik(data_target_fit)
+  seperate_logLik <- data_to_align_logLik + data_target_logLik # logLikelihoods, so sum
+  combined_logLik <- stats::logLik(combined_fit)
+
+  # Calculate the comparison.stats - - AIC, BIC, smaller is better!
   # 2*num.spline.params as fitting seperate models for Ara * Col
-  seperate.AIC <- calc_AIC(seperate.logLik, 2*num.spline.params)
-  combined.AIC <- calc_AIC(combined.logLik, num.spline.params+num.registration.params)
+  seperate.AIC <- calc_AIC(seperate_logLik, 2*num.spline.params)
+  combined.AIC <- calc_AIC(combined_logLik, num.spline.params+num.registration.params)
 
-  seperate.BIC <- calc_BIC(seperate.logLik, 2*num.spline.params, num.obs)
-  combined.BIC <- calc_BIC(combined.logLik, num.spline.params+num.registration.params, num.obs)
+  seperate.BIC <- calc_BIC(seperate_logLik, 2*num.spline.params, num.obs)
+  combined.BIC <- calc_BIC(combined_logLik, num.spline.params+num.registration.params, num.obs)
 
 
-  if (is.testing==TRUE) {
-    ara.pred <- stats::predict(ara.fit)
-    ara.pred.df <- unique(data.frame('shifted_time'=ara.spline.data$shifted_time,
+  if (is_testing == TRUE) {
+    ara.pred <- stats::predict(data_to_align_fit)
+    ara.pred.df <- unique(data.frame('shifted_time'=data_to_align_spline$shifted_time,
                                      'mean_cpm'=ara.pred, 'accession'='Col0'))
-    bra.pred <- stats::predict(bra.fit)
-    bra.pred.df <- unique(data.frame('shifted_time'=bra.spline.data$shifted_time,
+    bra.pred <- stats::predict(data_target_fit)
+    bra.pred.df <- unique(data.frame('shifted_time'=data_target_spline$shifted_time,
                                      'mean_cpm'=bra.pred, 'accession'='Ro18'))
 
-    combined.pred <- stats::predict(combined.fit)
-    combined.pred.df <- unique(data.frame('shifted_time'=combined.spline.data$shifted_time,
+    combined.pred <- stats::predict(combined_fit)
+    combined.pred.df <- unique(data.frame('shifted_time'=combined_spline_data$shifted_time,
                                           'mean_cpm'=combined.pred, 'accession'='registered'))
     spline.df <- rbind(ara.pred.df, bra.pred.df, combined.pred.df)
 
-    p <- ggplot2::ggplot(data=combined.spline.data)+
+    p <- ggplot2::ggplot(data=combined_spline_data)+
       ggplot2::aes(x=shifted_time, y=mean_cpm, colour=accession) +
       ggplot2::geom_point()+
       ggplot2::geom_line(data=spline.df)+
-      ggplot2::ggtitle(paste0(curr.sym, ' : sep AIC:combo AIC=', round(seperate.AIC), ':', round(combined.AIC),
+      ggplot2::ggtitle(paste0(curr_sym, ' : sep AIC:combo AIC=', round(seperate.AIC), ':', round(combined.AIC),
                               ', sep BIC: combo BIC=', round(seperate.BIC), ':', round(combined.BIC)))
-    # ggplot2::ggsave(paste0('./testing/fitted_splines/', curr.sym, '_', max(ara.pred.df$shifted_time), '.pdf'))
+    ggplot2::ggsave(paste0(curr_sym, '_', max(ara.pred.df$shifted_time), '.pdf'))
+
   }
 
-  return(list(seperate.AIC, combined.AIC, seperate.BIC,combined.BIC))
+  return(list(seperate.AIC, combined.AIC, seperate.BIC, combined.BIC))
+
 }

@@ -38,60 +38,83 @@ get_best_result <- function(df) {
 
 }
 
+
+#' Wrapper of applying best shifts and compare the registered and unregistered models
+#'
+#' `calculate_all_model_comparison_stats` is a wrapper function to apply best shifts and compare the registered and unregistered models using compare_registered_to_unregistered_model.
+#'
+#' @param all_data_df Input all data (without taking mean).
+#' @param best_shifts Input data frame containing information of best shifts.
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_target Accession name of data target.
+#' @param data_to_align_time_added Time points to be added in data to align.
+#' @param data_target_time_added Time points to be added in data target.
+#'
+#' @return AIC and BIC score for registered and unregistered models.
 #' @export
-calculate_all_model_comparison_stats <- function(all_data_df, best_shifts) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
+calculate_all_model_comparison_stats <- function(all_data_df,
+                                                 best_shifts,
+                                                 accession_data_to_align,
+                                                 accession_data_target,
+                                                 data_to_align_time_added,
+                                                 data_target_time_added) {
+
   # wrapper to apply compare_registered_to_unregistered_model() to all the genes
 
-  if (!('Col0' %in% unique(all_data_df$accession) &
-        'Ro18' %in% unique(all_data_df$accession))) {
+  if (!(accession_data_to_align %in% unique(all_data_df$accession) &
+        accession_data_target %in% unique(all_data_df$accession))) {
     stop("error in calculate_all_model_comparison_stats() :
          all_data_df doesn't have the correct accession info - should have been
          converted to Ro18 & Col0")
   }
 
 
-  # apply the registration to the all rep data, so can use for model comparison.
+  # Apply the registration to the all rep data, so can use for model comparison
+  shifted_all_data_df <- apply_best_shift(data = all_data_df,
+                                          best_shifts,
+                                          accession_data_to_align,
+                                          accession_data_target,
+                                          data_to_align_time_added,
+                                          data_target_time_added)
 
+  message('Calculating registration vs different expression comparison AIC & BIC...')
 
-  shifted.all_data_df <- apply_best_shift(all_data_df, best_shifts)
+  genes <- unique(shifted_all_data_df$locus_name)
 
-  # # check that have now got scaled, stretched time for both genes.
-  # tst <- all_data_df
-  # ggplot2::ggplot(tst[tst$locus_name=='BRAA01G000040.3C'])+
-  #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession) +
-  #   ggplot2::geom_point()
-  # ggplot2::ggplot(tst[tst$locus_name=='BRAA01G000040.3C'])+
-  #   ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
-  #   ggplot2::geom_point()
-
-  print('calculating registration vs different expression comparison AIC & BIC...')
-
-  genes <- unique(shifted.all_data_df$locus_name)
   out.sepAIC <- rep(0, length(genes))
   out.combAIC <- rep(0, length(genes))
   out.sepBIC <- rep(0, length(genes))
   out.combBIC <- rep(0, length(genes))
 
-  i <- 1
-  #i <- sample(1:length(genes), 1)
   for(i in 1:length(genes)) {
+
     if( i %% 100 == 0) {
-      print(paste0(i, ' / ', length(genes)))
+      message(i, ' / ', length(genes))
     }
 
-    #curr_sym <- 'BRAA06G010220.3C'
     curr_sym <- genes[i]
-    L <- compare_registered_to_unregistered_model(curr_sym, shifted.all_data_df, is_testing=FALSE)
-    out.sepAIC[i] <- L[[1]]
-    out.combAIC[i] <- L[[2]]
-    out.sepBIC[i] <- L[[3]]
-    out.combBIC[i] <- L[[4]]
+
+    L <- compare_registered_to_unregistered_model(curr_sym,
+                                                  shifted_all_data_df,
+                                                  is_testing = FALSE,
+                                                  accession_data_to_align,
+                                                  accession_data_target)
+
+    out.sepAIC[i] <- L[["seperate.AIC"]]
+    out.combAIC[i] <- L[["combined.AIC"]]
+    out.sepBIC[i] <- L[["seperate.BIC"]]
+    out.combBIC[i] <- L[["combined.BIC"]]
+
   }
 
-  out <- data.table::data.table(data.frame('gene'=genes, 'seperate.AIC'=out.sepAIC, 'registered.AIC'=out.combAIC,
-                                           'seperate.BIC'=out.sepBIC, 'registered.BIC'=out.combBIC))
+  out <- data.table::data.table('gene' = genes,
+                                           'seperate.AIC' = out.sepAIC,
+                                           'registered.AIC' = out.combAIC,
+                                           'seperate.BIC' = out.sepBIC,
+                                          'registered.BIC' = out.combBIC)
+
   return(out)
+
 }
 
 
@@ -318,6 +341,7 @@ compare_registered_to_unregistered_model <- function(curr_sym,
                                           accession_data_to_align,
                                           accession_data_target)
 
+
 #   ggplot2::ggplot(curr_data_df)+
 #     ggplot2::aes(x=shifted_time, y=mean_cpm, shape=is_compared, color=accession)+
 #     ggplot2::geom_point()
@@ -380,6 +404,9 @@ compare_registered_to_unregistered_model <- function(curr_sym,
 
   }
 
-  return(list(seperate.AIC, combined.AIC, seperate.BIC, combined.BIC))
+  return(list(seperate.AIC = seperate.AIC,
+              combined.AIC = combined.AIC,
+              seperate.BIC = seperate.BIC,
+              combined.BIC = combined.BIC))
 
 }

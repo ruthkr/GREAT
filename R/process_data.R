@@ -5,21 +5,21 @@
 # test.genes <- unique(mean_df$locus_name)[1:101]
 # #test.genes <- 'MSTRG.10244'
 # mean_df <- mean_df[mean_df$locus_name %in% test.genes,]
-# all.data.df <- all.data.df[all.data.df$locus_name %in% test.genes,]
+# all_data_df <- all_data_df[all_data_df$locus_name %in% test.genes,]
 # shift_extreme=4
 # transformed.timecourse <- 'Ro18'
 
 #' @export
-prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, initial.rescale, do_rescale, min_num_overlapping_points, shift_extreme, transformed.timecourse) {
+prepare_scaled_and_registered_data <- function(mean_df, all_data_df, stretches, initial.rescale, do_rescale, min_num_overlapping_points, shift_extreme, transformed.timecourse) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   ## APPLY NORMALISATION OF EXPRESSION FOR EACH GENE ACROSS ALL TIMEPOINTS ##
 
   # hardcoded all the functions to use 'Col0', and 'Ro18'. Rather than fix all instances
   # of that, just temporarily rename them here, and turn back at the end.
   # will apply stretch, and shift to the "transformed.timecourse" accession (which should be the quicker one...)
-  L <- change.accession.names(mean_df, all.data.df, transformed.timecourse)
+  L <- change.accession.names(mean_df, all_data_df, transformed.timecourse)
   mean_df <- L[['mean_df']]
-  all.data.df <- L[['all.data.df']]
+  all_data_df <- L[['all_data_df']]
   original.transformed.accession <- L[['original.transformed.accession.name']]
   original.other.accession <- L[['original.other.accession.name']]
 
@@ -37,29 +37,29 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
   # whether prior rescaled mean, or mean data should be used for registration
   if (initial.rescale==TRUE) {
     # apply rescale to mean_df prior to registration
-    to.shift.df <- data.table::copy(mean_df.sc)
-    to.shift.df$mean_cpm <- to.shift.df$sc.mean_cpm
-    to.shift.df$sc.mean_cpm <- NULL
+    to_shift_df <- data.table::copy(mean_df.sc)
+    to_shift_df$mean_cpm <- to_shift_df$sc.mean_cpm
+    to_shift_df$sc.mean_cpm <- NULL
 
-    # apply THE SAME rescale to all.data.df prior to registration
+    # apply THE SAME rescale to all_data_df prior to registration
     # TODO: handle my_scale in conditional
-    all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'scale')
-    #all.data.df <- scale_all_rep_data(mean_df, all.data.df, 'my_scale')
+    all_data_df <- scale_all_rep_data(mean_df, all_data_df, 'scale')
+    #all_data_df <- scale_all_rep_data(mean_df, all_data_df, 'my_scale')
 
 
     # sanity plot that rescale all data worked
-    # ggplot2::ggplot(all.data.df[all.data.df$locus_name=='BRAA01G000040.3C'])+
+    # ggplot2::ggplot(all_data_df[all_data_df$locus_name=='BRAA01G000040.3C'])+
     #   ggplot2::aes(x=timepoint, y=mean_cpm, color=accession)
     #   ggplot2::geom_point()
   } else {
-    to.shift.df <- data.table::copy(mean_df)
+    to_shift_df <- data.table::copy(mean_df)
   }
 
-  print(paste0('Max value of mean_cpm of all.data.df :', max(all.data.df$mean_cpm)))
-  # ggplot2::ggplot(to.shift.df[to.shift.df$locus_name=='BRAA03G004600.3C'])+
+  print(paste0('Max value of mean_cpm of all_data_df :', max(all_data_df$mean_cpm)))
+  # ggplot2::ggplot(to_shift_df[to_shift_df$locus_name=='BRAA03G004600.3C'])+
   #   ggplot2::aes(x=timepoint, y=mean_cpm, color=accession)
   #   ggplot2::geom_point()
-  # tst <- all.data.df
+  # tst <- all_data_df
   # ggplot2::ggplot(tst[tst$locus_name=='BRAA01G000040.3C'])+
   #   ggplot2::aes(x=timepoint, y=mean_cpm, color=accession) +
   #   ggplot2::geom_point()
@@ -67,7 +67,7 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
   # calculate the best registration. Returns all tried registrations, best stretch and shift combo,
   # and AIC/BIC stats for comparison of best registration model to seperate models for expression of
   # each gene in Ro18 and Col0.
-  L <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches, do_rescale, min_num_overlapping_points, shift_extreme)
+  L <- get_best_stretch_and_shift(to_shift_df, all_data_df, stretches, do_rescale, min_num_overlapping_points, shift_extreme)
   all_shifts <- L[['all_shifts']]
   best_shifts <- L[['best_shifts']]
   model.comparison.dt <- L[['model.comparison.dt']]
@@ -89,13 +89,13 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
   # get the best-shifted and stretched mean gene expression, only to genes which registration is better than
   # seperate models by BIC. Don't stretch out, or shift genes for which seperate is better.
   # registration is applied to col0.
-  shifted.mean_df <- apply_shift_to_registered_genes_only(to.shift.df, best_shifts, model.comparison.dt)
-  # shifted.mean_df <- apply_shift_to_all(to.shift.df, best_shifts, model.comparison.dt)
+  shifted.mean_df <- apply_shift_to_registered_genes_only(to_shift_df, best_shifts, model.comparison.dt)
+  # shifted.mean_df <- apply_shift_to_all(to_shift_df, best_shifts, model.comparison.dt)
   print(paste0('Max value of mean_cpm :', max(shifted.mean_df$mean_cpm)))
-  # shifted.mean_df <- apply_best_shift(to.shift.df, best_shifts) # can be NA if exactly tied for what the best shift was
+  # shifted.mean_df <- apply_best_shift(to_shift_df, best_shifts) # can be NA if exactly tied for what the best shift was
 
   # GOI <- 'MSTRG.11237'
-  # ggplot2::ggplot(all.data.df[all.data.df$locus_name==GOI])+
+  # ggplot2::ggplot(all_data_df[all_data_df$locus_name==GOI])+
   #   ggplot2::aes(x=timepoint, y= mean_cpm, color=accession) +
   #   ggplot2::geom_point()
   #
@@ -139,7 +139,7 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
 
 
 #' @export
-change.accession.names <- function(mean_df, all.data.df, transformed.timecourse) {
+change.accession.names <- function(mean_df, all_data_df, transformed.timecourse) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # set the "transformed.timecourse" accession to "Col0", and the other one to "Ro18"
 
@@ -158,19 +158,19 @@ change.accession.names <- function(mean_df, all.data.df, transformed.timecourse)
   new.mean_df.accession[mean_df$accession!=transformed.timecourse] <- 'Ro18'
   mean_df$accession <- new.mean_df.accession
 
-  # change all.data.df
-  new.all.data.df.accession <- all.data.df$accession
-  new.all.data.df.accession[all.data.df$accession==transformed.timecourse] <- 'Col0'
-  new.all.data.df.accession[all.data.df$accession!=transformed.timecourse] <- 'Ro18'
-  all.data.df$accession <- new.all.data.df.accession
+  # change all_data_df
+  new.all_data_df.accession <- all_data_df$accession
+  new.all_data_df.accession[all_data_df$accession==transformed.timecourse] <- 'Col0'
+  new.all_data_df.accession[all_data_df$accession!=transformed.timecourse] <- 'Ro18'
+  all_data_df$accession <- new.all_data_df.accession
 
   return(list('mean_df'=mean_df,
-              'all.data.df'=all.data.df,
+              'all_data_df'=all_data_df,
               'original.transformed.accession.name'=original.transformed.timecourse.name,
               'original.other.accession.name'=original.other.accession.name))
 }
 
-#all.rep.data <- all.data.df
+#all.rep.data <- all_data_df
 #' @export
 scale_all_rep_data <- function(mean_df, all.rep.data, scale.func) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
@@ -208,105 +208,143 @@ scale_all_rep_data <- function(mean_df, all.rep.data, scale.func) {
   return(out)
 }
 
-# to.shift.df
-# all.data.df
-# stretches
-# do_rescale
-# min_num_overlapping_points
-# shift_extreme
+
+#' Calculate best shifts and stretches for each gene, also calculate AIC/BIC under registration or non-registration
+#'
+#' `get_best_stretch_and_shift` is a function to stretch in all stretches and calculates best shift, by comparing SUM of squares difference. For the best shift in each stretch, compares to separate models to calculate AIC/BIC under registration or no registration.
+#'
+#' @param to_shift_df Input data containing mean of each time point.
+#' @param all_data_df Input all data (without taking mean).
+#' @param stretches Vector data of stretches.
+#' @param do_rescale Apply "scale" to compared points for each shift if TRUE, use original mean expression data if FALSE.
+#' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
+#' @param shift_extreme Approximation of maximum and minimum shifts allowed.
+#' @param num_shifts Number of different shifts to be considered.
+#' @param testing Showing a plot of the progress if TRUE, otherwise if FALSE.
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_target Accession name of data target.
+#' @param data_to_align_time_added Time points to be added in data to align.
+#' @param data_target_time_added Time points to be added in data target.
+#'
+#' @return List of data frames (a) all_shifts : all the combos of stretching and shifting tried for each gene, (b) best_shifts : the best stretch and shift combo found for each gene, as well as info for scaling, and (c) model_comparison.dt : AIC / BIC scores for best registerd model found, compared to seperate model for each genes expression in the 2 accessions.
 #' @export
-get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_rescale, min_num_overlapping_points, shift_extreme) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
+get_best_stretch_and_shift <- function(to_shift_df,
+                                       all_data_df,
+                                       stretches,
+                                       do_rescale,
+                                       min_num_overlapping_points,
+                                       shift_extreme,
+                                       num_shifts,
+                                       testing,
+                                       accession_data_to_align,
+                                       accession_data_target,
+                                       data_to_align_time_added,
+                                       data_target_time_added) {
 
-  # for each stretch in stretches, calculates best shift, by comparing SUM of squares difference.
-  # for the best shift in each stretch, compares to seperate models to calculate AIC/BIC under registration,
-  # / no registration.
-
-  # returns:
-  # - all_shifts : all the combos of stretching and shifting tried for each gene
-  # - best_shifts : the best stretch and shift combo found for each gene, as well as info for scaling etc
-  # - model_comparison.dt : AIC / BIC scores for best registerd model found, compared to seperate model for
-  # each genes expression in the 2 accessions.
-
-
-  if (!('Col0' %in% all.data.df$accession & 'Ro18' %in% all.data.df$accession)) {
-    stop('get_best_stretch_and_shift() : all.data.df accessions should have been
-         converted to Col0 and Ro18.')
+  # Warning to make sure users have correct accession data
+  if (!('Col0' %in% all_data_df$accession & 'Ro18' %in% all_data_df$accession)) {
+    stop('get_best_stretch_and_shift() : data accessions should have been
+         converted to correct accession.')
   }
 
   all_all_shifts <- rep(list(0), length(stretches))
   all_best_shifts <- rep(list(0), length(stretches))
-  all_model_comparison.dt <- rep(list(0), length(stretches))
+  all_model_comparison_dt <- rep(list(0), length(stretches))
 
 
   for (i in 1:length(stretches)) {
     stretch <- stretches[i]
     message(paste0('testing models for stretch factor = ', stretch))
-    # calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points
-    # if do_rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
 
-    all_shifts <- calculate_all_best_shifts(to.shift.df, stretch_factor=stretch, do_rescale, min_num_overlapping_points, shift_extreme)
+    # Calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points
+    # if do_rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
+    all_shifts <- calculate_all_best_shifts(num_shifts,
+      mean_df = to_shift_df,
+      stretch_factor = stretch,
+      do_rescale,
+      shift_extreme,
+      min_num_overlapping_points,
+      testing = FALSE,
+      accession_data_to_align,
+      accession_data_target)
 
     all_shifts <- unique(all_shifts) # ensure no duplicated rows
 
-    # cut down to single best shift for each gene
+    # Cut down to single best shift for each gene
     all_shifts[, is_best:=get_best_result(.SD), by=.(gene)]
     best_shifts <- all_shifts[is_best==TRUE,]
     all_shifts$is_best <- NULL
 
-    if (nrow(best_shifts)!= length(unique(all.data.df$locus_name))) {
+    if (nrow(best_shifts)!= length(unique(all_data_df$locus_name))) {
       stop('get_best_stretch_and_shift() : got non-unique best shifts in best_shifts')
     }
 
-    # calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the
-    # gene's expression seperately in Col0 and Ro18
-    model.comparison.dt <- calculate_all_model_comparison_stats(all.data.df, best_shifts)
-    # add info on the stretch and shift applied
+    # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the
+    # gene's expression separately in data to align and data target
+    model.comparison.dt <- calculate_all_model_comparison_stats(all_data_df,
+                                                                best_shifts,
+                                                                accession_data_to_align,
+                                                                accession_data_target,
+                                                                data_to_align_time_added,
+                                                                data_target_time_added)
+
+
+    # Add info on the stretch and shift applied
     model.comparison.dt <- merge(model.comparison.dt, best_shifts[, c('gene', 'stretch', 'shift'),],
                                  by='gene')
 
-    # record the results for the current stretch factor
+    # Record the results for the current stretch factor
     all_all_shifts[[i]] <- all_shifts
     all_best_shifts[[i]] <- best_shifts
-    all_model_comparison.dt[[i]] <- model.comparison.dt
+    all_model_comparison_dt[[i]] <- model.comparison.dt
     message(paste0('finished testing models for stretch factor = ', stretch), "\n")
+
   }
 
   all_shifts <- do.call('rbind', all_all_shifts) # all the combinations of shift, and stretch tried
   all_best_shifts <- do.call('rbind', all_best_shifts) # the best shifts for each stretch
-  all_model_comparison.dt <- do.call('rbind', all_model_comparison.dt) # model comparison of best shift (for each stretch) to seperate modeles
+  all_model_comparison_dt <- do.call('rbind', all_model_comparison_dt) # model comparison of best shift (for each stretch) to seperate modeles
 
-  # get the best registration applied (best stretch, and best shift) for each gene
-  # picking by bic alone will favour fewer overlapping (considered) datapoints. Pick best in order to maximise
-  # how much better register.BIC is than seperate.BIC
-  all_model_comparison.dt$delta.BIC <- all_model_comparison.dt$registered.BIC - all_model_comparison.dt$seperate.BIC
-  all_model_comparison.dt[, is_best:=(delta.BIC==min(delta.BIC)), by=.(gene)] # best is one for which registered.BIC is as small as possible compared to seperate.BIC
-  best_model_comparison.dt <- all_model_comparison.dt[all_model_comparison.dt$is_best==TRUE]
-  # if there's a tie for best registration for a gene, keep the first one as the best
+  # Get the best registration applied (best stretch, and best shift) for each gene,
+  # picking by BIC alone will favour fewer overlapping (considered) data points.
+  # Pick best in order to maximise how much better register.BIC is than separate.BIC
+  all_model_comparison_dt$delta.BIC <- all_model_comparison_dt$registered.BIC - all_model_comparison_dt$seperate.BIC
+
+  # Best is one for which registered.BIC is as small as possible compared to separate.BIC
+  all_model_comparison_dt[, is_best := (delta.BIC == min(delta.BIC)), by = .(gene)]
+  best_model_comparison.dt <- all_model_comparison_dt[all_model_comparison_dt$is_best==TRUE]
+
+  # If there is a tie for best registration for a gene, keep the first one as the best
   if (any(duplicated(best_model_comparison.dt$gene))) {
     print(paste0('found ', sum(duplicated(best_model_comparison.dt$gene)), ' tied optimal registrations. Removing dupliates'))
     best_model_comparison.dt <- best_model_comparison.dt[!(duplicated(best_model_comparison.dt$gene)),]
   }
+
   best_model_comparison.dt$delta.BIC <- NULL
-  # cut down best shifts to the best shift for the best stretch only
-  best_shifts <- merge(all_best_shifts, best_model_comparison.dt[, c('gene', 'stretch', 'shift')],
+
+  # Cut down best shifts to the best shift for the best stretch only
+  best_shifts <- merge(all_best_shifts,
+                       best_model_comparison.dt[, c('gene', 'stretch', 'shift')],
                        by=c('gene', 'stretch', 'shift'))
-  stopifnot(nrow(best_shifts)==length(unique(to.shift.df$locus_name))) # there should be only 1 best shift for each gene
+
+  # There should be only 1 best shift for each gene, stop if it is not the case
+  stopifnot(nrow(best_shifts) == length(unique(to_shift_df$locus_name)))
 
   return(list('all_shifts'=all_shifts,
               'best_shifts'=best_shifts,
               'model.comparison.dt'=best_model_comparison.dt))
+
 }
 
 #' @export
-apply_shift_to_registered_genes_only <- function(to.shift.df, best_shifts, model.comparison.dt) {
+apply_shift_to_registered_genes_only <- function(to_shift_df, best_shifts, model.comparison.dt) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
 
   # genes for which registration model is better than seperate model
   genes.to.register <- model.comparison.dt$gene[model.comparison.dt$BIC.registered.is.better]
   # apply the registration transformation to these genes
   if (length(genes.to.register > 0)) {
-    register.dt <- to.shift.df[to.shift.df$locus_name %in% genes.to.register,]
+    register.dt <- to_shift_df[to_shift_df$locus_name %in% genes.to.register,]
     registered.dt <- apply_best_shift(register.dt, best_shifts)
     registered.dt$is.registered <- TRUE
   }
@@ -315,7 +353,7 @@ apply_shift_to_registered_genes_only <- function(to.shift.df, best_shifts, model
   genes.to.keep.seperate <- model.comparison.dt$gene[!(model.comparison.dt$BIC.registered.is.better)]
 
   # generate the columns for these needed to concat. with registered.dt
-  seperate.dt <- to.shift.df[to.shift.df$locus_name %in% genes.to.keep.seperate,]
+  seperate.dt <- to_shift_df[to_shift_df$locus_name %in% genes.to.keep.seperate,]
   seperate.dt$stretched.time.delta <- 0 # in order to ensure that seperate copy
   # print('line 594')
   # print(min(timepoint))
@@ -336,10 +374,10 @@ apply_shift_to_registered_genes_only <- function(to.shift.df, best_shifts, model
 }
 
 #' @export
-apply_shift_to_all <- function(to.shift.df, best_shifts, model.comparison.dt) {
+apply_shift_to_all <- function(to_shift_df, best_shifts, model.comparison.dt) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
 
-  registered.dt <- to.shift.df
+  registered.dt <- to_shift_df
   registered.dt <- apply_best_shift(registered.dt, best_shifts)
   # registered.dt$shifted_time <- registered.dt$stretched.time.delta + 14 # add eleven, as this is done for the registered genes
 

@@ -59,8 +59,6 @@ calculate_all_model_comparison_stats <- function(all_data_df,
                                                  data_to_align_time_added,
                                                  data_target_time_added) {
 
-  # wrapper to apply compare_registered_to_unregistered_model() to all the genes
-
   if (!(accession_data_to_align %in% unique(all_data_df$accession) &
         accession_data_target %in% unique(all_data_df$accession))) {
     stop("error in calculate_all_model_comparison_stats() :

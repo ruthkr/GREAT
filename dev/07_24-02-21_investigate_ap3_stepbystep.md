@@ -748,7 +748,7 @@ model.comparison.dt <- calculate_all_model_comparison_stats(all.data.df, best_sh
 model.comparison.dt
 ```
 
-    ##          gene seperate.AIC registered.AIC seperate.BIC registered.BIC
+    ##          gene separate.AIC registered.AIC separate.BIC registered.BIC
     ## 1: BO4G120010    -77.63306     -20.938622   -49.823202      -2.398717
     ## 2: BO8G083600    -24.19456       2.278069     3.125433      20.491398
 

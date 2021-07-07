@@ -377,7 +377,7 @@ load_mean_df <- function(file_path_brassica, file_path_arabidopsis, file_path_id
 # 
 #   #setwd('/Volumes/Research-Projects/bravo/alex/BRAVO_rna-seq/scripts/')
 #   rds_file <- 'ro18_chiifu_apex' # don't include the .rds # the name of the brassica data to load
-#   sumBrassicas <- F # if false use seperate brassica genes, and compare to repeated arabidopsis genes. If true, sume copies of each brassica and compare to arabidopsis
+#   sumBrassicas <- F # if false use separate brassica genes, and compare to repeated arabidopsis genes. If true, sume copies of each brassica and compare to arabidopsis
 #   #datapath <- paste0('../final_data/rds/', rds_file, '.rds')
 # 
 # 

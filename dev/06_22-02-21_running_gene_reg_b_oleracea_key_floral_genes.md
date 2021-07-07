@@ -444,7 +444,7 @@ best_shifts <- L[['best_shifts']]
 model.comparison.dt <- L[['model.comparison.dt']]
 
 model.comparison.dt %>% 
-  # dplyr::select(-c(seperate.AIC, registered.AIC)) %>%
+  # dplyr::select(-c(separate.AIC, registered.AIC)) %>%
   dplyr::left_join(table_id_info_key_floral_genes %>% 
                      dplyr::mutate(CDS.model = toupper(CDS.model)), by = c("gene" = "CDS.model")) %>% 
   # dplyr::select(symbol, gene, stretch, shift) %>% 
@@ -453,19 +453,19 @@ model.comparison.dt %>%
 
 ``` r
 # report model comparison results
-model.comparison.dt$BIC.registered.is.better <- (model.comparison.dt$registered.BIC < model.comparison.dt$seperate.BIC)
-model.comparison.dt$AIC.registered.is.better <- (model.comparison.dt$registered.AIC < model.comparison.dt$seperate.AIC)
+model.comparison.dt$BIC.registered.is.better <- (model.comparison.dt$registered.BIC < model.comparison.dt$separate.BIC)
+model.comparison.dt$AIC.registered.is.better <- (model.comparison.dt$registered.AIC < model.comparison.dt$separate.AIC)
 model.comparison.dt$ABIC.registered.is.better <- (model.comparison.dt$BIC.registered.is.better & model.comparison.dt$AIC.registered.is.better)
 print("################## Model comparison results #######################")
-print(paste0("AIC finds registration better than seperate for :", sum(model.comparison.dt$AIC.registered.is.better), " / ", nrow(model.comparison.dt)))
-print(paste0("BIC finds registration better than seperate for :", sum(model.comparison.dt$BIC.registered.is.better), " / ", nrow(model.comparison.dt)))
-print(paste0("AIC & BIC finds registration better than seperate for :", sum(model.comparison.dt$ABIC.registered.is.better), " / ", nrow(model.comparison.dt)))
+print(paste0("AIC finds registration better than separate for :", sum(model.comparison.dt$AIC.registered.is.better), " / ", nrow(model.comparison.dt)))
+print(paste0("BIC finds registration better than separate for :", sum(model.comparison.dt$BIC.registered.is.better), " / ", nrow(model.comparison.dt)))
+print(paste0("AIC & BIC finds registration better than separate for :", sum(model.comparison.dt$ABIC.registered.is.better), " / ", nrow(model.comparison.dt)))
 print("###################################################################")
 ```
 
 ``` r
 model.comparison.dt %>% 
-  dplyr::select(-c(seperate.AIC, registered.AIC, AIC.registered.is.better)) %>%
+  dplyr::select(-c(separate.AIC, registered.AIC, AIC.registered.is.better)) %>%
   dplyr::left_join(table_id_info_key_floral_genes %>% 
                      dplyr::mutate(CDS.model = toupper(CDS.model)), by = c("gene" = "CDS.model")) %>% 
   # dplyr::select(symbol, gene, stretch, shift) %>% 

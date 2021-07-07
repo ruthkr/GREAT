@@ -13,7 +13,7 @@ do_tSNE <- function(DATA, rds_file, plot_name, sumBrassicas) {
   if (sumBrassicas==T) {
     save.dir <- paste0('../graphs/', rds_file, '/tSNE_plots_summed_bra_copies')
   } else {
-    save.dir <- paste0('../graphs/', rds_file, '/tSNE_plots_seperate_bra_copies')
+    save.dir <- paste0('../graphs/', rds_file, '/tSNE_plots_separate_bra_copies')
   }
 
   D <- DATA[, c('group', 'locus_name', 'norm.cpm')]

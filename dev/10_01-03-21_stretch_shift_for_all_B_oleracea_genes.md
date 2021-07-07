@@ -191,7 +191,7 @@ model.comparison %>%
   head(5)
 ```
 
-    ##           gene seperate.AIC registered.AIC seperate.BIC registered.BIC stretch
+    ##           gene separate.AIC registered.AIC separate.BIC registered.BIC stretch
     ## 1: BO00418S190     198.8443       211.9604     223.5696       228.4439       7
     ## 2: BO00434S130     187.6364       187.6931     212.3617       204.1766       7
     ## 3: BO00534S090     268.6059       272.3236     294.6986       289.7187       7
@@ -321,7 +321,7 @@ model.comparison %>%
   dplyr::filter(gene %in% c("BO4G120010","BO8G083600"))
 ```
 
-    ##          gene seperate.AIC registered.AIC seperate.BIC registered.BIC stretch
+    ##          gene separate.AIC registered.AIC separate.BIC registered.BIC stretch
     ## 1: BO4G120010    -79.92564      -20.41745    -52.44013      -2.093772     4.0
     ## 2: BO8G083600    -64.05853      -24.77898    -36.73854      -6.565651     3.5
     ##         shift is_best BIC.registered.is.better AIC.registered.is.better

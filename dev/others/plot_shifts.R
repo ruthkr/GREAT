@@ -42,9 +42,9 @@ plot_fit <- function(results_list, facets = c("arabidopsis", "brassica"), title 
       title = paste0(
         title,
         "AIC=",
-        round(results_list$seperate.AIC), ":", round(results_list$combined.AIC),
+        round(results_list$separate.AIC), ":", round(results_list$combined.AIC),
         ", BIC=",
-        round(results_list$seperate.BIC), ":", round(results_list$combined.BIC),
+        round(results_list$separate.BIC), ":", round(results_list$combined.BIC),
         " (sep:reg)"
       ),
       subtitle = paste0(

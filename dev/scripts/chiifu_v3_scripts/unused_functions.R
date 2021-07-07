@@ -371,7 +371,7 @@ load_shuffled_distances <- function(dir.name, D.type, numJobs, numRuns) {
   # that + expression scaled(center=T, scale=T)
   # that + registered (scale using compared points only)
 
-  # numJobs : how many seperate jobs were submitted
+  # numJobs : how many separate jobs were submitted
   # numRuns : how many runs each job did
 
   file.stem <- paste0('../intermediate_data/gene_registration/', dir.name, '/', D.type)
@@ -532,7 +532,7 @@ plot_registration_for_exemplar_genes <- function(all.rep.shifted.data, GoIs) {
   # cut down to genes to plot
   tmp <- all.rep.shifted.data[all.rep.shifted.data$locus_name %in% GoIs]
 
-  p.seperate <- ggplot(tmp, aes(x=timepoint, y=mean_cpm, color=locus_name, fill=locus_name,
+  p.separate <- ggplot(tmp, aes(x=timepoint, y=mean_cpm, color=locus_name, fill=locus_name,
                                 shape=accession, linetype=accession))+
     stat_summary(fun=mean, geom='line', size=1)+
     #stat_summary(fun=mean, geom='point')+
@@ -579,7 +579,7 @@ plot_registration_for_exemplar_genes <- function(all.rep.shifted.data, GoIs) {
           strip.text = element_text(size=10),
           strip.background = element_rect(fill='white'))
 
-  p.grid <- plot_grid(p.seperate, p.shifted, ncol=1, rel_heights = c(0.6, 0.4))
+  p.grid <- plot_grid(p.separate, p.shifted, ncol=1, rel_heights = c(0.6, 0.4))
   # p.grid
   # ggsave('./test.pdf',
   #        plot=p.grid,

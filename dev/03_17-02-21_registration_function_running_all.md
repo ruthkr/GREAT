@@ -206,7 +206,7 @@ model.comparison %>%
   knitr::kable()
 ```
 
-| gene             | seperate.AIC | registered.AIC | seperate.BIC | registered.BIC | stretch |      shift | is_best | BIC.registered.is.better | AIC.registered.is.better | ABIC.registered.is.better |
+| gene             | separate.AIC | registered.AIC | separate.BIC | registered.BIC | stretch |      shift | is_best | BIC.registered.is.better | AIC.registered.is.better | ABIC.registered.is.better |
 |:-----------------|-------------:|---------------:|-------------:|---------------:|--------:|-----------:|:--------|:-------------------------|:-------------------------|:--------------------------|
 | BRAA01G000630.3C |     97.33704 |       123.0187 |     122.4692 |       139.7734 |       2 |  4.0000000 | TRUE    | FALSE                    | FALSE                    | FALSE                     |
 | BRAA01G000680.3C |    140.90437 |       156.8583 |     165.6297 |       173.3418 |       2 | -0.4444444 | TRUE    | FALSE                    | FALSE                    | FALSE                     |

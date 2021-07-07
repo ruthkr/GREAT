@@ -380,7 +380,7 @@ to.shift.df %>%
 
 ```{r}
 # calculate the best registration. Returns all tried registrations, best stretch and shift combo,
-# and AIC/BIC stats for comparison of best registration model to seperate models for expression of
+# and AIC/BIC stats for comparison of best registration model to separate models for expression of
 # each gene in Ro18 and Col0.
 best_stretch_and_shift <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches = stretch, do_rescale = should.rescale, min_num_overlapping_points, shift_extreme)
 ```

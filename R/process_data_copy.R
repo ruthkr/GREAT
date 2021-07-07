@@ -67,7 +67,7 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
   #   ggplot2::geom_point()
 
   # calculate the best registration. Returns all tried registrations, best stretch and shift combo,
-  # and AIC/BIC stats for comparison of best registration model to seperate models for expression of
+  # and AIC/BIC stats for comparison of best registration model to separate models for expression of
   # each gene in Ro18 and Col0.
   L <- get_best_stretch_and_shift(to.shift.df, all.data.df, stretches, do_rescale, min_num_overlapping_points, shift_extreme)
   all_shifts <- L[['all_shifts']]
@@ -78,18 +78,18 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches, 
 
 
   # report model comparison results
-  model.comparison.dt$BIC.registered.is.better <- (model.comparison.dt$registered.BIC < model.comparison.dt$seperate.BIC)
-  model.comparison.dt$AIC.registered.is.better <- (model.comparison.dt$registered.AIC < model.comparison.dt$seperate.AIC)
+  model.comparison.dt$BIC.registered.is.better <- (model.comparison.dt$registered.BIC < model.comparison.dt$separate.BIC)
+  model.comparison.dt$AIC.registered.is.better <- (model.comparison.dt$registered.AIC < model.comparison.dt$separate.AIC)
   model.comparison.dt$ABIC.registered.is.better <- (model.comparison.dt$BIC.registered.is.better & model.comparison.dt$AIC.registered.is.better)
   print('################## Model comparison results #######################')
-  print(paste0('AIC finds registration better than seperate for :', sum(model.comparison.dt$AIC.registered.is.better), ' / ', nrow(model.comparison.dt)))
-  print(paste0('BIC finds registration better than seperate for :', sum(model.comparison.dt$BIC.registered.is.better), ' / ', nrow(model.comparison.dt)))
-  print(paste0('AIC & BIC finds registration better than seperate for :', sum(model.comparison.dt$ABIC.registered.is.better), ' / ', nrow(model.comparison.dt)))
+  print(paste0('AIC finds registration better than separate for :', sum(model.comparison.dt$AIC.registered.is.better), ' / ', nrow(model.comparison.dt)))
+  print(paste0('BIC finds registration better than separate for :', sum(model.comparison.dt$BIC.registered.is.better), ' / ', nrow(model.comparison.dt)))
+  print(paste0('AIC & BIC finds registration better than separate for :', sum(model.comparison.dt$ABIC.registered.is.better), ' / ', nrow(model.comparison.dt)))
   print('###################################################################')
 
 
   # get the best-shifted and stretched mean gene expression, only to genes which registration is better than
-  # seperate models by BIC. Don't stretch out, or shift genes for which seperate is better.
+  # separate models by BIC. Don't stretch out, or shift genes for which separate is better.
   # registration is applied to col0.
   shifted.mean_df <- apply_shift_to_registered_genes_only(to.shift.df, best_shifts, model.comparison.dt)
   # shifted.mean_df <- apply_shift_to_all(to.shift.df, best_shifts, model.comparison.dt)
@@ -221,13 +221,13 @@ get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_r
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
 
   # for each stretch in stretches, calculates best shift, by comparing SUM of squares difference.
-  # for the best shift in each stretch, compares to seperate models to calculate AIC/BIC under registration,
+  # for the best shift in each stretch, compares to separate models to calculate AIC/BIC under registration,
   # / no registration.
 
   # returns:
   # - all_shifts : all the combos of stretching and shifting tried for each gene
   # - best_shifts : the best stretch and shift combo found for each gene, as well as info for scaling etc
-  # - model_comparison.dt : AIC / BIC scores for best registerd model found, compared to seperate model for
+  # - model_comparison.dt : AIC / BIC scores for best registerd model found, compared to separate model for
   # each genes expression in the 2 accessions.
 
 
@@ -261,7 +261,7 @@ get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_r
     }
 
     # calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the
-    # gene's expression seperately in Col0 and Ro18
+    # gene's expression separately in Col0 and Ro18
     model.comparison.dt <- calculate_all_model_comparison_stats(all.data.df, best_shifts)
     # add info on the stretch and shift applied
     model.comparison.dt <- merge(model.comparison.dt, best_shifts[, c('gene', 'stretch', 'shift'),],
@@ -276,13 +276,13 @@ get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_r
 
   all_shifts <- do.call('rbind', all_all_shifts) # all the combinations of shift, and stretch tried
   all_best_shifts <- do.call('rbind', all_best_shifts) # the best shifts for each stretch
-  all_model_comparison.dt <- do.call('rbind', all_model_comparison.dt) # model comparison of best shift (for each stretch) to seperate modeles
+  all_model_comparison.dt <- do.call('rbind', all_model_comparison.dt) # model comparison of best shift (for each stretch) to separate modeles
 
   # get the best registration applied (best stretch, and best shift) for each gene
   # picking by bic alone will favour fewer overlapping (considered) datapoints. Pick best in order to maximise
-  # how much better register.BIC is than seperate.BIC
-  all_model_comparison.dt$delta.BIC <- all_model_comparison.dt$registered.BIC - all_model_comparison.dt$seperate.BIC
-  all_model_comparison.dt[, is_best:=(delta.BIC==min(delta.BIC)), by=.(gene)] # best is one for which registered.BIC is as small as possible compared to seperate.BIC
+  # how much better register.BIC is than separate.BIC
+  all_model_comparison.dt$delta.BIC <- all_model_comparison.dt$registered.BIC - all_model_comparison.dt$separate.BIC
+  all_model_comparison.dt[, is_best:=(delta.BIC==min(delta.BIC)), by=.(gene)] # best is one for which registered.BIC is as small as possible compared to separate.BIC
   best_model_comparison.dt <- all_model_comparison.dt[all_model_comparison.dt$is_best==TRUE]
   # if there's a tie for best registration for a gene, keep the first one as the best
   if (any(duplicated(best_model_comparison.dt$gene))) {
@@ -304,7 +304,7 @@ get_best_stretch_and_shift <- function(to.shift.df, all.data.df, stretches, do_r
 apply_shift_to_registered_genes_only <- function(to.shift.df, best_shifts, model.comparison.dt) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
 
-  # genes for which registration model is better than seperate model
+  # genes for which registration model is better than separate model
   genes.to.register <- model.comparison.dt$gene[model.comparison.dt$BIC.registered.is.better]
   # apply the registration transformation to these genes
   if (length(genes.to.register > 0)) {
@@ -313,25 +313,25 @@ apply_shift_to_registered_genes_only <- function(to.shift.df, best_shifts, model
     registered.dt$is.registered <- TRUE
   }
 
-  # genes for which the seperate model is better than registration model
-  genes.to.keep.seperate <- model.comparison.dt$gene[!(model.comparison.dt$BIC.registered.is.better)]
+  # genes for which the separate model is better than registration model
+  genes.to.keep.separate <- model.comparison.dt$gene[!(model.comparison.dt$BIC.registered.is.better)]
 
   # generate the columns for these needed to concat. with registered.dt
-  seperate.dt <- to.shift.df[to.shift.df$locus_name %in% genes.to.keep.seperate,]
-  seperate.dt$stretched.time.delta <- 0 # in order to ensure that seperate copy
+  separate.dt <- to.shift.df[to.shift.df$locus_name %in% genes.to.keep.separate,]
+  separate.dt$stretched.time.delta <- 0 # in order to ensure that separate copy
   # print('line 594')
   # print(min(timepoint))
-  seperate.dt[, stretched.time.delta:=timepoint - min(timepoint), by=.(locus_name, accession)]
-  seperate.dt$shifted_time <- seperate.dt$stretched.time.delta + 14 # add eleven, as this is done for the registered genes
+  separate.dt[, stretched.time.delta:=timepoint - min(timepoint), by=.(locus_name, accession)]
+  separate.dt$shifted_time <- separate.dt$stretched.time.delta + 14 # add eleven, as this is done for the registered genes
   # to make comparible between Ro18 and Col. Therefore need to to this
   # here, to keep unregistered col0 in same frame as
   # stretch 1, shift 0 registered genes.
-  seperate.dt$is.registered <- FALSE
+  separate.dt$is.registered <- FALSE
 
   if (length(genes.to.register > 0)) {
-    out.dt <- rbind(registered.dt, seperate.dt)
+    out.dt <- rbind(registered.dt, separate.dt)
   } else {
-    out.dt <- seperate.dt
+    out.dt <- separate.dt
   }
 
   return(out.dt)

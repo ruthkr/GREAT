@@ -63,15 +63,15 @@ compare_registered_to_unregistered_model_with_ks <- function(curr.sym, all.data.
   # calculate the log likelihoods
   ara.logLik <- stats::logLik(ara.fit)
   bra.logLik <- stats::logLik(bra.fit)
-  seperate.logLik <- ara.logLik + bra.logLik # logLikelihoods, so sum
+  separate.logLik <- ara.logLik + bra.logLik # logLikelihoods, so sum
   combined.logLik <- stats::logLik(combined.fit)
 
   # calculate the comparison.stats - - AIC, BIC, smaller is better!
-  # 2*num.spline.params as fitting seperate models for Ara * Col
-  seperate.AIC <- calc_AIC(seperate.logLik, 2 * num.spline.params)
+  # 2*num.spline.params as fitting separate models for Ara * Col
+  separate.AIC <- calc_AIC(separate.logLik, 2 * num.spline.params)
   combined.AIC <- calc_AIC(combined.logLik, num.spline.params + num.registration.params)
 
-  seperate.BIC <- calc_BIC(seperate.logLik, 2 * num.spline.params, num.obs)
+  separate.BIC <- calc_BIC(separate.logLik, 2 * num.spline.params, num.obs)
   combined.BIC <- calc_BIC(combined.logLik, num.spline.params + num.registration.params, num.obs)
 
   # Kolmogorov-Smirnov test
@@ -103,8 +103,8 @@ compare_registered_to_unregistered_model_with_ks <- function(curr.sym, all.data.
       ggplot2::geom_point() +
       ggplot2::geom_line(data = spline.df) +
       ggplot2::ggtitle(paste0(
-        curr.sym, " : sep AIC:combo AIC=", round(seperate.AIC), ":", round(combined.AIC),
-        ", sep BIC: combo BIC=", round(seperate.BIC), ":", round(combined.BIC)
+        curr.sym, " : sep AIC:combo AIC=", round(separate.AIC), ":", round(combined.AIC),
+        ", sep BIC: combo BIC=", round(separate.BIC), ":", round(combined.BIC)
       ))
     # ggplot2::ggsave(paste0('./testing/fitted_splines/', curr.sym, '_', max(ara.pred.df$shifted_time), '.pdf'))
   }
@@ -117,9 +117,9 @@ compare_registered_to_unregistered_model_with_ks <- function(curr.sym, all.data.
     ara.fit = ara.fit,
     bra.fit = bra.fit,
     combined.fit = combined.fit,
-    seperate.AIC = seperate.AIC,
+    separate.AIC = separate.AIC,
     combined.AIC = combined.AIC,
-    seperate.BIC = seperate.BIC,
+    separate.BIC = separate.BIC,
     combined.BIC = combined.BIC,
     ks = ks
   )
@@ -169,9 +169,9 @@ plot_fit <- function(results_list, facets = c("arabidopsis", "brassica"), title 
       title = paste0(
         title,
         "AIC=",
-        round(results_list$seperate.AIC), ":", round(results_list$combined.AIC),
+        round(results_list$separate.AIC), ":", round(results_list$combined.AIC),
         ", BIC=",
-        round(results_list$seperate.BIC), ":", round(results_list$combined.BIC),
+        round(results_list$separate.BIC), ":", round(results_list$combined.BIC),
         " (sep:reg)"
       ),
       subtitle = paste0(

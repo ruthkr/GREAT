@@ -98,17 +98,17 @@ calculate_all_model_comparison_stats <- function(all_data_df,
                                                   accession_data_to_align,
                                                   accession_data_target)
 
-    out.sepAIC[i] <- L[["seperate.AIC"]]
+    out.sepAIC[i] <- L[["separate.AIC"]]
     out.combAIC[i] <- L[["combined.AIC"]]
-    out.sepBIC[i] <- L[["seperate.BIC"]]
+    out.sepBIC[i] <- L[["separate.BIC"]]
     out.combBIC[i] <- L[["combined.BIC"]]
 
   }
 
   out <- data.table::data.table('gene' = genes,
-                                           'seperate.AIC' = out.sepAIC,
+                                           'separate.AIC' = out.sepAIC,
                                            'registered.AIC' = out.combAIC,
-                                           'seperate.BIC' = out.sepBIC,
+                                           'separate.BIC' = out.sepBIC,
                                           'registered.BIC' = out.combBIC)
 
   return(out)
@@ -367,15 +367,15 @@ compare_registered_to_unregistered_model <- function(curr_sym,
   # Calculate the log likelihoods
   data_to_align_logLik <- stats::logLik(data_to_align_fit)
   data_target_logLik <- stats::logLik(data_target_fit)
-  seperate_logLik <- data_to_align_logLik + data_target_logLik # logLikelihoods, so sum
+  separate_logLik <- data_to_align_logLik + data_target_logLik # logLikelihoods, so sum
   combined_logLik <- stats::logLik(combined_fit)
 
   # Calculate the comparison.stats - - AIC, BIC, smaller is better!
-  # 2*num.spline.params as fitting seperate models for Ara * Col
-  seperate.AIC <- calc_AIC(seperate_logLik, 2*num.spline.params)
+  # 2*num.spline.params as fitting separate models for Ara * Col
+  separate.AIC <- calc_AIC(separate_logLik, 2*num.spline.params)
   combined.AIC <- calc_AIC(combined_logLik, num.spline.params+num.registration.params)
 
-  seperate.BIC <- calc_BIC(seperate_logLik, 2*num.spline.params, num.obs)
+  separate.BIC <- calc_BIC(separate_logLik, 2*num.spline.params, num.obs)
   combined.BIC <- calc_BIC(combined_logLik, num.spline.params+num.registration.params, num.obs)
 
 
@@ -396,15 +396,15 @@ compare_registered_to_unregistered_model <- function(curr_sym,
       ggplot2::aes(x=shifted_time, y=mean_cpm, colour=accession) +
       ggplot2::geom_point()+
       ggplot2::geom_line(data=spline.df)+
-      ggplot2::ggtitle(paste0(curr_sym, ' : sep AIC:combo AIC=', round(seperate.AIC), ':', round(combined.AIC),
-                              ', sep BIC: combo BIC=', round(seperate.BIC), ':', round(combined.BIC)))
+      ggplot2::ggtitle(paste0(curr_sym, ' : sep AIC:combo AIC=', round(separate.AIC), ':', round(combined.AIC),
+                              ', sep BIC: combo BIC=', round(separate.BIC), ':', round(combined.BIC)))
     ggplot2::ggsave(paste0(curr_sym, '_', max(ara.pred.df$shifted_time), '.pdf'))
 
   }
 
-  return(list(seperate.AIC = seperate.AIC,
+  return(list(separate.AIC = separate.AIC,
               combined.AIC = combined.AIC,
-              seperate.BIC = seperate.BIC,
+              separate.BIC = separate.BIC,
               combined.BIC = combined.BIC))
 
 }

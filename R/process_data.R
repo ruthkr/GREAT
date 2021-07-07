@@ -405,17 +405,6 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
   return(out_dt)
 }
 
-#' @export
-apply_shift_to_all <- function(to_shift_df, best_shifts, model_comparison_dt) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-
-  registered_dt <- to_shift_df
-  registered_dt <- apply_best_shift(registered_dt, best_shifts)
-  # registered_dt$shifted_time <- registered_dt$stretched_time_delta + 14 # add eleven, as this is done for the registered genes
-
-  registered_dt$is_registered <- TRUE
-  return(registered_dt)
-}
 
 #' @export
 impute_arabidopsis_values <- function(shifted.mean_df) {

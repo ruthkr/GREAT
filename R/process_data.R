@@ -89,10 +89,10 @@ prepare_scaled_and_registered_data <- function(mean_df, all_data_df, stretches, 
   # get the best-shifted and stretched mean gene expression, only to genes which registration is better than
   # separate models by BIC. Don't stretch out, or shift genes for which separate is better.
   # registration is applied to col0.
-  shifted.mean_df <- apply_shift_to_registered_genes_only(to_shift_df, best_shifts, model_comparison_dt)
-  # shifted.mean_df <- apply_shift_to_all(to_shift_df, best_shifts, model_comparison_dt)
-  print(paste0('Max value of mean_cpm :', max(shifted.mean_df$mean_cpm)))
-  # shifted.mean_df <- apply_best_shift(to_shift_df, best_shifts) # can be NA if exactly tied for what the best shift was
+  shifted_mean_df <- apply_shift_to_registered_genes_only(to_shift_df, best_shifts, model_comparison_dt)
+  # shifted_mean_df <- apply_shift_to_all(to_shift_df, best_shifts, model_comparison_dt)
+  print(paste0('Max value of mean_cpm :', max(shifted_mean_df$mean_cpm)))
+  # shifted_mean_df <- apply_best_shift(to_shift_df, best_shifts) # can be NA if exactly tied for what the best shift was
 
   # GOI <- 'MSTRG.11237'
   # ggplot2::ggplot(all_data_df[all_data_df$locus_name==GOI])+
@@ -100,7 +100,7 @@ prepare_scaled_and_registered_data <- function(mean_df, all_data_df, stretches, 
   #   ggplot2::geom_point()
   #
   # #sanity plot that done right
-  # ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name==GOI])+
+  # ggplot2::ggplot(shifted_mean_df[shifted_mean_df$locus_name==GOI])+
   #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession) +
   #   ggplot2::geom_point()+
   #   ggplot2::geom_line()
@@ -110,10 +110,10 @@ prepare_scaled_and_registered_data <- function(mean_df, all_data_df, stretches, 
   # so can compare using heatmap.
   # arabidopsis curves are the ones that been shifted around. Linear impute values for these
   # curves so that brassica samples can be compared to an arabidopsis point.
-  imputed.mean_df <- impute_arabidopsis_values(shifted.mean_df)
+  imputed.mean_df <- impute_aligned_exp_values(shifted_mean_df)
 
   #sanity plot that done right
-  # ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G001540.3C'])+
+  # ggplot2::ggplot(shifted_mean_df[shifted_mean_df$locus_name=='BRAA01G001540.3C'])+
   #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession) +
   #   ggplot2::geom_point()+
   #   ggplot2::geom_line()
@@ -426,76 +426,67 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
 }
 
 
+
+#' Setting aligned expression data and data target to be the same in a set of common time points
+#'
+#' `impute_aligned_exp_values` is a function to impute aligned times at set of common time points in order to allow sample distance comparison to data target. this means that aligned expression data were imputed relative to data target time points. Since the original value of aligned data are not meant to be discarded, the imputed times are generated from minimum and maximum shifted time points of aligned data (not just data target time points).
+#'
+#' @param shifted_mean_df All registered data frame.
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_target Accession name of data target.
+#'
+#' @return
 #' @export
-impute_arabidopsis_values <- function(shifted.mean_df) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
-  # Arabidopsis gene expression profiles are shifted all over. Need to impute times at set of common timepoints
-  # in order to allow sample distance comparison to Ro18.
-  #
-  # Ro18 genes haven't been shifted around, therefore imputed timepoints are realtive to Ro18 timepoints.
-  # We ONLY have Ro18 observations for 11, 13, 15, ... 35
-  #
-  # Col0 can have had different shifts applied to them, so need to impute them to a common scale, and to compare to Ro18
-  #
-  # therefore, we only need to impute Arabidopsis gene expression, which will be compared to the Ro18 timepoints.
-  # BUT don't want to discard any col0 data, so want to generate imputed time observations for col0 from minimum
-  # to maximum shifted timepoints for Col0 not just for 11,13,15, etc Ro18 observations.
+impute_aligned_exp_values <- function(shifted_mean_df,
+                                      accession_data_to_align,
+                                      accession_data_target) {
+
+  # The imputed aligned data times going to estimate gene expression for
+  imputed_timepoints <- round(seq(min(shifted_mean_df$shifted_time), max(shifted_mean_df$shifted_time)))
+
+  out_list <- list()
+  out_list <- c(out_list, list(shifted_mean_df[shifted_mean_df$accession == accession_data_target]))
 
 
-  # sanity plotting - a registered one
-  # ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G001090.3C', ])+
-  #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession)+
-  #   ggplot2::geom_point()
-  # # an unregistered one
-  # ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G003140.3C', ])+
-  #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession)+
-  #   ggplot2::geom_point()
-
-  # The imputed col0 times going to extimate gene expression for
-  imputed.timepoints <- round(seq(min(shifted.mean_df$shifted_time), max(shifted.mean_df$shifted_time)))
-
-  out.list <- list()
-  out.list <- c(out.list, list(shifted.mean_df[shifted.mean_df$accession=='Ro18']))
-
-  curr.gene <- 'BRAA01G001090.3C' #unique(shifted.mean_df$locus_name)[17]
   count <- 0
-  for (curr.gene in unique(shifted.mean_df$locus_name)) {
+  for (curr_gene in unique(shifted_mean_df$locus_name)) {
+
     if (count %% 100 == 0) {
-      print(paste0(count, ' / ', length(unique(shifted.mean_df$locus_name))))
+
+      message(count, ' / ', length(unique(shifted_mean_df$locus_name)))
+
     }
 
-    # get the current gene expression data
-    curr.df <- shifted.mean_df[shifted.mean_df$locus_name==curr.gene, ]
+    # Get the current gene expression data
+    curr_df <- shifted_mean_df[shifted_mean_df$locus_name == curr_gene, ]
 
-    # skip over this one, if not assigned a best shift value, because brassica gene not expressed
-    # if (all(is.na(curr.df$mean_cpm))) {
-    #   next
-    # }
+    aligned_df <- curr_df[curr_df$accession == accession_data_to_align, ]
+    # bra.df <- curr_df[curr_df$accession == accession_data_target, ]
 
-    ara.df <- curr.df[curr.df$accession=='Col0',]
-    bra.df <- curr.df[curr.df$accession=='Ro18',]
+    interp_aligned_df <- data.table::data.table('locus_name' = curr_gene,
+                                                'accession' = accession_data_to_align,
+                                                'tissue' = 'apex',
+                                                'timepoint' = NA,
+                                                 'stretched_time_delta' = NA,
+                                                'shifted_time' = imputed_timepoints,
+                                                'is_registered'= unique(aligned_df$is_registered)[1])
 
-    interp.ara.df <- data.table::data.table(data.frame('locus_name'=curr.gene, 'accession'='Col0', 'tissue'='apex', 'timepoint'=NA,
-                                                       'stretched_time_delta'= NA, 'shifted_time'=imputed.timepoints,
-                                                       'is_registered'= unique(ara.df$is_registered)[1]))
+    # For each data target timepoint, interpolate the comparable aligned expression data
+    # by linear interpolation between the neighbouring two aligned expression values.
+    # If not between two aligned expression values because shifted outside comparable range, set to NA.
+    interp_aligned_df$mean_cpm <- sapply(imputed_timepoints,
+                                         interpolate_data_target_comparison_expression,
+                                         data_target_dt = aligned_df)
 
-    # for each brassica timepoint, interpolate the comparible arabidopsis expression
-    # by linear interpolation between the neighbouring 2 ara values. If not between 2 ara values
-    # because shifted outside comparible range, set to NA
-    interp.ara.df$mean_cpm <- sapply(imputed.timepoints, interpolate_data_target_comparison_expression, bra.dt=ara.df)
-
-
-    # sanity testing - line is interpolated.
-    # ggplot2::ggplot(curr.df)+
-    #   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession)+
-    #   ggplot2::geom_point()+
-    #   ggplot2::geom_line(data=interp.ara.df)
-
-    out.list <- c(out.list, list(interp.ara.df))
+    out_list <- c(out_list, list( interp_aligned_df))
     count <- count+1
+
   }
-  out.df <- do.call('rbind', out.list)
-  return(out.df)
+
+  out_df <- do.call('rbind', out_list)
+
+  return(out_df)
+
 }
 
 

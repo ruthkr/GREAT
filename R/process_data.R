@@ -170,40 +170,60 @@ change.accession.names <- function(mean_df, all_data_df, transformed.timecourse)
               'original.other.accession.name'=original.other.accession.name))
 }
 
-#all.rep.data <- all_data_df
+
+
+#' Scaling all un-averaged data
+#'
+#' `scale_all_rep_data` is a function to scale
+#'
+#' @param mean_df Input data containing mean of each time point.
+#' @param all_rep_data Input all data (without taking mean).
+#' @param scale_func Scaling method choice applied in all_rep_data. There are two options: (a) "scale" where all expression values are subtracted by mean value and divided by standard deviation and (b) "my_scale" where expression values are divided by mean values
+#'
+#' @return Scaled expression data in all_rep_data.
 #' @export
-scale_all_rep_data <- function(mean_df, all.rep.data, scale.func) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
+scale_all_rep_data <- function(mean_df,
+                               all_rep_data,
+                               scale_func) {
+
   # apply the same scaling which done to the mean expression data
   # to all the reps.
   # (subtract mean, and divide by sd), using the values for the mean data
   # as this is what was used to find the best shift.
 
-  # calculate the summary stats to use for the rescaling
-  gene.expression.stats <- unique(mean_df[,
-                                          .(mean_val=mean(mean_cpm),
-                                            sd_val=stats::sd(mean_cpm)),
-                                          by=.(locus_name, accession)])
+  # Calculate the summary stats to use for the rescaling
+  gene_expression_stats <- unique(mean_df[, .(
+    mean_val = mean(mean_cpm),
+    sd_val = stats::sd(mean_cpm)
+  ),
+  by = .(locus_name, accession)
+  ])
 
-  all.rep.data <- merge(all.rep.data, gene.expression.stats, by=c('locus_name', 'accession'))
-  if (scale.func == 'scale') {
-    all.rep.data$scaled.norm.cpm <- (all.rep.data$mean_cpm - all.rep.data$mean_val) / all.rep.data$sd_val
-  } else if (scale.func == 'my_scale') {
-    all.rep.data$scaled.norm.cpm <- (all.rep.data$mean_cpm / all.rep.data$mean_val)
+  # Combine all_rep_data with gene_expression_stats
+  all_rep_data <- merge(all_rep_data, gene_expression_stats, by = c("locus_name", "accession"))
+
+  # Adjust scaling calculation depends on the scale function choice
+  if (scale_func == "scale") {
+    all_rep_data$scaled_norm_cpm <- (all_rep_data$mean_cpm - all_rep_data$mean_val) / all_rep_data$sd_val
+  } else if (scale_func == "my_scale") {
+    all_rep_data$scaled_norm_cpm <- (all_rep_data$mean_cpm / all_rep_data$mean_val)
   } else {
-    print('invalid scale option for scale_all_rep_data')
+    message("invalid scale option for scale_all_rep_data")
+
     stop()
   }
 
-  out <- subset(all.rep.data, select=c('locus_name', 'accession', 'tissue', 'timepoint',
-                                       'scaled.norm.cpm'))
+  out <- subset(all_rep_data,
+    select = c(
+      "locus_name",
+      "accession",
+      "tissue",
+      "timepoint",
+      "scaled_norm_cpm"
+    )
+  )
 
-  names(out)[names(out)=='scaled.norm.cpm'] <- 'mean_cpm'
-
-  # ggplot2::ggplot(mean_df[mean_df$locus_name=='BRAA01G000040.3C', ], ) +
-  #  ggplot2::aes(x=timepoint, y=mean_cpm, color=accession
-  #  ggplot2::geom_point()
-
+  names(out)[names(out) == "scaled_norm_cpm"] <- "mean_cpm"
 
   return(out)
 }
@@ -482,7 +502,7 @@ impute_arabidopsis_values <- function(shifted.mean_df) {
 
 #' @export
 fix.accessions <- function(df, original.transformed.accession, original.other.accession) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
+
   # swap Col0 with original.transformed.accession, and Ro18 with original.other.accession
   new.df.accession <- df$accession
   new.df.accession[df$accession=='Col0'] <- original.transformed.accession

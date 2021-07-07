@@ -76,13 +76,13 @@ prepare_scaled_and_registered_data <- function(mean_df, all_data_df, stretches, 
 
 
   # report model comparison results
-  model_comparison_dt$BIC.registered.is.better <- (model_comparison_dt$registered.BIC < model_comparison_dt$separate.BIC)
+  model_comparison_dt$BIC_registered_is_better <- (model_comparison_dt$registered.BIC < model_comparison_dt$separate.BIC)
   model_comparison_dt$AIC.registered.is.better <- (model_comparison_dt$registered.AIC < model_comparison_dt$separate.AIC)
-  model_comparison_dt$ABIC.registered.is.better <- (model_comparison_dt$BIC.registered.is.better & model_comparison_dt$AIC.registered.is.better)
+  model_comparison_dt$ABIC_registered_is_better <- (model_comparison_dt$BIC_registered_is_better & model_comparison_dt$AIC.registered.is.better)
   print('################## Model comparison results #######################')
   print(paste0('AIC finds registration better than separate for :', sum(model_comparison_dt$AIC.registered.is.better), ' / ', nrow(model_comparison_dt)))
-  print(paste0('BIC finds registration better than separate for :', sum(model_comparison_dt$BIC.registered.is.better), ' / ', nrow(model_comparison_dt)))
-  print(paste0('AIC & BIC finds registration better than separate for :', sum(model_comparison_dt$ABIC.registered.is.better), ' / ', nrow(model_comparison_dt)))
+  print(paste0('BIC finds registration better than separate for :', sum(model_comparison_dt$BIC_registered_is_better), ' / ', nrow(model_comparison_dt)))
+  print(paste0('AIC & BIC finds registration better than separate for :', sum(model_comparison_dt$ABIC_registered_is_better), ' / ', nrow(model_comparison_dt)))
   print('###################################################################')
 
 
@@ -336,54 +336,85 @@ get_best_stretch_and_shift <- function(to_shift_df,
 
 }
 
+
+#' Apply shift for all registered genes
+#'
+#' `apply_shift_to_registered_genes_only` is a function to apply shift for all registered model based on `model_comparison_dt` using information from `best_shifts`.
+#'
+#' @param to_shift_df Input data frame.
+#' @param best_shifts Data frame containing information of best shift and stretch values.
+#' @param model_comparison_dt Data frame containing information of comparison of BIC and AIC for registred and non-registered genes.
+#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_target Accession name of data target.
+#' @param data_to_align_time_added Time points to be added in data to align.
+#' @param data_target_time_added Time points to be added in data target.
+#'
+#' @return Data frame for all transformed genes for those with better BIC values.
 #' @export
 apply_shift_to_registered_genes_only <- function(to_shift_df,
                                                  best_shifts,
-                                                 model_comparison_dt) {
+                                                 model_comparison_dt,
+                                                 accession_data_to_align,
+                                                 accession_data_target,
+                                                 data_to_align_time_added = 11,
+                                                 data_target_time_added) {
 
-  # genes for which registration model is better than separate model
-  genes.to.register <- model_comparison_dt$gene[model_comparison_dt$BIC.registered.is.better]
-  # apply the registration transformation to these genes
-  if (length(genes.to.register > 0)) {
-    register.dt <- to_shift_df[to_shift_df$locus_name %in% genes.to.register,]
-    registered.dt <- apply_best_shift(register.dt, best_shifts)
-    registered.dt$is.registered <- TRUE
+  # Genes for which registration model is better than separate model
+  gene_to_register <- model_comparison_dt$gene[model_comparison_dt$BIC_registered_is_better]
+
+
+  # Apply the registration transformation to these genes --------------------
+  if (length(gene_to_register > 0)) {
+    register.dt <- to_shift_df[to_shift_df$locus_name %in% gene_to_register, ]
+    registered_dt <- apply_best_shift(
+      data = register.dt,
+      best_shifts,
+      accession_data_to_align,
+      accession_data_target,
+      data_to_align_time_added,
+      data_target_time_added
+    )
+
+    registered_dt$is_registered <- TRUE
   }
 
-  # genes for which the separate model is better than registration model
-  genes.to.keep.separate <- model_comparison_dt$gene[!(model_comparison_dt$BIC.registered.is.better)]
+  # Genes for which the separate model is better than registration model
+  genes_to_keep_separate <- model_comparison_dt$gene[!(model_comparison_dt$BIC_registered_is_better)]
 
-  # generate the columns for these needed to concat. with registered.dt
-  separate.dt <- to_shift_df[to_shift_df$locus_name %in% genes.to.keep.separate,]
-  separate.dt$stretched.time.delta <- 0 # in order to ensure that separate copy
-  # print('line 594')
-  # print(min(timepoint))
-  separate.dt[, stretched.time.delta:=timepoint - min(timepoint), by=.(locus_name, accession)]
-  separate.dt$shifted_time <- separate.dt$stretched.time.delta + 14 # add eleven, as this is done for the registered genes
-  # to make comparible between Ro18 and Col. Therefore need to to this
-  # here, to keep unregistered col0 in same frame as
-  # stretch 1, shift 0 registered genes.
-  separate.dt$is.registered <- FALSE
+  # Generate the columns for these needed to concat with registered_dt
+  separate_dt <- to_shift_df[to_shift_df$locus_name %in% genes_to_keep_separate, ]
+  # In order to ensure that separate copy
+  separate_dt$stretched_time_delta <- 0
 
-  if (length(genes.to.register > 0)) {
-    out.dt <- rbind(registered.dt, separate.dt)
+  # Apply the stretch transformation to these genes --------------------
+  separate_dt[, stretched_time_delta := timepoint - min(timepoint), by = .(locus_name, accession)]
+
+  # Here, we need to add additional time to make it comparable between data to align and data target
+  # Therefore need to to this here, to keep unregistered in same frame as stretch 1, shift 0 registered genes.
+  separate_dt$shifted_time <- separate_dt$stretched_time_delta + data_to_align_time_added
+
+  separate_dt$is_registered <- FALSE
+
+  # Combine both registered and non-registered data frame
+  if (length(gene_to_register > 0)) {
+    out_dt <- rbind(registered_dt, separate_dt)
   } else {
-    out.dt <- separate.dt
+    out_dt <- separate_dt
   }
 
-  return(out.dt)
+  return(out_dt)
 }
 
 #' @export
 apply_shift_to_all <- function(to_shift_df, best_shifts, model_comparison_dt) {
   message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
 
-  registered.dt <- to_shift_df
-  registered.dt <- apply_best_shift(registered.dt, best_shifts)
-  # registered.dt$shifted_time <- registered.dt$stretched.time.delta + 14 # add eleven, as this is done for the registered genes
+  registered_dt <- to_shift_df
+  registered_dt <- apply_best_shift(registered_dt, best_shifts)
+  # registered_dt$shifted_time <- registered_dt$stretched_time_delta + 14 # add eleven, as this is done for the registered genes
 
-  registered.dt$is.registered <- TRUE
-  return(registered.dt)
+  registered_dt$is_registered <- TRUE
+  return(registered_dt)
 }
 
 #' @export
@@ -436,8 +467,8 @@ impute_arabidopsis_values <- function(shifted.mean_df) {
     bra.df <- curr.df[curr.df$accession=='Ro18',]
 
     interp.ara.df <- data.table::data.table(data.frame('locus_name'=curr.gene, 'accession'='Col0', 'tissue'='apex', 'timepoint'=NA,
-                                                       'stretched.time.delta'= NA, 'shifted_time'=imputed.timepoints,
-                                                       'is.registered'= unique(ara.df$is.registered)[1]))
+                                                       'stretched_time_delta'= NA, 'shifted_time'=imputed.timepoints,
+                                                       'is_registered'= unique(ara.df$is_registered)[1]))
 
     # for each brassica timepoint, interpolate the comparible arabidopsis expression
     # by linear interpolation between the neighbouring 2 ara values. If not between 2 ara values

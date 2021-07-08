@@ -38,7 +38,7 @@ List of all main functions
 load_mean.df()
 shuffle_ro18_timepoints(mean.df, all.data.df)
 shuffle_ro18_gene_names(mean.df, all.data.df)
-prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min_num_overlapping_points, shift_extreme, transformed.timecourse)
+prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initial_rescale, should.rescale, min_num_overlapping_points, shift_extreme, transformed.timecourse)
 calculate_between_sample_distance(mean.df, mean.df.sc, imputed.mean.df)
 make_data_heatmaps(D.mean, D.scaled, D.registered, D.scaled.onlyNR, D.scaled.onlyR, D.registered.onlyR)
 ```
@@ -47,7 +47,7 @@ make_data_heatmaps(D.mean, D.scaled, D.registered, D.scaled.onlyNR, D.scaled.onl
 
 ``` r
 jobNum <- 1 # if running lots of times on cluster to get enough shuffled results, then jobNum is used to prevent output overwriting
-do.initial.rescale <- 'nope' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
+do.initial_rescale <- 'nope' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
 do.register.rescale <- 'rescale' # should be 'rescale' if want to rescale using only the overlapping points during  registration
 shuffle.type <- 'shuffle.expression' # whether should shuffle by shuffling the gene ids compared, or by shuffling the gene expression
 # for each gene c('shuffle.genes', or 'shuffle.expression)
@@ -81,10 +81,10 @@ print('********************')
 
 ``` r
 # setup flags for rescaling options
-if (do.initial.rescale=='rescale') {
-  initial.rescale <- TRUE
+if (do.initial_rescale=='rescale') {
+  initial_rescale <- TRUE
 } else {
-  initial.rescale <- FALSE
+  initial_rescale <- FALSE
 }
 if (do.register.rescale=='rescale') {
   should.rescale <- TRUE
@@ -94,7 +94,7 @@ if (do.register.rescale=='rescale') {
 
 #real.and.shuffled <- c('real', 1)
 
-if (initial.rescale==TRUE) {
+if (initial_rescale==TRUE) {
   print('********************')
   print('will rescale the data prior to registering, and register using this rescaled mean data!')
   print('********************')
@@ -414,8 +414,8 @@ mean.df.sc %>%
     ## 5: BRAA01G000040.3C      Ro18   apex        35 202.9576  -1.2290854
 
 ``` r
-initial.rescale = "TRUE"
-if (initial.rescale == TRUE) {
+initial_rescale = "TRUE"
+if (initial_rescale == TRUE) {
   # apply rescale to mean.df prior to registration
   to.shift.df <- data.table::copy(mean.df.sc)
   to.shift.df$mean_cpm <- to.shift.df$sc.mean_cpm
@@ -671,7 +671,7 @@ all_scores_df %>%
 
 ``` r
   ## PREPARE, AND REGISTER AND SCALE THE DATA
-  O <- prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min_num_overlapping_points, shift_extreme, transformed.timecourse)
+  O <- prepare_scaled_and_registered_data(mean.df, all.data.df, stretch=stretch, initial_rescale, should.rescale, min_num_overlapping_points, shift_extreme, transformed.timecourse)
 
   mean.df <- O[['mean.df']] # mean.df is unchanged
   mean.df.sc <- O[['mean.df.sc']] # mean.df.sc : data is scaled(center=T, scale=T)

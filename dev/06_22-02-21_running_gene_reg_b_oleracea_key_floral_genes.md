@@ -155,7 +155,7 @@ setdiff(missing_genes, b_oleracea_rds %>%
 ## Specify all parameters
 
 ``` r
-do.initial.rescale <- 'TRUE' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
+do.initial_rescale <- 'TRUE' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
 do.register.rescale <- 'rescale' 
 outdir.string <- 'TESTING_B_Oleracea_key_floral_genes'
 
@@ -250,7 +250,7 @@ shifted_stretched_all <- prepare_scaled_and_registered_data(
   mean.df, 
   all.data.df,
   stretch, 
-  initial.rescale = TRUE, 
+  initial_rescale = TRUE, 
   # do_rescale = should.rescale,
   do_rescale = TRUE,
   min_num_overlapping_points,

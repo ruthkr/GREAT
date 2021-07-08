@@ -869,7 +869,7 @@ change.accession.names <- function(mean_df, all.data.df, transformed.timecourse)
 
 
 # stretches=c(1, 1.5, 2.0)
-# initial.rescale=FALSE
+# initial_rescale=FALSE
 # do_rescale=FALSE
 # min_num_overlapping_points = 4
 # test.genes <- unique(mean_df$locus_name)[1:101]
@@ -880,7 +880,7 @@ change.accession.names <- function(mean_df, all.data.df, transformed.timecourse)
 # transformed.timecourse <- 'Ro18'
 
 prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches,
-                                               initial.rescale, do_rescale,
+                                               initial_rescale, do_rescale,
                                                min_num_overlapping_points, shift_extreme,
                                                transformed.timecourse) {
   ## APPLY NORMALISATION OF EXPRESSION FOR EACH GENE ACROSS ALL TIMEPOINTS ##
@@ -907,7 +907,7 @@ prepare_scaled_and_registered_data <- function(mean_df, all.data.df, stretches,
 
   # specify which data to use for registering.
   # whether prior rescaled mean, or mean data should be used for registration
-  if (initial.rescale==TRUE) {
+  if (initial_rescale==TRUE) {
     # apply rescale to mean_df prior to registration
     to.shift.df <- copy(mean_df.sc)
     to.shift.df$mean_cpm <- to.shift.df$sc.mean_cpm

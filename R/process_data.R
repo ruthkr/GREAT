@@ -7,8 +7,8 @@
 #' @param stretches Candidate registration stretch factors to apply to data to align.
 #' @param shift_extreme The absolute maximum value which can be applied as a shift to gene expression timecourse (days).
 #' @param num_shifts Number of shifts between minimum and maximum values of shift.
-#' @param min_num_overlapping_points Number of minimum overlapping time points.  Shifts will be only considered
-#' @param initial.rescale Scaling gene expression prior to registration if TRUE.
+#' @param min_num_overlapping_points Number of minimum overlapping time points.  Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
+#' @param initial_rescale Scaling gene expression prior to registration if TRUE.
 #' @param do_rescale Scaling gene expression using only overlapping timepoints points during registration.
 #' @param testing Showing immediate results (inclusing plots) if TRUE.
 #' @param accession_data_to_align Accession name of data which will be aligned.
@@ -24,7 +24,7 @@ scale_and_register_data <- function(mean_df,
                                     shift_extreme,
                                     num_shifts,
                                     min_num_overlapping_points,
-                                    initial.rescale,
+                                    initial_rescale,
                                     do_rescale,
                                     testing,
                                     accession_data_to_align,
@@ -41,8 +41,8 @@ scale_and_register_data <- function(mean_df,
     by = .(locus_name, accession)
   ]
 
-  # Apply scaling before registration (if initial.rescale == TRUE), otherwise using original data
-  if (initial.rescale == TRUE) {
+  # Apply scaling before registration (if initial_rescale == TRUE), otherwise using original data
+  if (initial_rescale == TRUE) {
 
     # apply rescale to mean_df prior to registration
     to_shift_df <- data.table::copy(mean_df_sc)

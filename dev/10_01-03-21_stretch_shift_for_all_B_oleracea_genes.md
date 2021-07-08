@@ -132,7 +132,7 @@ all.data.df <- b_oleracea_mean_df[[2]] %>%
 
 ``` r
 outdir.string <- 'TESTING_B_Oleracea_all_genes'
-do.initial.rescale <- 'TRUE' 
+do.initial_rescale <- 'TRUE' 
 do.register.rescale <- 'rescale'
 
 stretch = c(7, 6.5, 6, 5.5, 5, 4.5, 4, 3.5, 3, 2.5)
@@ -142,10 +142,10 @@ transformed.timecourse = 'Col0'
 num.shuffled <- 1 
 jobNum <- 1
 
-if (do.initial.rescale=='rescale') {
-  initial.rescale <- TRUE
+if (do.initial_rescale=='rescale') {
+  initial_rescale <- TRUE
 } else {
-  initial.rescale <- FALSE
+  initial_rescale <- FALSE
 }
 if (do.register.rescale=='rescale') {
   should.rescale <- TRUE
@@ -159,7 +159,7 @@ shifted_stretched_all <- prepare_scaled_and_registered_data(
   mean_df, 
   all.data.df,
   stretch, 
-  initial.rescale = TRUE, 
+  initial_rescale = TRUE, 
   do_rescale = FALSE,
   min_num_overlapping_points,
   shift_extreme, 

@@ -11,7 +11,7 @@ scale_and_register_data(
   shift_extreme,
   num_shifts,
   min_num_overlapping_points,
-  initial.rescale,
+  initial_rescale,
   do_rescale,
   testing,
   accession_data_to_align,
@@ -31,9 +31,9 @@ scale_and_register_data(
 
 \item{num_shifts}{Number of shifts between minimum and maximum values of shift.}
 
-\item{min_num_overlapping_points}{Number of minimum overlapping time points.  Shifts will be only considered}
+\item{min_num_overlapping_points}{Number of minimum overlapping time points.  Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.}
 
-\item{initial.rescale}{Scaling gene expression prior to registration if TRUE.}
+\item{initial_rescale}{Scaling gene expression prior to registration if TRUE.}
 
 \item{do_rescale}{Scaling gene expression using only overlapping timepoints points during registration.}
 

@@ -21,7 +21,7 @@ In this Rmd file, I tried to understand the process after getting all stretch an
 
 ```{r}
 jobNum <- 1 # if running lots of times on cluster to get enough shuffled results, then jobNum is used to prevent output overwriting
-do.initial.rescale <- 'nope' # should be 'rescale' if want to use scaled df for registration, rather than mean_df
+do.initial_rescale <- 'nope' # should be 'rescale' if want to use scaled df for registration, rather than mean_df
 do.register.rescale <- 'rescale' # should be 'rescale' if want to rescale using only the overlapping points during  registration
 shuffle.type <- 'shuffle.expression' # whether should shuffle by shuffling the gene ids compared, or by shuffling the gene expression
 # for each gene c('shuffle.genes', or 'shuffle.expression)
@@ -49,10 +49,10 @@ num.shuffled <- 1 #25 # for real, ran 40 jobs to get 40 * 25 random shuffled pai
 
 ```{r}
 # setup flags for rescaling options
-if (do.initial.rescale=='rescale') {
-  initial.rescale <- TRUE
+if (do.initial_rescale=='rescale') {
+  initial_rescale <- TRUE
 } else {
-  initial.rescale <- FALSE
+  initial_rescale <- FALSE
 }
 if (do.register.rescale=='rescale') {
   should.rescale <- TRUE
@@ -62,7 +62,7 @@ if (do.register.rescale=='rescale') {
 
 #real.and.shuffled <- c('real', 1)
 
-if (initial.rescale==TRUE) {
+if (initial_rescale==TRUE) {
   print('********************')
   print('will rescale the data prior to registering, and register using this rescaled mean data!')
   print('********************')

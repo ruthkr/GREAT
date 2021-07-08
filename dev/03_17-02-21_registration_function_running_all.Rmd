@@ -21,7 +21,7 @@ source("scripts/chiifu_v3_scripts/unused_functions.R")
 This short report is to try to run all of the registration functions, with the purpose to get/reproduce the same results in Alex's paper. 
 
 ```r
-do.initial.rescale <- 'rescale' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
+do.initial_rescale <- 'rescale' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
 do.register.rescale <- 'rescale' 
 outdir.string <- 'TESTING_rescale_as_register___shuffled_g_v4__'
 ```
@@ -45,10 +45,10 @@ jobNum <- 1
 
 ```r
 # setup flags for rescaling options
-if (do.initial.rescale=='rescale') {
-  initial.rescale <- TRUE
+if (do.initial_rescale=='rescale') {
+  initial_rescale <- TRUE
 } else {
-  initial.rescale <- FALSE
+  initial_rescale <- FALSE
 }
 if (do.register.rescale=='rescale') {
   should.rescale <- TRUE
@@ -56,7 +56,7 @@ if (do.register.rescale=='rescale') {
   should.rescale <- FALSE
 }
 
-if (initial.rescale==TRUE) {
+if (initial_rescale==TRUE) {
   print('********************')
   print('will rescale the data prior to registering, and register using this rescaled mean data!')
   print('********************')
@@ -104,7 +104,7 @@ all.data.df <- L[[2]]
 ```r
 ## PREPARE, AND REGISTER AND SCALE THE DATA
 O <- prepare_scaled_and_registered_data(mean.df, all.data.df,
-  stretch = stretch, initial.rescale, should.rescale, min_num_overlapping_points,
+  stretch = stretch, initial_rescale, should.rescale, min_num_overlapping_points,
   shift_extreme, transformed.timecourse
 )
 

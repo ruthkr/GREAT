@@ -138,7 +138,7 @@ mean_df
 ## Specify all parameters
 
 ``` r
-do.initial.rescale <- 'TRUE' # should be 'rescale' if want to use scaled df for registration, rather than mean_df
+do.initial_rescale <- 'TRUE' # should be 'rescale' if want to use scaled df for registration, rather than mean_df
 do.register.rescale <- 'rescale' 
 outdir.string <- 'TESTING_B_Oleracea_key_floral_genes_AP3'
 
@@ -157,10 +157,10 @@ num.shuffled <- 1
 jobNum <- 1
 
 # Setup flags for rescaling options
-if (do.initial.rescale=='rescale') {
-  initial.rescale <- TRUE
+if (do.initial_rescale=='rescale') {
+  initial_rescale <- TRUE
 } else {
-  initial.rescale <- FALSE
+  initial_rescale <- FALSE
 }
 if (do.register.rescale=='rescale') {
   should.rescale <- TRUE

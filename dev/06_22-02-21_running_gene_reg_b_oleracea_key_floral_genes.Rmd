@@ -296,7 +296,7 @@ setdiff(missing_genes, b_oleracea_rds %>%
 
 
 ```{r}
-do.initial.rescale <- 'TRUE' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
+do.initial_rescale <- 'TRUE' # should be 'rescale' if want to use scaled df for registration, rather than mean.df
 do.register.rescale <- 'rescale' 
 outdir.string <- 'TESTING_B_Oleracea_key_floral_genes'
 
@@ -310,10 +310,10 @@ jobNum <- 1
 
 ```{r echo=FALSE}
 # setup flags for rescaling options
-if (do.initial.rescale=='rescale') {
-  initial.rescale <- TRUE
+if (do.initial_rescale=='rescale') {
+  initial_rescale <- TRUE
 } else {
-  initial.rescale <- FALSE
+  initial_rescale <- FALSE
 }
 if (do.register.rescale=='rescale') {
   should.rescale <- TRUE
@@ -321,7 +321,7 @@ if (do.register.rescale=='rescale') {
   should.rescale <- FALSE
 }
 
-if (initial.rescale==TRUE) {
+if (initial_rescale==TRUE) {
   print('********************')
   print('will rescale the data prior to registering, and register using this rescaled mean data!')
   print('********************')
@@ -405,7 +405,7 @@ shifted_stretched_all <- prepare_scaled_and_registered_data(
   mean.df, 
   all.data.df,
   stretch, 
-  initial.rescale = TRUE, 
+  initial_rescale = TRUE, 
   # do_rescale = should.rescale,
   do_rescale = TRUE,
   min_num_overlapping_points,

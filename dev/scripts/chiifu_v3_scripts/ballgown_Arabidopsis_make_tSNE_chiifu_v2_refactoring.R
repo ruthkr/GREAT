@@ -18,7 +18,7 @@ rm(list=ls())
 ### IF RUNNING ON CLUSTER
 # args <- commandArgs(trailingOnly = T)
 # jobNum <- toString(args[1])
-# do.initial.rescale <- toString(args[2])
+# do.initial_rescale <- toString(args[2])
 # do.register.rescale <- toString(args[3])
 # shuffle.type <- toString(args[4])
 # outdir.string <- toString(args[5])
@@ -30,7 +30,7 @@ rm(list=ls())
 jobNum <- 1 # if running lots of times on cluster to get enough shuffled results, then jobNum is used to prevent output overwriting
 setwd('/Volumes/Research-Projects/bravo/shared/to_Shannon/scripts/')
 source("./chiifu_v3_scripts/registration_functions.R")
-do.initial.rescale <- 'nope' # should be 'rescale' if want to use scaled df for registration, rather than mean_df
+do.initial_rescale <- 'nope' # should be 'rescale' if want to use scaled df for registration, rather than mean_df
 do.register.rescale <- 'rescale' # should be 'rescale' if want to rescale using only the overlapping points during
                               # registration
 shuffle.type <- 'shuffle.expression' # whether should shuffle by shuffling the gene ids compared, or by shuffling the gene expression
@@ -65,10 +65,10 @@ print('********************')
 
 
 # setup flags for rescaling options
-if (do.initial.rescale=='rescale') {
-  initial.rescale <- TRUE
+if (do.initial_rescale=='rescale') {
+  initial_rescale <- TRUE
 } else {
-  initial.rescale <- FALSE
+  initial_rescale <- FALSE
 }
 if (do.register.rescale=='rescale') {
   should.rescale <- TRUE
@@ -78,7 +78,7 @@ if (do.register.rescale=='rescale') {
 
 #real.and.shuffled <- c('real', 1)
 
-if (initial.rescale==TRUE) {
+if (initial_rescale==TRUE) {
   print('********************')
   print('will rescale the data prior to registering, and register using this rescaled mean data!')
   print('********************')
@@ -160,7 +160,7 @@ for (i in real.and.shuffled) {
 
 
   ## PREPARE, AND REGISTER AND SCALE THE DATA
-  O <- prepare_scaled_and_registered_data(mean_df, all.data.df, stretch=stretch, initial.rescale, should.rescale, min_num_overlapping_points,
+  O <- prepare_scaled_and_registered_data(mean_df, all.data.df, stretch=stretch, initial_rescale, should.rescale, min_num_overlapping_points,
                                           shift_extreme, transformed.timecourse)
 
   mean_df <- O[['mean_df']] # mean_df is unchanged

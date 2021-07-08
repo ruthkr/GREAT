@@ -122,7 +122,7 @@ scale_and_register_data <- function(mean_df,
     "mean_df_sc" = mean_df_sc,
     "imputed_mean_df" = imputed_mean_df,
     "all_shifts" = all_shifts,
-    "model.comparison" = model_comparison_dt
+    "model_comparison_dt" = model_comparison_dt
   )
 
 }

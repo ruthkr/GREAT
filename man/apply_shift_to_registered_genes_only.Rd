@@ -5,15 +5,19 @@
 \title{Apply shift for all registered genes}
 \usage{
 apply_shift_to_registered_genes_only(
-  to.shift.df,
+  to_shift_df,
   best_shifts,
-  model.comparison.dt
+  model_comparison_dt,
+  accession_data_to_align,
+  accession_data_target,
+  data_to_align_time_added = 11,
+  data_target_time_added
 )
 }
 \arguments{
-\item{best_shifts}{Data frame containing information of best shift and stretch values.}
-
 \item{to_shift_df}{Input data frame.}
+
+\item{best_shifts}{Data frame containing information of best shift and stretch values.}
 
 \item{model_comparison_dt}{Data frame containing information of comparison of BIC and AIC for registred and non-registered genes.}
 

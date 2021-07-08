@@ -5,15 +5,25 @@
 \title{Calculate best shifts and stretches for each gene, also calculate AIC/BIC under registration or non-registration}
 \usage{
 get_best_stretch_and_shift(
-  to.shift.df,
-  all.data.df,
+  to_shift_df,
+  all_data_df,
   stretches,
   do_rescale,
   min_num_overlapping_points,
-  shift_extreme
+  shift_extreme,
+  num_shifts,
+  testing,
+  accession_data_to_align,
+  accession_data_target,
+  data_to_align_time_added,
+  data_target_time_added
 )
 }
 \arguments{
+\item{to_shift_df}{Input data containing mean of each time point.}
+
+\item{all_data_df}{Input all data (without taking mean).}
+
 \item{stretches}{Vector data of stretches.}
 
 \item{do_rescale}{Apply "scale" to compared points for each shift if TRUE, use original mean expression data if FALSE.}
@@ -21,10 +31,6 @@ get_best_stretch_and_shift(
 \item{min_num_overlapping_points}{Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.}
 
 \item{shift_extreme}{Approximation of maximum and minimum shifts allowed.}
-
-\item{to_shift_df}{Input data containing mean of each time point.}
-
-\item{all_data_df}{Input all data (without taking mean).}
 
 \item{num_shifts}{Number of different shifts to be considered.}
 

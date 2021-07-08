@@ -4,7 +4,7 @@
 \alias{scale_all_rep_data}
 \title{Scaling all un-averaged data}
 \usage{
-scale_all_rep_data(mean_df, all.rep.data, scale.func)
+scale_all_rep_data(mean_df, all_rep_data, scale_func)
 }
 \arguments{
 \item{mean_df}{Input data containing mean of each time point.}

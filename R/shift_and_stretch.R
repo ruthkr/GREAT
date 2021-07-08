@@ -166,7 +166,7 @@ apply_best_shift <- function(data,
   } else {
 
     # If no scaling carried out DURING the registration step
-    message("No normalisation was carried out DURING registration (though may have been, prior to Col-Ro18 comparison)")
+    message("No normalisation was carried out DURING registration (though may have been, prior to the comparison)")
 
     processed_data <- processed_data
 

@@ -2,15 +2,15 @@
 % Please edit documentation in R/utils-calcs.R
 \name{min_is_compared_to_data_to_transform}
 \alias{min_is_compared_to_data_to_transform}
-\title{Get the smallest time point of data target}
+\title{Get the smallest time point of data fix}
 \usage{
-min_is_compared_to_data_to_transform(data_to_transform_time, data_target)
+min_is_compared_to_data_to_transform(data_to_transform_time, data_fix)
 }
 \arguments{
 \item{data_to_transform_time}{Minimum time points of candidate data to transform.}
 
-\item{data_target}{A data frame containing data target.}
+\item{data_fix}{A data frame containing data fix.}
 }
 \description{
-\code{min_is_compared_to_data_to_transform} is used to get the smallest time data target which is used in comparison t the data_to_transform time.
+\code{min_is_compared_to_data_to_transform} is used to get the smallest time data fix which is used in comparison t the data_to_transform time.
 }

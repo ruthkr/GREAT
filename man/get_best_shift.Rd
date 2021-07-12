@@ -14,7 +14,7 @@ get_best_shift(
   max_shift,
   testing = FALSE,
   accession_data_to_transform = "Col0",
-  accession_data_target = "Ro18"
+  accession_data_fix = "Ro18"
 )
 }
 \arguments{
@@ -36,7 +36,7 @@ get_best_shift(
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
-\item{accession_data_target}{Accession name of data target.}
+\item{accession_data_fix}{Accession name of data fix.}
 }
 \description{
 \code{get_best_shift} is used to calculate the score for all shifts (for the current gene, and current stretch_factor), and return the scores for all as a table, and the value of the optimal shift. Shift extremes are defined s.t. at least 5 points are compared.

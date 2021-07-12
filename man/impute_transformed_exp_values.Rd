@@ -2,7 +2,7 @@
 % Please edit documentation in R/process_data.R
 \name{impute_transformed_exp_values}
 \alias{impute_transformed_exp_values}
-\title{Setting transformed expression data and data target to be the same in a set of common time points}
+\title{Setting transformed expression data and data fix to be the same in a set of common time points}
 \usage{
 impute_transformed_exp_values(
   shifted_mean_df,

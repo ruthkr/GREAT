@@ -8,9 +8,9 @@ apply_stretch(
   data,
   best_shifts,
   accession_data_to_transform = "Col0",
-  accession_data_target = "Ro18",
+  accession_data_fix = "Ro18",
   data_to_transform_time_added = 11,
-  data_target_time_added = 11
+  data_fix_time_added = 11
 )
 }
 \arguments{
@@ -20,11 +20,11 @@ apply_stretch(
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
-\item{accession_data_target}{Accession name of data target.}
+\item{accession_data_fix}{Accession name of data fix.}
 
 \item{data_to_transform_time_added}{Time points to be added in data to transform.}
 
-\item{data_target_time_added}{Time points to be added in data target.}
+\item{data_fix_time_added}{Time points to be added in data fix.}
 }
 \value{
 

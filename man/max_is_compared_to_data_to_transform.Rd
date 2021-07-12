@@ -2,15 +2,15 @@
 % Please edit documentation in R/utils-calcs.R
 \name{max_is_compared_to_data_to_transform}
 \alias{max_is_compared_to_data_to_transform}
-\title{Get the largest time point of data target}
+\title{Get the largest time point of data fix}
 \usage{
-max_is_compared_to_data_to_transform(data_to_transform_time, data_target)
+max_is_compared_to_data_to_transform(data_to_transform_time, data_fix)
 }
 \arguments{
 \item{data_to_transform_time}{Maximum time points of candidate data to transform.}
 
-\item{data_target}{A data frame containing data target.}
+\item{data_fix}{A data frame containing data fix.}
 }
 \description{
-\code{max_is_compared_to_data_to_transform} is used to get the largest time data target which is used in comparison t the data_to_transform time.
+\code{max_is_compared_to_data_to_transform} is used to get the largest time data fix which is used in comparison t the data_to_transform time.
 }

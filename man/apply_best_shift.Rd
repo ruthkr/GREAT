@@ -8,9 +8,9 @@ apply_best_shift(
   data,
   best_shifts,
   accession_data_to_transform,
-  accession_data_target,
+  accession_data_fix,
   data_to_transform_time_added,
-  data_target_time_added
+  data_fix_time_added
 )
 }
 \arguments{
@@ -20,11 +20,11 @@ apply_best_shift(
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
-\item{accession_data_target}{Accession name of data target.}
+\item{accession_data_fix}{Accession name of data fix.}
 
 \item{data_to_transform_time_added}{Time points to be added in data to transform.}
 
-\item{data_target_time_added}{Time points to be added in data target.}
+\item{data_fix_time_added}{Time points to be added in data fix.}
 }
 \value{
 The registered expression over time for each gene.

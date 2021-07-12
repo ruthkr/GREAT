@@ -8,7 +8,7 @@ apply_best_normalisation(
   data,
   best_shifts,
   accession_data_to_transform = "Col0",
-  accession_data_target = "Ro18"
+  accession_data_fix = "Ro18"
 )
 }
 \arguments{
@@ -18,11 +18,11 @@ apply_best_normalisation(
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
-\item{accession_data_target}{Accession name of data target.}
+\item{accession_data_fix}{Accession name of data fix.}
 }
 \value{
 Normalised data.
 }
 \description{
-\code{apply_best_normalisation} is a function to normalise by the mean and standard deviation of the compared points (after applying stretching) for each gene, in each accesion (data target and data to transform). If the gene wasn't compared, set the expression value to NA.
+\code{apply_best_normalisation} is a function to normalise by the mean and standard deviation of the compared points (after applying stretching) for each gene, in each accesion (data fix and data to transform). If the gene wasn't compared, set the expression value to NA.
 }

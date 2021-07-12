@@ -385,23 +385,23 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
 
 #' Setting transformed expression data and data fix to be the same in a set of common time points
 #'
-#' `impute_transformed_exp_values` is a function to impute transformed times at set of common time points in order to allow sample distance comparison to data target. this means that transformed expression data were imputed relative to data target time points. Since the original value of transformed data are not meant to be discarded, the imputed times are generated from minimum and maximum shifted time points of transformed data (not just data target time points).
+#' `impute_transformed_exp_values` is a function to impute transformed times at set of common time points in order to allow sample distance comparison to data fix. this means that transformed expression data were imputed relative to data fix time points. Since the original value of transformed data are not meant to be discarded, the imputed times are generated from minimum and maximum shifted time points of transformed data (not just data fix time points).
 #'
 #' @param shifted_mean_df All registered data frame.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_target Accession name of data target.
+#' @param accession_data_fix Accession name of data fix.
 #'
 #' @return
 #' @export
 impute_transformed_exp_values <- function(shifted_mean_df,
                                       accession_data_to_transform,
-                                      accession_data_target) {
+                                      accession_data_fix) {
 
   # The imputed transformed data times going to estimate gene expression for
   imputed_timepoints <- round(seq(min(shifted_mean_df$shifted_time), max(shifted_mean_df$shifted_time)))
 
   out_list <- list()
-  out_list <- c(out_list, list(shifted_mean_df[shifted_mean_df$accession == accession_data_target]))
+  out_list <- c(out_list, list(shifted_mean_df[shifted_mean_df$accession == accession_data_fix]))
 
 
   count <- 0
@@ -417,7 +417,7 @@ impute_transformed_exp_values <- function(shifted_mean_df,
     curr_df <- shifted_mean_df[shifted_mean_df$locus_name == curr_gene, ]
 
     transformed_df <- curr_df[curr_df$accession == accession_data_to_transform, ]
-    # bra.df <- curr_df[curr_df$accession == accession_data_target, ]
+    # bra.df <- curr_df[curr_df$accession == accession_data_fix, ]
 
     interp_transformed_df <- data.table::data.table('locus_name' = curr_gene,
                                                 'accession' = accession_data_to_transform,
@@ -427,12 +427,12 @@ impute_transformed_exp_values <- function(shifted_mean_df,
                                                 'shifted_time' = imputed_timepoints,
                                                 'is_registered'= unique(transformed_df$is_registered)[1])
 
-    # For each data target timepoint, interpolate the comparable transformed expression data
+    # For each data fix timepoint, interpolate the comparable transformed expression data
     # by linear interpolation between the neighbouring two transformed expression values.
     # If not between two transformed expression values because shifted outside comparable range, set to NA.
     interp_transformed_df$mean_cpm <- sapply(imputed_timepoints,
-                                         interpolate_data_target_comparison_expression,
-                                         data_target_dt = transformed_df)
+                                         interpolate_data_fix_comparison_expression,
+                                         data_fix_dt = transformed_df)
 
     out_list <- c(out_list, list( interp_transformed_df))
     count <- count+1

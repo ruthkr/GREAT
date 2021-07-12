@@ -7,7 +7,7 @@
 impute_transformed_exp_values(
   shifted_mean_df,
   accession_data_to_transform,
-  accession_data_target
+  accession_data_fix
 )
 }
 \arguments{
@@ -15,11 +15,11 @@ impute_transformed_exp_values(
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
-\item{accession_data_target}{Accession name of data target.}
+\item{accession_data_fix}{Accession name of data fix.}
 }
 \value{
 
 }
 \description{
-\code{impute_transformed_exp_values} is a function to impute transformed times at set of common time points in order to allow sample distance comparison to data target. this means that transformed expression data were imputed relative to data target time points. Since the original value of transformed data are not meant to be discarded, the imputed times are generated from minimum and maximum shifted time points of transformed data (not just data target time points).
+\code{impute_transformed_exp_values} is a function to impute transformed times at set of common time points in order to allow sample distance comparison to data fix. this means that transformed expression data were imputed relative to data fix time points. Since the original value of transformed data are not meant to be discarded, the imputed times are generated from minimum and maximum shifted time points of transformed data (not just data fix time points).
 }

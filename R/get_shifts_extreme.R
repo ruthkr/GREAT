@@ -2,11 +2,11 @@
 #'
 #' `get_extreme_shifts_for_all` is used to calculate the minimum and maximum shifts can apply to data after the stretch transformation.
 #'
-#' @param mean_df Input dataframe containing data to align and data target.
+#' @param mean_df Input dataframe containing data to transform and data target.
 #' @param stretch_factor Stretch transformation factor wanted.
 #' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
 #' @param shift_extreme Approximation of maximum and minimum shifts allowed.
-#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_target Accession name of data target.
 #'
 #' @return minimum and maximum values of shifts
@@ -15,7 +15,7 @@ get_extreme_shifts_for_all <- function(mean_df,
                                        stretch_factor,
                                        min_num_overlapping_points,
                                        shift_extreme,
-                                       accession_data_to_align,
+                                       accession_data_to_transform,
                                        accession_data_target) {
 
 
@@ -27,15 +27,15 @@ get_extreme_shifts_for_all <- function(mean_df,
   # Transform timepoint to be time from first timepoint
   mean_df[, delta_time := timepoint - min(timepoint), by = .(accession)]
 
-  # Apply stretch_factor to the data to align, leave the data target as it is
-  mean_df$delta_time[mean_df$accession == accession_data_to_align] <- mean_df$delta_time[mean_df$accession == accession_data_to_align] * stretch_factor
+  # Apply stretch_factor to the data to transform, leave the data target as it is
+  mean_df$delta_time[mean_df$accession == accession_data_to_transform] <- mean_df$delta_time[mean_df$accession == accession_data_to_transform] * stretch_factor
 
   # Calculate max and min shifts
   max_min_shifts <- calc_extreme_shifts(
     mean_df,
     min_num_overlapping_points,
     shift_extreme,
-    accession_data_to_align,
+    accession_data_to_transform,
     accession_data_target
   )
 
@@ -46,10 +46,10 @@ get_extreme_shifts_for_all <- function(mean_df,
 #'
 #' `calc_extreme_shifts` is used to calculate the minimum and maximum shifts, whilst preserving the criteria that at least min_num_overlapping_points are being compared from both accessions.
 #'
-#' @param mean_df Input dataframe containing data to align and data target.
+#' @param mean_df Input dataframe containing data to transform and data target.
 #' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
 #' @param shift_extreme Approximation of maximum and minimum shifts allowed.
-#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_target Accession name of data target.
 #'
 #' @return minimum and maximum values of shifts
@@ -58,7 +58,7 @@ get_extreme_shifts_for_all <- function(mean_df,
 calc_extreme_shifts <- function(mean_df,
                                 min_num_overlapping_points,
                                 shift_extreme,
-                                accession_data_to_align = "Col0",
+                                accession_data_to_transform = "Col0",
                                 accession_data_target = "Ro18") {
 
   # Make copy of the mean_df to make sure that the original dataframe will not edited
@@ -66,16 +66,16 @@ calc_extreme_shifts <- function(mean_df,
   original$shifted_time <- original$delta_time
 
 
-  # Negative extreme shift will be -1 * exactly the difference between 1 of the stretched data_to_align (e.g. Col0) timepoints, and the smallest data_target (e.g. R018) timepoint
-  # Potitive extreme will be the difference between 1 of the ata_to_align timepoints, and the maximum data_target timepoint
-  neg_extreme_candidate <- -1 * (original$delta_time[original$accession == accession_data_to_align] - min(original$delta_time[original$accession == accession_data_target]))
-  pos_extreme_candidates <- max(original$delta_time[original$accession == accession_data_target]) - original$delta_time[original$accession == accession_data_to_align]
+  # Negative extreme shift will be -1 * exactly the difference between 1 of the stretched data_to_transform (e.g. Col0) timepoints, and the smallest data_target (e.g. R018) timepoint
+  # Potitive extreme will be the difference between 1 of the ata_to_transform timepoints, and the maximum data_target timepoint
+  neg_extreme_candidate <- -1 * (original$delta_time[original$accession == accession_data_to_transform] - min(original$delta_time[original$accession == accession_data_target]))
+  pos_extreme_candidates <- max(original$delta_time[original$accession == accession_data_target]) - original$delta_time[original$accession == accession_data_to_transform]
 
   # Among of these candidates, find the most extreme values which maintaining the required number of overlapping time-points to be considered.
   num_overlapping_points <- sapply(neg_extreme_candidate,
     FUN = calc_num_overlapping_points,
     data = original,
-    accession_data_to_align = accession_data_to_align
+    accession_data_to_transform = accession_data_to_transform
   )
   if (all(num_overlapping_points < min_num_overlapping_points)) {
     stop(paste0(
@@ -89,7 +89,7 @@ calc_extreme_shifts <- function(mean_df,
   num_overlapping_points <- sapply(pos_extreme_candidates,
                                    FUN = calc_num_overlapping_points,
                                    data = original,
-                                   accession_data_to_align = accession_data_to_align)
+                                   accession_data_to_transform = accession_data_to_transform)
   pos_extreme <- max(pos_extreme_candidates[num_overlapping_points >= min_num_overlapping_points])
 
   # Hard code maximum and minimum allowed shifts, as noticed spurious registrations when too extreme shifts allowed

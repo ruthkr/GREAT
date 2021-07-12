@@ -4,16 +4,16 @@
 #'
 #' @param mean_df Input data frame contains the mean gene expression of each gene in each genotype at each timepoint.
 #' @param all_data_df Input data frame contains all replicates of gene expression in each genotype at each timepoint.
-#' @param stretches Candidate registration stretch factors to apply to data to align.
+#' @param stretches Candidate registration stretch factors to apply to data to transform.
 #' @param shift_extreme The absolute maximum value which can be applied as a shift to gene expression timecourse (days).
 #' @param num_shifts Number of shifts between minimum and maximum values of shift.
 #' @param min_num_overlapping_points Number of minimum overlapping time points.  Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
 #' @param initial_rescale Scaling gene expression prior to registration if TRUE.
 #' @param do_rescale Scaling gene expression using only overlapping timepoints points during registration.
-#' @param testing Showing immediate results (inclusing plots) if TRUE.
-#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param testing Showing immediate results (including plots) if TRUE.
+#' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_target Accession name of data target.
-#' @param data_to_align_time_added Time points to be added in data to align.
+#' @param data_to_transform_time_added Time points to be added in data to transform.
 #' @param data_target_time_added Time points to be added in data target.
 #'
 #' @return List of dataframes: (a) `mean_df` is unchanged by `scale_and_register_data()`, (b) `mean_df_sc` is identical to `mean_df`, with additional column "sc.mean.cpm", (c) `imputed_mean_df` is registered expression data, (d) `all_shifts` is a table of candidate registraions applied, and score for each, and (e) `model_comparison_dt` is a table comparing the optimal registration function for each gene (based on `all_shifts` scores) to model with no registration applied.
@@ -27,9 +27,9 @@ scale_and_register_data <- function(mean_df,
                                     initial_rescale,
                                     do_rescale,
                                     testing,
-                                    accession_data_to_align,
+                                    accession_data_to_transform,
                                     accession_data_target,
-                                    data_to_align_time_added,
+                                    data_to_transform_time_added,
                                     data_target_time_added) {
 
 
@@ -70,9 +70,9 @@ scale_and_register_data <- function(mean_df,
     shift_extreme,
     num_shifts,
     testing,
-    accession_data_to_align,
+    accession_data_to_transform,
     accession_data_target,
-    data_to_align_time_added,
+    data_to_transform_time_added,
     data_target_time_added
   )
 
@@ -103,18 +103,18 @@ scale_and_register_data <- function(mean_df,
   shifted_mean_df <- apply_shift_to_registered_genes_only(to_shift_df,
                                                           best_shifts,
                                                           model_comparison_dt,
-                                                          accession_data_to_align,
+                                                          accession_data_to_transform,
                                                           accession_data_target,
-                                                          data_to_align_time_added,
+                                                          data_to_transform_time_added,
                                                           data_target_time_added)
 
   message("Max value of mean_cpm :", max(shifted_mean_df$mean_cpm))
 
-  # Impute aligned values at times == to the observed data target points for each shifted aligned gene so can compare using heat maps.
-  # Aligned curves are the ones that been shifted around. Linear impute values for these
-  # curves so that data target samples can be compared to an aligned data point.
-  imputed_mean_df <- impute_aligned_exp_values(shifted_mean_df,
-                                               accession_data_to_align,
+  # Impute transformed values at times == to the observed data target points for each shifted transformed gene so can compare using heat maps.
+  # transformed curves are the ones that been shifted around. Linear impute values for these
+  # curves so that data target samples can be compared to an transformed data point.
+  imputed_mean_df <- impute_transformed_exp_values(shifted_mean_df,
+                                               accession_data_to_transform,
                                                accession_data_target)
 
   out <- list(
@@ -197,9 +197,9 @@ scale_all_rep_data <- function(mean_df,
 #' @param shift_extreme Approximation of maximum and minimum shifts allowed.
 #' @param num_shifts Number of different shifts to be considered.
 #' @param testing Showing a plot of the progress if TRUE, otherwise if FALSE.
-#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_target Accession name of data target.
-#' @param data_to_align_time_added Time points to be added in data to align.
+#' @param data_to_transform_time_added Time points to be added in data to transform.
 #' @param data_target_time_added Time points to be added in data target.
 #'
 #' @return List of data frames (a) all_shifts : all the combos of stretching and shifting tried for each gene, (b) best_shifts : the best stretch and shift combo found for each gene, as well as info for scaling, and (c) model_comparison.dt : AIC / BIC scores for best registerd model found, compared to separate model for each genes expression in the 2 accessions.
@@ -212,9 +212,9 @@ get_best_stretch_and_shift <- function(to_shift_df,
                                        shift_extreme,
                                        num_shifts,
                                        testing,
-                                       accession_data_to_align,
+                                       accession_data_to_transform,
                                        accession_data_target,
-                                       data_to_align_time_added,
+                                       data_to_transform_time_added,
                                        data_target_time_added) {
 
   # Warning to make sure users have correct accession data
@@ -241,7 +241,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
       shift_extreme,
       min_num_overlapping_points,
       testing = FALSE,
-      accession_data_to_align,
+      accession_data_to_transform,
       accession_data_target)
 
     all_shifts <- unique(all_shifts) # ensure no duplicated rows
@@ -256,12 +256,12 @@ get_best_stretch_and_shift <- function(to_shift_df,
     }
 
     # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the
-    # gene's expression separately in data to align and data target
+    # gene's expression separately in data to transform and data target
     model_comparison_dt <- calculate_all_model_comparison_stats(all_data_df,
                                                                 best_shifts,
-                                                                accession_data_to_align,
+                                                                accession_data_to_transform,
                                                                 accession_data_target,
-                                                                data_to_align_time_added,
+                                                                data_to_transform_time_added,
                                                                 data_target_time_added)
 
 
@@ -320,9 +320,9 @@ get_best_stretch_and_shift <- function(to_shift_df,
 #' @param to_shift_df Input data frame.
 #' @param best_shifts Data frame containing information of best shift and stretch values.
 #' @param model_comparison_dt Data frame containing information of comparison of BIC and AIC for registred and non-registered genes.
-#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_target Accession name of data target.
-#' @param data_to_align_time_added Time points to be added in data to align.
+#' @param data_to_transform_time_added Time points to be added in data to transform.
 #' @param data_target_time_added Time points to be added in data target.
 #'
 #' @return Data frame for all transformed genes for those with better BIC values.
@@ -330,9 +330,9 @@ get_best_stretch_and_shift <- function(to_shift_df,
 apply_shift_to_registered_genes_only <- function(to_shift_df,
                                                  best_shifts,
                                                  model_comparison_dt,
-                                                 accession_data_to_align,
+                                                 accession_data_to_transform,
                                                  accession_data_target,
-                                                 data_to_align_time_added = 11,
+                                                 data_to_transform_time_added = 11,
                                                  data_target_time_added) {
 
   # Genes for which registration model is better than separate model
@@ -345,9 +345,9 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
     registered_dt <- apply_best_shift(
       data = register.dt,
       best_shifts,
-      accession_data_to_align,
+      accession_data_to_transform,
       accession_data_target,
-      data_to_align_time_added,
+      data_to_transform_time_added,
       data_target_time_added
     )
 
@@ -365,9 +365,9 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
   # Apply the stretch transformation to these genes --------------------
   separate_dt[, stretched_time_delta := timepoint - min(timepoint), by = .(locus_name, accession)]
 
-  # Here, we need to add additional time to make it comparable between data to align and data target
+  # Here, we need to add additional time to make it comparable between data to transform and data target
   # Therefore need to to this here, to keep unregistered in same frame as stretch 1, shift 0 registered genes.
-  separate_dt$shifted_time <- separate_dt$stretched_time_delta + data_to_align_time_added
+  separate_dt$shifted_time <- separate_dt$stretched_time_delta + data_to_transform_time_added
 
   separate_dt$is_registered <- FALSE
 
@@ -383,21 +383,21 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
 
 
 
-#' Setting aligned expression data and data target to be the same in a set of common time points
+#' Setting transformed expression data and data target to be the same in a set of common time points
 #'
-#' `impute_aligned_exp_values` is a function to impute aligned times at set of common time points in order to allow sample distance comparison to data target. this means that aligned expression data were imputed relative to data target time points. Since the original value of aligned data are not meant to be discarded, the imputed times are generated from minimum and maximum shifted time points of aligned data (not just data target time points).
+#' `impute_transformed_exp_values` is a function to impute transformed times at set of common time points in order to allow sample distance comparison to data target. this means that transformed expression data were imputed relative to data target time points. Since the original value of transformed data are not meant to be discarded, the imputed times are generated from minimum and maximum shifted time points of transformed data (not just data target time points).
 #'
 #' @param shifted_mean_df All registered data frame.
-#' @param accession_data_to_align Accession name of data which will be aligned.
+#' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_target Accession name of data target.
 #'
 #' @return
 #' @export
-impute_aligned_exp_values <- function(shifted_mean_df,
-                                      accession_data_to_align,
+impute_transformed_exp_values <- function(shifted_mean_df,
+                                      accession_data_to_transform,
                                       accession_data_target) {
 
-  # The imputed aligned data times going to estimate gene expression for
+  # The imputed transformed data times going to estimate gene expression for
   imputed_timepoints <- round(seq(min(shifted_mean_df$shifted_time), max(shifted_mean_df$shifted_time)))
 
   out_list <- list()
@@ -416,25 +416,25 @@ impute_aligned_exp_values <- function(shifted_mean_df,
     # Get the current gene expression data
     curr_df <- shifted_mean_df[shifted_mean_df$locus_name == curr_gene, ]
 
-    aligned_df <- curr_df[curr_df$accession == accession_data_to_align, ]
+    transformed_df <- curr_df[curr_df$accession == accession_data_to_transform, ]
     # bra.df <- curr_df[curr_df$accession == accession_data_target, ]
 
-    interp_aligned_df <- data.table::data.table('locus_name' = curr_gene,
-                                                'accession' = accession_data_to_align,
+    interp_transformed_df <- data.table::data.table('locus_name' = curr_gene,
+                                                'accession' = accession_data_to_transform,
                                                 'tissue' = 'apex',
                                                 'timepoint' = NA,
                                                  'stretched_time_delta' = NA,
                                                 'shifted_time' = imputed_timepoints,
-                                                'is_registered'= unique(aligned_df$is_registered)[1])
+                                                'is_registered'= unique(transformed_df$is_registered)[1])
 
-    # For each data target timepoint, interpolate the comparable aligned expression data
-    # by linear interpolation between the neighbouring two aligned expression values.
-    # If not between two aligned expression values because shifted outside comparable range, set to NA.
-    interp_aligned_df$mean_cpm <- sapply(imputed_timepoints,
+    # For each data target timepoint, interpolate the comparable transformed expression data
+    # by linear interpolation between the neighbouring two transformed expression values.
+    # If not between two transformed expression values because shifted outside comparable range, set to NA.
+    interp_transformed_df$mean_cpm <- sapply(imputed_timepoints,
                                          interpolate_data_target_comparison_expression,
-                                         data_target_dt = aligned_df)
+                                         data_target_dt = transformed_df)
 
-    out_list <- c(out_list, list( interp_aligned_df))
+    out_list <- c(out_list, list( interp_transformed_df))
     count <- count+1
 
   }

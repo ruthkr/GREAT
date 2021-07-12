@@ -41,16 +41,16 @@ ID_table %>%
 ```{r}
 test_load_mean_df <- load_mean_df(
   filepath_data_target = brassica_rapa_expression_path,
-  filepath_data_to_align = arabidopsis_expression_path,
+  filepath_data_to_transform = arabidopsis_expression_path,
   filepath_id_table = id_table_path,
   target_id_table_shared_colname = "CDS.model",
-  target_and_to_align_data_shared_colname = "locus_name",
+  target_and_to_transform_data_shared_colname = "locus_name",
   colnames_id_table = c("CDS.model", "symbol", "locus_name"),
   colnames_wanted = NULL,
   tissue_wanted = "apex",
   curr_GoIs = c("AT4G24540", "AT1G69120", "AT5G61850", "AT2G45660", "AT3G54340"),
   sum_exp_data_target = F, 
-  accession_data_to_align = "Col0",
+  accession_data_to_transform = "Col0",
   ids_data_target_colnames = c("CDS.model", "locus_name")
 )
 
@@ -65,7 +65,7 @@ get_extreme_shifts_for_all(
   stretch_factor = 2,
   min_num_overlapping_points = 7,
   shift_extreme = 4,
-  accession_data_to_align = "Col0",
+  accession_data_to_transform = "Col0",
   accession_data_target = "Ro18"
 )
 ```
@@ -84,7 +84,7 @@ test_get_best_shift <- get_best_shift(num_shifts = 4,
                            min_shift = 4,
                            max_shift = -4,
                            testing = TRUE,
-                           accession_data_to_align = "Col0",
+                           accession_data_to_transform = "Col0",
                            accession_data_target = "Ro18")
 ```
 
@@ -97,7 +97,7 @@ test_best_shifts <- calculate_all_best_shifts(num_shifts = 10,
                                       shift_extreme = 4, 
                                       min_num_overlapping_points = 5, 
                                       testing = FALSE,
-                                      accession_data_to_align = "Col0",
+                                      accession_data_to_transform = "Col0",
                                       accession_data_target = "Ro18")
 
 test_best_shifts
@@ -125,9 +125,9 @@ test_load_mean_df[[2]]
 ```{r}
 data_after_applying_stretch <- apply_stretch(test_load_mean_df[[2]], 
               best_shifts, 
-              accession_data_to_align = "Col0",
+              accession_data_to_transform = "Col0",
               accession_data_target = "Ro18",
-              data_to_align_time_added = 11,
+              data_to_transform_time_added = 11,
               data_target_time_added = 11)
 
 data_after_applying_stretch
@@ -135,22 +135,22 @@ data_after_applying_stretch
 ### test: apply_best_normalisation()
 
 ```{r}
-best_shifts$data_align_compared_mean[best_shifts$gene == "BRAA02G018970.3C"] %>% 
+best_shifts$data_transform_compared_mean[best_shifts$gene == "BRAA02G018970.3C"] %>% 
   length()
 
 # Get list of gene
 best_shifts$gene %>% unique()
 
-# Get the compared mean from data_tp_align (Arabidopsis), remember that there is only one copy in Ara, thats why when compared, there are some duplicated 
-best_shifts$data_align_compared_mean
+# Get the compared mean from data_tp_transform (Arabidopsis), remember that there is only one copy in Ara, thats why when compared, there are some duplicated 
+best_shifts$data_transform_compared_mean
 # Take the unique ---------
-best_shifts$data_align_compared_mean %>% unique()
+best_shifts$data_transform_compared_mean %>% unique()
 ```
 
 ```{r}
 apply_best_normalisation(data = data_after_applying_stretch,
                                      best_shifts,
-                                     accession_data_to_align = "Col0",
+                                     accession_data_to_transform = "Col0",
                                      accession_data_target = "Ro18") 
 ```
 
@@ -162,9 +162,9 @@ apply_best_normalisation(data = data_after_applying_stretch,
 test_apply_best_shift <- apply_best_shift(
   data = test_load_mean_df[[2]],
   best_shifts,
-  accession_data_to_align = "Col0",
+  accession_data_to_transform = "Col0",
   accession_data_target = "Ro18",
-  data_to_align_time_added = 11,
+  data_to_transform_time_added = 11,
   data_target_time_added = 11
 )
 
@@ -304,9 +304,9 @@ ggplot2::ggplot(curr_data_df) +
 calculate_all_model_comparison_stats(
   test_load_mean_df[[2]],
   best_shifts,
-  accession_data_to_align = "Col0",
+  accession_data_to_transform = "Col0",
   accession_data_target = "Ro18",
-  data_to_align_time_added = 11,
+  data_to_transform_time_added = 11,
   data_target_time_added = 11
 )
 ```

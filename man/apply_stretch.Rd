@@ -7,9 +7,9 @@
 apply_stretch(
   data,
   best_shifts,
-  accession_data_to_align = "Col0",
+  accession_data_to_transform = "Col0",
   accession_data_target = "Ro18",
-  data_to_align_time_added = 11,
+  data_to_transform_time_added = 11,
   data_target_time_added = 11
 )
 }
@@ -18,11 +18,11 @@ apply_stretch(
 
 \item{best_shifts}{Input data frame containing information of best shifts.}
 
-\item{accession_data_to_align}{Accession name of data which will be aligned.}
+\item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
 \item{accession_data_target}{Accession name of data target.}
 
-\item{data_to_align_time_added}{Time points to be added in data to align.}
+\item{data_to_transform_time_added}{Time points to be added in data to transform.}
 
 \item{data_target_time_added}{Time points to be added in data target.}
 }

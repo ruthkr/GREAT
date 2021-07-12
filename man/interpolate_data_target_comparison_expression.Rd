@@ -5,12 +5,12 @@
 \title{Calculate prediction of data target expression value}
 \usage{
 interpolate_data_target_comparison_expression(
-  data_to_align_time,
+  data_to_transform_time,
   data_target_dt
 )
 }
 \arguments{
-\item{data_to_align_time}{Input time from data to align.}
+\item{data_to_transform_time}{Input time from data to transform.}
 
 \item{data_target_dt}{Input data target data frame.}
 }

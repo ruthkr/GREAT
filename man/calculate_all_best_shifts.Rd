@@ -12,7 +12,7 @@ calculate_all_best_shifts(
   shift_extreme,
   min_num_overlapping_points,
   testing = FALSE,
-  accession_data_to_align = "Col0",
+  accession_data_to_transform = "Col0",
   accession_data_target = "Ro18"
 )
 }
@@ -31,7 +31,7 @@ calculate_all_best_shifts(
 
 \item{testing}{Showing a plot of the progress if TRUE, otherwise if FALSE.}
 
-\item{accession_data_to_align}{Accession name of data which will be aligned.}
+\item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
 \item{accession_data_target}{Accession name of data target.}
 }

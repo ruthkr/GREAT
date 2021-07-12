@@ -13,7 +13,7 @@ get_best_shift(
   min_shift,
   max_shift,
   testing = FALSE,
-  accession_data_to_align = "Col0",
+  accession_data_to_transform = "Col0",
   accession_data_target = "Ro18"
 )
 }
@@ -34,7 +34,7 @@ get_best_shift(
 
 \item{testing}{Showing a plot of the progress if TRUE, otherwise if FALSE}
 
-\item{accession_data_to_align}{Accession name of data which will be aligned.}
+\item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
 \item{accession_data_target}{Accession name of data target.}
 }

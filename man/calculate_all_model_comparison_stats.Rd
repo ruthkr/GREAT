@@ -7,9 +7,9 @@
 calculate_all_model_comparison_stats(
   all_data_df,
   best_shifts,
-  accession_data_to_align,
+  accession_data_to_transform,
   accession_data_target,
-  data_to_align_time_added,
+  data_to_transform_time_added,
   data_target_time_added
 )
 }
@@ -18,11 +18,11 @@ calculate_all_model_comparison_stats(
 
 \item{best_shifts}{Input data frame containing information of best shifts.}
 
-\item{accession_data_to_align}{Accession name of data which will be aligned.}
+\item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
 \item{accession_data_target}{Accession name of data target.}
 
-\item{data_to_align_time_added}{Time points to be added in data to align.}
+\item{data_to_transform_time_added}{Time points to be added in data to transform.}
 
 \item{data_target_time_added}{Time points to be added in data target.}
 }

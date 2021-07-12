@@ -8,18 +8,18 @@ calc_extreme_shifts(
   mean_df,
   min_num_overlapping_points,
   shift_extreme,
-  accession_data_to_align = "Col0",
+  accession_data_to_transform = "Col0",
   accession_data_target = "Ro18"
 )
 }
 \arguments{
-\item{mean_df}{Input dataframe containing data to align and data target.}
+\item{mean_df}{Input dataframe containing data to transform and data target.}
 
 \item{min_num_overlapping_points}{Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.}
 
 \item{shift_extreme}{Approximation of maximum and minimum shifts allowed.}
 
-\item{accession_data_to_align}{Accession name of data which will be aligned.}
+\item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
 \item{accession_data_target}{Accession name of data target.}
 }

@@ -2,21 +2,21 @@
 % Please edit documentation in R/utils.R
 \name{get_compared_timepoints}
 \alias{get_compared_timepoints}
-\title{Flag data to align time points which overlap to data target timecourse}
+\title{Flag data to transform time points which overlap to data target timecourse}
 \usage{
 get_compared_timepoints(
   data,
-  accession_data_to_align = "Col0",
+  accession_data_to_transform = "Col0",
   accession_data_target = "Ro18"
 )
 }
 \arguments{
-\item{data}{Input data containing both data to align and data target.}
+\item{data}{Input data containing both data to transform and data target.}
 
-\item{accession_data_to_align}{Accession name of data which will be aligned.}
+\item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
 \item{accession_data_target}{Accession name of data target.}
 }
 \description{
-\code{get_compared_timepoints} flags data to align time points which overlap to data target timecourse by comparing each data to align time points to minimum and maximum value of data target.
+\code{get_compared_timepoints} flags data to transform time points which overlap to data target timecourse by comparing each data to transform time points to minimum and maximum value of data target.
 }

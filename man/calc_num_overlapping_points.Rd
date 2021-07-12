@@ -4,14 +4,14 @@
 \alias{calc_num_overlapping_points}
 \title{Calculate the number of overlapping points}
 \usage{
-calc_num_overlapping_points(shift, data, accession_data_to_align = "Col0")
+calc_num_overlapping_points(shift, data, accession_data_to_transform = "Col0")
 }
 \arguments{
 \item{shift}{Current shift value}
 
 \item{data}{Input data.}
 
-\item{accession_data_to_align}{Accession name of data which will be aligned.}
+\item{accession_data_to_transform}{Accession name of data which will be transformed.}
 }
 \description{
 \code{calc_num_overlapping_points} is used to calculate the number of overlapping points for the species with the fewer overlapping points if the current "shift" is applied to the data to alined delta timepoints.

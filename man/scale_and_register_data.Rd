@@ -14,9 +14,9 @@ scale_and_register_data(
   initial_rescale,
   do_rescale,
   testing,
-  accession_data_to_align,
+  accession_data_to_transform,
   accession_data_target,
-  data_to_align_time_added,
+  data_to_transform_time_added,
   data_target_time_added
 )
 }
@@ -25,7 +25,7 @@ scale_and_register_data(
 
 \item{all_data_df}{Input data frame contains all replicates of gene expression in each genotype at each timepoint.}
 
-\item{stretches}{Candidate registration stretch factors to apply to data to align.}
+\item{stretches}{Candidate registration stretch factors to apply to data to transform.}
 
 \item{shift_extreme}{The absolute maximum value which can be applied as a shift to gene expression timecourse (days).}
 
@@ -37,13 +37,13 @@ scale_and_register_data(
 
 \item{do_rescale}{Scaling gene expression using only overlapping timepoints points during registration.}
 
-\item{testing}{Showing immediate results (inclusing plots) if TRUE.}
+\item{testing}{Showing immediate results (including plots) if TRUE.}
 
-\item{accession_data_to_align}{Accession name of data which will be aligned.}
+\item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
 \item{accession_data_target}{Accession name of data target.}
 
-\item{data_to_align_time_added}{Time points to be added in data to align.}
+\item{data_to_transform_time_added}{Time points to be added in data to transform.}
 
 \item{data_target_time_added}{Time points to be added in data target.}
 }

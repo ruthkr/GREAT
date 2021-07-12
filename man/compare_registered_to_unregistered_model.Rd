@@ -8,7 +8,7 @@ compare_registered_to_unregistered_model(
   curr_sym,
   all_data_df,
   is_testing = FALSE,
-  accession_data_to_align = "Col0",
+  accession_data_to_transform = "Col0",
   accession_data_target = "Ro18"
 )
 }
@@ -19,7 +19,7 @@ compare_registered_to_unregistered_model(
 
 \item{is_testing}{Showing a plot of the progress if TRUE, otherwise if FALSE.}
 
-\item{accession_data_to_align}{Accession name of data which will be aligned.}
+\item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
 \item{accession_data_target}{Accession name of data target.}
 }
@@ -27,5 +27,5 @@ compare_registered_to_unregistered_model(
 Score of AIC and BIC for both registered and unregistered models.
 }
 \description{
-\code{compare_registered_to_unregistered_model} is a function to compare the overlapping timepoints in data target and data to align after best registration and without registration. Same timepoints and stretched data were used for both models.
+\code{compare_registered_to_unregistered_model} is a function to compare the overlapping timepoints in data target and data to transform after best registration and without registration. Same timepoints and stretched data were used for both models.
 }

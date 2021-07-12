@@ -7,7 +7,7 @@
 apply_best_normalisation(
   data,
   best_shifts,
-  accession_data_to_align = "Col0",
+  accession_data_to_transform = "Col0",
   accession_data_target = "Ro18"
 )
 }
@@ -16,7 +16,7 @@ apply_best_normalisation(
 
 \item{best_shifts}{Input dataframe containing information of best shifts.}
 
-\item{accession_data_to_align}{Accession name of data which will be aligned.}
+\item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
 \item{accession_data_target}{Accession name of data target.}
 }
@@ -24,5 +24,5 @@ apply_best_normalisation(
 Normalised data.
 }
 \description{
-\code{apply_best_normalisation} is a function to normalise by the mean and standard deviation of the compared points (after applying stretching) for each gene, in each accesion (data target and data to align). If the gene wasn't compared, set the expression value to NA.
+\code{apply_best_normalisation} is a function to normalise by the mean and standard deviation of the compared points (after applying stretching) for each gene, in each accesion (data target and data to transform). If the gene wasn't compared, set the expression value to NA.
 }

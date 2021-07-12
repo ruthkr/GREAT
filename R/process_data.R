@@ -12,9 +12,9 @@
 #' @param do_rescale Scaling gene expression using only overlapping timepoints points during registration.
 #' @param testing Showing immediate results (including plots) if TRUE.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_target Accession name of data target.
+#' @param accession_data_fix Accession name of data fix.
 #' @param data_to_transform_time_added Time points to be added in data to transform.
-#' @param data_target_time_added Time points to be added in data target.
+#' @param data_fix_time_added Time points to be added in data fix.
 #'
 #' @return List of dataframes: (a) `mean_df` is unchanged by `scale_and_register_data()`, (b) `mean_df_sc` is identical to `mean_df`, with additional column "sc.mean.cpm", (c) `imputed_mean_df` is registered expression data, (d) `all_shifts` is a table of candidate registraions applied, and score for each, and (e) `model_comparison_dt` is a table comparing the optimal registration function for each gene (based on `all_shifts` scores) to model with no registration applied.
 #' @export
@@ -28,9 +28,9 @@ scale_and_register_data <- function(mean_df,
                                     do_rescale,
                                     testing,
                                     accession_data_to_transform,
-                                    accession_data_target,
+                                    accession_data_fix,
                                     data_to_transform_time_added,
-                                    data_target_time_added) {
+                                    data_fix_time_added) {
 
 
   # Apply normalisation of expression for each gene across all timepoints
@@ -71,9 +71,9 @@ scale_and_register_data <- function(mean_df,
     num_shifts,
     testing,
     accession_data_to_transform,
-    accession_data_target,
+    accession_data_fix,
     data_to_transform_time_added,
-    data_target_time_added
+    data_fix_time_added
   )
 
   all_shifts <- L[["all_shifts"]]
@@ -104,18 +104,18 @@ scale_and_register_data <- function(mean_df,
                                                           best_shifts,
                                                           model_comparison_dt,
                                                           accession_data_to_transform,
-                                                          accession_data_target,
+                                                          accession_data_fix,
                                                           data_to_transform_time_added,
-                                                          data_target_time_added)
+                                                          data_fix_time_added)
 
   message("Max value of mean_cpm :", max(shifted_mean_df$mean_cpm))
 
-  # Impute transformed values at times == to the observed data target points for each shifted transformed gene so can compare using heat maps.
+  # Impute transformed values at times == to the observed data fix points for each shifted transformed gene so can compare using heat maps.
   # transformed curves are the ones that been shifted around. Linear impute values for these
-  # curves so that data target samples can be compared to an transformed data point.
+  # curves so that data fix samples can be compared to an transformed data point.
   imputed_mean_df <- impute_transformed_exp_values(shifted_mean_df,
                                                accession_data_to_transform,
-                                               accession_data_target)
+                                               accession_data_fix)
 
   out <- list(
     "mean_df" = mean_df,
@@ -198,9 +198,9 @@ scale_all_rep_data <- function(mean_df,
 #' @param num_shifts Number of different shifts to be considered.
 #' @param testing Showing a plot of the progress if TRUE, otherwise if FALSE.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_target Accession name of data target.
+#' @param accession_data_fix Accession name of data fix.
 #' @param data_to_transform_time_added Time points to be added in data to transform.
-#' @param data_target_time_added Time points to be added in data target.
+#' @param data_fix_time_added Time points to be added in data fix.
 #'
 #' @return List of data frames (a) all_shifts : all the combos of stretching and shifting tried for each gene, (b) best_shifts : the best stretch and shift combo found for each gene, as well as info for scaling, and (c) model_comparison.dt : AIC / BIC scores for best registerd model found, compared to separate model for each genes expression in the 2 accessions.
 #' @export
@@ -213,9 +213,9 @@ get_best_stretch_and_shift <- function(to_shift_df,
                                        num_shifts,
                                        testing,
                                        accession_data_to_transform,
-                                       accession_data_target,
+                                       accession_data_fix,
                                        data_to_transform_time_added,
-                                       data_target_time_added) {
+                                       data_fix_time_added) {
 
   # Warning to make sure users have correct accession data
   if (!('Col0' %in% all_data_df$accession & 'Ro18' %in% all_data_df$accession)) {
@@ -242,7 +242,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
       min_num_overlapping_points,
       testing = FALSE,
       accession_data_to_transform,
-      accession_data_target)
+      accession_data_fix)
 
     all_shifts <- unique(all_shifts) # ensure no duplicated rows
 
@@ -256,13 +256,13 @@ get_best_stretch_and_shift <- function(to_shift_df,
     }
 
     # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the
-    # gene's expression separately in data to transform and data target
+    # gene's expression separately in data to transform and data fix
     model_comparison_dt <- calculate_all_model_comparison_stats(all_data_df,
                                                                 best_shifts,
                                                                 accession_data_to_transform,
-                                                                accession_data_target,
+                                                                accession_data_fix,
                                                                 data_to_transform_time_added,
-                                                                data_target_time_added)
+                                                                data_fix_time_added)
 
 
     # Add info on the stretch and shift applied
@@ -321,9 +321,9 @@ get_best_stretch_and_shift <- function(to_shift_df,
 #' @param best_shifts Data frame containing information of best shift and stretch values.
 #' @param model_comparison_dt Data frame containing information of comparison of BIC and AIC for registred and non-registered genes.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_target Accession name of data target.
+#' @param accession_data_fix Accession name of data fix.
 #' @param data_to_transform_time_added Time points to be added in data to transform.
-#' @param data_target_time_added Time points to be added in data target.
+#' @param data_fix_time_added Time points to be added in data fix.
 #'
 #' @return Data frame for all transformed genes for those with better BIC values.
 #' @export
@@ -331,9 +331,9 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
                                                  best_shifts,
                                                  model_comparison_dt,
                                                  accession_data_to_transform,
-                                                 accession_data_target,
+                                                 accession_data_fix,
                                                  data_to_transform_time_added = 11,
-                                                 data_target_time_added) {
+                                                 data_fix_time_added) {
 
   # Genes for which registration model is better than separate model
   gene_to_register <- model_comparison_dt$gene[model_comparison_dt$BIC_registered_is_better]
@@ -346,9 +346,9 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
       data = register.dt,
       best_shifts,
       accession_data_to_transform,
-      accession_data_target,
+      accession_data_fix,
       data_to_transform_time_added,
-      data_target_time_added
+      data_fix_time_added
     )
 
     registered_dt$is_registered <- TRUE
@@ -365,7 +365,7 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
   # Apply the stretch transformation to these genes --------------------
   separate_dt[, stretched_time_delta := timepoint - min(timepoint), by = .(locus_name, accession)]
 
-  # Here, we need to add additional time to make it comparable between data to transform and data target
+  # Here, we need to add additional time to make it comparable between data to transform and data fix
   # Therefore need to to this here, to keep unregistered in same frame as stretch 1, shift 0 registered genes.
   separate_dt$shifted_time <- separate_dt$stretched_time_delta + data_to_transform_time_added
 
@@ -383,7 +383,7 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
 
 
 
-#' Setting transformed expression data and data target to be the same in a set of common time points
+#' Setting transformed expression data and data fix to be the same in a set of common time points
 #'
 #' `impute_transformed_exp_values` is a function to impute transformed times at set of common time points in order to allow sample distance comparison to data target. this means that transformed expression data were imputed relative to data target time points. Since the original value of transformed data are not meant to be discarded, the imputed times are generated from minimum and maximum shifted time points of transformed data (not just data target time points).
 #'

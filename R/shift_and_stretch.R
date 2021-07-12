@@ -46,21 +46,21 @@ get_best_result <- function(df) {
 #' @param all_data_df Input all data (without taking mean).
 #' @param best_shifts Input data frame containing information of best shifts.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_target Accession name of data target.
+#' @param accession_data_fix Accession name of data fix.
 #' @param data_to_transform_time_added Time points to be added in data to transform.
-#' @param data_target_time_added Time points to be added in data target.
+#' @param data_fix_time_added Time points to be added in data fix.
 #'
 #' @return AIC and BIC score for registered and unregistered models.
 #' @export
 calculate_all_model_comparison_stats <- function(all_data_df,
                                                  best_shifts,
                                                  accession_data_to_transform,
-                                                 accession_data_target,
+                                                 accession_data_fix,
                                                  data_to_transform_time_added,
-                                                 data_target_time_added) {
+                                                 data_fix_time_added) {
 
   if (!(accession_data_to_transform %in% unique(all_data_df$accession) &
-        accession_data_target %in% unique(all_data_df$accession))) {
+        accession_data_fix %in% unique(all_data_df$accession))) {
     stop("error in calculate_all_model_comparison_stats() :
          all_data_df doesn't have the correct accession info - should have been
          converted to Ro18 & Col0")
@@ -71,9 +71,9 @@ calculate_all_model_comparison_stats <- function(all_data_df,
   shifted_all_data_df <- apply_best_shift(data = all_data_df,
                                           best_shifts,
                                           accession_data_to_transform,
-                                          accession_data_target,
+                                          accession_data_fix,
                                           data_to_transform_time_added,
-                                          data_target_time_added)
+                                          data_fix_time_added)
 
   message('Calculating registration vs different expression comparison AIC & BIC...')
 
@@ -96,7 +96,7 @@ calculate_all_model_comparison_stats <- function(all_data_df,
                                                   shifted_all_data_df,
                                                   is_testing = FALSE,
                                                   accession_data_to_transform,
-                                                  accession_data_target)
+                                                  accession_data_fix)
 
     out.sepAIC[i] <- L[["separate.AIC"]]
     out.combAIC[i] <- L[["combined.AIC"]]
@@ -123,18 +123,18 @@ calculate_all_model_comparison_stats <- function(all_data_df,
 #' @param data Input data (all data).
 #' @param best_shifts Input data frame containing information of best shifts.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_target Accession name of data target.
+#' @param accession_data_fix Accession name of data fix.
 #' @param data_to_transform_time_added Time points to be added in data to transform.
-#' @param data_target_time_added Time points to be added in data target.
+#' @param data_fix_time_added Time points to be added in data fix.
 #'
 #' @return The registered expression over time for each gene.
 #' @export
 apply_best_shift <- function(data,
                              best_shifts,
                              accession_data_to_transform,
-                             accession_data_target,
+                             accession_data_fix,
                              data_to_transform_time_added,
-                             data_target_time_added) {
+                             data_fix_time_added) {
 
   processed_data <- data.table::copy(data)
 
@@ -142,15 +142,15 @@ apply_best_shift <- function(data,
     data = processed_data,
     best_shifts,
     accession_data_to_transform,
-    accession_data_target,
+    accession_data_fix,
     data_to_transform_time_added,
-    data_target_time_added
+    data_fix_time_added
   )
 
   # Normalise the expression data (If was normalised when calculating the expression data, is recorder in the _compared_mean, and _compared_sd columns. If no normalisation was carried out, then these should have values of 0 and 1. This was done using get_best_shift()).
 
 
-  if (!(all(unique(best_shifts$data_transform_compared_mean) == 0)) | !(all(unique(best_shifts$data_target_compared_mean) == 0))) {
+  if (!(all(unique(best_shifts$data_transform_compared_mean) == 0)) | !(all(unique(best_shifts$data_fix_compared_mean) == 0))) {
 
     message("Normalising expression by mean and sd of compared values...")
 
@@ -158,7 +158,7 @@ apply_best_shift <- function(data,
       data = processed_data,
       best_shifts,
       accession_data_to_transform,
-      accession_data_target
+      accession_data_fix
     )
 
     message("Done!")
@@ -195,26 +195,26 @@ apply_best_shift <- function(data,
 #' @param data Input data.
 #' @param best_shifts Input data frame containing information of best shifts.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_target Accession name of data target.
+#' @param accession_data_fix Accession name of data fix.
 #' @param data_to_transform_time_added Time points to be added in data to transform.
-#' @param data_target_time_added Time points to be added in data target.
+#' @param data_fix_time_added Time points to be added in data fix.
 #'
 #' @return
 #' @export
 apply_stretch <- function(data,
                           best_shifts,
                           accession_data_to_transform = "Col0",
-                          accession_data_target = "Ro18",
+                          accession_data_fix = "Ro18",
                           data_to_transform_time_added = 11,
-                          data_target_time_added = 11) {
+                          data_fix_time_added = 11) {
 
   data <- data.table::copy(data)
 
-  # Stretch the expression of data to transform, leave data target as is
+  # Stretch the expression of data to transform, leave data fix as is
   data[, delta_time := timepoint - min(timepoint), by = .(accession)]
 
   # Filter data based on the accession
-  data_target <- data[data$accession == accession_data_target, ]
+  data_fix <- data[data$accession == accession_data_fix, ]
   data_to_transform <- data[data$accession == accession_data_to_transform, ]
 
   # Get the info of the strecth factor and merge data into one single data frame
@@ -227,8 +227,8 @@ apply_stretch <- function(data,
   data_to_transform$delta_time <- data_to_transform$delta_time * data_to_transform$stretch
   data_to_transform$stretch <- NULL
 
-  # Bind by rows data target and data to transform which have been stretched
-  data <- rbind(data_target, data_to_transform)
+  # Bind by rows data fix and data to transform which have been stretched
+  data <- rbind(data_fix, data_to_transform)
 
   # Record the stretched times (before individual shifting applied)
   data$stretched_time_delta <- data$delta_time # record the time (from start of timecourse) after stretching,
@@ -236,7 +236,7 @@ apply_stretch <- function(data,
 
   # After stretching, add the time to the first datapoint back on
   data$shifted_time[data$accession == accession_data_to_transform] <- data$shifted_time[data$accession == accession_data_to_transform] + data_to_transform_time_added
-  data$shifted_time[data$accession == accession_data_target] <- data$shifted_time[data$accession == accession_data_target] + data_target_time_added
+  data$shifted_time[data$accession == accession_data_fix] <- data$shifted_time[data$accession == accession_data_fix] + data_fix_time_added
   data$delta_time <- NULL
 
   return(data)
@@ -246,19 +246,19 @@ apply_stretch <- function(data,
 
 #' Apply normalisation (after applying stretch)
 #'
-#' `apply_best_normalisation` is a function to normalise by the mean and standard deviation of the compared points (after applying stretching) for each gene, in each accesion (data target and data to transform). If the gene wasn't compared, set the expression value to NA.
+#' `apply_best_normalisation` is a function to normalise by the mean and standard deviation of the compared points (after applying stretching) for each gene, in each accesion (data fix and data to transform). If the gene wasn't compared, set the expression value to NA.
 #'
 #' @param data Input data (after applying stretching).
 #' @param best_shifts Input dataframe containing information of best shifts.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_target Accession name of data target.
+#' @param accession_data_fix Accession name of data fix.
 #'
 #' @return Normalised data.
 #' @export
 apply_best_normalisation <- function(data,
                                      best_shifts,
                                      accession_data_to_transform = "Col0",
-                                     accession_data_target = "Ro18") {
+                                     accession_data_fix = "Ro18") {
 
   count <- 0
   for (curr_gene in unique(data$locus_name)) {
@@ -268,9 +268,9 @@ apply_best_normalisation <- function(data,
     }
 
     data_transform_mean <- best_shifts$data_transform_compared_mean[best_shifts$gene == curr_gene]
-    data_target_mean <- best_shifts$data_target_compared_mean[best_shifts$gene == curr_gene]
+    data_fix_mean <- best_shifts$data_fix_compared_mean[best_shifts$gene == curr_gene]
     data_transform_sd <- best_shifts$data_transform_compared_sd[best_shifts$gene == curr_gene]
-    data_target_sd <- best_shifts$data_target_compared_sd[best_shifts$gene == curr_gene]
+    data_fix_sd <- best_shifts$data_fix_compared_sd[best_shifts$gene == curr_gene]
 
     # If was compared
     if (length(data_transform_mean) != 0) {
@@ -283,10 +283,10 @@ apply_best_normalisation <- function(data,
       }
 
       # Make sure that sd is not 0, since we do not want to divide by 0 ---------------
-      if (data_target_sd != 0) {
-        data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_target] <- (data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_target] - data_target_mean) / data_target_sd
+      if (data_fix_sd != 0) {
+        data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_fix] <- (data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_fix] - data_fix_mean) / data_fix_sd
       } else {
-        data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_target] <- (data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_target] - data_target_mean)
+        data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_fix] <- (data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_fix] - data_fix_mean)
       }
 
       if (any(is.na(data$mean_cpm))) {
@@ -298,7 +298,7 @@ apply_best_normalisation <- function(data,
     } else {
 
       data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_to_transform] <- NA
-      data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_target] <- NA
+      data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_fix] <- NA
 
     }
 
@@ -314,13 +314,13 @@ apply_best_normalisation <- function(data,
 
 #' Comparing registered to unregistered model
 #'
-#' `compare_registered_to_unregistered_model` is a function to compare the overlapping timepoints in data target and data to transform after best registration and without registration. Same timepoints and stretched data were used for both models.
+#' `compare_registered_to_unregistered_model` is a function to compare the overlapping timepoints in data fix and data to transform after best registration and without registration. Same timepoints and stretched data were used for both models.
 #'
 #' @param curr_sym A gene accession.
 #' @param all_data_df Input data.
 #' @param is_testing Showing a plot of the progress if TRUE, otherwise if FALSE.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_target Accession name of data target.
+#' @param accession_data_fix Accession name of data fix.
 #'
 #' @return Score of AIC and BIC for both registered and unregistered models.
 #' @export
@@ -328,7 +328,7 @@ compare_registered_to_unregistered_model <- function(curr_sym,
                                                      all_data_df,
                                                      is_testing = FALSE,
                                                      accession_data_to_transform = "Col0",
-                                                     accession_data_target = "Ro18") {
+                                                     accession_data_fix = "Ro18") {
 
 
   curr_data_df <- all_data_df[all_data_df$locus_name == curr_sym]
@@ -337,7 +337,7 @@ compare_registered_to_unregistered_model <- function(curr_sym,
   # Flag the timepoints to be used in the modelling, only the ones which overlap!
   curr_data_df <- get_compared_timepoints(curr_data_df,
                                           accession_data_to_transform,
-                                          accession_data_target)
+                                          accession_data_fix)
 
 
 #   ggplot2::ggplot(curr_data_df)+
@@ -347,8 +347,8 @@ compare_registered_to_unregistered_model <- function(curr_sym,
   # Cut down to the data for each model
   data_to_transform_spline <- curr_data_df[curr_data_df$is_compared == TRUE &
                                     curr_data_df$accession == accession_data_to_transform, ]
-  data_target_spline <- curr_data_df[curr_data_df$is_compared == TRUE &
-                                    curr_data_df$accession == accession_data_target, ]
+  data_fix_spline <- curr_data_df[curr_data_df$is_compared == TRUE &
+                                    curr_data_df$accession == accession_data_fix, ]
   combined_spline_data <- curr_data_df[curr_data_df$is_compared == TRUE, ]
 
   # Fit the models - fit regression splines.
@@ -361,13 +361,13 @@ compare_registered_to_unregistered_model <- function(curr_sym,
 
 
   data_to_transform_fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_to_transform_spline)
-  data_target_fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_target_spline)
+  data_fix_fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_fix_spline)
   combined_fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = combined_spline_data)
 
   # Calculate the log likelihoods
   data_to_transform_logLik <- stats::logLik(data_to_transform_fit)
-  data_target_logLik <- stats::logLik(data_target_fit)
-  separate_logLik <- data_to_transform_logLik + data_target_logLik # logLikelihoods, so sum
+  data_fix_logLik <- stats::logLik(data_fix_fit)
+  separate_logLik <- data_to_transform_logLik + data_fix_logLik # logLikelihoods, so sum
   combined_logLik <- stats::logLik(combined_fit)
 
   # Calculate the comparison.stats - - AIC, BIC, smaller is better!
@@ -383,8 +383,8 @@ compare_registered_to_unregistered_model <- function(curr_sym,
     ara.pred <- stats::predict(data_to_transform_fit)
     ara.pred.df <- unique(data.frame('shifted_time'=data_to_transform_spline$shifted_time,
                                      'mean_cpm'=ara.pred, 'accession'='Col0'))
-    bra.pred <- stats::predict(data_target_fit)
-    bra.pred.df <- unique(data.frame('shifted_time'=data_target_spline$shifted_time,
+    bra.pred <- stats::predict(data_fix_fit)
+    bra.pred.df <- unique(data.frame('shifted_time'=data_fix_spline$shifted_time,
                                      'mean_cpm'=bra.pred, 'accession'='Ro18'))
 
     combined.pred <- stats::predict(combined_fit)

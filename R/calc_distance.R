@@ -126,17 +126,23 @@ calc_sample_distance <- function(dt, gene.col) {
   out.df <- data.table::data.table(data.frame('x.sample'=i.cols, 'y.sample'=j.cols, 'distance'=ds))
 }
 
+
+#' Calculate pairwise sample distance
+#'
+#' @param df Dataframe contains the wide format expression of the two samples to be compared. Only genes which have data in both samples are considered (only relevant for registration case).
+#'
+#' @return Dataframe contains the distance between two samples
 #' @export
-calculate_pairwise_sample_distance_simple <- function(dt) {
-  # dt is the wide format expression of the two samples to be compared.
-  # only genes which have data in both samples are considered (only
-  # relevant for registration case).
+calculate_pairwise_sample_distance_main <- function(df) {
 
-  # filter to genes with data in both.
-  dt <- stats::na.omit(dt)
-  # calculate distance
-  dt$sq.diff <- (dt[, 1] - dt[, 2])^2
+  # Omit NA in the data
+  df <- stats::na.omit(df)
 
-  d <- mean(dt$sq.diff)
+  # Calculate distance
+  df$sq_diff <- (df[, 1] - df[, 2])^2
+
+  d <- mean(df$sq_diff)
+
   return(d)
+
 }

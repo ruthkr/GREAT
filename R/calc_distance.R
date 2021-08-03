@@ -8,21 +8,21 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
 
   # mean_df
   sample.id.cols <- c('accession','timepoint')
-  gene.col <- c('locus_name')
+  gene_col <- c('locus_name')
   expression.col <- 'mean_cpm'
-  mean.dt.w <- reformat_for_distance_calculation(mean_df, sample.id.cols, gene.col, expression.col)
+  mean.dt.w <- reformat_for_distance_calculation(mean_df, sample.id.cols, gene_col, expression.col)
 
   # normalised mean_df
   sample.id.cols <- c('accession','timepoint')
-  gene.col <- c('locus_name')
+  gene_col <- c('locus_name')
   expression.col <- c('sc.mean_cpm')
-  mean.dt.sc.w <- reformat_for_distance_calculation(mean_df.sc, sample.id.cols, gene.col, expression.col)
+  mean.dt.sc.w <- reformat_for_distance_calculation(mean_df.sc, sample.id.cols, gene_col, expression.col)
 
   # imputed.mean_df - all genes
   sample.id.cols <- c('accession','shifted_time')
-  gene.col <- c('locus_name')
+  gene_col <- c('locus_name')
   expression.col <- c('mean_cpm')
-  imputed.mean.dt.w <- reformat_for_distance_calculation(imputed.mean_df, sample.id.cols, gene.col, expression.col)
+  imputed.mean.dt.w <- reformat_for_distance_calculation(imputed.mean_df, sample.id.cols, gene_col, expression.col)
 
   # same, but for subsets of REGISTERED / NOT REGISTERED genes.
   # distance between samples, only using genes which are found best model is not registered
@@ -42,13 +42,13 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
   # Distance used is mean of [squared distance between each gene / absolute mean of expression
   # of that gene in the sample]. Is calculated for each gene for which have data in both samples.
   # Mean of these values (divided by number of genes is calculated for) is reported.
-  D.mean <- calc_sample_distance(mean.dt.w, gene.col='locus_name')
-  D.scaled <- calc_sample_distance(mean.dt.sc.w, gene.col='locus_name')
-  D.registered <- calc_sample_distance(imputed.mean.dt.w, gene.col='locus_name')
+  D.mean <- calc_sample_distance(mean.dt.w, gene_col='locus_name')
+  D.scaled <- calc_sample_distance(mean.dt.sc.w, gene_col='locus_name')
+  D.registered <- calc_sample_distance(imputed.mean.dt.w, gene_col='locus_name')
 
-  D.scaled.not.registered.genes <- calc_sample_distance(mean.dt.sc.w.not.registered, gene.col='locus_name')
-  D.scaled.registered.genes <- calc_sample_distance(mean.dt.sc.w.registered, gene.col='locus_name')
-  D.registered.registered.genes <- calc_sample_distance(imputed.mean.dt.w.registered, gene.col='locus_name')
+  D.scaled.not.registered.genes <- calc_sample_distance(mean.dt.sc.w.not.registered, gene_col='locus_name')
+  D.scaled.registered.genes <- calc_sample_distance(mean.dt.sc.w.registered, gene_col='locus_name')
+  D.registered.registered.genes <- calc_sample_distance(imputed.mean.dt.w.registered, gene_col='locus_name')
 
 
   # for use to make heatmaps with shared scales
@@ -70,11 +70,11 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
 }
 
 # sample.id.cols <- c('accession','delta_time')
-# gene.col <- c('locus_name')
+# gene_col <- c('locus_name')
 # expression.col <- 'mean_cpm'
 # dt <- mean_df
 #' @export
-reformat_for_distance_calculation <- function(dt, sample.id.cols, gene.col, expression.col) {
+reformat_for_distance_calculation <- function(dt, sample.id.cols, gene_col, expression.col) {
 
   # concatenate sample.id columns to generate sample ids
   dt$sample.id <- dt[[sample.id.cols[1]]]
@@ -90,7 +90,7 @@ reformat_for_distance_calculation <- function(dt, sample.id.cols, gene.col, expr
   }
 
   # subset to just the relevant columns
-  dt <- subset(dt, select=c('sample.id', gene.col, expression.col))
+  dt <- subset(dt, select=c('sample.id', gene_col, expression.col))
 
   # convert to wide format
   dt.w <- data.table::dcast(dt, locus_name ~ sample.id, value.var=eval(expression.col))
@@ -98,13 +98,19 @@ reformat_for_distance_calculation <- function(dt, sample.id.cols, gene.col, expr
   return(dt.w)
 }
 
-#' @export
-calc_sample_distance <- function(dt, gene.col) {
-  # wrapper for calculate_pairwise_sample_distance
-  # to calculate distance for all compared samples
 
-  data.cols <- names(dt)[names(dt)!=eval(gene.col)]
-  print(data.cols)
+#' Calculate sample distance wrapper
+#'
+#' `calc_sample_distance` is a wrapper to  calculate_pairwise_sample_distance to calculate distance for all compared samples.
+#'
+#' @param df Dataframe contains expression data from each sample.
+#' @param gene_col Column name of accession gene.
+#'
+#' @return Dataframe contains squared distance of data.
+#' @export
+calc_sample_distance <- function(df, gene_col) {
+
+  data.cols <- names(df)[names(df) != eval(gene_col)]
 
   i.cols <- c()
   j.cols <- c()
@@ -115,15 +121,17 @@ calc_sample_distance <- function(dt, gene.col) {
     for (j in (i+1):length(data.cols)) {
       j.col <- data.cols[j]
 
-      curr.dt <- subset(dt, select=c(i.col, j.col))
-      d <- calculate_pairwise_sample_distance_simple(curr.dt)
+      curr.dt <- subset(df, select=c(i.col, j.col))
+      d <- calculate_pairwise_sample_distance_main(curr.dt)
 
       i.cols <- c(i.cols, i.col, j.col) # distance metric is symmetrical
       j.cols <- c(j.cols, j.col, i.col)
       ds <- c(ds, d, d)
     }
   }
-  out.df <- data.table::data.table(data.frame('x.sample'=i.cols, 'y.sample'=j.cols, 'distance'=ds))
+
+  out_df <- data.table::data.table(data.frame('x_sample' = i.cols, 'y_sample' = j.cols, 'distance' = ds))
+
 }
 
 
@@ -131,7 +139,7 @@ calc_sample_distance <- function(dt, gene.col) {
 #'
 #' @param df Dataframe contains the wide format expression of the two samples to be compared. Only genes which have data in both samples are considered (only relevant for registration case).
 #'
-#' @return Dataframe contains the distance between two samples
+#' @return Dataframe contains the distance between two samples.
 #' @export
 calculate_pairwise_sample_distance_main <- function(df) {
 

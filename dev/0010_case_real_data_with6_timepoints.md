@@ -416,6 +416,10 @@ reg_data_with_6_timepoints_mean[['model_comparison_dt']] %>%
 
 <img src="0010_case_real_data_with6_timepoints_files/figure-ext/BRAA06G025360.3C_17_mixed.png" title="BRAA06G0253 60.3C with max shifted time = 17" alt="BRAA06G0253 60.3C with max shifted time = 17" width="50%" />
 
+There are two possibilities of data:
+
+<img src="0010_case_real_data_with6_timepoints_files/figure-ext/user_input_data_possibilities.png" title="User input data" alt="User input data" width="75%" />
+
 #### Aux codes
 
 ``` r

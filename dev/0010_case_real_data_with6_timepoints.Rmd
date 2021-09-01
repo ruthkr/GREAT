@@ -199,17 +199,29 @@ reg_data_with_6_timepoints_mean[['model_comparison_dt']] %>%
   knitr::kable()
 ```
 
-```{r BRAA06G025360.3C_16, echo=FALSE, fig.cap="BRAA06G025360.3C with max shifted time = 16", out.width = '45%'}
+### Compare data fitting for mean data and all data
+
+#### BRAA06G025360.3C with maximum shifted_time = 16
+
+```{r BRAA06G025360.3C_16, echo=FALSE, fig.cap="BRAA06G025360.3C with max shifted time = 16", out.width = '50%'}
 knitr::include_graphics("0010_case_real_data_with6_timepoints_files/figure-ext/BRAA06G025360.3C_16_mean.png")
 ```
 
-```{r BRAA06G025360.3C_16_mixed, echo=FALSE, fig.cap="BRAA06G0253 60.3C with max shifted time = 16", out.width = '45%'}
+```{r BRAA06G025360.3C_16_mixed, echo=FALSE, fig.cap="BRAA06G0253 60.3C with max shifted time = 16", out.width = '50%'}
 knitr::include_graphics("0010_case_real_data_with6_timepoints_files/figure-ext/BRAA06G025360.3C_16_mixed.png")
 ```
 
 
+#### BRAA06G025360.3C with maximum shifted_time = 17
+
+```{r BRAA06G025360.3C_17, echo=FALSE, fig.cap="BRAA06G025360.3C with max shifted time = 17", out.width = '50%'}
+knitr::include_graphics("0010_case_real_data_with6_timepoints_files/figure-ext/BRAA06G025360.3C_17_mean.png")
+```
 
 
+```{r BRAA06G025360.3C_17_mixed, echo=FALSE, fig.cap="BRAA06G0253 60.3C with max shifted time = 17", out.width = '50%'}
+knitr::include_graphics("0010_case_real_data_with6_timepoints_files/figure-ext/BRAA06G025360.3C_17_mixed.png")
+```
 
 #### Aux codes
 

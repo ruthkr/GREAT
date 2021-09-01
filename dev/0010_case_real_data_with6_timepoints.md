@@ -14,6 +14,8 @@ Running registration using real data with different timepoints
         data](#register-data-using-mean-and-all-data)
     -   [Register data using only mean
         data](#register-data-using-only-mean-data)
+    -   [Compare data fitting for mean data and all
+        data](#compare-data-fitting-for-mean-data-and-all-data)
 
 ## Setup and running functions
 
@@ -400,9 +402,19 @@ reg_data_with_6_timepoints_mean[['model_comparison_dt']] %>%
 | BRAA07G034100.3C | FALSE                    | FALSE                     |
 | BRAA09G045310.3C | FALSE                    | FALSE                     |
 
-<img src="0010_case_real_data_with6_timepoints_files/figure-ext/BRAA06G025360.3C_16_mean.png" title="BRAA06G025360.3C with max shifted time = 16" alt="BRAA06G025360.3C with max shifted time = 16" width="45%" />
+### Compare data fitting for mean data and all data
 
-<img src="0010_case_real_data_with6_timepoints_files/figure-ext/BRAA06G025360.3C_16_mixed.png" title="BRAA06G0253 60.3C with max shifted time = 16" alt="BRAA06G0253 60.3C with max shifted time = 16" width="45%" />
+#### BRAA06G025360.3C with maximum shifted_time = 16
+
+<img src="0010_case_real_data_with6_timepoints_files/figure-ext/BRAA06G025360.3C_16_mean.png" title="BRAA06G025360.3C with max shifted time = 16" alt="BRAA06G025360.3C with max shifted time = 16" width="50%" />
+
+<img src="0010_case_real_data_with6_timepoints_files/figure-ext/BRAA06G025360.3C_16_mixed.png" title="BRAA06G0253 60.3C with max shifted time = 16" alt="BRAA06G0253 60.3C with max shifted time = 16" width="50%" />
+
+#### BRAA06G025360.3C with maximum shifted_time = 17
+
+<img src="0010_case_real_data_with6_timepoints_files/figure-ext/BRAA06G025360.3C_17_mean.png" title="BRAA06G025360.3C with max shifted time = 17" alt="BRAA06G025360.3C with max shifted time = 17" width="50%" />
+
+<img src="0010_case_real_data_with6_timepoints_files/figure-ext/BRAA06G025360.3C_17_mixed.png" title="BRAA06G0253 60.3C with max shifted time = 17" alt="BRAA06G0253 60.3C with max shifted time = 17" width="50%" />
 
 #### Aux codes
 

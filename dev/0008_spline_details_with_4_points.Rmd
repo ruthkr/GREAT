@@ -1,0 +1,218 @@
+---
+title: "Notebook"
+output: github_document
+---
+
+
+```{r setup, message=FALSE, include=FALSE}
+library(tidyverse)
+theme_set(theme_light())
+```
+
+### Define data
+
+```{r}
+data <- data.frame(
+  locus_name = c("A_1", "A_1", "A_1", "A_1", "A_1", "A_1", "A_1", "A_1"),
+  accession = c("Col0", "Col0", "Col0", "Col0", "Ro18", "Ro18", "Ro18", "Ro18"),
+  tissue = c("apex", "apex", "apex", "apex", "apex", "apex", "apex", "apex"),
+  timepoint = c(10L, 13L, 16L, 19L, 45L, 57L, 69L, 81L),
+  mean_cpm = c(
+    10.3020734833646, 8.1765718166656, 7.45844623551049, 3.28459081620233, 
+    65.8124409001875, 53.0594308999936, 48.7506774130629, 23.707544897214
+  )
+)
+
+data %>% 
+  knitr::kable()
+
+data %>% 
+  ggplot() +
+  aes(
+    x = timepoint,
+    y = mean_cpm,
+    color = accession,
+    shape = accession
+  ) +
+  geom_point() +
+  geom_line(alpha = 0.5)
+```
+
+### Applying registration
+
+```{r}
+time_stretch <- 4
+time_shift <- 5
+exp_stretch <- 6
+exp_shift <- 4
+```
+
+
+```{r}
+gg <- data %>% 
+  dplyr::bind_rows(
+    data %>% 
+  dplyr::filter(accession == "Col0") %>% 
+  dplyr::mutate(
+      timepoint = timepoint * time_stretch + time_shift,
+      mean_cpm = mean_cpm * exp_stretch + exp_shift,
+      accession = "Col0 (Reg)"
+    )
+  ) %>%
+  ggplot() +
+  aes(
+    x = timepoint,
+    y = mean_cpm,
+    color = accession,
+    shape = accession
+  ) +
+  geom_point() +
+  geom_line(alpha = 0.5)
+```
+
+```{r}
+gg
+
+gg + facet_wrap(~accession)
+```
+
+```{r}
+data_after_reg <- data %>% filter(accession == "Ro18")
+```
+
+```{r}
+# fit <- lm(formula = mean_cpm ~ splines::bs(timepoint, degree = 2, knot = c(62)), data = data_after_reg)
+fit <- lm(formula = mean_cpm ~ splines::bs(timepoint, degree = 3, df = 3), data = data_after_reg)
+summary(fit)
+```
+
+```{r gg-prediction, warning=FALSE}
+x_pred <- seq(min(data_after_reg$timepoint), max(data_after_reg$timepoint), len = 100)
+splines_df = data.frame(
+  timepoint = x_pred,
+  mean_cpm = predict(fit, data.frame(timepoint = x_pred))
+)
+ 
+data_after_reg %>% 
+  ggplot() +
+  aes(x = timepoint, y = mean_cpm) +
+  geom_line(
+    data = splines_df,
+    color = "red"
+  ) +
+  geom_point()
+```
+
+```{r residuals-loglik}
+fit$residuals
+
+# LogLik
+
+logLik(fit)
+AIC(fit)
+```
+
+
+### Data with noise 
+
+```{r}
+data
+```
+```{r}
+set.seed(9)
+data_with_noise <- data %>% 
+  dplyr::mutate(mean_cpm = ifelse(accession == "Col0", mean_cpm + rnorm(4, sd = 2), mean_cpm))
+
+data_with_noise %>% 
+  ggplot() +
+  aes(
+    x = timepoint,
+    y = mean_cpm,
+    color = accession,
+    shape = accession
+  ) +
+  geom_point() +
+  geom_line(alpha = 0.5)
+```
+
+```{r}
+gg <- data_with_noise %>% 
+  dplyr::bind_rows(
+    data_with_noise %>% 
+  dplyr::filter(accession == "Col0") %>% 
+  dplyr::mutate(
+      timepoint = timepoint * time_stretch + time_shift,
+      mean_cpm = mean_cpm * exp_stretch + exp_shift,
+      accession = "Col0 (Reg)"
+    )
+  ) %>%
+  ggplot() +
+  aes(
+    x = timepoint,
+    y = mean_cpm,
+    color = accession,
+    shape = accession
+  ) +
+  geom_point() +
+  geom_line(alpha = 0.5)
+
+gg
+```
+
+```{r fit-noise}
+data_after_reg_with_noise <- data_with_noise %>%
+  dplyr::filter(accession == "Ro18") %>%
+  dplyr::bind_rows(
+    data_with_noise %>%
+      dplyr::filter(accession == "Col0") %>%
+      dplyr::mutate(
+        timepoint = timepoint * time_stretch + time_shift,
+        mean_cpm = mean_cpm * exp_stretch + exp_shift,
+        accession = "Col0 (Reg)"
+      )
+  )
+
+# fit <- lm(formula = mean_cpm ~ splines::bs(timepoint, degree = 2, knot = c(62)), data = data_after_reg)
+fit <- lm(formula = mean_cpm ~ splines::bs(timepoint, degree = 3, df = 3), data = data_after_reg_with_noise)
+summary(fit)
+```
+
+
+```{r gg-prediction-noise, warning=FALSE}
+x_pred <- seq(min(data_after_reg_with_noise$timepoint), max(data_after_reg_with_noise$timepoint), len = 100)
+splines_df = data.frame(
+  timepoint = x_pred,
+  mean_cpm = predict(fit, data.frame(timepoint = x_pred))
+)
+ 
+data_after_reg_with_noise %>% 
+  ggplot() +
+  aes(x = timepoint, y = mean_cpm) +
+  geom_line(
+    data = splines_df,
+    color = "red"
+  ) +
+  geom_point()
+```
+
+#### Calculate AIC and BIC for non-registered data
+
+```{r fit-separate}
+fit_Ro18_sep <- lm(
+  formula = mean_cpm ~ splines::bs(timepoint, degree = 3, df = 3), 
+  data = data_with_noise %>% filter(accession == "Ro18")
+)
+
+fit_Col0_sep <- lm(
+  formula = mean_cpm ~ splines::bs(timepoint, degree = 3, df = 3), 
+  data = data_with_noise %>% filter(accession == "Col0")
+)
+
+data.frame(
+  acession = c("Ro18", "Col0"),
+  logLik = list(fit_Ro18_sep, fit_Col0_sep) %>% purrr::map(logLik) %>% unlist(),
+  AIC =    list(fit_Ro18_sep, fit_Col0_sep) %>% purrr::map(AIC) %>% unlist(),
+  BIC =    list(fit_Ro18_sep, fit_Col0_sep) %>% purrr::map(BIC) %>% unlist()
+) %>% 
+  knitr::kable()
+```

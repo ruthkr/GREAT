@@ -58,7 +58,7 @@ calculate_all_best_shifts <- function(num_shifts,
       do_rescale,
       min_shift,
       max_shift,
-      testing = FALSE,
+      testing,
       accession_data_to_transform = "Col0",
       accession_data_fix = "Ro18"
     )
@@ -185,14 +185,18 @@ get_best_shift <- function(num_shifts = 25,
     }
 
     # Data plot of shifted, and normalised gene expression
-    if (testing == TRUE) {
-      p <- ggplot2::ggplot(compared) +
-        ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
-        ggplot2::geom_point() +
-        ggplot2::geom_line() +
-        ggplot2::ggtitle(paste0("shift : ", curr_shift))
-      ggplot2::ggsave(paste0(curr_sym, stretch_factor, "-", curr_shift, ".pdf"))
-    }
+    # if (testing == TRUE) {
+    #   p <- ggplot2::ggplot(compared) +
+    #     ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
+    #     ggplot2::geom_point() +
+    #     ggplot2::geom_line() +
+    #     ggplot2::ggtitle(paste0("shift : ", curr_shift))
+    #
+    #   ggplot2::ggsave(
+    #     plot = p,
+    #     filename = paste0(curr_sym, stretch_factor, "-", curr_shift, ".pdf")
+    #   )
+    # }
 
     # For each data to transform timepoint, linear interpolate between the two nearest data fix timepoints
     data_transform_compared <- compared[compared$accession == accession_data_to_transform]
@@ -200,15 +204,20 @@ get_best_shift <- function(num_shifts = 25,
 
     data_transform_compared$pred.bra.expression <- sapply(data_transform_compared$shifted_time, interpolate_data_fix_comparison_expression, data_fix_dt = data_fix_compared)
 
-    if (testing == TRUE) {
-      interpolate_res <- ggplot2::ggplot(compared) +
-        ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
-        ggplot2::geom_point() +
-        ggplot2::geom_line() +
-        ggplot2::geom_point(data = data_transform_compared, aes(x = shifted_time, y = pred.bra.expression), color = "purple") +
-        ggplot2::geom_line(data = data_transform_compared, aes(x = shifted_time, y = pred.bra.expression), color = "purple") +
-        ggplot2::ggsave(paste0(curr_sym, stretch_factor, "-", curr_shift, "with_interpolation.pdf"))
-    }
+    # if (testing == TRUE) {
+    #   interpolate_res <- ggplot2::ggplot(compared) +
+    #     ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
+    #     ggplot2::geom_point() +
+    #     ggplot2::geom_line() +
+    #     ggplot2::geom_point(data = data_transform_compared, aes(x = shifted_time, y = pred.bra.expression), color = "purple") +
+    #     ggplot2::geom_line(data = data_transform_compared, aes(x = shifted_time, y = pred.bra.expression), color = "purple")
+    #
+    #
+    #     ggplot2::ggsave(
+    #       plot = interpolate_res,
+    #       filename = paste0(curr_sym, stretch_factor, "-", curr_shift, "with_interpolation.pdf")
+    #     )
+    # }
 
     # Calculate the score, using the (interpolated) predicted.bra.expression, and the observed arabidopsis expression
     score <- calc_score(data_transform_compared$mean_cpm, data_transform_compared$pred.bra.expression)

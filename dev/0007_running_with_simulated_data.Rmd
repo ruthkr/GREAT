@@ -85,7 +85,7 @@ Several set of data to generate:
 ```{r,fig.width=10, fig.height=10}
 knitr::include_graphics("refactoring/simulated_data_skecth.png")
 ```
-
+### Function to simulate data
 
 ```{r}
 #  Function to create data to register
@@ -144,7 +144,7 @@ for (num_points in num_points_list) {
     time_shift = 5,
     exp_stretch = 6,
     exp_shift = 4,
-    exp_noise_sd = 10
+    exp_noise_sd = 2
   )
 
   simulated_data_pool1 <- rbind(data_to_reg_points, data_fixed) %>%
@@ -341,7 +341,7 @@ result_with_num_point_6 <- GREAT::scale_and_register_data(
   stretches = c(1, 2, 3, 4, 5, 6),
   shift_extreme = 5,
   num_shifts = 11,
-  min_num_overlapping_points = 3,
+  min_num_overlapping_points = 2,
   initial_rescale = FALSE,
   do_rescale = TRUE,
   testing = FALSE,
@@ -356,4 +356,94 @@ result_with_num_point_6 <- GREAT::scale_and_register_data(
 
 ```{r, warning=FALSE, fig.width=10, fig.height=10}
 GREAT::plot_registered_GoIs_for_comparible_timepoints(result_with_num_point_6[["imputed_mean_df"]])
+```
+
+
+### Data with 5 timepoints
+
+```{r, warning=FALSE, fig.width=10, fig.height=10}
+simulated_data_with_num_point_5 <- results_list[[2]]
+
+simulated_data_with_num_point_5 %>% 
+  ggplot() +
+  aes(x = timepoint, y = mean_cpm, color = accession) +
+  geom_line() +
+  geom_point() +
+  ggplot2::facet_wrap(vars(locus_name))
+```
+#### Register dan plot the registered data
+
+```{r warning = FALSE, include=FALSE}
+result_with_num_point_5 <- GREAT::scale_and_register_data(
+  simulated_data_with_num_point_5,
+  simulated_data_with_num_point_5,
+  stretches = c(1, 2, 3, 4, 5, 6),
+  shift_extreme = 6,
+  num_shifts = 13,
+  min_num_overlapping_points = 1,
+  initial_rescale = FALSE,
+  do_rescale = TRUE,
+  testing = FALSE,
+  # accession_data_to_transform = "data_to_reg",
+  # accession_data_fix = "data_fixed",
+  accession_data_to_transform = "Col0",
+  accession_data_fix = "Ro18",
+  data_to_transform_time_added = 40,
+  data_fix_time_added = 40
+)
+```
+
+
+```{r}
+result_with_num_point_5[["model_comparison_dt"]]
+```
+
+
+
+```{r, warning=FALSE, fig.width=10, fig.height=10}
+GREAT::plot_registered_GoIs_for_comparible_timepoints(result_with_num_point_5[["imputed_mean_df"]])
+```
+
+
+
+
+### Data with 4 timepoints
+
+```{r, warning=FALSE, fig.width=10, fig.height=10}
+simulated_data_with_num_point_4 <- results_list[[1]]
+
+simulated_data_with_num_point_4 %>% 
+  ggplot() +
+  aes(x = timepoint, y = mean_cpm, color = accession) +
+  geom_line() +
+  geom_point() +
+  ggplot2::facet_wrap(vars(locus_name))
+```
+
+
+
+#### Register dan plot the registered data
+
+```{r warning = FALSE, include=FALSE}
+result_with_num_point_4 <- GREAT::scale_and_register_data(
+  simulated_data_with_num_point_4,
+  simulated_data_with_num_point_4,
+  stretches = c(1, 2, 3, 4, 5, 6),
+  shift_extreme = 6,
+  num_shifts = 13,
+  min_num_overlapping_points = 1,
+  initial_rescale = FALSE,
+  do_rescale = TRUE,
+  testing = FALSE,
+  # accession_data_to_transform = "data_to_reg",
+  # accession_data_fix = "data_fixed",
+  accession_data_to_transform = "Col0",
+  accession_data_fix = "Ro18",
+  data_to_transform_time_added = 40,
+  data_fix_time_added = 40
+)
+```
+
+```{r, warning=FALSE, fig.width=10, fig.height=10}
+GREAT::plot_registered_GoIs_for_comparible_timepoints(result_with_num_point_4[["imputed_mean_df"]])
 ```

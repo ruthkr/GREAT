@@ -67,9 +67,11 @@ calc_extreme_shifts <- function(mean_df,
 
 
   # Negative extreme shift will be -1 * exactly the difference between 1 of the stretched data_to_transform (e.g. Col0) timepoints, and the smallest data_fix (e.g. R018) timepoint
-  # Potitive extreme will be the difference between 1 of the ata_to_transform timepoints, and the maximum data_fix timepoint
+  # Potitive extreme will be the difference between 1 of the data_to_transform timepoints, and the maximum data_fix timepoint
   neg_extreme_candidate <- -1 * (original$delta_time[original$accession == accession_data_to_transform] - min(original$delta_time[original$accession == accession_data_fix]))
   pos_extreme_candidates <- max(original$delta_time[original$accession == accession_data_fix]) - original$delta_time[original$accession == accession_data_to_transform]
+
+
 
   # Among of these candidates, find the most extreme values which maintaining the required number of overlapping time-points to be considered.
   num_overlapping_points <- sapply(neg_extreme_candidate,
@@ -77,9 +79,10 @@ calc_extreme_shifts <- function(mean_df,
     data = original,
     accession_data_to_transform = accession_data_to_transform
   )
+
   if (all(num_overlapping_points < min_num_overlapping_points)) {
     stop(paste0(
-      "calc_extreme_shifts():\nafter applying stretch factor:", stretch, " to ", transformed.timecourse, ", none of the considered shifts have ",
+      "calc_extreme_shifts():\n after applying stretch factor:", "none of the considered shifts have ",
       "min_num_overlapping_points (", min_num_overlapping_points, ") overlapping timepoints with the other timecourse!\n",
       "maybe try a smaller stretch, and double check you're applying it to the correct timecourse."
     ))

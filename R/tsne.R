@@ -68,8 +68,11 @@ do_tSNE <- function(DATA, rds_file, plot_name, sumBrassicas) {
     p <- ggpubr::ggarrange(p1, p2, p3, p4,
                            labels=c('a', 'b', 'c', 'd'),
                            ncol=2, nrow=2)
-    p
-    ggplot2::ggsave(paste0(save.dir, '/', plot_name, '_p=', perp,'.pdf'), scale=1.5)
+    # p
+    ggplot2::ggsave(
+      plot = p,
+      filename = paste0(save.dir, '/', plot_name, '_p=', perp,'.pdf'), scale=1.5
+    )
   }
 
   # try with PCA before tSNE, as it seems to give an ok gradient timecourse.

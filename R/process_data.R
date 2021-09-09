@@ -38,8 +38,7 @@ scale_and_register_data <- function(mean_df,
 
   # Apply scaling
   mean_df_sc[, sc.mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE),
-    by = .(locus_name, accession)
-  ]
+    by = .(locus_name, accession)]
 
   # Apply scaling before registration (if initial_rescale == TRUE), otherwise using original data
   if (initial_rescale == TRUE) {
@@ -80,8 +79,9 @@ scale_and_register_data <- function(mean_df,
   best_shifts <- L[["best_shifts"]]
   model_comparison_dt <- L[["model_comparison_dt"]]
 
-  message("Max value of all_shifts mean_cpm :", max(all_shifts$mean_cpm))
+  # browser()
 
+  # message("Max value of all_shifts mean_cpm :", max(all_shifts$mean_cpm))
 
   # Add columns which flags which BIC and AIC values are better
   model_comparison_dt$BIC_registered_is_better <- (model_comparison_dt$registered.BIC < model_comparison_dt$separate.BIC)
@@ -217,8 +217,9 @@ get_best_stretch_and_shift <- function(to_shift_df,
                                        data_to_transform_time_added,
                                        data_fix_time_added) {
 
+
   # Warning to make sure users have correct accession data
-  if (!('Col0' %in% all_data_df$accession & 'Ro18' %in% all_data_df$accession)) {
+  if (!(accession_data_to_transform %in% all_data_df$accession & accession_data_fix %in% all_data_df$accession)) {
     stop('get_best_stretch_and_shift() : data accessions should have been
          converted to correct accession.')
   }
@@ -240,9 +241,10 @@ get_best_stretch_and_shift <- function(to_shift_df,
       do_rescale,
       shift_extreme,
       min_num_overlapping_points,
-      testing = FALSE,
+      testing,
       accession_data_to_transform,
-      accession_data_fix)
+      accession_data_fix
+    )
 
     all_shifts <- unique(all_shifts) # ensure no duplicated rows
 
@@ -257,12 +259,15 @@ get_best_stretch_and_shift <- function(to_shift_df,
 
     # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the
     # gene's expression separately in data to transform and data fix
-    model_comparison_dt <- calculate_all_model_comparison_stats(all_data_df,
-                                                                best_shifts,
-                                                                accession_data_to_transform,
-                                                                accession_data_fix,
-                                                                data_to_transform_time_added,
-                                                                data_fix_time_added)
+    model_comparison_dt <- calculate_all_model_comparison_stats(
+      all_data_df,
+      best_shifts,
+      is_testing = testing,
+      accession_data_to_transform,
+      accession_data_fix,
+      data_to_transform_time_added,
+      data_fix_time_added
+    )
 
 
     # Add info on the stretch and shift applied
@@ -292,7 +297,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
 
   # If there is a tie for best registration for a gene, keep the first one as the best
   if (any(duplicated(best_model_comparison.dt$gene))) {
-    print(paste0('found ', sum(duplicated(best_model_comparison.dt$gene)), ' tied optimal registrations. Removing dupliates'))
+    print(paste0('found ', sum(duplicated(best_model_comparison.dt$gene)), ' tied optimal registrations. Removing duplicates'))
     best_model_comparison.dt <- best_model_comparison.dt[!(duplicated(best_model_comparison.dt$gene)),]
   }
 
@@ -302,6 +307,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
   best_shifts <- merge(all_best_shifts,
                        best_model_comparison.dt[, c('gene', 'stretch', 'shift')],
                        by=c('gene', 'stretch', 'shift'))
+
 
   # There should be only 1 best shift for each gene, stop if it is not the case
   stopifnot(nrow(best_shifts) == length(unique(to_shift_df$locus_name)))
@@ -394,8 +400,8 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
 #' @return
 #' @export
 impute_transformed_exp_values <- function(shifted_mean_df,
-                                      accession_data_to_transform,
-                                      accession_data_fix) {
+                                          accession_data_to_transform,
+                                          accession_data_fix) {
 
   # The imputed transformed data times going to estimate gene expression for
   imputed_timepoints <- round(seq(min(shifted_mean_df$shifted_time), max(shifted_mean_df$shifted_time)))
@@ -406,11 +412,8 @@ impute_transformed_exp_values <- function(shifted_mean_df,
 
   count <- 0
   for (curr_gene in unique(shifted_mean_df$locus_name)) {
-
     if (count %% 100 == 0) {
-
-      message(count, ' / ', length(unique(shifted_mean_df$locus_name)))
-
+      message(count, " / ", length(unique(shifted_mean_df$locus_name)))
     }
 
     # Get the current gene expression data
@@ -419,30 +422,31 @@ impute_transformed_exp_values <- function(shifted_mean_df,
     transformed_df <- curr_df[curr_df$accession == accession_data_to_transform, ]
     # bra.df <- curr_df[curr_df$accession == accession_data_fix, ]
 
-    interp_transformed_df <- data.table::data.table('locus_name' = curr_gene,
-                                                'accession' = accession_data_to_transform,
-                                                'tissue' = 'apex',
-                                                'timepoint' = NA,
-                                                 'stretched_time_delta' = NA,
-                                                'shifted_time' = imputed_timepoints,
-                                                'is_registered'= unique(transformed_df$is_registered)[1])
+    interp_transformed_df <- data.table::data.table(
+      "locus_name" = curr_gene,
+      "accession" = accession_data_to_transform,
+      "tissue" = "apex",
+      "timepoint" = NA,
+      "stretched_time_delta" = NA,
+      "shifted_time" = imputed_timepoints,
+      "is_registered" = unique(transformed_df$is_registered)[1]
+    )
 
     # For each data fix timepoint, interpolate the comparable transformed expression data
     # by linear interpolation between the neighbouring two transformed expression values.
     # If not between two transformed expression values because shifted outside comparable range, set to NA.
     interp_transformed_df$mean_cpm <- sapply(imputed_timepoints,
-                                         interpolate_data_fix_comparison_expression,
-                                         data_fix_dt = transformed_df)
+      interpolate_data_fix_comparison_expression,
+      data_fix_dt = transformed_df
+    )
 
-    out_list <- c(out_list, list( interp_transformed_df))
-    count <- count+1
-
+    out_list <- c(out_list, list(interp_transformed_df))
+    count <- count + 1
   }
 
-  out_df <- do.call('rbind', out_list)
+  out_df <- do.call("rbind", out_list)
 
   return(out_df)
-
 }
 
 

@@ -76,11 +76,12 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
 #' @export
 reformat_for_distance_calculation <- function(dt, sample.id.cols, gene_col, expression.col) {
 
-  # concatenate sample.id columns to generate sample ids
+  # Concatenate sample.id columns to generate sample ids
   dt$sample.id <- dt[[sample.id.cols[1]]]
   if (length(sample.id.cols) > 1) {
     for (i in 2:length(sample.id.cols)) {
-      # pad timepoint to 2 figures to help ordering
+
+      # Pad timepoint to 2 figures to help ordering
       if (class(dt[[sample.id.cols[i]]]) %in%  c('integer', 'numeric')) {
         dt[[sample.id.cols[i]]] <- stringr::str_pad(dt[[sample.id.cols[i]]], 2, pad='0')
       }

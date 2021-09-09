@@ -45,6 +45,7 @@ get_best_result <- function(df) {
 #'
 #' @param all_data_df Input all data (without taking mean).
 #' @param best_shifts Input data frame containing information of best shifts.
+#' @param is_testing Showing a plot of the progress if \code{TRUE}, otherwise if \code{FALSE}.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_fix Accession name of data fix.
 #' @param data_to_transform_time_added Time points to be added in data to transform.
@@ -54,6 +55,7 @@ get_best_result <- function(df) {
 #' @export
 calculate_all_model_comparison_stats <- function(all_data_df,
                                                  best_shifts,
+                                                 is_testing,
                                                  accession_data_to_transform,
                                                  accession_data_fix,
                                                  data_to_transform_time_added,
@@ -65,7 +67,6 @@ calculate_all_model_comparison_stats <- function(all_data_df,
          all_data_df doesn't have the correct accession info - should have been
          converted to Ro18 & Col0")
   }
-
 
   # Apply the registration to the all rep data, so can use for model comparison
   shifted_all_data_df <- apply_best_shift(data = all_data_df,
@@ -94,7 +95,7 @@ calculate_all_model_comparison_stats <- function(all_data_df,
 
     L <- compare_registered_to_unregistered_model(curr_sym,
                                                   shifted_all_data_df,
-                                                  is_testing = FALSE,
+                                                  is_testing,
                                                   accession_data_to_transform,
                                                   accession_data_fix)
 
@@ -318,7 +319,7 @@ apply_best_normalisation <- function(data,
 #'
 #' @param curr_sym A gene accession.
 #' @param all_data_df Input data.
-#' @param is_testing Showing a plot of the progress if TRUE, otherwise if FALSE.
+#' @param is_testing Showing a plot of the progress if \code{TRUE}, otherwise if \code{FALSE}.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_fix Accession name of data fix.
 #'
@@ -340,13 +341,9 @@ compare_registered_to_unregistered_model <- function(curr_sym,
                                           accession_data_fix)
 
 
-#   ggplot2::ggplot(curr_data_df)+
-#     ggplot2::aes(x=shifted_time, y=mean_cpm, shape=is_compared, color=accession)+
-#     ggplot2::geom_point()
-
   # Cut down to the data for each model
   data_to_transform_spline <- curr_data_df[curr_data_df$is_compared == TRUE &
-                                    curr_data_df$accession == accession_data_to_transform, ]
+                                             curr_data_df$accession == accession_data_to_transform, ]
   data_fix_spline <- curr_data_df[curr_data_df$is_compared == TRUE &
                                     curr_data_df$accession == accession_data_fix, ]
   combined_spline_data <- curr_data_df[curr_data_df$is_compared == TRUE, ]
@@ -358,7 +355,6 @@ compare_registered_to_unregistered_model <- function(curr_sym,
   num.spline.params <- 6 # number of parameters for each spline fitting (degree and this used to calculate num knots).
   num.registration.params <- 2 # stretch, shift
   num.obs <- nrow(combined_spline_data)
-
 
   data_to_transform_fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_to_transform_spline)
   data_fix_fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_fix_spline)
@@ -372,7 +368,16 @@ compare_registered_to_unregistered_model <- function(curr_sym,
 
   # Calculate the comparison.stats - - AIC, BIC, smaller is better!
   # 2*num.spline.params as fitting separate models for Ara * Col
+  # fix_inf <- function(x) {
+  #   if (is.infinite(x) & sign(x) == -1) {
+  #     x <- 0
+  #   }
+  #
+  #   return(x)
+  # }
+
   separate.AIC <- calc_AIC(separate_logLik, 2*num.spline.params)
+  # %>% fix_inf()
   combined.AIC <- calc_AIC(combined_logLik, num.spline.params+num.registration.params)
 
   separate.BIC <- calc_BIC(separate_logLik, 2*num.spline.params, num.obs)
@@ -398,8 +403,13 @@ compare_registered_to_unregistered_model <- function(curr_sym,
       ggplot2::geom_line(data=spline.df)+
       ggplot2::ggtitle(paste0(curr_sym, ' : sep AIC:combo AIC=', round(separate.AIC), ':', round(combined.AIC),
                               ', sep BIC: combo BIC=', round(separate.BIC), ':', round(combined.BIC)))
-    ggplot2::ggsave(paste0(curr_sym, '_', max(ara.pred.df$shifted_time), '.pdf'))
 
+    ggplot2::ggsave(
+      plot = p,
+      filename = paste0(curr_sym, '_', max(ara.pred.df$shifted_time), '.pdf')
+    )
+
+    message("Saving plot as ", paste0(curr_sym, '_', max(ara.pred.df$shifted_time), '.pdf'))
   }
 
   return(list(separate.AIC = separate.AIC,

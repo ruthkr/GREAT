@@ -1,0 +1,171 @@
+---
+title: "Refactoring process_data.R"
+output: 
+  github_document:
+    toc: true
+---
+
+```{r setup}
+knitr::opts_chunk$set()
+
+load_all()
+library(ggplot2)
+library(data.table)
+library(cowplot)
+library(ggpubr)
+```
+
+
+#### test: impute_arabidopsis_values()
+
+```{r}
+
+# sanity plotting - a registered one
+# ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G001090.3C', ])+
+#   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession)+
+#   ggplot2::geom_point()
+# # an unregistered one
+# ggplot2::ggplot(shifted.mean_df[shifted.mean_df$locus_name=='BRAA01G003140.3C', ])+
+#   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession)+
+#   ggplot2::geom_point()
+
+
+
+# sanity testing - line is interpolated.
+# ggplot2::ggplot(curr_df)+
+#   ggplot2::aes(x=shifted_time, y=mean_cpm, color=accession)+
+#   ggplot2::geom_point()+
+#   ggplot2::geom_line(data=interp.transformed_df)
+```
+
+
+```{r}
+mean_df <- test_load_mean_df[[1]]
+all_data_df <- test_load_mean_df[[2]]
+# mean_df <- filtered_alex_data_mean %>% 
+#   dplyr::rename(mean_cpm = mean.cpm)
+# all_data_df <- filtered_alex_data_all %>% 
+#   dplyr::rename(mean_cpm = mean.cpm)
+stretches <- c(1, 1.5, 2)
+shift_extreme <- 4
+num_shifts <- 27
+min_num_overlapping_points <- 4
+initial_rescale <- FALSE
+do_rescale <- TRUE
+testing <- FALSE
+accession_data_to_transform <- "Col0"
+accession_data_fix <- "Ro18"
+data_to_transform_time_added <- 11
+data_fix_time_added <- 11
+```
+
+```{r}
+test_load_mean_df[[1]]
+```
+
+
+```{r}
+test_scale_and_register_data <- scale_and_register_data(
+  mean_df,
+  all_data_df,
+  stretches,
+  shift_extreme,
+  num_shifts,
+  min_num_overlapping_points,
+  initial_rescale,
+  do_rescale,
+  testing,
+  accession_data_to_transform,
+  accession_data_fix,
+  data_to_transform_time_added,
+  data_fix_time_added
+)
+```
+
+```{r}
+test_scale_and_register_data
+```
+
+```{r}
+test_mapped <- test_scale_and_register_data[["imputed_mean_df"]] %>%
+  dplyr::left_join(ID_table %>% 
+                     dplyr::mutate(CDS.model = toupper(CDS.model)), by = c("locus_name" = "CDS.model")) %>% 
+  dplyr::select(-c(locus_name.y)) %>%
+  dplyr::rename(locus_name = symbol, bra_gene = locus_name)
+```
+
+```{r}
+test <- test_mapped %>% 
+  dplyr::filter(dplyr::case_when(locus_name == "AGL24" ~ shifted_time >= 14 & shifted_time <= 35, 
+                          locus_name == "AP1" ~  shifted_time >= 11 & shifted_time <= 25,
+                          locus_name == "AP3" ~  shifted_time >= 13 & shifted_time <= 30,
+                          locus_name == "LFY" ~ shifted_time >= 11 & shifted_time <= 30,
+                          locus_name == "SOC1" ~ shifted_time >= 10 & shifted_time <= 31))
+
+test
+```
+
+```{r}
+plot_registered_GoIs_for_comparible_timepoints <- function(all.stretched.df) {
+
+  # make plot of gene expression after registration - only plot compared timepoints
+  # cut down to compared timepoints for each gene
+
+  registered.plot.df <- all.stretched.df
+  # AGL24.df <- registered.plot.df[registered.plot.df$locus_name=='AGL24'] 
+  # AP1.df <- registered.plot.df[registered.plot.df$locus_name=='AP1'] 
+  # AP3.df <- registered.plot.df[registered.plot.df$locus_name=='AP3']
+  # LFY.df <- registered.plot.df[registered.plot.df$locus_name=='LFY'] 
+  # SOC1.df <- registered.plot.df[registered.plot.df$locus_name=='SOC1'] 
+  # registered.plot.df <- rbind(AGL24.df, AP1.df, AP3.df, LFY.df, SOC1.df)
+
+  registered.plot.df$accession <- as.character(registered.plot.df$accession)
+  registered.plot.df$accession[registered.plot.df$accession=='Col0'] <- 'Col-0'
+  registered.plot.df$accession[registered.plot.df$accession=='Ro18'] <- 'Ro18'
+
+  p.registered <- ggplot(registered.plot.df, aes(x=shifted_time, y=mean_cpm, color=accession, fill=accession))+
+    stat_summary(fun=mean, geom='line', size=1)+
+    stat_summary(fun.data=mean_se, fun.args=list(mult=1.96),geom='ribbon',
+                 color=NA, alpha=0.3)+
+    geom_point(size=0.4)+
+    theme_bw()+
+    xlab('registered time (d)')+
+    ylab('normalised expression')+
+    facet_wrap(~locus_name, scales='free', ncol=2)+
+    scale_x_continuous(breaks=scales::pretty_breaks())+
+    theme(legend.position = 'top',
+          legend.title = element_blank(),
+          axis.title = element_text(size=10),
+          axis.text=element_text(size=6),
+          strip.text=element_text(face='italic'),
+          legend.margin=margin(21,0,0,0))
+
+  return(p.registered)
+}
+```
+
+```{r warning = FALSE}
+plot_registered_GoIs_for_comparible_timepoints(test)
+```
+
+
+```{r warning = FALSE}
+plot_registered_GoIs_for_comparible_timepoints(test)
+```
+
+
+
+
+```{r}
+test_scale_and_register_data[["model_comparison_dt"]] %>%
+  dplyr::left_join(ID_table %>%
+                     dplyr::mutate(CDS.model = toupper(CDS.model)), by = c("gene" = "CDS.model")) %>%
+  # dplyr::select(-c(locus_name.y)) %>%
+  # dplyr::rename(locus_name = symbol) %>%
+  dplyr::select(gene, stretch, shift, symbol)
+```
+
+
+
+
+

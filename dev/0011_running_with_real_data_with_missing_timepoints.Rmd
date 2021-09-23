@@ -153,7 +153,7 @@ alex_data_mean %>%
 
 ```{r, warning=FALSE, fig.width=10, fig.height=10}
 skipped_every_one_timepoint_mean <- alex_data_mean %>% 
-  undersample_data_timepoints_skip(skip_timepoints_pattern = c(TRUE, FALSE))
+  undersample_data_timepoints_skip(skip_timepoints_pattern = c(FALSE, TRUE))
 
 
 
@@ -182,8 +182,8 @@ skipped_every_one_timepoint_all %>% dplyr::pull(timepoint) %>% unique()
 
 ```{r message=FALSE, error=TRUE}
 reg_data_skipped_every_one_timepoint <- GREAT::scale_and_register_data(
-  skipped_every_one_timepoint_mean,
-  skipped_every_one_timepoint_all,
+  as.data.table(skipped_every_one_timepoint_mean),
+  as.data.table(skipped_every_one_timepoint_all),
   stretches =  c(2, 1.5, 1),
   shift_extreme = 4,
   num_shifts = 27,
@@ -198,6 +198,10 @@ reg_data_skipped_every_one_timepoint <- GREAT::scale_and_register_data(
 )
 ```
 
+```{r, warning=FALSE, fig.width=10, fig.height=10}
+GREAT::plot_registered_GoIs_for_comparible_timepoints(reg_data_skipped_every_one_timepoint[['imputed_mean_df']])
+```
+
 
 ## Skip every two timepoints
 
@@ -205,7 +209,7 @@ reg_data_skipped_every_one_timepoint <- GREAT::scale_and_register_data(
 
 ```{r, warning=FALSE, fig.width=10, fig.height=10}
 skipped_every_two_timepoint_mean <- alex_data_mean %>% 
-  undersample_data_timepoints_skip(skip_timepoints_pattern = c(TRUE, FALSE, FALSE))
+  undersample_data_timepoints_skip(skip_timepoints_pattern = c(FALSE, FALSE, TRUE))
 
 
 
@@ -233,15 +237,15 @@ skipped_every_two_timepoint_all  %>% dplyr::pull(timepoint) %>% unique()
 
 skipped_every_two_timepoint_all  %>% class()
 
-is.data.table(skipped_every_two_timepoint_all)
+is.data.table(skipped_every_two_timepoint_mean)
 ```
 
 ### Register data
 
 ```{r message=FALSE, error=TRUE}
 reg_data_skipped_every_one_timepoint <- GREAT::scale_and_register_data(
-  skipped_every_two_timepoint_mean,
-  skipped_every_two_timepoint_all,
+  as.data.table(skipped_every_two_timepoint_mean),
+  as.data.table(skipped_every_two_timepoint_all),
   stretches =  c(2, 1.5, 1),
   shift_extreme = 4,
   num_shifts = 27,
@@ -254,4 +258,77 @@ reg_data_skipped_every_one_timepoint <- GREAT::scale_and_register_data(
   data_to_transform_time_added = 11,
   data_fix_time_added = 11
 )
+```
+
+```{r, warning=FALSE, fig.width=10, fig.height=10}
+GREAT::plot_registered_GoIs_for_comparible_timepoints(reg_data_skipped_every_one_timepoint[['imputed_mean_df']])
+```
+
+
+
+## Skip every three timepoints
+
+### Plot data before registering
+
+```{r, warning=FALSE, fig.width=10, fig.height=10}
+skipped_every_three_timepoint_mean <- alex_data_mean %>% 
+  undersample_data_timepoints_skip(skip_timepoints_pattern = c(FALSE, FALSE, FALSE, TRUE))
+
+
+
+skipped_every_three_timepoint_mean %>% 
+ggplot() +
+  aes(x = timepoint, y = mean_cpm, color = accession) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~locus_name)
+```
+
+
+
+```{r}
+uniq_skipped_every_three_timepoint <- skipped_every_three_timepoint_mean %>% dplyr::pull(timepoint) %>% unique()
+
+uniq_skipped_every_three_timepoint
+```
+
+```{r}
+skipped_every_three_timepoint_all <- alex_data_all %>% 
+  dplyr::filter(timepoint %in% uniq_skipped_every_three_timepoint)
+
+skipped_every_three_timepoint_all %>% dplyr::pull(timepoint) %>% unique()
+```
+
+### Register data
+
+```{r message=FALSE, error=TRUE}
+reg_data_skipped_every_three_timepoint <- GREAT::scale_and_register_data(
+  as.data.table(skipped_every_three_timepoint_mean),
+  as.data.table(skipped_every_three_timepoint_all),
+  stretches =  c(2, 1.5, 1),
+  shift_extreme = 4,
+  num_shifts = 27,
+  min_num_overlapping_points = 1,
+  initial_rescale = FALSE,
+  do_rescale = TRUE,
+  testing = FALSE,
+  accession_data_to_transform = "Col0",
+  accession_data_fix = "Ro18",
+  data_to_transform_time_added = 11,
+  data_fix_time_added = 11
+)
+```
+
+```{r}
+skipped_every_three_timepoint_mean %>% 
+ggplot() +
+  aes(x = timepoint, y = mean_cpm, color = accession) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~locus_name)
+```
+
+
+```{r, warning=FALSE, fig.width=5, fig.height=5}
+GREAT::plot_registered_GoIs_for_comparible_timepoints(reg_data_skipped_every_three_timepoint[['imputed_mean_df']])
 ```

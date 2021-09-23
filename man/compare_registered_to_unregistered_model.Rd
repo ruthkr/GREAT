@@ -17,7 +17,7 @@ compare_registered_to_unregistered_model(
 
 \item{all_data_df}{Input data.}
 
-\item{is_testing}{Showing a plot of the progress if TRUE, otherwise if FALSE.}
+\item{is_testing}{Showing a plot of the progress if \code{TRUE}, otherwise if \code{FALSE}.}
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 

@@ -98,7 +98,14 @@ GREAT::plot_registered_GoIs_for_comparible_timepoints(data_to_plot)
 ## Slice the data functions
 
 ```{r fn-undersample-data_timepoints-skip}
-undersample_data_timepoints_skip <- function(data, skip_timepoints_pattern = c(TRUE)) {
+undersample_data_timepoints_skip <- function(data, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(TRUE)) {
+  if (keep_first_last_timepoint) {
+  sliced_data <- data %>%
+    dplyr::group_by(locus_name, accession) %>%
+    dplyr::arrange(timepoint) %>%
+    dplyr::slice(c(1, seq(2, dplyr::n() - 1, 1)[skip_timepoints_pattern], dplyr::n())) %>% 
+    dplyr::ungroup()
+  } else
   sliced_data <- data %>%
     dplyr::group_by(locus_name, accession) %>%
     dplyr::arrange(timepoint) %>%

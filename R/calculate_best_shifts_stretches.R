@@ -12,7 +12,7 @@
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_fix Accession name of data fix.
 #'
-#' @return
+#' @return \code{all_scores_df}
 #' @export
 calculate_all_best_shifts <- function(num_shifts,
                                       mean_df,
@@ -51,7 +51,8 @@ calculate_all_best_shifts <- function(num_shifts,
 
     # Out is mean SSD between data to transform (e.g. arabidopsis), and interpolated data fix (interpolated between 2 nearest points, e.g. Brassica)
     # Get "score" for all the candidate shifts. Score is mean error / data fix expression for compared points. If timepoints don't line up, brassica value is linearly imputed
-    out <- get_best_shift(num_shifts,
+    out <- get_best_shift(
+      num_shifts,
       curr_sym,
       data = mean_df,
       stretch_factor,
@@ -59,14 +60,15 @@ calculate_all_best_shifts <- function(num_shifts,
       min_shift,
       max_shift,
       testing,
-      accession_data_to_transform = "Col0",
-      accession_data_fix = "Ro18"
+      accession_data_to_transform,
+      accession_data_fix
     )
 
     best_shift <- out$shift[out$score == min(out$score)]
+
     if (length(best_shift) > 1) {
-      if (max(out$score) == "Inf") {
-        # Can get inf score if data fix gene note expressed in the comparison
+      if (is.infinite(max(out$score))) {
+        # Can get inf score if data fix gene not expressed in the comparison
         next
       } else {
         # If ties for the best shift applied, apply the smaller absolute one
@@ -81,12 +83,11 @@ calculate_all_best_shifts <- function(num_shifts,
     count <- count + 1
   }
 
+  # Bind all scores
   all_scores_df <- do.call("rbind", all_scores_list)
 
   return(all_scores_df)
 }
-
-
 
 #' Calculate the score for all shifts
 #'
@@ -149,12 +150,14 @@ get_best_shift <- function(num_shifts = 25,
     compared <- data[data$is_compared == TRUE, ]
 
     # Renormalise expression using just these timepoints?
-    if (do_rescale == TRUE) {
+    if (do_rescale) {
       # Record the mean and sd of the compared points, used for rescaling in "apply shift" function
-      data_transform_mean <- mean(compared$mean_cpm[compared$accession == accession_data_to_transform])
-      data_fix_mean <- mean(compared$mean_cpm[compared$accession == accession_data_fix])
-      data_transform_sd <- stats::sd(compared$mean_cpm[compared$accession == accession_data_to_transform])
-      data_fix_sd <- stats::sd(compared$mean_cpm[compared$accession == accession_data_fix])
+      mean_cpm_transform <- compared$mean_cpm[compared$accession == accession_data_to_transform]
+      data_transform_mean <- mean(mean_cpm_transform)
+      data_transform_sd <- stats::sd(mean_cpm_transform)
+      mean_cpm_fix <- compared$mean_cpm[compared$accession == accession_data_fix]
+      data_fix_mean <- mean(mean_cpm_fix)
+      data_fix_sd <- stats::sd(mean_cpm_fix)
 
       # Do the transformation started from here
       if ((data_transform_sd != 0 | !is.nan(data_transform_sd)) & (data_fix_sd != 0 | !is.nan(data_fix_sd))) {
@@ -183,7 +186,7 @@ get_best_shift <- function(num_shifts = 25,
     }
 
     # Data plot of shifted, and normalised gene expression
-    # if (testing == TRUE) {
+    # if (testing) {
     #   p <- ggplot2::ggplot(compared) +
     #     ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
     #     ggplot2::geom_point() +

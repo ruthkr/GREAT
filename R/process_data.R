@@ -467,7 +467,6 @@ fix.accessions <- function(df, original.transformed.accession, original.other.ac
 
 #' @export
 change.accession.names <- function(mean_df, all_data_df, transformed.timecourse) {
-  message_function_header(unlist(stringr::str_split(deparse(sys.call()), "\\("))[[1]])
   # set the "transformed.timecourse" accession to "Col0", and the other one to "Ro18"
 
   # error checking

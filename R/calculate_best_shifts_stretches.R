@@ -200,15 +200,15 @@ get_best_shift <- function(num_shifts = 25,
     data_transform_compared <- compared[compared$accession == accession_data_to_transform]
     data_fix_compared <- compared[compared$accession == accession_data_fix]
 
-    data_transform_compared$pred.bra.expression <- sapply(data_transform_compared$shifted_time, interpolate_data_fix_comparison_expression, data_fix_dt = data_fix_compared)
+    data_transform_compared$pred_data_fix_expression <- sapply(data_transform_compared$shifted_time, interpolate_data_fix_comparison_expression, data_fix_dt = data_fix_compared)
 
-    # if (testing == TRUE) {
+    # if (testing) {
     #   interpolate_res <- ggplot2::ggplot(compared) +
     #     ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
     #     ggplot2::geom_point() +
     #     ggplot2::geom_line() +
-    #     ggplot2::geom_point(data = data_transform_compared, aes(x = shifted_time, y = pred.bra.expression), color = "purple") +
-    #     ggplot2::geom_line(data = data_transform_compared, aes(x = shifted_time, y = pred.bra.expression), color = "purple")
+    #     ggplot2::geom_point(data = data_transform_compared, aes(x = shifted_time, y = pred_data_fix_expression), color = "purple") +
+    #     ggplot2::geom_line(data = data_transform_compared, aes(x = shifted_time, y = pred_data_fix_expression), color = "purple")
     #
     #
     #     ggplot2::ggsave(
@@ -218,14 +218,17 @@ get_best_shift <- function(num_shifts = 25,
     # }
 
     # Calculate the score, using the (interpolated) predicted.bra.expression, and the observed arabidopsis expression
-    score <- calc_score(data_transform_compared$mean_cpm, data_transform_compared$pred.bra.expression)
+    score <- calc_score(
+      data_to_transform_expression = data_transform_compared$mean_cpm,
+      data_fix_expression = data_transform_compared$pred_data_fix_expression
+    )
 
     if (is.na(score)) {
-      print("error in get_best_shift(): got a score of NA for gene:")
-      print(paste("data_transform_compared$mean_cpm:", data_transform_compared$mean_cpm))
-      print(data_transform_compared$pred.bra.expression)
-      print(curr_sym)
-      print(paste0("with curr_shift=", curr_shift))
+      message("error in get_best_shift(): got a score of NA for gene:")
+      message(paste("data_transform_compared$mean_cpm:", data_transform_compared$mean_cpm))
+      message(data_transform_compared$pred_data_fix_expression)
+      message(curr_sym)
+      message(paste0("with curr_shift=", curr_shift))
       stop()
     }
 
@@ -236,17 +239,18 @@ get_best_shift <- function(num_shifts = 25,
     all_data_fix_sd[i] <- data_fix_sd
   }
 
-  out <- data.table::data.table(data.frame(
-    "gene" = curr_sym,
-    "stretch" = stretch_factor,
-    "shift" = all_shifts,
-    "score" = all_scores,
-    "data_transform_compared_mean" = all_data_transform_mean,
-    "data_fix_compared_mean" = all_data_fix_mean,
-    "data_transform_compared_sd" = all_data_transform_sd,
-    "data_fix_compared_sd" = all_data_fix_sd
-  ))
+  out <- data.table::data.table(
+    data.frame(
+      "gene" = curr_sym,
+      "stretch" = stretch_factor,
+      "shift" = all_shifts,
+      "score" = all_scores,
+      "data_transform_compared_mean" = all_data_transform_mean,
+      "data_fix_compared_mean" = all_data_fix_mean,
+      "data_transform_compared_sd" = all_data_transform_sd,
+      "data_fix_compared_sd" = all_data_fix_sd
+    )
+  )
 
   return(out)
-
 }

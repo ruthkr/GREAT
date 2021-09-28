@@ -114,7 +114,6 @@ get_best_shift <- function(num_shifts = 25,
                            testing = FALSE,
                            accession_data_to_transform = "Col0",
                            accession_data_fix = "Ro18") {
-
   data <- data[data$locus_name == curr_sym, ]
 
   # Transform timepoint to be time from first timepoint
@@ -123,12 +122,11 @@ get_best_shift <- function(num_shifts = 25,
   # Apply stretch_factor to the data to transform, leave the data fix as it is
   data$delta_time[data$accession == accession_data_to_transform] <- data$delta_time[data$accession == accession_data_to_transform] * stretch_factor
 
-
-  all_scores <- rep(0, num_shifts)
-  all_data_transform_mean <- rep(0, num_shifts)
-  all_data_fix_mean <- rep(0, num_shifts)
-  all_data_transform_sd <- rep(0, num_shifts)
-  all_data_fix_sd <- rep(0, num_shifts)
+  all_scores <- numeric(length = num_shifts)
+  all_data_transform_mean <- numeric(length = num_shifts)
+  all_data_fix_mean <- numeric(length = num_shifts)
+  all_data_transform_sd <- numeric(length = num_shifts)
+  all_data_fix_sd <- numeric(length = num_shifts)
 
   all_shifts <- seq(min_shift, max_shift, length.out = num_shifts)
 
@@ -139,7 +137,7 @@ get_best_shift <- function(num_shifts = 25,
 
   # Start the iteration to calculate score for each shift for all shifts in the list
   i <- 1
-  for (i in 1:length(all_shifts)) {
+  for (i in seq_along(all_shifts)) {
     curr_shift <- all_shifts[i]
 
     # Shift the data to transform expression timings

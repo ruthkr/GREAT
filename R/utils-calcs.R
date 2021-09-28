@@ -10,7 +10,6 @@ my_scale <- function(input) {
   return(input / max(input))
 }
 
-
 #' Calculate Akaike's ‘An Information Criterion’
 #'
 #' `calc_AIC` is a generic function calculating Akaike's ‘An Information Criterion’ for one or several fitted model objects for which a log-likelihood value can be obtained.
@@ -21,7 +20,6 @@ my_scale <- function(input) {
 #' @return AIC criterion value.
 #' @export
 calc_AIC <- function(logL, num_params) {
-
   return((-2 * logL) + 2 * num_params)
 }
 
@@ -36,10 +34,8 @@ calc_AIC <- function(logL, num_params) {
 #' @return AIC criterion value.
 #' @export
 calc_BIC <- function(logL, num_params, num_obs) {
-
   return((-2 * logL) + log(num_obs) * num_params)
 }
-
 
 #' Calculate mean score of observed expression data and expected value
 #'
@@ -51,11 +47,9 @@ calc_BIC <- function(logL, num_params, num_obs) {
 #' @return Mean of score value.
 #' @export
 calc_score <- function(data_to_transform_expression, data_fix_expression) {
-
   # if don't regularise / penalise for shift applied, then like uniform prior on it.
   # maybe should penalise for comparing fewer timepoints?
   # divide by the data_to_transform_expression as filtered already to make sure expressed
-
   score <- (data_to_transform_expression - data_fix_expression)**2 # / abs(data_to_transform_expression)
 
   return(mean(score))
@@ -70,8 +64,7 @@ calc_score <- function(data_to_transform_expression, data_fix_expression) {
 #'
 #' @export
 max_is_compared_to_data_to_transform <- function(data_to_transform_time,
-                                             data_fix) {
-
+                                                 data_fix) {
   # If using for rep data, then repeats of the same points screws it up
   data_fix <- unique(subset(data_fix, select = c("timepoint", "shifted_time")))
 
@@ -81,9 +74,7 @@ max_is_compared_to_data_to_transform <- function(data_to_transform_time,
   data_fix_max_time <- candidates$shifted_time[candidates$diff == min(candidates$diff)]
 
   return(data_fix_max_time)
-
 }
-
 
 #' Get the smallest time point of data fix
 #'
@@ -94,18 +85,15 @@ max_is_compared_to_data_to_transform <- function(data_to_transform_time,
 #'
 #' @export
 min_is_compared_to_data_to_transform <- function(data_to_transform_time,
-                                             data_fix) {
-
+                                                 data_fix) {
   # If using for rep data, then repeats of the same points screws it up
   data_fix <- unique(subset(data_fix, select = c("timepoint", "shifted_time")))
-
   data_fix$diff <- data_fix$shifted_time - data_to_transform_time
   candidates <- data_fix[data_fix$diff <= 0, ]
   data_fix_min_time <- candidates$shifted_time[candidates$diff == max(candidates$diff)]
 
   return(data_fix_min_time)
 }
-
 
 #' Calculate the number of overlapping points
 #'
@@ -117,10 +105,8 @@ min_is_compared_to_data_to_transform <- function(data_to_transform_time,
 #'
 #' @export
 calc_num_overlapping_points <- function(shift, data, accession_data_to_transform = "Col0") {
-
   data$shifted_time[data$accession == accession_data_to_transform] <- data$delta_time[data$accession == accession_data_to_transform] + shift
   data <- get_compared_timepoints(data)
-
   data[, num.compared := sum(is_compared), by = .(accession)]
 
   return(min(data$num.compared))

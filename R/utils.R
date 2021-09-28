@@ -10,7 +10,6 @@
 get_compared_timepoints <- function(data,
                                     accession_data_to_transform = "Col0",
                                     accession_data_fix = "Ro18") {
-
   # Filter data fix from the whole dataset
   data_fix <- data$shifted_time[data$accession == accession_data_fix]
 
@@ -22,18 +21,22 @@ get_compared_timepoints <- function(data,
   data$is_compared[(data$accession == accession_data_to_transform & (data$shifted_time >= min_data_fix & data$shifted_time <= max_data_fix))] <- TRUE
 
   # Get the extreme data fix times which used - bigger or equal than max of data to transform, and smaller or equal than  min data to transform, because have to project data to transform onto data fix
-  max_data_to_transform <- max(data$shifted_time[data$accession == accession_data_to_transform & data$is_compared==TRUE])
-  min_data_to_transform <- min(data$shifted_time[data$accession == accession_data_to_transform & data$is_compared==TRUE])
-  max_data_fix <- max_is_compared_to_data_to_transform(max_data_to_transform, data[data$accession == accession_data_fix, ])
-  min_data_fix <- min_is_compared_to_data_to_transform(min_data_to_transform, data[data$accession == accession_data_fix, ])
+  max_data_to_transform <- max(data$shifted_time[data$accession == accession_data_to_transform & data$is_compared == TRUE])
+  min_data_to_transform <- min(data$shifted_time[data$accession == accession_data_to_transform & data$is_compared == TRUE])
+  max_data_fix <- max_is_compared_to_data_to_transform(
+    data_to_transform_time = max_data_to_transform,
+    data_fix = data[data$accession == accession_data_fix, ]
+  )
+  min_data_fix <- min_is_compared_to_data_to_transform(
+    data_to_transform_time = min_data_to_transform,
+    data_fix = data[data$accession == accession_data_fix, ]
+  )
 
   # use these to get all the brassica times which used
-  data$is_compared[(data$accession == accession_data_fix & (data$shifted_time >= min_data_fix & data$shifted_time <=max_data_fix))] <- TRUE
+  data$is_compared[(data$accession == accession_data_fix & (data$shifted_time >= min_data_fix & data$shifted_time <= max_data_fix))] <- TRUE
 
   return(data)
 }
-
-
 
 #' Calculate prediction of data fix expression value
 #'
@@ -42,8 +45,7 @@ get_compared_timepoints <- function(data,
 #'
 #' @return Expression prediction.
 interpolate_data_fix_comparison_expression <- function(data_to_transform_time,
-                                                          data_fix_dt) {
-
+                                                       data_fix_dt) {
   data_fix_dt$diff <- data_fix_dt$shifted_time - data_to_transform_time
 
   # If outside of comparable range (time is smaller than all data_fix_dt time or bigger than all)

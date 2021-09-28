@@ -90,12 +90,11 @@ scale_and_register_data <- function(mean_df,
 
 
   # Report model comparison results
-  print("################## Model comparison results #######################")
-  print(paste0("AIC finds registration better than separate for :", sum(model_comparison_dt$AIC_registered_is_better), " / ", nrow(model_comparison_dt)))
-  print(paste0("BIC finds registration better than separate for :", sum(model_comparison_dt$BIC_registered_is_better), " / ", nrow(model_comparison_dt)))
-  print(paste0("AIC & BIC finds registration better than separate for :", sum(model_comparison_dt$ABIC_registered_is_better), " / ", nrow(model_comparison_dt)))
-  print("###################################################################")
-
+  message("################## Model comparison results #######################")
+  message("AIC finds registration better than separate for :", sum(model_comparison_dt$AIC_registered_is_better), " / ", nrow(model_comparison_dt))
+  message("BIC finds registration better than separate for :", sum(model_comparison_dt$BIC_registered_is_better), " / ", nrow(model_comparison_dt))
+  message("AIC & BIC finds registration better than separate for :", sum(model_comparison_dt$ABIC_registered_is_better), " / ", nrow(model_comparison_dt))
+  message("###################################################################")
 
   # get the best-shifted and stretched mean gene expression, only to genes which registration is better than
   # separate models by BIC. Don't stretch out, or shift genes for which separate is better.
@@ -297,7 +296,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
 
   # If there is a tie for best registration for a gene, keep the first one as the best
   if (any(duplicated(best_model_comparison.dt$gene))) {
-    print(paste0('found ', sum(duplicated(best_model_comparison.dt$gene)), ' tied optimal registrations. Removing duplicates'))
+    message(paste0('found ', sum(duplicated(best_model_comparison.dt$gene)), ' tied optimal registrations. Removing duplicates'))
     best_model_comparison.dt <- best_model_comparison.dt[!(duplicated(best_model_comparison.dt$gene)),]
   }
 

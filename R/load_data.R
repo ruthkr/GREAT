@@ -50,8 +50,8 @@ load_mean_df <- function(filepath_data_fix,
   mean_df <- mean_df[mean_df$locus_name %in% keep_final_genes, ]
 
   # Printing the keep genes
-  print(paste0(length(keep_data_fix_genes), ' brassica genes considered in the comparison'))
-  print(paste0(length(keep_final_genes), ' all genes considered in the comparison'))
+  message(paste0(length(keep_data_fix_genes), " brassica genes considered in the comparison"))
+  message(paste0(length(keep_final_genes), " all genes considered in the comparison"))
 
   # Get mean_df, including column "group"
   exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]

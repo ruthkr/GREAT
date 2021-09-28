@@ -1,48 +1,51 @@
 #' @export
 load_mean_df <- function(filepath_data_fix,
-                          filepath_data_to_transform,
-                          filepath_id_table,
-                          fix_id_table_shared_colname,
-                          fix_and_to_transform_data_shared_colname,
-                          colnames_id_table,
-                          colnames_wanted,
-                          tissue_wanted,
-                          curr_GoIs,
-                          sum_exp_data_fix,
-                          accession_data_to_transform,
-                          ids_data_fix_colnames,
-                          max_mean_cpm_wanted = 5) {
+                         filepath_data_to_transform,
+                         filepath_id_table,
+                         fix_id_table_shared_colname,
+                         fix_and_to_transform_data_shared_colname,
+                         colnames_id_table,
+                         colnames_wanted,
+                         tissue_wanted,
+                         curr_GoIs,
+                         sum_exp_data_fix = FALSE,
+                         accession_data_to_transform = "Col0",
+                         ids_data_fix_colnames = c("CDS.model", "locus_name"),
+                         max_mean_cpm_wanted = 5) {
 
   # Load the expression data for all the curr_GoIs gene models, for data to transform and for data fix
-  exp <- get_expression_of_interest(filepath_data_fix,
-                                    filepath_data_to_transform,
-                                    filepath_id_table,
-                                    fix_id_table_shared_colname,
-                                    fix_and_to_transform_data_shared_colname,
-                                    colnames_id_table,
-                                    colnames_wanted,
-                                    tissue_wanted,
-                                    curr_GoIs,
-                                    sum_exp_data_fix = F,
-                                    accession_data_to_transform = "Col0",
-                                    ids_data_fix_colnames = c("CDS.model", "locus_name"))
+  exp <- get_expression_of_interest(
+    filepath_data_fix,
+    filepath_data_to_transform,
+    filepath_id_table,
+    fix_id_table_shared_colname,
+    fix_and_to_transform_data_shared_colname,
+    colnames_id_table,
+    colnames_wanted,
+    tissue_wanted,
+    curr_GoIs,
+    sum_exp_data_fix,
+    accession_data_to_transform,
+    ids_data_fix_colnames
+  )
 
   # Calculate mean of each timepoint by adding a column called "mean_cpm"
+  # TODO: make vector in mean_df a non-hardcoded parameter
   exp[, mean_cpm := mean(norm.cpm), by = list(locus_name, accession, tissue, timepoint)]
-  mean_df <- unique(exp[, c('locus_name', 'accession', 'tissue', 'timepoint', 'mean_cpm')])
+  mean_df <- unique(exp[, c("locus_name", "accession", "tissue", "timepoint", "mean_cpm")])
 
   # Filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed greater than 1
   data_fix_df <- mean_df[mean_df$accession != accession_data_to_transform]
-  data_fix_df[, keep := (max(mean_cpm) > max_mean_cpm_wanted | mean(mean_cpm > 1) > 0.5) , by = .(locus_name)]
+  data_fix_df[, keep := (max(mean_cpm) > max_mean_cpm_wanted | mean(mean_cpm > 1) > 0.5), by = .(locus_name)]
 
   keep_data_fix_genes <- unique(data_fix_df$locus_name[data_fix_df$keep == TRUE])
   discard_data_fix_genes <- unique(data_fix_df$locus_name[data_fix_df$keep == FALSE])
 
   # Filter mean_df to remove all data to transform genes with all zeros values
   data_to_transform_df <- mean_df[mean_df$locus_name %in% keep_data_fix_genes & mean_df$accession == accession_data_to_transform]
-  data_to_transform_df[, keep_final:=(mean(mean_cpm) != 0 & sd(mean_cpm) != 0), by=.(locus_name)]
-  keep_final_genes <- unique(data_to_transform_df$locus_name[data_to_transform_df$keep_final==TRUE])
-  discard_final_genes <- unique(data_to_transform_df$locus_name[data_to_transform_df$keep_final==FALSE])
+  data_to_transform_df[, keep_final := (mean(mean_cpm) != 0 & sd(mean_cpm) != 0), by = .(locus_name)]
+  keep_final_genes <- unique(data_to_transform_df$locus_name[data_to_transform_df$keep_final == TRUE])
+  discard_final_genes <- unique(data_to_transform_df$locus_name[data_to_transform_df$keep_final == FALSE])
 
   mean_df <- mean_df[mean_df$locus_name %in% keep_final_genes, ]
 
@@ -52,34 +55,39 @@ load_mean_df <- function(filepath_data_fix,
 
   # Get mean_df, including column "group"
   exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
-  exp <- subset(exp, select = c('locus_name', 'accession', 'tissue', 'timepoint',
-                              'norm.cpm', 'group'))
-  names(exp)[names(exp) == 'norm.cpm'] <- 'mean_cpm'
-  return(list(mean_df, exp))
+  exp <- subset(exp, select = c("locus_name", "accession", "tissue", "timepoint", "norm.cpm", "group"))
+  names(exp)[names(exp) == "norm.cpm"] <- "mean_cpm"
+
+  # Results object
+  results_list <- list(mean_df, exp)
+
+  return(results_list)
 }
 
 #' @export
 get_expression_of_interest <- function(filepath_data_fix,
                                        filepath_data_to_transform,
                                        filepath_id_table,
-                                       fix_id_table_shared_colname,
-                                       fix_and_to_transform_data_shared_colname,
-                                       colnames_id_table,
-                                       colnames_wanted,
+                                       fix_id_table_shared_colname = "CDS.model",
+                                       fix_and_to_transform_data_shared_colname = "locus_name",
+                                       colnames_id_table = c("CDS.model", "symbol", "locus_name"),
+                                       colnames_wanted = NULL,
                                        tissue_wanted,
                                        curr_GoIs,
-                                       sum_exp_data_fix = F,
+                                       sum_exp_data_fix = FALSE,
                                        accession_data_to_transform = "Col0",
                                        ids_data_fix_colnames = c("CDS.model", "locus_name")) {
 
   # Load of the single df data
-  master_exp <- get_all_data(filepath_data_fix,
-                           filepath_data_to_transform,
-                           filepath_id_table,
-                           fix_id_table_shared_colname = "CDS.model",
-                           fix_and_to_transform_data_shared_colname = "locus_name",
-                           colnames_id_table = c("CDS.model", "symbol", "locus_name"),
-                           colnames_wanted = NULL)
+  master_exp <- get_all_data(
+    filepath_data_fix,
+    filepath_data_to_transform,
+    filepath_id_table,
+    fix_id_table_shared_colname,
+    fix_and_to_transform_data_shared_colname,
+    colnames_id_table,
+    colnames_wanted
+  )
 
   master_exp <- unique(master_exp)
 

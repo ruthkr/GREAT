@@ -189,20 +189,25 @@ get_all_data <- function(filepath_data_fix,
   return(expression)
 }
 
-#' @export
-shorten_groups <- function(exp) {
 
-  # Get reps for klepikova and for brassica data, make sure it is a data.table
+#' @param exp
+#' @param accession_data_to_transform
+#'
+#' @export
+shorten_groups <- function(exp,
+                           accession_data_to_transform = "Col0") {
+
+  # Get reps for model plant data comparison and for fixed data, make sure it is a data.table
   exp <- data.table::data.table(exp)
 
   # Get the last element of "sample_id" of Brassica data
-  B <- exp[exp$accession != 'Col0']
+  B <- exp[exp$accession != accession_data_to_transform]
   B[, c('j1', 'j2', 'j3', 'j4', 'j5', 'j6', 'rep'):=data.table::tstrsplit(sample_id, split='_')]
   B$rep[is.na(B$rep)] <- 1
   B[, c('j1', 'j2', 'j3', 'j4', 'j5', 'j6')] <- NULL
 
   # Get the last element of "dataset" of Arabidopsis data
-  A <- exp[exp$accession == 'Col0']
+  A <- exp[exp$accession == accession_data_to_transform]
   A[, c('j1', 'j2','rep'):=data.table::tstrsplit(dataset, split='_')]
   A[, c('j1', 'j2')] <- NULL
 
@@ -213,5 +218,6 @@ shorten_groups <- function(exp) {
 
   exp <- data.table::data.table(exp)
   exp[, group:=paste(accession, sprintf('%02d', timepoint), ds, sep='-')]
+
   return(exp)
 }

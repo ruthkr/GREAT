@@ -36,7 +36,7 @@ calculate_all_best_shifts(
 \item{accession_data_fix}{Accession name of data fix.}
 }
 \value{
-
+\code{all_scores_df}
 }
 \description{
 \code{calculate_all_best_shifts} is a function to get score for all shifts value after stretching with a particular stretch factor. The extremes shift values were defined by allowing 5 overlapping points for comparison.

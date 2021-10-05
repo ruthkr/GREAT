@@ -12,7 +12,7 @@
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_fix Accession name of data fix.
 #'
-#' @return
+#' @return \code{all_scores_df}
 #' @export
 calculate_all_best_shifts <- function(num_shifts,
                                       mean_df,
@@ -46,12 +46,13 @@ calculate_all_best_shifts <- function(num_shifts,
   for (i in 1:length(unique(mean_df$locus_name))) {
     curr_sym <- unique(mean_df$locus_name)[i]
     if (count %% 100 == 0) {
-      print(paste0(count, " / ", length(unique(mean_df$locus_name))))
+      message(paste0(count, " / ", length(unique(mean_df$locus_name))))
     }
 
     # Out is mean SSD between data to transform (e.g. arabidopsis), and interpolated data fix (interpolated between 2 nearest points, e.g. Brassica)
     # Get "score" for all the candidate shifts. Score is mean error / data fix expression for compared points. If timepoints don't line up, brassica value is linearly imputed
-    out <- get_best_shift(num_shifts,
+    out <- get_best_shift(
+      num_shifts,
       curr_sym,
       data = mean_df,
       stretch_factor,
@@ -59,14 +60,15 @@ calculate_all_best_shifts <- function(num_shifts,
       min_shift,
       max_shift,
       testing,
-      accession_data_to_transform = "Col0",
-      accession_data_fix = "Ro18"
+      accession_data_to_transform,
+      accession_data_fix
     )
 
     best_shift <- out$shift[out$score == min(out$score)]
+
     if (length(best_shift) > 1) {
-      if (max(out$score) == "Inf") {
-        # Can get inf score if data fix gene note expressed in the comparison
+      if (is.infinite(max(out$score))) {
+        # Can get inf score if data fix gene not expressed in the comparison
         next
       } else {
         # If ties for the best shift applied, apply the smaller absolute one
@@ -81,12 +83,11 @@ calculate_all_best_shifts <- function(num_shifts,
     count <- count + 1
   }
 
+  # Bind all scores
   all_scores_df <- do.call("rbind", all_scores_list)
 
   return(all_scores_df)
 }
-
-
 
 #' Calculate the score for all shifts
 #'
@@ -114,7 +115,6 @@ get_best_shift <- function(num_shifts = 25,
                            testing = FALSE,
                            accession_data_to_transform = "Col0",
                            accession_data_fix = "Ro18") {
-
   data <- data[data$locus_name == curr_sym, ]
 
   # Transform timepoint to be time from first timepoint
@@ -123,12 +123,11 @@ get_best_shift <- function(num_shifts = 25,
   # Apply stretch_factor to the data to transform, leave the data fix as it is
   data$delta_time[data$accession == accession_data_to_transform] <- data$delta_time[data$accession == accession_data_to_transform] * stretch_factor
 
-
-  all_scores <- rep(0, num_shifts)
-  all_data_transform_mean <- rep(0, num_shifts)
-  all_data_fix_mean <- rep(0, num_shifts)
-  all_data_transform_sd <- rep(0, num_shifts)
-  all_data_fix_sd <- rep(0, num_shifts)
+  all_scores <- numeric(length = num_shifts)
+  all_data_transform_mean <- numeric(length = num_shifts)
+  all_data_fix_mean <- numeric(length = num_shifts)
+  all_data_transform_sd <- numeric(length = num_shifts)
+  all_data_fix_sd <- numeric(length = num_shifts)
 
   all_shifts <- seq(min_shift, max_shift, length.out = num_shifts)
 
@@ -139,7 +138,7 @@ get_best_shift <- function(num_shifts = 25,
 
   # Start the iteration to calculate score for each shift for all shifts in the list
   i <- 1
-  for (i in 1:length(all_shifts)) {
+  for (i in seq_along(all_shifts)) {
     curr_shift <- all_shifts[i]
 
     # Shift the data to transform expression timings
@@ -151,12 +150,14 @@ get_best_shift <- function(num_shifts = 25,
     compared <- data[data$is_compared == TRUE, ]
 
     # Renormalise expression using just these timepoints?
-    if (do_rescale == TRUE) {
+    if (do_rescale) {
       # Record the mean and sd of the compared points, used for rescaling in "apply shift" function
-      data_transform_mean <- mean(compared$mean_cpm[compared$accession == accession_data_to_transform])
-      data_fix_mean <- mean(compared$mean_cpm[compared$accession == accession_data_fix])
-      data_transform_sd <- stats::sd(compared$mean_cpm[compared$accession == accession_data_to_transform])
-      data_fix_sd <- stats::sd(compared$mean_cpm[compared$accession == accession_data_fix])
+      mean_cpm_transform <- compared$mean_cpm[compared$accession == accession_data_to_transform]
+      data_transform_mean <- mean(mean_cpm_transform)
+      data_transform_sd <- stats::sd(mean_cpm_transform)
+      mean_cpm_fix <- compared$mean_cpm[compared$accession == accession_data_fix]
+      data_fix_mean <- mean(mean_cpm_fix)
+      data_fix_sd <- stats::sd(mean_cpm_fix)
 
       # Do the transformation started from here
       if ((data_transform_sd != 0 | !is.nan(data_transform_sd)) & (data_fix_sd != 0 | !is.nan(data_fix_sd))) {
@@ -185,7 +186,7 @@ get_best_shift <- function(num_shifts = 25,
     }
 
     # Data plot of shifted, and normalised gene expression
-    # if (testing == TRUE) {
+    # if (testing) {
     #   p <- ggplot2::ggplot(compared) +
     #     ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
     #     ggplot2::geom_point() +
@@ -202,15 +203,15 @@ get_best_shift <- function(num_shifts = 25,
     data_transform_compared <- compared[compared$accession == accession_data_to_transform]
     data_fix_compared <- compared[compared$accession == accession_data_fix]
 
-    data_transform_compared$pred.bra.expression <- sapply(data_transform_compared$shifted_time, interpolate_data_fix_comparison_expression, data_fix_dt = data_fix_compared)
+    data_transform_compared$pred_data_fix_expression <- sapply(data_transform_compared$shifted_time, interpolate_data_fix_comparison_expression, data_fix_dt = data_fix_compared)
 
-    # if (testing == TRUE) {
+    # if (testing) {
     #   interpolate_res <- ggplot2::ggplot(compared) +
     #     ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
     #     ggplot2::geom_point() +
     #     ggplot2::geom_line() +
-    #     ggplot2::geom_point(data = data_transform_compared, aes(x = shifted_time, y = pred.bra.expression), color = "purple") +
-    #     ggplot2::geom_line(data = data_transform_compared, aes(x = shifted_time, y = pred.bra.expression), color = "purple")
+    #     ggplot2::geom_point(data = data_transform_compared, aes(x = shifted_time, y = pred_data_fix_expression), color = "purple") +
+    #     ggplot2::geom_line(data = data_transform_compared, aes(x = shifted_time, y = pred_data_fix_expression), color = "purple")
     #
     #
     #     ggplot2::ggsave(
@@ -220,14 +221,17 @@ get_best_shift <- function(num_shifts = 25,
     # }
 
     # Calculate the score, using the (interpolated) predicted.bra.expression, and the observed arabidopsis expression
-    score <- calc_score(data_transform_compared$mean_cpm, data_transform_compared$pred.bra.expression)
+    score <- calc_score(
+      data_to_transform_expression = data_transform_compared$mean_cpm,
+      data_fix_expression = data_transform_compared$pred_data_fix_expression
+    )
 
     if (is.na(score)) {
-      print("error in get_best_shift(): got a score of NA for gene:")
-      print(paste("data_transform_compared$mean_cpm:", data_transform_compared$mean_cpm))
-      print(data_transform_compared$pred.bra.expression)
-      print(curr_sym)
-      print(paste0("with curr_shift=", curr_shift))
+      message("error in get_best_shift(): got a score of NA for gene:")
+      message(paste("data_transform_compared$mean_cpm:", data_transform_compared$mean_cpm))
+      message(data_transform_compared$pred_data_fix_expression)
+      message(curr_sym)
+      message(paste0("with curr_shift=", curr_shift))
       stop()
     }
 
@@ -238,17 +242,18 @@ get_best_shift <- function(num_shifts = 25,
     all_data_fix_sd[i] <- data_fix_sd
   }
 
-  out <- data.table::data.table(data.frame(
-    "gene" = curr_sym,
-    "stretch" = stretch_factor,
-    "shift" = all_shifts,
-    "score" = all_scores,
-    "data_transform_compared_mean" = all_data_transform_mean,
-    "data_fix_compared_mean" = all_data_fix_mean,
-    "data_transform_compared_sd" = all_data_transform_sd,
-    "data_fix_compared_sd" = all_data_fix_sd
-  ))
+  out <- data.table::data.table(
+    data.frame(
+      "gene" = curr_sym,
+      "stretch" = stretch_factor,
+      "shift" = all_shifts,
+      "score" = all_scores,
+      "data_transform_compared_mean" = all_data_transform_mean,
+      "data_fix_compared_mean" = all_data_fix_mean,
+      "data_transform_compared_sd" = all_data_transform_sd,
+      "data_fix_compared_sd" = all_data_fix_sd
+    )
+  )
 
   return(out)
-
 }

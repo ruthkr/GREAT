@@ -25,6 +25,16 @@ path_b_rapa <- "~/Downloads/test_data.RDS"
 
 alex_data_mean <- readRDS(path_b_rapa)[[1]]
 alex_data_all <- readRDS(path_b_rapa)[[2]]
+
+
+alex_data_all %>% 
+  mutate(
+    group_simplified = as.factor(unlist(stringr::str_extract_all(group, pattern = "[a-d]$")))
+  ) %>% 
+  ggplot() +
+  aes(x = timepoint, y = mean_cpm, colour = group_simplified) +
+  geom_point() +
+  facet_wrap(accession~locus_name, scales = "free")
 ```
 
 ### Plot data before registering
@@ -154,33 +164,29 @@ alex_data_mean %>%
 ```{r, warning=FALSE, fig.width=10, fig.height=10}
 skipped_every_one_timepoint_mean <- alex_data_mean %>% 
   undersample_data_timepoints_skip(skip_timepoints_pattern = c(FALSE, TRUE))
-
-
-
-skipped_every_one_timepoint_mean %>% 
-ggplot() +
-  aes(x = timepoint, y = mean_cpm, color = accession) +
-  geom_line() +
-  geom_point() +
-  facet_wrap(~locus_name)
 ```
 ```{r}
 uniq_skipped_every_one_timepoint <- skipped_every_one_timepoint_mean %>% dplyr::pull(timepoint) %>% unique()
 
-uniq_skipped_every_one_timepoint
+data.frame(
+"Col0" = skipped_every_one_timepoint_mean %>% dplyr::filter(accession == "Col0") %>% dplyr::pull(timepoint) %>% unique() %>% paste(collapse = ", "), 
+"Ro18" = skipped_every_one_timepoint_mean %>% dplyr::filter(accession == "Ro18") %>% dplyr::pull(timepoint) %>% unique() %>% paste(collapse = ", ")
+) %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  tibble::rownames_to_column() %>% 
+  `colnames<-`(c("Accession", "Timepoints"))
 ```
 
 ```{r}
 skipped_every_one_timepoint_all <- alex_data_all %>% 
   dplyr::filter(timepoint %in% uniq_skipped_every_one_timepoint)
-
-skipped_every_one_timepoint_all %>% dplyr::pull(timepoint) %>% unique()
 ```
 
 
 ### Register data
 
-```{r message=FALSE, error=TRUE}
+```{r error=TRUE}
 reg_data_skipped_every_one_timepoint <- GREAT::scale_and_register_data(
   as.data.table(skipped_every_one_timepoint_mean),
   as.data.table(skipped_every_one_timepoint_all),
@@ -198,6 +204,17 @@ reg_data_skipped_every_one_timepoint <- GREAT::scale_and_register_data(
 )
 ```
 
+
+```{r}
+skipped_every_one_timepoint_mean %>% 
+ggplot() +
+  aes(x = timepoint, y = mean_cpm, color = accession) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~locus_name)
+```
+
+
 ```{r, warning=FALSE, fig.width=10, fig.height=10}
 GREAT::plot_registered_GoIs_for_comparible_timepoints(reg_data_skipped_every_one_timepoint[['imputed_mean_df']])
 ```
@@ -210,15 +227,6 @@ GREAT::plot_registered_GoIs_for_comparible_timepoints(reg_data_skipped_every_one
 ```{r, warning=FALSE, fig.width=10, fig.height=10}
 skipped_every_two_timepoint_mean <- alex_data_mean %>% 
   undersample_data_timepoints_skip(skip_timepoints_pattern = c(FALSE, FALSE, TRUE))
-
-
-
-skipped_every_two_timepoint_mean %>% 
-ggplot() +
-  aes(x = timepoint, y = mean_cpm, color = accession) +
-  geom_line() +
-  geom_point() +
-  facet_wrap(~locus_name)
 ```
 
 
@@ -226,23 +234,30 @@ ggplot() +
 ```{r}
 uniq_skipped_every_two_timepoint_mean <- skipped_every_two_timepoint_mean %>% dplyr::pull(timepoint) %>% unique()
 
-uniq_skipped_every_two_timepoint_mean
+data.frame(
+"Col0" = skipped_every_two_timepoint_mean %>% dplyr::filter(accession == "Col0") %>% dplyr::pull(timepoint) %>% unique() %>% paste(collapse = ", "), 
+"Ro18" = skipped_every_two_timepoint_mean %>% dplyr::filter(accession == "Ro18") %>% dplyr::pull(timepoint) %>% unique() %>% paste(collapse = ", ")
+) %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  tibble::rownames_to_column() %>% 
+  `colnames<-`(c("Accession", "Timepoints"))
 ```
 
-```{r}
+```{r include=FALSE}
 skipped_every_two_timepoint_all <- alex_data_all %>% 
   dplyr::filter(timepoint %in% uniq_skipped_every_two_timepoint_mean)
 
-skipped_every_two_timepoint_all  %>% dplyr::pull(timepoint) %>% unique()
+# skipped_every_two_timepoint_all  %>% dplyr::pull(timepoint) %>% unique()
 
-skipped_every_two_timepoint_all  %>% class()
+# skipped_every_two_timepoint_all  %>% class()
 
-is.data.table(skipped_every_two_timepoint_mean)
+# is.data.table(skipped_every_two_timepoint_mean)
 ```
 
 ### Register data
 
-```{r message=FALSE, error=TRUE}
+```{r error=TRUE}
 reg_data_skipped_every_one_timepoint <- GREAT::scale_and_register_data(
   as.data.table(skipped_every_two_timepoint_mean),
   as.data.table(skipped_every_two_timepoint_all),
@@ -260,6 +275,16 @@ reg_data_skipped_every_one_timepoint <- GREAT::scale_and_register_data(
 )
 ```
 
+```{r}
+skipped_every_two_timepoint_mean %>% 
+ggplot() +
+  aes(x = timepoint, y = mean_cpm, color = accession) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~locus_name)
+```
+
+
 ```{r, warning=FALSE, fig.width=10, fig.height=10}
 GREAT::plot_registered_GoIs_for_comparible_timepoints(reg_data_skipped_every_one_timepoint[['imputed_mean_df']])
 ```
@@ -273,15 +298,6 @@ GREAT::plot_registered_GoIs_for_comparible_timepoints(reg_data_skipped_every_one
 ```{r, warning=FALSE, fig.width=10, fig.height=10}
 skipped_every_three_timepoint_mean <- alex_data_mean %>% 
   undersample_data_timepoints_skip(skip_timepoints_pattern = c(FALSE, FALSE, FALSE, TRUE))
-
-
-
-skipped_every_three_timepoint_mean %>% 
-ggplot() +
-  aes(x = timepoint, y = mean_cpm, color = accession) +
-  geom_line() +
-  geom_point() +
-  facet_wrap(~locus_name)
 ```
 
 
@@ -289,19 +305,26 @@ ggplot() +
 ```{r}
 uniq_skipped_every_three_timepoint <- skipped_every_three_timepoint_mean %>% dplyr::pull(timepoint) %>% unique()
 
-uniq_skipped_every_three_timepoint
+data.frame(
+"Col0" = skipped_every_three_timepoint_mean %>% dplyr::filter(accession == "Col0") %>% dplyr::pull(timepoint) %>% unique() %>% paste(collapse = ", "), 
+"Ro18" = skipped_every_three_timepoint_mean %>% dplyr::filter(accession == "Ro18") %>% dplyr::pull(timepoint) %>% unique() %>% paste(collapse = ", ")
+) %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  tibble::rownames_to_column() %>% 
+  `colnames<-`(c("Accession", "Timepoints"))
 ```
 
 ```{r}
 skipped_every_three_timepoint_all <- alex_data_all %>% 
   dplyr::filter(timepoint %in% uniq_skipped_every_three_timepoint)
 
-skipped_every_three_timepoint_all %>% dplyr::pull(timepoint) %>% unique()
+# skipped_every_three_timepoint_all %>% dplyr::pull(timepoint) %>% unique()
 ```
 
 ### Register data
 
-```{r message=FALSE, error=TRUE}
+```{r error=TRUE}
 reg_data_skipped_every_three_timepoint <- GREAT::scale_and_register_data(
   as.data.table(skipped_every_three_timepoint_mean),
   as.data.table(skipped_every_three_timepoint_all),
@@ -318,7 +341,6 @@ reg_data_skipped_every_three_timepoint <- GREAT::scale_and_register_data(
   data_fix_time_added = 11
 )
 ```
-
 ```{r}
 skipped_every_three_timepoint_mean %>% 
 ggplot() +
@@ -329,6 +351,6 @@ ggplot() +
 ```
 
 
-```{r, warning=FALSE, fig.width=5, fig.height=5}
+```{r, warning=FALSE, fig.width=10, fig.height=10}
 GREAT::plot_registered_GoIs_for_comparible_timepoints(reg_data_skipped_every_three_timepoint[['imputed_mean_df']])
 ```

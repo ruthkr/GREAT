@@ -193,7 +193,93 @@ reg_with_full_simulated_data <- GREAT::scale_and_register_data(
   data_fix_time_added = 40
 )
 ```
+
 ```{r}
-reg_with_full_simulated_data
+reg_with_full_simulated_data$model_comparison_dt %>% dplyr::filter(BIC_registered_is_better == TRUE) %>% nrow()
+```
+
+```{r simulate-data-with-diff-replicate-sd}
+# replicate_sd_list <- seq(0, 2, length.out = 21)
+replicate_sd_list <- c(0, 0.5, 1)
+
+results_list <- list()
+
+for (rep_sd in replicate_sd_list) {
+  data_to_reg_points <- gene_name %>%
+    purrr::map(simulate_data_to_reg, num_points = 25, replicates = 3, replicate_sd = rep_sd, method = c("fixed_var")) %>%
+    purrr::reduce(rbind)
+
+  data_fixed <- simulate_data_fixed(
+    data_to_reg_points,
+    num_points = 25,
+    time_stretch = 4,
+    time_shift = 5,
+    exp_stretch = 6,
+    exp_shift = 4,
+    exp_noise_sd = 2
+  )
+
+  simulated_data <- rbind(data_to_reg_points, data_fixed) %>%
+    dplyr::mutate(
+      accession = dplyr::case_when(
+        accession == "data_to_reg" ~ "Col0",
+        accession == "data_fixed" ~ "Ro18"
+      )
+    ) %>%
+    as.data.table()
+
+  simulated_data_mean <- simulated_data %>%
+    dplyr::group_by(locus_name, accession, timepoint) %>%
+    dplyr::summarise(mean_cpm = mean(mean_cpm), .groups = "drop") %>%
+    as.data.table()
+
+  results_list[[paste0("data_sd_", stringr::str_pad(rep_sd, width = 2, pad = "0"))]] <- list(
+    all_data = simulated_data,
+    mean_data = simulated_data_mean,
+    sd = rep_sd
+  )
+  
+  # results_list[[paste0("mean_data_sd_", stringr::str_pad(rep_sd, width = 2, pad = "0"))]] <- simulated_data_mean
+}
+
+
+reg_with_full_simulated_data <- results_list %>%
+  purrr::map(
+    function(x) {
+      results <- GREAT::scale_and_register_data(
+        x$mean_data %>% dplyr::mutate(tissue = "apex"),
+        x$all_data %>% dplyr::mutate(tissue = "apex"),
+        stretches =  c(4, 3, 2, 1),
+        shift_extreme = 5,
+        num_shifts = 21,
+        min_num_overlapping_points = 4,
+        initial_rescale = FALSE,
+        do_rescale = TRUE,
+        testing = FALSE,
+        accession_data_to_transform = "Col0",
+        accession_data_fix = "Ro18",
+        data_to_transform_time_added = 40,
+        data_fix_time_added = 40
+      )
+      
+      results[["sd"]] <- x$sd
+      
+      return(results)
+    }
+  )
+```
+
+
+```{r}
+reg_with_full_simulated_data %>% 
+  purrr::map(
+    ~ data.frame(
+      sd = .x$sd,
+      registered_genes = .x$model_comparison_dt %>% 
+  dplyr::filter(BIC_registered_is_better == TRUE) %>% 
+    nrow()
+    )
+  ) %>% 
+    purrr::reduce(dplyr::bind_rows)
 ```
 

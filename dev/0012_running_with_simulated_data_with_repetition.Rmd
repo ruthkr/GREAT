@@ -105,13 +105,13 @@ simulate_data_fixed <- function(df_to_reg,
 undersample_data_timepoints_skip <- function(data, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(TRUE)) {
   if (keep_first_last_timepoint) {
   sliced_data <- data %>%
-    dplyr::group_by(locus_name, accession) %>%
+    dplyr::group_by(locus_name, accession, group) %>%
     dplyr::arrange(timepoint) %>%
     dplyr::slice(c(1, seq(2, dplyr::n() - 1, 1)[skip_timepoints_pattern], dplyr::n())) %>% 
     dplyr::ungroup()
   } else
   sliced_data <- data %>%
-    dplyr::group_by(locus_name, accession) %>%
+    dplyr::group_by(locus_name, accession, group) %>%
     dplyr::arrange(timepoint) %>%
     dplyr::slice(seq(1, dplyr::n(), 1)[skip_timepoints_pattern]) %>% 
     dplyr::ungroup()
@@ -218,7 +218,7 @@ reg_with_full_simulated_data <- GREAT::scale_and_register_data(
 reg_with_full_simulated_data$model_comparison_dt %>% dplyr::filter(BIC_registered_is_better == TRUE) %>% nrow()
 ```
 
-```{r warning=FALSE, include=FALSE}
+```{r running-multiple-simulation, warning=FALSE, include=FALSE}
 # replicate_sd_list <- seq(0, 2, length.out = 21)
 replicate_sd_list <- c(0, 0.5, 1)
 num_timepoints <- 10
@@ -394,4 +394,19 @@ reg_with_full_simulated_data_skip2 %>%
 
 ```{r}
 results_list$data_sd_00$mean_data_skip1
+```
+
+
+```{r}
+# Check the data
+
+results_list$data_sd_00$all_data_skip1 %>%
+  ggplot() +
+  aes(x = timepoint, y = mean_cpm, colour = accession) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(group ~ locus_name)
+
+
+results_list$data_sd_00$all_data
 ```

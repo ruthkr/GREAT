@@ -27,7 +27,14 @@ alex_data_mean <- readRDS(path_b_rapa)[[1]]
 alex_data_all <- readRDS(path_b_rapa)[[2]]
 
 
-alex_data_mean
+alex_data_all %>% 
+  mutate(
+    group_simplified = as.factor(unlist(stringr::str_extract_all(group, pattern = "[a-d]$")))
+  ) %>% 
+  ggplot() +
+  aes(x = timepoint, y = mean_cpm, colour = group_simplified) +
+  geom_point() +
+  facet_wrap(accession~locus_name, scales = "free")
 ```
 
 ### Plot data before registering

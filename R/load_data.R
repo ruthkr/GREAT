@@ -230,7 +230,7 @@ shorten_groups <- function(exp) {
   A <- exp[exp$accession == "Col0"]
   A[, c("j1", "j2", "rep") := data.table::tstrsplit(dataset, split = "_")]
   A[, c("j1", "j2")] <- NULL
-
+m
   # Combine both data
   exp <- rbind(B, A)
 

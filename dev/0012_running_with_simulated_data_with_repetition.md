@@ -1,30 +1,70 @@
----
-title: ""
-output: 
-  github_document:
-    toc: true
----
+
+-   [Running registration using simulated data with
+    repetition](#running-registration-using-simulated-data-with-repetition)
+    -   [Set-up and load libraries](#set-up-and-load-libraries)
+    -   [Function to simulate data](#function-to-simulate-data)
+        -   [Test functions](#test-functions)
+    -   [Running simulations](#running-simulations)
 
 # Running registration using simulated data with repetition
 
-This is a small experiment to test the standard deviation threshold for the simulated data with different number of timepoints.
+This is a small experiment to test the standard deviation threshold for
+the simulated data with different number of timepoints.
 
 ## Set-up and load libraries
 
-```{r setup}
+``` r
 knitr::opts_chunk$set()
 
 devtools::load_all()
+```
+
+    ## ℹ Loading GREAT
+
+``` r
 library(ggplot2)
 library(data.table)
 library(cowplot)
 library(ggpubr)
+```
+
+    ## 
+    ## Attaching package: 'ggpubr'
+
+    ## The following object is masked from 'package:cowplot':
+    ## 
+    ##     get_legend
+
+``` r
 library(dplyr)
 ```
 
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:data.table':
+    ## 
+    ##     between, first, last
+
+    ## The following objects are masked from 'package:GREAT':
+    ## 
+    ##     between, first, last
+
+    ## The following object is masked from 'package:testthat':
+    ## 
+    ##     matches
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
 ## Function to simulate data
 
-```{r fn-simulated-data}
+``` r
 #  Function to create data to register
 simulate_data_to_reg <- function(gene_name, num_points, replicates = 1, replicate_sd = 1, method = c("theory", "fixed_var")) {
   method <- match.arg(method)
@@ -103,7 +143,7 @@ simulate_data_fixed <- function(df_to_reg,
 }
 ```
 
-```{r fn-undersample-data_timepoints-skip}
+``` r
 undersample_data_timepoints_skip <- function(data, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(TRUE), columns_to_group = c("locus_name", "accession")) {
   if (keep_first_last_timepoint) {
   sliced_data <- data %>%
@@ -124,7 +164,7 @@ undersample_data_timepoints_skip <- function(data, keep_first_last_timepoint = T
 
 ### Test functions
 
-```{r test-simulate-data-registered, eval=FALSE}
+``` r
 # Gene name list
 list_letter <- LETTERS[seq(from = 1, to = 2)]
 list_num <- seq(1, 3, 1)
@@ -136,7 +176,7 @@ data_to_reg_points <- gene_name %>%
     purrr::reduce(rbind)
 ```
 
-```{r test-simulate-data-plot, eval=FALSE}
+``` r
 data_to_reg_points %>% 
   group_by(locus_name, accession, timepoint) %>% 
   summarise(sd = sd(mean_cpm))
@@ -149,8 +189,7 @@ data_to_reg_points %>%
   facet_wrap(accession ~ locus_name)
 ```
 
-
-```{r simulate-data-fixed, eval=FALSE}
+``` r
 data_fixed <- simulate_data_fixed(
   data_to_reg_points,
   num_points = 25,
@@ -173,7 +212,7 @@ simulated_data <- rbind(data_to_reg_points, data_fixed) %>%
 simulated_data %>% head()
 ```
 
-```{r warning=FALSE, fig.width=15, fig.height=10, eval=FALSE}
+``` r
 simulated_data %>%
   ggplot() +
   aes(x = timepoint, y = mean_cpm, colour = group) +
@@ -189,8 +228,7 @@ simulated_data %>%
   facet_wrap(group ~ locus_name, scales = "free_y")
 ```
 
-
-```{r}
+``` r
 # simulated_data_mean <- simulated_data %>% 
 #   dplyr::group_by(locus_name, accession, timepoint) %>% 
 #   # dplyr::summarise(mean_cpm = mean(mean_cpm), n = n(), .groups = "drop") %>% 
@@ -202,7 +240,7 @@ simulated_data %>%
 
 ## Running simulations
 
-```{r running-multiple-simulation, warning=FALSE, message=FALSE}
+``` r
 # Define parameters
 list_letter <- LETTERS[seq(from = 1, to = 2)]
 list_num <- seq(1, 10, 1)
@@ -325,8 +363,7 @@ reg_with_full_simulated_data <- results_list %>%
   )
 ```
 
-
-```{r simulation-results}
+``` r
 table <- reg_with_full_simulated_data %>% 
   purrr::map(
     ~ data.frame(
@@ -349,7 +386,76 @@ table %>%
   knitr::kable()
 ```
 
-```{r show-table-with-all-registered-data}
+|   SD | num_timepoints | registered_genes_total10 |
+|-----:|---------------:|-------------------------:|
+| 0.00 |             10 |                       10 |
+| 0.00 |              6 |                        0 |
+| 0.00 |              4 |                        0 |
+| 0.01 |             10 |                       10 |
+| 0.01 |              6 |                        0 |
+| 0.01 |              4 |                        0 |
+| 0.02 |             10 |                       10 |
+| 0.02 |              6 |                        0 |
+| 0.02 |              4 |                        0 |
+| 0.03 |             10 |                       10 |
+| 0.03 |              6 |                        0 |
+| 0.03 |              4 |                        0 |
+| 0.04 |             10 |                       10 |
+| 0.04 |              6 |                        2 |
+| 0.04 |              4 |                        4 |
+| 0.05 |             10 |                       10 |
+| 0.05 |              6 |                        0 |
+| 0.05 |              4 |                        5 |
+| 0.06 |             10 |                       10 |
+| 0.06 |              6 |                        0 |
+| 0.06 |              4 |                        2 |
+| 0.07 |             10 |                       10 |
+| 0.07 |              6 |                        0 |
+| 0.07 |              4 |                        5 |
+| 0.08 |             10 |                        9 |
+| 0.08 |              6 |                        1 |
+| 0.08 |              4 |                        2 |
+| 0.09 |             10 |                        9 |
+| 0.09 |              6 |                        1 |
+| 0.09 |              4 |                       10 |
+| 0.10 |             10 |                       10 |
+| 0.10 |              6 |                        0 |
+| 0.10 |              4 |                        0 |
+| 0.11 |             10 |                       10 |
+| 0.11 |              6 |                        0 |
+| 0.11 |              4 |                        0 |
+| 0.12 |             10 |                       10 |
+| 0.12 |              6 |                        3 |
+| 0.12 |              4 |                        8 |
+| 0.13 |             10 |                       10 |
+| 0.13 |              6 |                        9 |
+| 0.13 |              4 |                       10 |
+| 0.14 |             10 |                       10 |
+| 0.14 |              6 |                        8 |
+| 0.14 |              4 |                       10 |
+| 0.15 |             10 |                       10 |
+| 0.15 |              6 |                        5 |
+| 0.15 |              4 |                        5 |
+| 0.16 |             10 |                       10 |
+| 0.16 |              6 |                        1 |
+| 0.16 |              4 |                        9 |
+| 0.17 |             10 |                        9 |
+| 0.17 |              6 |                        0 |
+| 0.17 |              4 |                        6 |
+| 0.20 |             10 |                       10 |
+| 0.20 |              6 |                        8 |
+| 0.20 |              4 |                        9 |
+| 0.24 |             10 |                        9 |
+| 0.24 |              6 |                       10 |
+| 0.24 |              4 |                       10 |
+| 0.27 |             10 |                        9 |
+| 0.27 |              6 |                       10 |
+| 0.27 |              4 |                       10 |
+| 0.28 |             10 |                       10 |
+| 0.28 |              6 |                        7 |
+| 0.28 |              4 |                       10 |
+
+``` r
 # All timepoints are registered
 table %>% 
   dplyr::group_by(SD) %>% 
@@ -359,8 +465,37 @@ table %>%
   knitr::kable()
 ```
 
+|   SD | num_timepoints | registered_genes_total10 |
+|-----:|---------------:|-------------------------:|
+| 0.18 |             10 |                       10 |
+| 0.18 |              6 |                       10 |
+| 0.18 |              4 |                       10 |
+| 0.19 |             10 |                       10 |
+| 0.19 |              6 |                       10 |
+| 0.19 |              4 |                       10 |
+| 0.21 |             10 |                       10 |
+| 0.21 |              6 |                       10 |
+| 0.21 |              4 |                       10 |
+| 0.22 |             10 |                       10 |
+| 0.22 |              6 |                       10 |
+| 0.22 |              4 |                       10 |
+| 0.23 |             10 |                       10 |
+| 0.23 |              6 |                       10 |
+| 0.23 |              4 |                       10 |
+| 0.25 |             10 |                       10 |
+| 0.25 |              6 |                       10 |
+| 0.25 |              4 |                       10 |
+| 0.26 |             10 |                       10 |
+| 0.26 |              6 |                       10 |
+| 0.26 |              4 |                       10 |
+| 0.29 |             10 |                       10 |
+| 0.29 |              6 |                       10 |
+| 0.29 |              4 |                       10 |
+| 0.30 |             10 |                       10 |
+| 0.30 |              6 |                       10 |
+| 0.30 |              4 |                       10 |
 
-```{r fig.height=16, fig.width=15}
+``` r
 results_list$data_sd_0.3$all_data %>% 
   ggplot() +
   aes(x = timepoint, y = mean_cpm, colour = group) +
@@ -369,7 +504,4 @@ results_list$data_sd_0.3$all_data %>%
   facet_wrap(locus_name ~ accession, ncol = 4)
 ```
 
-
-
-
-
+![](0012_running_with_simulated_data_with_repetition_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->

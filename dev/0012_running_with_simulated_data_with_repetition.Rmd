@@ -208,7 +208,7 @@ list_letter <- LETTERS[seq(from = 1, to = 2)]
 list_num <- seq(1, 10, 1)
 gene_name <- paste0(list_letter, "_", list_num)
 
-replicate_sd_list <- seq(0, 0.30, length.out = 31)
+replicate_sd_list <- seq(0, 0.35, length.out = 36)
 # replicate_sd_list <- c(0, 0.05)
 num_timepoints <- 10
 

@@ -4,8 +4,8 @@ idx<-seq(0,6.28,len=100);
 query<-sin(idx)+runif(100)/10;
 
 ## A cosine is for template; sin and cos are offset by 25 samples
-idx_2 <- idx/2
-template<- cos(idx_2)
+# idx_2 <- idx/2
+template<- cos(idx)
 
 ## Find the best match with the canonical recursion formula
 library(dtw);

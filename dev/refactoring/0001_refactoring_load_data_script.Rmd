@@ -25,6 +25,19 @@ arabidopsis_expression_path <- system.file("extdata/sample_data/arabidopsis_expr
 brassica_rapa_expression_path <- system.file("extdata/sample_data/brassica_rapa_expression.RDS", package = "GREAT")
 ```
 
+```{r}
+arabidopsis_expression_path %>% 
+  readRDS() %>% 
+  head() %>% 
+  knitr::kable()
+```
+
+```{r}
+brassica_rapa_expression_path %>% 
+  readRDS() %>% 
+  head() %>% 
+  knitr::kable()
+```
 
 ## Compare "get_all_data" function
 

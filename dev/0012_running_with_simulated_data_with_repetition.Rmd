@@ -208,128 +208,154 @@ list_letter <- LETTERS[seq(from = 1, to = 2)]
 list_num <- seq(1, 10, 1)
 gene_name <- paste0(list_letter, "_", list_num)
 
+
+num_simulation <- c(1,2)
 replicate_sd_list <- seq(0, 0.35, length.out = 36)
-# replicate_sd_list <- c(0, 0.05)
+
 num_timepoints <- 10
 
 results_list <- list()
 
-for (rep_sd in replicate_sd_list) {
-  data_to_reg_points <- gene_name %>%
-    purrr::map(simulate_data_to_reg, num_points = num_timepoints, replicates = 3, replicate_sd = rep_sd, method = c("fixed_var")) %>%
-    purrr::reduce(rbind)
+for (simul in num_simulation) {
+  for (rep_sd in replicate_sd_list) {
+    data_to_reg_points <- gene_name %>%
+      purrr::map(simulate_data_to_reg, num_points = num_timepoints, replicates = 3, replicate_sd = rep_sd, method = c("fixed_var")) %>%
+      purrr::reduce(rbind)
 
-  data_fixed <- simulate_data_fixed(
-    data_to_reg_points,
-    num_points = num_timepoints,
-    time_stretch = 4,
-    time_shift = 5,
-    exp_stretch = 6,
-    exp_shift = 4,
-    exp_noise_sd = 2
-  )
+    data_fixed <- simulate_data_fixed(
+      data_to_reg_points,
+      num_points = num_timepoints,
+      time_stretch = 4,
+      time_shift = 5,
+      exp_stretch = 6,
+      exp_shift = 4,
+      exp_noise_sd = 2
+    )
 
-  simulated_data <- rbind(data_to_reg_points, data_fixed) %>%
-    dplyr::mutate(
-      accession = dplyr::case_when(
-        accession == "data_to_reg" ~ "Col0",
-        accession == "data_fixed" ~ "Ro18"
-      )
-    ) %>%
-    as.data.table()
+    simulated_data <- rbind(data_to_reg_points, data_fixed) %>%
+      dplyr::mutate(
+        accession = dplyr::case_when(
+          accession == "data_to_reg" ~ "Col0",
+          accession == "data_fixed" ~ "Ro18"
+        )
+      ) %>%
+      as.data.table()
 
-  simulated_data_mean <- simulated_data %>%
-    dplyr::group_by(locus_name, accession, timepoint) %>%
-    dplyr::summarise(mean_cpm = mean(mean_cpm), .groups = "drop") %>%
-    as.data.table()
-  
-  # From the data, skip one timepoint
-  skip_1_timepoint_all <- undersample_data_timepoints_skip(simulated_data, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(FALSE, TRUE), columns_to_group = c("locus_name", "accession", "group"))
-  skip_1_timepoint_mean <- undersample_data_timepoints_skip(simulated_data_mean, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(FALSE, TRUE))
+    simulated_data_mean <- simulated_data %>%
+      dplyr::group_by(locus_name, accession, timepoint) %>%
+      dplyr::summarise(mean_cpm = mean(mean_cpm), .groups = "drop") %>%
+      as.data.table()
 
-  # From the data, skip two timepoint
-  skip_2_timepoint_all <- undersample_data_timepoints_skip(simulated_data, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(FALSE, FALSE, TRUE), columns_to_group = c("locus_name", "accession", "group"))
-  skip_2_timepoint_mean <- undersample_data_timepoints_skip(simulated_data_mean, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(FALSE, FALSE, TRUE))
-  
-  results_list[[paste0("data_sd_", stringr::str_pad(rep_sd, width = 2, pad = "0"))]] <- list(
-    all_data = simulated_data,
-    mean_data = simulated_data_mean,
-    sd = rep_sd, 
-    num_points = simulated_data_mean %>% 
-      dplyr::filter(accession == simulated_data_mean$accession[1]) %>% 
-      dplyr::pull(timepoint) %>% unique() %>% length()
-  )
-  
-  results_list[[paste0("data_sd_skip1_", stringr::str_pad(rep_sd, width = 2, pad = "0"))]] <- list(
-    all_data = skip_1_timepoint_all,
-    mean_data = skip_1_timepoint_mean,
-    sd = rep_sd, 
-    num_points = skip_1_timepoint_mean %>% 
-      dplyr::filter(accession == simulated_data_mean$accession[1]) %>% 
-      dplyr::pull(timepoint) %>% unique() %>% length()
-  )
-  
-  results_list[[paste0("data_sd_skip2_", stringr::str_pad(rep_sd, width = 2, pad = "0"))]] <- list(
-    all_data = skip_2_timepoint_all,
-    mean_data = skip_2_timepoint_mean,
-    sd = rep_sd, 
-    num_points = skip_2_timepoint_mean %>% 
-      dplyr::filter(accession == simulated_data_mean$accession[1]) %>% 
-      dplyr::pull(timepoint) %>% unique() %>% length()
-  )
-  
+    # From the data, skip one timepoint
+    skip_1_timepoint_all <- undersample_data_timepoints_skip(simulated_data, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(FALSE, TRUE), columns_to_group = c("locus_name", "accession", "group"))
+    skip_1_timepoint_mean <- undersample_data_timepoints_skip(simulated_data_mean, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(FALSE, TRUE))
+
+    # From the data, skip two timepoint
+    skip_2_timepoint_all <- undersample_data_timepoints_skip(simulated_data, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(FALSE, FALSE, TRUE), columns_to_group = c("locus_name", "accession", "group"))
+    skip_2_timepoint_mean <- undersample_data_timepoints_skip(simulated_data_mean, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(FALSE, FALSE, TRUE))
+    
+    # Save results
+    sim_str <- paste0("sim_", stringr::str_pad(simul, width = 3, pad = "0"))
+    rep_sd_str <- stringr::str_pad(rep_sd, width = 2, pad = "0")
+
+    results_list[[paste(sim_str, "data_full_sd", rep_sd_str, sep = "_")]] <- list(
+      all_data = simulated_data,
+      mean_data = simulated_data_mean,
+      sd = rep_sd,
+      num_points = simulated_data_mean %>%
+        dplyr::filter(accession == simulated_data_mean$accession[1]) %>%
+        dplyr::pull(timepoint) %>% unique() %>% length(),
+      num_simul = simul
+    )
+
+    results_list[[paste(sim_str, "data_skip1_sd", rep_sd_str, sep = "_")]] <- list(
+      all_data = skip_1_timepoint_all,
+      mean_data = skip_1_timepoint_mean,
+      sd = rep_sd,
+      num_points = skip_1_timepoint_mean %>%
+        dplyr::filter(accession == simulated_data_mean$accession[1]) %>%
+        dplyr::pull(timepoint) %>% unique() %>% length(),
+      num_simul = simul
+    )
+
+    results_list[[paste(sim_str, "data_skip2_sd", rep_sd_str, sep = "_")]] <- list(
+      all_data = skip_2_timepoint_all,
+      mean_data = skip_2_timepoint_mean,
+      sd = rep_sd,
+      num_points = skip_2_timepoint_mean %>%
+        dplyr::filter(accession == simulated_data_mean$accession[1]) %>%
+        dplyr::pull(timepoint) %>% unique() %>% length(),
+      num_simul = simul
+    )
+  }
 }
+```
 
+```{r running-multiple-simulation-b, warning=FALSE}
+total_sims <- length(num_simulation)
+sim_count <- numeric(length = total_sims)
 
-reg_with_full_simulated_data <- results_list %>%
+reg_with_full_simulated_data <- small_results_list %>%
   purrr::map(
     function(x) {
-      if (x$num_points == 10){
-      results <- GREAT::scale_and_register_data(
-        x$mean_data %>% dplyr::mutate(tissue = "apex"),
-        x$all_data %>% dplyr::mutate(tissue = "apex"),
-        stretches =  c(4, 3, 2, 1),
-        shift_extreme = 5,
-        num_shifts = 21,
-        min_num_overlapping_points = 4,
-        initial_rescale = FALSE,
-        do_rescale = TRUE,
-        testing = FALSE,
-        accession_data_to_transform = "Col0",
-        accession_data_fix = "Ro18",
-        data_to_transform_time_added = 40,
-        data_fix_time_added = 40
-      )
-      } else 
-        results <- GREAT::scale_and_register_data(
-        x$mean_data %>% dplyr::mutate(tissue = "apex"),
-        x$all_data %>% dplyr::mutate(tissue = "apex"),
-        stretches =  c(4, 3, 2, 1),
-        shift_extreme = 5,
-        num_shifts = 21,
-        min_num_overlapping_points = 2,
-        initial_rescale = FALSE,
-        do_rescale = TRUE,
-        testing = FALSE,
-        accession_data_to_transform = "Col0",
-        accession_data_fix = "Ro18",
-        data_to_transform_time_added = 40,
-        data_fix_time_added = 40
-        )
+      # Check simulation processing progress
+      num_simul <- x$num_simul
+      if (!(num_simul %in% sim_count)) {
+        sim_count[num_simul] <<- num_simul
+        message("[", Sys.time(), "] ", "Processing simulation ", num_simul, "/", total_sims, "...")
+      }
       
+      # Register data
+      if (x$num_points == 10) {
+        results <- GREAT::scale_and_register_data(
+          x$mean_data %>% dplyr::mutate(tissue = "apex"),
+          x$all_data %>% dplyr::mutate(tissue = "apex"),
+          stretches =  c(4, 3, 2, 1),
+          shift_extreme = 5,
+          num_shifts = 21,
+          min_num_overlapping_points = 4,
+          initial_rescale = FALSE,
+          do_rescale = TRUE,
+          testing = FALSE,
+          accession_data_to_transform = "Col0",
+          accession_data_fix = "Ro18",
+          data_to_transform_time_added = 40,
+          data_fix_time_added = 40
+        ) %>% 
+          suppressMessages()
+      } else {
+        results <- GREAT::scale_and_register_data(
+          x$mean_data %>% dplyr::mutate(tissue = "apex"),
+          x$all_data %>% dplyr::mutate(tissue = "apex"),
+          stretches =  c(4, 3, 2, 1),
+          shift_extreme = 5,
+          num_shifts = 21,
+          min_num_overlapping_points = 2,
+          initial_rescale = FALSE,
+          do_rescale = TRUE,
+          testing = FALSE,
+          accession_data_to_transform = "Col0",
+          accession_data_fix = "Ro18",
+          data_to_transform_time_added = 40,
+          data_fix_time_added = 40
+        ) %>% 
+          suppressMessages()
+      }
+
+      results[["simul"]] <- x$num_simul
       results[["sd"]] <- x$sd
       results[["num_points"]] <- x$num_points
-      
+
       return(results)
     }
   )
 ```
 
-
 ```{r simulation-results}
 table <- reg_with_full_simulated_data %>% 
   purrr::map(
     ~ data.frame(
+      num_simul = .x$simul,
       SD = .x$sd,
       num_timepoints = .x$num_points,
       `registered_genes_total10` = .x$model_comparison_dt %>% 
@@ -342,7 +368,7 @@ table <- reg_with_full_simulated_data %>%
 
 # Not all time points are registered 
 table %>% 
-  dplyr::group_by(SD) %>% 
+  dplyr::group_by(SD, num_simul) %>% 
   dplyr::filter(
     sum(ifelse(`registered_genes_total10` == 10, 1, 0)) < dplyr::n()
   ) %>% 
@@ -351,24 +377,23 @@ table %>%
 
 ```{r show-table-with-all-registered-data}
 # All timepoints are registered
-table %>% 
-  dplyr::group_by(SD) %>% 
+table %>%
+  dplyr::group_by(SD, num_simul) %>%
   dplyr::filter(
     sum(ifelse(`registered_genes_total10` == 10, 1, 0)) == dplyr::n()
-  ) %>% 
+  ) %>%
   knitr::kable()
 ```
 
 
 ```{r fig.height=16, fig.width=15}
-results_list$data_sd_0.3$all_data %>% 
-  ggplot() +
-  aes(x = timepoint, y = mean_cpm, colour = group) +
-  geom_point() +
-  geom_line() +
-  facet_wrap(locus_name ~ accession, ncol = 4)
+# results_list$data_sd_0.3$all_data %>% 
+#   ggplot() +
+#   aes(x = timepoint, y = mean_cpm, colour = group) +
+#   geom_point() +
+#   geom_line() +
+#   facet_wrap(locus_name ~ accession, ncol = 4)
 ```
-
 
 
 

@@ -449,15 +449,3 @@ impute_transformed_exp_values <- function(shifted_mean_df,
 
   return(out_df)
 }
-
-#' @export
-fix.accessions <- function(df, original.transformed.accession, original.other.accession) {
-
-  # swap Col0 with original.transformed.accession, and Ro18 with original.other.accession
-  new.df.accession <- df$accession
-  new.df.accession[df$accession == "Col0"] <- original.transformed.accession
-  new.df.accession[df$accession == "Ro18"] <- original.other.accession
-  df$accession <- new.df.accession
-
-  return(df)
-}

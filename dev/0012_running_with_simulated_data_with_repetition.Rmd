@@ -209,7 +209,7 @@ list_num <- seq(1, 10, 1)
 gene_name <- paste0(list_letter, "_", list_num)
 
 
-num_simulation <- c(1,2)
+num_simulation <- seq(1, 100, 1)
 replicate_sd_list <- seq(0, 0.35, length.out = 36)
 
 num_timepoints <- 10
@@ -295,7 +295,7 @@ for (simul in num_simulation) {
 total_sims <- length(num_simulation)
 sim_count <- numeric(length = total_sims)
 
-reg_with_full_simulated_data <- small_results_list %>%
+reg_with_full_simulated_data <- results_list %>%
   purrr::map(
     function(x) {
       # Check simulation processing progress
@@ -350,6 +350,8 @@ reg_with_full_simulated_data <- small_results_list %>%
     }
   )
 ```
+
+
 
 ```{r simulation-results}
 table <- reg_with_full_simulated_data %>% 

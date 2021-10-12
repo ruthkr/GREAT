@@ -1,36 +1,33 @@
 ---
-title: ""
-output: 
+title: "Running registration using simulated data with repetition"
+output:
   github_document:
     toc: true
 ---
-
-# Running registration using simulated data with repetition
 
 This is a small experiment to test the standard deviation threshold for the simulated data with different number of timepoints.
 
 ## Set-up and load libraries
 
-```{r setup}
+```{r setup, message=FALSE}
 knitr::opts_chunk$set()
 
 devtools::load_all()
 library(dplyr)
-library(ggplot2)
 library(data.table)
+library(ggplot2)
 library(cowplot)
 library(ggpubr)
-library(dplyr)
 library(viridis)
 library(ggridges)
+
+theme_set(theme_bw())
 ```
 
-```{r parallel-setup}
+```{r parallel-setup, eval=FALSE}
 library(future)
 future::plan(future::multisession, workers = 15)
 ```
-
-
 ## Function to simulate data
 
 ```{r fn-simulated-data}
@@ -55,14 +52,14 @@ simulate_data_to_reg <- function(gene_name, num_points, replicates = 1, replicat
 
     return(df)
   }
-  
+
   simulate_replicates_fixed_var <- function(timepoint, gene_name, replicates, replicate_sd) {
     df <- data.frame(
       locus_name = gene_name,
       accession = "data_to_reg",
       timepoint = timepoint,
       mean_cpm = abs(rnorm(n = 1, sd = 10)) %>%
-        `+`(c(-replicate_sd, 0, replicate_sd)) %>% 
+        `+`(c(-replicate_sd, 0, replicate_sd)) %>%
         sample(replicates),
       group = as.factor(1:replicates)
     )
@@ -79,7 +76,7 @@ simulate_data_to_reg <- function(gene_name, num_points, replicates = 1, replicat
     if (replicates != 3) {
       stop("Replicates can only by 3 for this method.")
     }
-    
+
     df <- timepoints_list %>%
       purrr::map(
         ~ simulate_replicates_fixed_var(.x, gene_name, replicates, replicate_sd)
@@ -93,21 +90,14 @@ simulate_data_to_reg <- function(gene_name, num_points, replicates = 1, replicat
 }
 
 # Function to create data fixed
-simulate_data_fixed <- function(df_to_reg, 
-                                time_stretch,
-                                time_shift,
-                                exp_stretch, 
-                                exp_shift, 
-                                num_points, 
-                                exp_noise_sd) {
-  
-  df <- df_to_reg %>% 
+simulate_data_fixed <- function(df_to_reg, time_stretch, time_shift, exp_stretch, exp_shift, num_points, exp_noise_sd) {
+  df <- df_to_reg %>%
     dplyr::mutate(
       accession = "data_fixed",
       timepoint = timepoint * time_stretch + time_shift,
       mean_cpm = mean_cpm * exp_stretch + exp_shift + rnorm(n = num_points, sd = exp_noise_sd)
     )
-  
+
   return(df)
 }
 ```
@@ -115,17 +105,18 @@ simulate_data_fixed <- function(df_to_reg,
 ```{r fn-undersample-data_timepoints-skip}
 undersample_data_timepoints_skip <- function(data, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(TRUE), columns_to_group = c("locus_name", "accession")) {
   if (keep_first_last_timepoint) {
-  sliced_data <- data %>%
-    dplyr::group_by(dplyr::across(columns_to_group)) %>%
-    dplyr::arrange(timepoint) %>%
-    dplyr::slice(c(1, seq(2, dplyr::n() - 1, 1)[skip_timepoints_pattern], dplyr::n())) %>% 
-    dplyr::ungroup()
-  } else
-  sliced_data <- data %>%
-    dplyr::group_by(dplyr::across(columns_to_group)) %>%
-    dplyr::arrange(timepoint) %>%
-    dplyr::slice(seq(1, dplyr::n(), 1)[skip_timepoints_pattern]) %>% 
-    dplyr::ungroup()
+    sliced_data <- data %>%
+      dplyr::group_by(dplyr::across(columns_to_group)) %>%
+      dplyr::arrange(timepoint) %>%
+      dplyr::slice(c(1, seq(2, dplyr::n() - 1, 1)[skip_timepoints_pattern], dplyr::n())) %>%
+      dplyr::ungroup()
+  } else {
+    sliced_data <- data %>%
+      dplyr::group_by(dplyr::across(columns_to_group)) %>%
+      dplyr::arrange(timepoint) %>%
+      dplyr::slice(seq(1, dplyr::n(), 1)[skip_timepoints_pattern]) %>%
+      dplyr::ungroup()
+  }
 
   return(as.data.table(sliced_data))
 }
@@ -141,16 +132,16 @@ gene_name <- paste0(list_letter, "_", list_num)
 
 # Simulate registered data
 data_to_reg_points <- gene_name %>%
-    purrr::map(simulate_data_to_reg, num_points = 25, replicates = 3, replicate_sd = 4, method = "fixed_var") %>%
-    purrr::reduce(rbind)
+  purrr::map(simulate_data_to_reg, num_points = 25, replicates = 3, replicate_sd = 4, method = "fixed_var") %>%
+  purrr::reduce(rbind)
 ```
 
 ```{r test-simulate-data-plot, eval=FALSE}
-data_to_reg_points %>% 
-  group_by(locus_name, accession, timepoint) %>% 
+data_to_reg_points %>%
+  group_by(locus_name, accession, timepoint) %>%
   summarise(sd = sd(mean_cpm))
 
-data_to_reg_points %>% 
+data_to_reg_points %>%
   ggplot() +
   aes(x = timepoint, y = mean_cpm, colour = group) +
   geom_point() +
@@ -200,12 +191,12 @@ simulated_data %>%
 
 
 ```{r}
-# simulated_data_mean <- simulated_data %>% 
-#   dplyr::group_by(locus_name, accession, timepoint) %>% 
-#   # dplyr::summarise(mean_cpm = mean(mean_cpm), n = n(), .groups = "drop") %>% 
-#   dplyr::summarise(mean_cpm = mean(mean_cpm), .groups = "drop") %>% 
+# simulated_data_mean <- simulated_data %>%
+#   dplyr::group_by(locus_name, accession, timepoint) %>%
+#   # dplyr::summarise(mean_cpm = mean(mean_cpm), n = n(), .groups = "drop") %>%
+#   dplyr::summarise(mean_cpm = mean(mean_cpm), .groups = "drop") %>%
 #   as.data.table()
-# 
+#
 # simulated_data_mean %>% head()
 ```
 
@@ -224,7 +215,7 @@ list_num <- 1:num_genes
 gene_name <- paste0(list_letter, "_", list_num)
 ```
 
-```{r running-multiple-simulation, warning=FALSE, message=FALSE}
+```{r running-multiple-simulation, warning=FALSE, message=FALSE, eval =FALSE}
 results_list <- list()
 
 for (simul in num_simulation) {
@@ -264,7 +255,7 @@ for (simul in num_simulation) {
     # From the data, skip two timepoint
     skip_2_timepoint_all <- undersample_data_timepoints_skip(simulated_data, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(FALSE, FALSE, TRUE), columns_to_group = c("locus_name", "accession", "group"))
     skip_2_timepoint_mean <- undersample_data_timepoints_skip(simulated_data_mean, keep_first_last_timepoint = TRUE, skip_timepoints_pattern = c(FALSE, FALSE, TRUE))
-    
+
     # Save results
     sim_str <- paste0("sim_", stringr::str_pad(simul, width = 3, pad = "0"))
     rep_sd_str <- stringr::str_pad(rep_sd, width = 2, pad = "0")
@@ -302,7 +293,7 @@ for (simul in num_simulation) {
 }
 ```
 
-```{r running-multiple-simulation-b, warning=FALSE}
+```{r running-multiple-simulation-b, warning=FALSE, eval=FALSE}
 total_sims <- length(num_simulation)
 sim_count <- numeric(length = total_sims)
 
@@ -315,7 +306,7 @@ reg_with_full_simulated_data <- results_list %>%
         sim_count[num_simul] <<- num_simul
         message("[", Sys.time(), "] ", "Processing simulation ", num_simul, "/", total_sims, "...")
       }
-      
+
       # Register data
       if (x$num_points == 10) {
         results <- GREAT::scale_and_register_data(
@@ -332,7 +323,7 @@ reg_with_full_simulated_data <- results_list %>%
           accession_data_fix = "Ro18",
           data_to_transform_time_added = 40,
           data_fix_time_added = 40
-        ) %>% 
+        ) %>%
           suppressMessages()
       } else {
         results <- GREAT::scale_and_register_data(
@@ -349,7 +340,7 @@ reg_with_full_simulated_data <- results_list %>%
           accession_data_fix = "Ro18",
           data_to_transform_time_added = 40,
           data_fix_time_added = 40
-        ) %>% 
+        ) %>%
           suppressMessages()
       }
 
@@ -362,152 +353,207 @@ reg_with_full_simulated_data <- results_list %>%
   )
 ```
 
-
-### Analysing data
-
-```{r}
-# Reading data from simulation
-
-reg_with_full_simulated_data <- readRDS("../../../Downloads/reg_with_full_simulated_data_2021-10-11_15-57-54.rds")
-```
-
-## Save simulation results
-
-```{r save-results}
-timestamp <- Sys.time() %>% 
-  stringr::str_replace_all(" ", "_") %>% 
+```{r save-results, include=FALSE, eval=FALSE}
+timestamp <- Sys.time() %>%
+  stringr::str_replace_all(" ", "_") %>%
   stringr::str_replace_all(":", "-")
 
-saveRDS(results_list, file = paste0("~/Downloads/results_list_", timestamp,".rds"))
-saveRDS(reg_with_full_simulated_data, file = paste0("~/Downloads/reg_with_full_simulated_data_", timestamp,".rds"))
+saveRDS(results_list, file = paste0("~/Downloads/results_list_", timestamp, ".rds"))
+saveRDS(reg_with_full_simulated_data, file = paste0("~/Downloads/reg_with_full_simulated_data_", timestamp, ".rds"))
+```
+### Analysing data
+
+```{r read-data, include=FALSE}
+# Reading data from simulation
+# reg_with_full_simulated_data <- readRDS("~/Downloads/reg_with_full_simulated_data_2021-10-11_15-57-54.rds")
+# reg_with_full_simulated_data_100_simulation <- readRDS("~/Downloads/reg_with_full_simulated_data_11Oct.rds")
+table_100simul <- data.table::fread(here::here("dev/table_100simul_reg_with_full_simulated_data_11Oct.csv")) %>% 
+  dplyr::mutate(
+    num_timepoints = as.factor(num_timepoints),
+    SD = as.factor(SD)
+  )
+table <- data.table::fread(here::here("dev/table_reg_with_full_simulated_data_2021-10-11_15-57-54.csv")) %>% 
+  dplyr::mutate(
+    num_timepoints = as.factor(num_timepoints),
+    SD = as.factor(SD)
+  )
 ```
 
-## Analyse results
-
 ```{r simulation-results, eval=FALSE}
-table <- reg_with_full_simulated_data %>% 
+table <- reg_with_full_simulated_data %>%
   purrr::map(
     ~ data.frame(
       num_simul = .x$simul,
       SD = .x$sd,
       num_timepoints = .x$num_points,
-      `registered_genes_total10` = .x$model_comparison_dt %>% 
-  dplyr::filter(BIC_registered_is_better == TRUE) %>% 
-    nrow()
+      `registered_genes_total10` = .x$model_comparison_dt %>%
+        dplyr::filter(BIC_registered_is_better == TRUE) %>%
+        dplyr::nrow()
     )
-  ) %>% 
-    purrr::reduce(dplyr::bind_rows)
+  ) %>%
+  purrr::reduce(dplyr::bind_rows) %>%
+  dplyr::mutate(
+    num_timepoints = as.factor(num_timepoints),
+    SD = as.factor(SD)
+  )
+
+
+table_100simul <- reg_with_full_simulated_data_100_simulation %>%
+  purrr::map(
+    ~ data.frame(
+      num_simul = .x$simul,
+      SD = .x$sd,
+      num_timepoints = .x$num_points,
+      `registered_genes_total10` = .x$model_comparison_dt %>%
+        dplyr::filter(BIC_registered_is_better == TRUE) %>%
+        nrow()
+    )
+  ) %>%
+  purrr::reduce(dplyr::bind_rows) %>%
+  dplyr::mutate(
+    num_timepoints = as.factor(num_timepoints),
+    SD = as.factor(SD)
+  )
 ```
 
-```{r}
-# Ploting the data
 
-table <- table %>% 
-  dplyr::mutate(num_timepoints = as.factor(num_timepoints), 
-                SD = as.factor(SD)
-                )
+```{r fn-get-bar-plot}
+get_bar_plot <- function(data) {
+  plot <- data %>%
+    dplyr::group_by(SD, num_timepoints) %>%
+    dplyr::summarise(
+      dplyr::across(
+        .cols = registered_genes_total10,
+        list(mean = mean, sd = sd)
+      ),
+      .groups = "drop"
+    ) %>%
+    dplyr::rename(mean_length = registered_genes_total10_mean, sd_length = registered_genes_total10_sd) %>%
+    # Plot
+    ggplot() +
+    aes(y = mean_length, x = as.factor(num_timepoints)) +
+    geom_bar(
+      stat = "identity",
+      fill = "#8da0cb",
+      position = position_dodge()
+    ) +
+    geom_errorbar(
+      aes(
+        ymin = mean_length - sd_length,
+        ymax = mean_length + sd_length
+      ),
+      width = .2,
+      position = position_dodge(.9)
+    ) +
+    labs(
+      x = "Number timepoints",
+      y = "Registered genes",
+      title = "Total registered genes"
+    ) +
+    facet_wrap(~SD)
+
+  return(plot)
+}
 ```
 
-```{r fig.width=10, fig.height=10}
+## Barplot with standard error of simulated data for n=100
+
+```{r plot-table-100-simulation, fig.width=10, fig.height=10}
+table_100simul %>%
+  get_bar_plot()
+```
+
+## Barplot with standard error of simulated data for n=500
+
+```{r plot-table-500-simulation, fig.width=10, fig.height=10}
 table %>%
-  dplyr::group_by(SD, num_timepoints) %>%
-  dplyr::summarise(
-    dplyr::across(
-      .cols = registered_genes_total10,
-      list(mean = mean, sd = sd)
-    )
-  ) %>% 
-  dplyr::rename(mean_length = registered_genes_total10_mean, sd_length = registered_genes_total10_sd) %>%
-  # Plot
-  ggplot() +
-  aes(y = mean_length, x = as.factor(num_timepoints)) +
-  geom_bar(
-    stat = "identity",
-    fill = "#8da0cb",
-    position = position_dodge()
-  ) +
-  geom_errorbar(
-    aes(
-      ymin = mean_length - sd_length,
-      ymax = mean_length + sd_length
-    ),
-    width = .2,
-    position = position_dodge(.9)
-  ) +
-  labs(
-    x = "Number timepoints",
-    y = "Registered genes",
-    title = "Total registered genes"
-  ) +
-  facet_wrap(~SD) +
-  theme_light()
+  get_bar_plot()
 ```
 
+## Boxplot of simulated data
 
-```{r show-table-with-all-registered-data, eval=FALSE, fig.width=15, fig.height=20}
-# All timepoints are registered
+```{r boxplot-with-jitter, fig.width=10, fig.height=12}
 table %>%
   ggplot(aes(y = registered_genes_total10, x = num_timepoints, fill = num_timepoints)) +
   geom_boxplot() +
   scale_fill_viridis(discrete = TRUE, alpha = 0.6) +
-  geom_jitter(color = "black", size = 0.4, alpha = 0.2) +
+  geom_jitter(color = "black", size = 0.4, alpha = 0.1) +
   theme(
     legend.position = "none",
     plot.title = element_text(size = 11)
   ) +
   scale_y_continuous(breaks = seq(1, 10, by = 1)) +
   labs(x = "Number timepoints", y = "Number of registered genes") +
-  facet_wrap(~SD)
+  facet_wrap(~SD, ncol = 4)
 ```
-```{r fig.width=12, fig.height=10}
-table %>% 
-  dplyr::mutate(registered_genes_total10 = as.factor(registered_genes_total10)) %>% 
-  dplyr::filter(SD %in% seq(0.3, 0.4, by = 0.01)) %>%
-  group_by(SD, num_timepoints, registered_genes_total10) %>% 
-  summarise(count = n(), percentage = n()/500 * 100) %>% 
+
+```{r percentage-registered-genes-plot, fig.width=10, fig.height=4}
+table %>%
+  dplyr::mutate(
+    registered_genes_total10 = as.factor(registered_genes_total10),
+    SD = as.numeric(as.character(SD))
+  ) %>%
+  dplyr::filter(
+    SD >= 0.3,
+    SD <= 0.4
+  ) %>%
+  dplyr::group_by(SD, num_timepoints, registered_genes_total10) %>%
+  dplyr::summarise(
+    count = n(),
+    percentage = n() / 500 * 100,
+    .groups = "drop"
+  ) %>%
   ggplot() +
   aes(x = SD, y = percentage, group = registered_genes_total10, color = registered_genes_total10) +
   geom_point() +
   geom_line() +
-  facet_wrap(~num_timepoints)
+  geom_vline(xintercept = 0.35, linetype = "dashed") +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  labs(
+    x = "Standard deviation",
+    y = "Percentage",
+    color = "Number of registered genes"
+  ) +
+  facet_wrap(
+    ~num_timepoints,
+    labeller = labeller(
+      num_timepoints =
+        c(
+          "4" = "Number of points: 4",
+          "6" = "Number of points: 6",
+          "10" = "Number of points: 8"
+        )
+    )
+  )
 ```
-
-
 
 ## ANOVA (ANalysis Of VAriance) test
 
-- Null hypothesis ($H_{0}$): $\mu_{SD_i, alltimepoints} = \mu_{SD_i, 6timepoints} = \dots = \mu_{SD_i, 4timepoints}$, that is, all samples came from populations with the same mean.
-- Alternative hypothesis ($H_{1}$): not all samples came from populations with the same mean.
+- Null hypothesis ($H_{0}$): $\mu_{\sigma_i, \forall n} = \mu_{\sigma_i, n = 6} = \dots = \mu_{\sigma_i,n = 4}$.
+
+That is, for $\sigma_{i}$ all groups with different time points ($n$) have same mean of number registered genes.
+
+- Alternative hypothesis ($H_{1}$): not all samples have the same mean of number registered genes.
 
 The null hypothesis is tested by comparing variances.
 
 
 ```{r anova-test}
-# aov_results <- aov(
-#   formula = registered_genes_total10 ~ num_timepoints,
-#   data = table %>%
-#     dplyr::filter(
-#       SD == 0.31
-#     )
-# )
-chisq.test(table %>%
-    dplyr::filter(SD == 0.31)
+aov_results <- aov(
+  formula = registered_genes_total10 ~ num_timepoints,
+  data = table %>%
+    dplyr::filter(
+      SD == 0.35
     )
-
-
-table %>%
-    dplyr::filter(SD == 0.31)
+)
 ```
 
 ```{r anova-results}
 summary(aov_results)
-TukeyHSD(aov_results)
 ```
 
+The p-value is far below 0.05, so the null is rejected, and it can be concluded there are differences between number of registered genes between different time point groups with SD = 0.35.
 
-
-
-
-
-
-
+```{r TukeyHSD-results}
+TukeyHSD(aov_results)
+```

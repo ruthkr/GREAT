@@ -16,7 +16,7 @@
 #' @param data_to_transform_time_added Time points to be added in data to transform.
 #' @param data_fix_time_added Time points to be added in data fix.
 #'
-#' @return List of dataframes: (a) `mean_df` is unchanged by `scale_and_register_data()`, (b) `mean_df_sc` is identical to `mean_df`, with additional column "sc.mean.cpm", (c) `imputed_mean_df` is registered expression data, (d) `all_shifts` is a table of candidate registraions applied, and score for each, and (e) `model_comparison_dt` is a table comparing the optimal registration function for each gene (based on `all_shifts` scores) to model with no registration applied.
+#' @return List of dataframes: (a) `mean_df` is unchanged by `scale_and_register_data()`, (b) `mean_df_sc` is identical to `mean_df`, with additional column "sc.mean.cpm", (c) `imputed_mean_df` is registered expression data, (d) `all_shifts` is a table of candidate registrations applied, and score for each, and (e) `model_comparison_dt` is a table comparing the optimal registration function for each gene (based on `all_shifts` scores) to model with no registration applied.
 #' @export
 scale_and_register_data <- function(mean_df,
                                     all_data_df,
@@ -80,10 +80,6 @@ scale_and_register_data <- function(mean_df,
   best_shifts <- L[["best_shifts"]]
   model_comparison_dt <- L[["model_comparison_dt"]]
 
-  # browser()
-
-  # message("Max value of all_shifts mean_cpm :", max(all_shifts$mean_cpm))
-
   # Add columns which flags which BIC and AIC values are better
   model_comparison_dt$BIC_registered_is_better <- (model_comparison_dt$registered.BIC < model_comparison_dt$separate.BIC)
   model_comparison_dt$AIC_registered_is_better <- (model_comparison_dt$registered.AIC < model_comparison_dt$separate.AIC)
@@ -97,9 +93,9 @@ scale_and_register_data <- function(mean_df,
   message("AIC & BIC finds registration better than separate for :", sum(model_comparison_dt$ABIC_registered_is_better), " / ", nrow(model_comparison_dt))
   message("###################################################################")
 
-  # get the best-shifted and stretched mean gene expression, only to genes which registration is better than
+  # Get the best-shifted and stretched mean gene expression, only to genes which registration is better than
   # separate models by BIC. Don't stretch out, or shift genes for which separate is better.
-  # registration is applied to col0.
+
   shifted_mean_df <- apply_shift_to_registered_genes_only(
     to_shift_df,
     best_shifts,
@@ -452,53 +448,4 @@ impute_transformed_exp_values <- function(shifted_mean_df,
   out_df <- do.call("rbind", out_list)
 
   return(out_df)
-}
-
-
-
-#' @export
-fix.accessions <- function(df, original.transformed.accession, original.other.accession) {
-
-  # swap Col0 with original.transformed.accession, and Ro18 with original.other.accession
-  new.df.accession <- df$accession
-  new.df.accession[df$accession == "Col0"] <- original.transformed.accession
-  new.df.accession[df$accession == "Ro18"] <- original.other.accession
-  df$accession <- new.df.accession
-
-  return(df)
-}
-
-
-
-#' @export
-change.accession.names <- function(mean_df, all_data_df, transformed.timecourse) {
-  # set the "transformed.timecourse" accession to "Col0", and the other one to "Ro18"
-
-  # error checking
-  if (length(unique(mean_df$accession)) != 2) {
-    stop("Error in change.accession.names() : comparison must be made between two accessions!")
-  }
-
-  # store these, to rename at the end
-  original.transformed.timecourse.name <- transformed.timecourse
-  original.other.accession.name <- as.character(unique(mean_df$accession[mean_df$accession != transformed.timecourse]))
-
-  # change mean_df
-  new.mean_df.accession <- mean_df$accession
-  new.mean_df.accession[mean_df$accession == transformed.timecourse] <- "Col0"
-  new.mean_df.accession[mean_df$accession != transformed.timecourse] <- "Ro18"
-  mean_df$accession <- new.mean_df.accession
-
-  # change all_data_df
-  new.all_data_df.accession <- all_data_df$accession
-  new.all_data_df.accession[all_data_df$accession == transformed.timecourse] <- "Col0"
-  new.all_data_df.accession[all_data_df$accession != transformed.timecourse] <- "Ro18"
-  all_data_df$accession <- new.all_data_df.accession
-
-  return(list(
-    "mean_df" = mean_df,
-    "all_data_df" = all_data_df,
-    "original.transformed.accession.name" = original.transformed.timecourse.name,
-    "original.other.accession.name" = original.other.accession.name
-  ))
 }

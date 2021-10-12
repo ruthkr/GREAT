@@ -15,12 +15,18 @@ This is a small experiment to test the standard deviation threshold for the simu
 knitr::opts_chunk$set()
 
 devtools::load_all()
+library(dplyr)
 library(ggplot2)
 library(data.table)
 library(cowplot)
 library(ggpubr)
-library(dplyr)
 ```
+
+```{r parallel-setup}
+library(future)
+future::plan(future::multisession, workers = 15)
+```
+
 
 ## Function to simulate data
 
@@ -202,24 +208,26 @@ simulated_data %>%
 
 ## Running simulations
 
-```{r running-multiple-simulation, warning=FALSE, message=FALSE}
-# Define parameters
-list_letter <- LETTERS[seq(from = 1, to = 2)]
-list_num <- seq(1, 10, 1)
-gene_name <- paste0(list_letter, "_", list_num)
-
-
-num_simulation <- seq(1, 100, 1)
-replicate_sd_list <- seq(0, 0.35, length.out = 36)
-
+```{r simulation-parameters}
+# Simulation parameters
+num_simulation <- 1:500
+replicate_sd_list <- seq(0.25, 0.4, length.out = 16)
 num_timepoints <- 10
 
+# Simulated gene names
+num_genes <- 10
+list_letter <- LETTERS[1:2]
+list_num <- 1:num_genes
+gene_name <- paste0(list_letter, "_", list_num)
+```
+
+```{r running-multiple-simulation, warning=FALSE, message=FALSE}
 results_list <- list()
 
 for (simul in num_simulation) {
   for (rep_sd in replicate_sd_list) {
     data_to_reg_points <- gene_name %>%
-      purrr::map(simulate_data_to_reg, num_points = num_timepoints, replicates = 3, replicate_sd = rep_sd, method = c("fixed_var")) %>%
+      furrr::future_map(simulate_data_to_reg, num_points = num_timepoints, replicates = 3, replicate_sd = rep_sd, method = c("fixed_var")) %>%
       purrr::reduce(rbind)
 
     data_fixed <- simulate_data_fixed(
@@ -296,7 +304,7 @@ total_sims <- length(num_simulation)
 sim_count <- numeric(length = total_sims)
 
 reg_with_full_simulated_data <- results_list %>%
-  purrr::map(
+  furrr::future_map(
     function(x) {
       # Check simulation processing progress
       num_simul <- x$num_simul
@@ -351,9 +359,20 @@ reg_with_full_simulated_data <- results_list %>%
   )
 ```
 
+## Save simulation results
 
+```{r save-results}
+timestamp <- Sys.time() %>% 
+  stringr::str_replace_all(" ", "_") %>% 
+  stringr::str_replace_all(":", "-")
 
-```{r simulation-results}
+saveRDS(results_list, file = paste0("~/Downloads/results_list_", timestamp,".rds"))
+saveRDS(reg_with_full_simulated_data, file = paste0("~/Downloads/reg_with_full_simulated_data_", timestamp,".rds"))
+```
+
+## Analyse results
+
+```{r simulation-results, eval=FALSE}
 table <- reg_with_full_simulated_data %>% 
   purrr::map(
     ~ data.frame(
@@ -377,7 +396,7 @@ table %>%
   knitr::kable()
 ```
 
-```{r show-table-with-all-registered-data}
+```{r show-table-with-all-registered-data, eval=FALSE}
 # All timepoints are registered
 table %>%
   dplyr::group_by(SD, num_simul) %>%

@@ -421,7 +421,6 @@ impute_transformed_exp_values <- function(shifted_mean_df,
     curr_df <- shifted_mean_df[shifted_mean_df$locus_name == curr_gene, ]
 
     transformed_df <- curr_df[curr_df$accession == accession_data_to_transform, ]
-    # bra.df <- curr_df[curr_df$accession == accession_data_fix, ]
 
     interp_transformed_df <- data.table::data.table(
       "locus_name" = curr_gene,

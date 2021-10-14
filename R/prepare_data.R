@@ -1,4 +1,23 @@
+#' Simplify reference data and data to transform into one dataframe
+#'
+#' @param filepath_data_fix File name in working directory, path to file of reference data.
+#' @param filepath_data_to_transform File name in working directory, path to file of data to transform.
+#' @param filepath_id_table File name in working directory, path to file of ID table connecting both reference data and data.
+#' @param fix_id_table_shared_colname Column names shared by both reference data and ID table.
+#' @param fix_and_to_transform_data_shared_colname Column names shared by both reference data and data to transform.
+#' @param colnames_id_table ID table column names.
+#' @param colnames_wanted List of column names to keep from both reference data and data to transform.
+#' @param tissue_wanted Name of tissue from which data will be compared.
+#' @param curr_GoIs Gene of interest list.
+#' @param sum_exp_data_fix default is FALSE. If TRUE then sum all gene data.
+#' @param accession_data_to_transform Accession name of data which will be transformed.
+#' @param ids_data_fix_colnames Column names shared by both reference data and ID table, whose element needs to be unique.
+#' @param max_mean_cpm_wanted Maximum value of expression desired.
+#' @param exp_threshold Minimum expression threshold from which expression below the threshold will be removed.
+#'
 #' @export
+#'
+#' @return Combined data frame for both reference data and data to transform: (1) only containing mean of the expression, and (2) still contains replicate data.
 load_mean_df <- function(filepath_data_fix,
                          filepath_data_to_transform,
                          filepath_id_table,
@@ -11,7 +30,8 @@ load_mean_df <- function(filepath_data_fix,
                          sum_exp_data_fix = FALSE,
                          accession_data_to_transform = "Col0",
                          ids_data_fix_colnames = c("CDS.model", "locus_name"),
-                         max_mean_cpm_wanted = 5) {
+                         max_mean_cpm_wanted = 5,
+                         exp_threshold = 0.5) {
 
   # Load the expression data for all the curr_GoIs gene models, for data to transform and for data fix
   exp <- get_expression_of_interest(
@@ -36,7 +56,7 @@ load_mean_df <- function(filepath_data_fix,
 
   # Filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed greater than 1
   data_fix_df <- mean_df[mean_df$accession != accession_data_to_transform]
-  data_fix_df[, keep := (max(mean_cpm) > max_mean_cpm_wanted | mean(mean_cpm > 1) > 0.5), by = .(locus_name)]
+  data_fix_df[, keep := (max(mean_cpm) > max_mean_cpm_wanted | mean(mean_cpm > 1) > exp_threshold), by = .(locus_name)]
 
   keep_data_fix_genes <- unique(data_fix_df$locus_name[data_fix_df$keep == TRUE])
   discard_data_fix_genes <- unique(data_fix_df$locus_name[data_fix_df$keep == FALSE])

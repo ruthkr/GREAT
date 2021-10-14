@@ -48,7 +48,7 @@ scale_and_register_data(
 \item{data_fix_time_added}{Time points to be added in data fix.}
 }
 \value{
-List of dataframes: (a) \code{mean_df} is unchanged by \code{scale_and_register_data()}, (b) \code{mean_df_sc} is identical to \code{mean_df}, with additional column "sc.mean.cpm", (c) \code{imputed_mean_df} is registered expression data, (d) \code{all_shifts} is a table of candidate registraions applied, and score for each, and (e) \code{model_comparison_dt} is a table comparing the optimal registration function for each gene (based on \code{all_shifts} scores) to model with no registration applied.
+List of dataframes: (a) \code{mean_df} is unchanged by \code{scale_and_register_data()}, (b) \code{mean_df_sc} is identical to \code{mean_df}, with additional column "sc.mean.cpm", (c) \code{imputed_mean_df} is registered expression data, (d) \code{all_shifts} is a table of candidate registrations applied, and score for each, and (e) \code{model_comparison_dt} is a table comparing the optimal registration function for each gene (based on \code{all_shifts} scores) to model with no registration applied.
 }
 \description{
 \code{scale_and_register_data} is a function to process all data. This includes scaling data before registration, finding and calculate score of optimal shifts and stretches, apply the best shifts and stretches.

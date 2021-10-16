@@ -13,7 +13,7 @@ calculate_all_best_shifts(
   min_num_overlapping_points,
   testing = FALSE,
   accession_data_to_transform = "Col0",
-  accession_data_fix = "Ro18"
+  accession_data_ref = "Ro18"
 )
 }
 \arguments{
@@ -33,7 +33,7 @@ calculate_all_best_shifts(
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
-\item{accession_data_fix}{Accession name of data fix.}
+\item{accession_data_ref}{Accession name of reference data.}
 }
 \value{
 \code{all_scores_df}

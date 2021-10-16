@@ -9,7 +9,7 @@ compare_registered_to_unregistered_model(
   all_data_df,
   is_testing = FALSE,
   accession_data_to_transform = "Col0",
-  accession_data_fix = "Ro18"
+  accession_data_ref = "Ro18"
 )
 }
 \arguments{
@@ -21,11 +21,11 @@ compare_registered_to_unregistered_model(
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
-\item{accession_data_fix}{Accession name of data fix.}
+\item{accession_data_ref}{Accession name of reference data.}
 }
 \value{
 Score of AIC and BIC for both registered and unregistered models.
 }
 \description{
-\code{compare_registered_to_unregistered_model} is a function to compare the overlapping timepoints in data fix and data to transform after best registration and without registration. Same timepoints and stretched data were used for both models.
+\code{compare_registered_to_unregistered_model} is a function to compare the overlapping timepoints in reference data and data to transform after best registration and without registration. Same timepoints and stretched data were used for both models.
 }

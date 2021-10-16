@@ -4,12 +4,12 @@
 \alias{calc_score}
 \title{Calculate mean score of observed expression data and expected value}
 \usage{
-calc_score(data_to_transform_expression, data_fix_expression)
+calc_score(data_to_transform_expression, data_ref_expression)
 }
 \arguments{
 \item{data_to_transform_expression}{Input expression of data_to_transform.}
 
-\item{data_fix_expression}{Input expression of data_fix.}
+\item{data_ref_expression}{Input expression of data_ref.}
 }
 \value{
 Mean of score value.

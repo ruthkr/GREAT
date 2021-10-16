@@ -9,11 +9,11 @@ calc_extreme_shifts(
   min_num_overlapping_points,
   shift_extreme,
   accession_data_to_transform = "Col0",
-  accession_data_fix = "Ro18"
+  accession_data_ref = "Ro18"
 )
 }
 \arguments{
-\item{mean_df}{Input dataframe containing data to transform and data fix.}
+\item{mean_df}{Input dataframe containing data to transform and reference data.}
 
 \item{min_num_overlapping_points}{Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.}
 
@@ -21,7 +21,7 @@ calc_extreme_shifts(
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
-\item{accession_data_fix}{Accession name of data fix.}
+\item{accession_data_ref}{Accession name of reference data.}
 }
 \value{
 minimum and maximum values of shifts

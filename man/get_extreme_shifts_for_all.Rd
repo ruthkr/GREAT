@@ -10,11 +10,11 @@ get_extreme_shifts_for_all(
   min_num_overlapping_points,
   shift_extreme,
   accession_data_to_transform,
-  accession_data_fix
+  accession_data_ref
 )
 }
 \arguments{
-\item{mean_df}{Input dataframe containing data to transform and data fix.}
+\item{mean_df}{Input dataframe containing data to transform and reference data.}
 
 \item{stretch_factor}{Stretch transformation factor wanted.}
 
@@ -24,7 +24,7 @@ get_extreme_shifts_for_all(
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
-\item{accession_data_fix}{Accession name of data fix.}
+\item{accession_data_ref}{Accession name of reference data.}
 }
 \value{
 minimum and maximum values of shifts

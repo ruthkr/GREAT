@@ -14,9 +14,9 @@ get_best_stretch_and_shift(
   num_shifts,
   testing,
   accession_data_to_transform,
-  accession_data_fix,
+  accession_data_ref,
   data_to_transform_time_added,
-  data_fix_time_added
+  data_ref_time_added
 )
 }
 \arguments{
@@ -38,11 +38,11 @@ get_best_stretch_and_shift(
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
-\item{accession_data_fix}{Accession name of data fix.}
+\item{accession_data_ref}{Accession name of reference data.}
 
 \item{data_to_transform_time_added}{Time points to be added in data to transform.}
 
-\item{data_fix_time_added}{Time points to be added in data fix.}
+\item{data_ref_time_added}{Time points to be added in reference data.}
 }
 \value{
 List of data frames (a) all_shifts : all the combos of stretching and shifting tried for each gene, (b) best_shifts : the best stretch and shift combo found for each gene, as well as info for scaling, and (c) model_comparison.dt : AIC / BIC scores for best registerd model found, compared to separate model for each genes expression in the 2 accessions.

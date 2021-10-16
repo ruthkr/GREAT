@@ -10,6 +10,7 @@ Authors@R:
 Description: What the package does (one paragraph).
 License: GPL-3
 Imports: 
+    cli,
     cowplot,
     data.table,
     dplyr,

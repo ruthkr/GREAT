@@ -273,7 +273,7 @@ apply_best_normalisation <- function(data,
       }
 
       if (any(is.na(data$mean_cpm))) {
-        message("Have NAs in mean_cpm after rescaling in apply best_normalisation() for gene :")
+        message("Have NAs in mean_cpm after rescaling in apply best_normalisation() for gene: ")
         message(unique(data$locus_name))
         stop()
       }
@@ -395,7 +395,7 @@ compare_registered_to_unregistered_model <- function(curr_sym,
       ggplot2::geom_line(data = spline.df) +
       ggplot2::ggtitle(
         paste0(
-          curr_sym, " : sep AIC:combo AIC=", round(separate.AIC), ":", round(combined.AIC),
+          curr_sym, ": sep AIC:combo AIC=", round(separate.AIC), ":", round(combined.AIC),
           ", sep BIC: combo BIC=", round(separate.BIC), ":", round(combined.BIC)
         )
       )

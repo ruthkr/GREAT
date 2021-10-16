@@ -58,8 +58,7 @@ scale_and_register_data <- function(mean_df,
     to_shift_df <- data.table::copy(mean_df)
   }
 
-  message("Max value of mean_cpm of all_data_df :", max(all_data_df$mean_cpm))
-
+  message("Max value of mean_cpm of all_data_df: ", max(all_data_df$mean_cpm))
 
   # calculate the best registration. Returns all tried registrations, best stretch and shift combo,
   # and AIC/BIC stats for comparison of best registration model to separate models for expression of
@@ -109,7 +108,7 @@ scale_and_register_data <- function(mean_df,
     data_ref_time_added
   )
 
-  message("Max value of mean_cpm :", max(shifted_mean_df$mean_cpm))
+  message("Max value of mean_cpm: ", max(shifted_mean_df$mean_cpm))
 
   # Impute transformed values at times == to the observed reference data points for each shifted transformed gene so can compare using heat maps.
   # transformed curves are the ones that been shifted around. Linear impute values for these
@@ -185,7 +184,6 @@ scale_all_rep_data <- function(mean_df,
   return(out)
 }
 
-
 #' Calculate best shifts and stretches for each gene, also calculate AIC/BIC under registration or non-registration
 #'
 #' `get_best_stretch_and_shift` is a function to stretch in all stretches and calculates best shift, by comparing SUM of squares difference. For the best shift in each stretch, compares to separate models to calculate AIC/BIC under registration or no registration.
@@ -218,18 +216,14 @@ get_best_stretch_and_shift <- function(to_shift_df,
                                        accession_data_ref,
                                        data_to_transform_time_added,
                                        data_ref_time_added) {
-
-
   # Warning to make sure users have correct accession data
   if (!(accession_data_to_transform %in% all_data_df$accession & accession_data_ref %in% all_data_df$accession)) {
-    stop("get_best_stretch_and_shift() : data accessions should have been
-         converted to correct accession.")
+    stop("get_best_stretch_and_shift(): data accessions should have been converted to correct accession.")
   }
 
   all_all_shifts <- rep(list(0), length(stretches))
   all_best_shifts <- rep(list(0), length(stretches))
   all_model_comparison_dt <- rep(list(0), length(stretches))
-
 
   for (i in 1:length(stretches)) {
     stretch <- stretches[i]
@@ -257,7 +251,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
     all_shifts$is_best <- NULL
 
     if (nrow(best_shifts) != length(unique(all_data_df$locus_name))) {
-      stop("get_best_stretch_and_shift() : got non-unique best shifts in best_shifts")
+      stop("get_best_stretch_and_shift(): got non-unique best shifts in best_shifts")
     }
 
     # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the
@@ -271,7 +265,6 @@ get_best_stretch_and_shift <- function(to_shift_df,
       data_to_transform_time_added,
       data_ref_time_added
     )
-
 
     # Add info on the stretch and shift applied
     model_comparison_dt <- merge(model_comparison_dt, best_shifts[, c("gene", "stretch", "shift"), ],
@@ -312,7 +305,6 @@ get_best_stretch_and_shift <- function(to_shift_df,
     by = c("gene", "stretch", "shift")
   )
 
-
   # There should be only 1 best shift for each gene, stop if it is not the case
   stopifnot(nrow(best_shifts) == length(unique(to_shift_df$locus_name)))
 
@@ -322,7 +314,6 @@ get_best_stretch_and_shift <- function(to_shift_df,
     "model_comparison_dt" = best_model_comparison.dt
   ))
 }
-
 
 #' Apply shift for all registered genes
 #'
@@ -344,10 +335,8 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
                                                  accession_data_ref,
                                                  data_to_transform_time_added = 11,
                                                  data_ref_time_added) {
-
   # Genes for which registration model is better than separate model
   gene_to_register <- model_comparison_dt$gene[model_comparison_dt$BIC_registered_is_better]
-
 
   # Apply the registration transformation to these genes --------------------
   if (length(gene_to_register > 0)) {
@@ -376,7 +365,7 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
   separate_dt[, stretched_time_delta := timepoint - min(timepoint), by = .(locus_name, accession)]
 
   # Here, we need to add additional time to make it comparable between data to transform and reference data
-  # Therefore need to to this here, to keep unregistered in same frame as stretch 1, shift 0 registered genes.
+  # Therefore need to to this here, to keep unregistered in same frame as stretch 1, shift 0 registered genes
   separate_dt$shifted_time <- separate_dt$stretched_time_delta + data_to_transform_time_added
 
   separate_dt$is_registered <- FALSE
@@ -390,8 +379,6 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
 
   return(out_dt)
 }
-
-
 
 #' Setting transformed expression data and reference data to be the same in a set of common time points
 #'

@@ -186,7 +186,7 @@ get_best_shift <- function(num_shifts = 25,
     #     ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
     #     ggplot2::geom_point() +
     #     ggplot2::geom_line() +
-    #     ggplot2::ggtitle(paste0("shift : ", curr_shift))
+    #     ggplot2::ggtitle(paste0("shift: ", curr_shift))
     #
     #   ggplot2::ggsave(
     #     plot = p,
@@ -223,10 +223,10 @@ get_best_shift <- function(num_shifts = 25,
 
     if (is.na(score)) {
       message("error in get_best_shift(): got a score of NA for gene:")
-      message(paste("data_transform_compared$mean_cpm:", data_transform_compared$mean_cpm))
+      message("data_transform_compared$mean_cpm: ", data_transform_compared$mean_cpm)
       message(data_transform_compared$pred_data_ref_expression)
       message(curr_sym)
-      message(paste0("with curr_shift=", curr_shift))
+      message("with curr_shift=", curr_shift)
       stop()
     }
 

@@ -65,3 +65,10 @@ interpolate_data_ref_comparison_expression <- function(data_to_transform_time,
 
   return(pred.expression)
 }
+
+#' @noRd
+print_progress <- function(iterator, total_iterations, every = 100, message_start = NULL) {
+  if (iterator %% every == 0) {
+    message(message_start, iterator, " / ", total_iterations)
+  }
+}

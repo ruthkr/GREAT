@@ -32,7 +32,9 @@ scale_and_register_data <- function(mean_df,
                                     accession_data_ref,
                                     data_to_transform_time_added,
                                     data_ref_time_added) {
-
+  # Make sure the data are data.tables
+  mean_df <- data.table::as.data.table(mean_df)
+  all_data_df <- data.table::as.data.table(all_data_df)
 
   # Apply normalisation of expression for each gene across all timepoints
   mean_df_sc <- data.table::copy(mean_df)
@@ -89,9 +91,9 @@ scale_and_register_data <- function(mean_df,
 
   # Report model comparison results
   message("################## Model comparison results #######################")
-  message("AIC finds registration better than separate for :", sum(model_comparison_dt$AIC_registered_is_better), " / ", nrow(model_comparison_dt))
-  message("BIC finds registration better than separate for :", sum(model_comparison_dt$BIC_registered_is_better), " / ", nrow(model_comparison_dt))
-  message("AIC & BIC finds registration better than separate for :", sum(model_comparison_dt$ABIC_registered_is_better), " / ", nrow(model_comparison_dt))
+  message("AIC finds registration better than separate for: ", sum(model_comparison_dt$AIC_registered_is_better), " / ", nrow(model_comparison_dt))
+  message("BIC finds registration better than separate for: ", sum(model_comparison_dt$BIC_registered_is_better), " / ", nrow(model_comparison_dt))
+  message("AIC & BIC finds registration better than separate for: ", sum(model_comparison_dt$ABIC_registered_is_better), " / ", nrow(model_comparison_dt))
   message("###################################################################")
 
   # Get the best-shifted and stretched mean gene expression, only to genes which registration is better than
@@ -410,12 +412,9 @@ impute_transformed_exp_values <- function(shifted_mean_df,
   out_list <- list()
   out_list <- c(out_list, list(shifted_mean_df[shifted_mean_df$accession == accession_data_ref]))
 
-
   count <- 0
   for (curr_gene in unique(shifted_mean_df$locus_name)) {
-    if (count %% 100 == 0) {
-      message(count, " / ", length(unique(shifted_mean_df$locus_name)))
-    }
+    print_progress(count, length(unique(shifted_mean_df$locus_name)), message_start = "PRINT D: ")
 
     # Get the current gene expression data
     curr_df <- shifted_mean_df[shifted_mean_df$locus_name == curr_gene, ]

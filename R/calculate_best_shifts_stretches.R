@@ -44,9 +44,7 @@ calculate_all_best_shifts <- function(num_shifts,
   count <- 0
   for (i in 1:length(unique(mean_df$locus_name))) {
     curr_sym <- unique(mean_df$locus_name)[i]
-    if (count %% 100 == 0) {
-      message(paste0(count, " / ", length(unique(mean_df$locus_name))))
-    }
+    print_progress(count, length(unique(mean_df$locus_name)), message_start = "PRINT A: ")
 
     # Out is mean SSD between data to transform (e.g. arabidopsis), and interpolated reference data (interpolated between 2 nearest points, e.g. Brassica)
     # Get "score" for all the candidate shifts. Score is mean error / reference data expression for compared points. If timepoints don't line up, brassica value is linearly imputed

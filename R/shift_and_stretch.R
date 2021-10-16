@@ -83,9 +83,7 @@ calculate_all_model_comparison_stats <- function(all_data_df,
   out.combBIC <- numeric(length = length(genes))
 
   for (i in 1:length(genes)) {
-    if (i %% 100 == 0) {
-      message(i, " / ", length(genes))
-    }
+    print_progress(i, length(genes), message_start = "PRINT B: ")
 
     curr_sym <- genes[i]
 
@@ -250,9 +248,7 @@ apply_best_normalisation <- function(data,
                                      accession_data_ref = "Ro18") {
   count <- 0
   for (curr_gene in unique(data$locus_name)) {
-    if (count %% 100 == 0) {
-      message(count, " / ", length(unique(data$locus_name)))
-    }
+    print_progress(count, length(unique(data$locus_name)), message_start = "PRINT C: ")
 
     data_transform_mean <- best_shifts$data_transform_compared_mean[best_shifts$gene == curr_gene]
     data_ref_mean <- best_shifts$data_ref_compared_mean[best_shifts$gene == curr_gene]

@@ -1,14 +1,3 @@
-#' Scaling value
-#'
-#' `my_scale` is a function to get a scaled value of an input by dividing the maximum value.
-#'
-#' @param input Input data.
-#'
-#' @return Scaled value.
-my_scale <- function(input) {
-  return(input / max(input))
-}
-
 #' Calculate Akaike's ‘An Information Criterion’
 #'
 #' `calc_AIC` is a generic function calculating Akaike's ‘An Information Criterion’ for one or several fitted model objects for which a log-likelihood value can be obtained.
@@ -57,8 +46,7 @@ calc_score <- function(data_to_transform_expression, data_ref_expression) {
 #'
 #' @param data_to_transform_time Maximum time points of candidate data to transform.
 #' @param data_ref A data frame containing reference data.
-max_is_compared_to_data_to_transform <- function(data_to_transform_time,
-                                                 data_ref) {
+max_is_compared_to_data_to_transform <- function(data_to_transform_time, data_ref) {
   # If using for rep data, then repeats of the same points screws it up
   data_ref <- unique(subset(data_ref, select = c("timepoint", "shifted_time")))
 
@@ -76,8 +64,7 @@ max_is_compared_to_data_to_transform <- function(data_to_transform_time,
 #'
 #' @param data_to_transform_time Minimum time points of candidate data to transform.
 #' @param data_ref A data frame containing reference data.
-min_is_compared_to_data_to_transform <- function(data_to_transform_time,
-                                                 data_ref) {
+min_is_compared_to_data_to_transform <- function(data_to_transform_time, data_ref) {
   # If using for rep data, then repeats of the same points screws it up
   data_ref <- unique(subset(data_ref, select = c("timepoint", "shifted_time")))
   data_ref$diff <- data_ref$shifted_time - data_to_transform_time

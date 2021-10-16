@@ -17,6 +17,7 @@
 #' @param data_ref_time_added Time points to be added in reference data.
 #'
 #' @return List of dataframes: (a) `mean_df` is unchanged by `scale_and_register_data()`, (b) `mean_df_sc` is identical to `mean_df`, with additional column "sc.mean.cpm", (c) `imputed_mean_df` is registered expression data, (d) `all_shifts` is a table of candidate registrations applied, and score for each, and (e) `model_comparison_dt` is a table comparing the optimal registration function for each gene (based on `all_shifts` scores) to model with no registration applied.
+#'
 #' @export
 scale_and_register_data <- function(mean_df,
                                     all_data_df,
@@ -136,7 +137,6 @@ scale_and_register_data <- function(mean_df,
 #' @param scale_func Scaling method choice applied in all_rep_data. There are two options: (a) "scale" where all expression values are subtracted by mean value and divided by standard deviation and (b) "my_scale" where expression values are divided by mean values
 #'
 #' @return Scaled expression data in all_rep_data.
-#' @export
 scale_all_rep_data <- function(mean_df,
                                all_rep_data,
                                scale_func) {
@@ -202,6 +202,7 @@ scale_all_rep_data <- function(mean_df,
 #' @param data_ref_time_added Time points to be added in reference data.
 #'
 #' @return List of data frames (a) all_shifts : all the combos of stretching and shifting tried for each gene, (b) best_shifts : the best stretch and shift combo found for each gene, as well as info for scaling, and (c) model_comparison.dt : AIC / BIC scores for best registerd model found, compared to separate model for each genes expression in the 2 accessions.
+#'
 #' @export
 get_best_stretch_and_shift <- function(to_shift_df,
                                        all_data_df,
@@ -234,7 +235,8 @@ get_best_stretch_and_shift <- function(to_shift_df,
 
     # Calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points
     # if do_rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
-    all_shifts <- calculate_all_best_shifts(num_shifts,
+    all_shifts <- calculate_all_best_shifts(
+      num_shifts,
       mean_df = to_shift_df,
       stretch_factor = stretch,
       do_rescale,
@@ -333,7 +335,6 @@ get_best_stretch_and_shift <- function(to_shift_df,
 #' @param data_ref_time_added Time points to be added in reference data.
 #'
 #' @return Data frame for all transformed genes for those with better BIC values.
-#' @export
 apply_shift_to_registered_genes_only <- function(to_shift_df,
                                                  best_shifts,
                                                  model_comparison_dt,
@@ -399,7 +400,6 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
 #' @param accession_data_ref Accession name of reference data.
 #'
 #' @return
-#' @export
 impute_transformed_exp_values <- function(shifted_mean_df,
                                           accession_data_to_transform,
                                           accession_data_ref) {

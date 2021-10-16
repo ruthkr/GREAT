@@ -5,7 +5,6 @@
 #' @param input Input data.
 #'
 #' @return Scaled value.
-#' @export
 my_scale <- function(input) {
   return(input / max(input))
 }
@@ -18,7 +17,6 @@ my_scale <- function(input) {
 #' @param num_params Number of parameters in the fitted model.
 #'
 #' @return AIC criterion value.
-#' @export
 calc_AIC <- function(logL, num_params) {
   return((-2 * logL) + 2 * num_params)
 }
@@ -32,7 +30,6 @@ calc_AIC <- function(logL, num_params) {
 #' @param num_obs Number of observations.
 #'
 #' @return AIC criterion value.
-#' @export
 calc_BIC <- function(logL, num_params, num_obs) {
   return((-2 * logL) + log(num_obs) * num_params)
 }
@@ -45,7 +42,6 @@ calc_BIC <- function(logL, num_params, num_obs) {
 #' @param data_ref_expression Input expression of data_ref.
 #'
 #' @return Mean of score value.
-#' @export
 calc_score <- function(data_to_transform_expression, data_ref_expression) {
   # if don't regularise / penalise for shift applied, then like uniform prior on it.
   # maybe should penalise for comparing fewer timepoints?
@@ -61,8 +57,6 @@ calc_score <- function(data_to_transform_expression, data_ref_expression) {
 #'
 #' @param data_to_transform_time Maximum time points of candidate data to transform.
 #' @param data_ref A data frame containing reference data.
-#'
-#' @export
 max_is_compared_to_data_to_transform <- function(data_to_transform_time,
                                                  data_ref) {
   # If using for rep data, then repeats of the same points screws it up
@@ -82,8 +76,6 @@ max_is_compared_to_data_to_transform <- function(data_to_transform_time,
 #'
 #' @param data_to_transform_time Minimum time points of candidate data to transform.
 #' @param data_ref A data frame containing reference data.
-#'
-#' @export
 min_is_compared_to_data_to_transform <- function(data_to_transform_time,
                                                  data_ref) {
   # If using for rep data, then repeats of the same points screws it up
@@ -102,8 +94,6 @@ min_is_compared_to_data_to_transform <- function(data_to_transform_time,
 #' @param data Input data.
 #' @param shift Current shift value
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#'
-#' @export
 calc_num_overlapping_points <- function(shift, data, accession_data_to_transform = "Col0") {
   data$shifted_time[data$accession == accession_data_to_transform] <- data$delta_time[data$accession == accession_data_to_transform] + shift
   data <- get_compared_timepoints(data)

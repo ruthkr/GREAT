@@ -3,7 +3,6 @@
 #' @param df Dataframe input after registration.
 #'
 #' @return Plot of gene of interest after registration.
-#' @export
 plot_registered_GoIs_for_comparible_timepoints <- function(df) {
 
   # make plot of gene expression after registration - only plot compared timepoints

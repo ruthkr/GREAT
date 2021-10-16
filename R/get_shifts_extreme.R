@@ -10,7 +10,6 @@
 #' @param accession_data_ref Accession name of reference data.
 #'
 #' @return minimum and maximum values of shifts
-#' @export
 get_extreme_shifts_for_all <- function(mean_df,
                                        stretch_factor,
                                        min_num_overlapping_points,
@@ -53,8 +52,6 @@ get_extreme_shifts_for_all <- function(mean_df,
 #' @param accession_data_ref Accession name of reference data.
 #'
 #' @return minimum and maximum values of shifts
-#'
-#' @export
 calc_extreme_shifts <- function(mean_df,
                                 min_num_overlapping_points,
                                 shift_extreme,

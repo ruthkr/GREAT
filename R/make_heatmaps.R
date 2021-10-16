@@ -1,4 +1,4 @@
-#' @export
+#' Make data heatmaps
 make_data_heatmaps <- function(D.mean, D.scaled, D.registered, D.scaled.NR, D.scaled.R, D.registered.R) {
   p.mean <- make_heatmap(D.mean, ylabel = "mean expression")
   p.scaled <- make_heatmap(D.scaled, ylabel = "scaled mean expression")
@@ -13,7 +13,7 @@ make_data_heatmaps <- function(D.mean, D.scaled, D.registered, D.scaled.NR, D.sc
   return(p.all)
 }
 
-#' @export
+#' Make heatmap
 make_heatmap <- function(D, ylabel, y.axis.fontsize = 6) {
   D$x.sample <- factor(D$x.sample, levels = unique(sort(D$x.sample)))
   D$y.sample <- factor(D$y.sample, levels = unique(sort(D$y.sample)))
@@ -55,7 +55,7 @@ make_heatmap <- function(D, ylabel, y.axis.fontsize = 6) {
 }
 
 
-#' @export
+#' Make all heatmaps
 make_heatmap_all <- function(D, title) {
   D$x.sample <- factor(D$x.sample, levels = unique(sort(D$x.sample)))
   D$y.sample <- factor(D$y.sample, levels = unique(sort(D$y.sample)))

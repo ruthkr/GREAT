@@ -1,7 +1,6 @@
 # mean_df <- real.mean_df
 # mean_df.sc <- real.sc.df
 # imputed.mean_df <- imputed.mean_df
-#' @export
 calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_df) {
   ### convert all to wide format ready for distance calculation
   # mean_df
@@ -83,7 +82,6 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
 # gene_col <- c('locus_name')
 # expression.col <- 'mean_cpm'
 # dt <- mean_df
-#' @export
 reformat_for_distance_calculation <- function(dt, sample.id.cols, gene_col, expression.col) {
   # Concatenate sample.id columns to generate sample ids
   dt$sample.id <- dt[[sample.id.cols[1]]]
@@ -116,7 +114,6 @@ reformat_for_distance_calculation <- function(dt, sample.id.cols, gene_col, expr
 #' @param gene_col Column name of accession gene.
 #'
 #' @return Dataframe contains squared distance of data.
-#' @export
 calc_sample_distance <- function(df, gene_col) {
   data.cols <- names(df)[names(df) != eval(gene_col)]
 
@@ -150,7 +147,6 @@ calc_sample_distance <- function(df, gene_col) {
 #' @param df Dataframe contains the wide format expression of the two samples to be compared. Only genes which have data in both samples are considered (only relevant for registration case).
 #'
 #' @return Dataframe contains the distance between two samples.
-#' @export
 calculate_pairwise_sample_distance_main <- function(df) {
 
   # Omit NA in the data

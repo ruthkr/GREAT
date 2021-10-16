@@ -13,7 +13,6 @@
 #' @param accession_data_ref Accession name of reference data.
 #'
 #' @return \code{all_scores_df}
-#' @export
 calculate_all_best_shifts <- function(num_shifts,
                                       mean_df,
                                       stretch_factor,
@@ -103,8 +102,6 @@ calculate_all_best_shifts <- function(num_shifts,
 #' @param testing Showing a plot of the progress if TRUE, otherwise if FALSE
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
-#'
-#' @export
 get_best_shift <- function(num_shifts = 25,
                            curr_sym,
                            data,

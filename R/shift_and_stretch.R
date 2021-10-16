@@ -5,7 +5,6 @@
 #' @param df Input data frame containing value of applied shifts, stretches, and calculated score.
 #'
 #' @return Original data frame input with additional column indicating whether a pair of stretch and shift gives the best score.
-#' @export
 get_best_result <- function(df) {
 
   # return TRUE/FALSE vector. TRUE for the smallest score
@@ -51,7 +50,6 @@ get_best_result <- function(df) {
 #' @param data_ref_time_added Time points to be added in reference data.
 #'
 #' @return AIC and BIC score for registered and unregistered models.
-#' @export
 calculate_all_model_comparison_stats <- function(all_data_df,
                                                  best_shifts,
                                                  is_testing,
@@ -129,7 +127,6 @@ calculate_all_model_comparison_stats <- function(all_data_df,
 #' @param data_ref_time_added Time points to be added in reference data.
 #'
 #' @return The registered expression over time for each gene.
-#' @export
 apply_best_shift <- function(data,
                              best_shifts,
                              accession_data_to_transform,
@@ -194,7 +191,6 @@ apply_best_shift <- function(data,
 #' @param data_ref_time_added Time points to be added in reference data.
 #'
 #' @return
-#' @export
 apply_stretch <- function(data,
                           best_shifts,
                           accession_data_to_transform = "Col0",
@@ -248,7 +244,6 @@ apply_stretch <- function(data,
 #' @param accession_data_ref Accession name of reference data.
 #'
 #' @return Normalised data.
-#' @export
 apply_best_normalisation <- function(data,
                                      best_shifts,
                                      accession_data_to_transform = "Col0",
@@ -310,7 +305,6 @@ apply_best_normalisation <- function(data,
 #' @param accession_data_ref Accession name of reference data.
 #'
 #' @return Score of AIC and BIC for both registered and unregistered models.
-#' @export
 compare_registered_to_unregistered_model <- function(curr_sym,
                                                      all_data_df,
                                                      is_testing = FALSE,

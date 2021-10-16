@@ -5,8 +5,6 @@
 #' @param data Input data containing both data to transform and reference data.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
-#'
-#' @export
 get_compared_timepoints <- function(data,
                                     accession_data_to_transform = "Col0",
                                     accession_data_ref = "Ro18") {

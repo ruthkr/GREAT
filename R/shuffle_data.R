@@ -1,6 +1,6 @@
 # unrandom.mean_df <- mean_df
 # unrandom.all.df <- all.data.df
-#' @export
+#' Shuffle Ro18 timepoints
 shuffle_ro18_timepoints <- function(unrandom.mean_df, unrandom.all.df) {
   # shuffle the timepoints for each ro18 gene
 
@@ -40,7 +40,7 @@ shuffle_ro18_timepoints <- function(unrandom.mean_df, unrandom.all.df) {
   return(list(mean_df, all.df))
 }
 
-#' @export
+#'Shuffle Ro18 gene names
 shuffle_ro18_gene_names <- function(mean_df, out.all.df) {
   # shuffle the identities of the genes in the brassica
   # can't just do shuffle, becuase need to preserve which timepoints are from the same gene
@@ -68,7 +68,7 @@ shuffle_ro18_gene_names <- function(mean_df, out.all.df) {
   return(results_list)
 }
 
-#' @export
+#' Swap gene names
 swap_gene_names <- function(df, shuffle.gene.lookup) {
   replacement.genes <- sapply(
     df$locus_name[df$accession == "Ro18"],

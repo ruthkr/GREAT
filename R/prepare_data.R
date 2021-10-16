@@ -15,8 +15,6 @@
 #' @param max_mean_cpm_wanted Maximum value of expression desired.
 #' @param exp_threshold Minimum expression threshold from which expression below the threshold will be removed.
 #'
-#' @export
-#'
 #' @return Combined data frame for both reference data and data to transform: (1) only containing mean of the expression, and (2) still contains replicate data.
 get_mean_and_all_exp_data <- function(filepath_data_ref,
                                       filepath_data_to_transform,
@@ -84,7 +82,7 @@ get_mean_and_all_exp_data <- function(filepath_data_ref,
   return(results_list)
 }
 
-#' @export
+#' Get expression of interest
 get_expression_of_interest <- function(filepath_data_ref,
                                        filepath_data_to_transform,
                                        filepath_id_table,
@@ -174,7 +172,7 @@ get_expression_of_interest <- function(filepath_data_ref,
 }
 
 
-#' @export
+#' Get all data
 get_all_data <- function(filepath_data_ref,
                          filepath_data_to_transform,
                          filepath_id_table,
@@ -239,8 +237,6 @@ get_all_data <- function(filepath_data_ref,
 #' Shorten groups
 #' @param exp
 #' @param accession_data_to_transform
-#'
-#' @export
 shorten_groups <- function(exp) {
   # Get reps for klepikova and for brassica data, make sure it is a data.table
   exp <- data.table::data.table(exp)

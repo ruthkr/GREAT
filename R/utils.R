@@ -1,62 +1,62 @@
-#' Flag data to transform time points which overlap to data fix timecourse
+#' Flag data to transform time points which overlap to reference data timecourse
 #'
-#' `get_compared_timepoints` flags data to transform time points which overlap to data fix timecourse by comparing each data to transform time points to minimum and maximum value of data fix.
+#' `get_compared_timepoints` flags data to transform time points which overlap to reference data timecourse by comparing each data to transform time points to minimum and maximum value of reference data.
 #'
-#' @param data Input data containing both data to transform and data fix.
+#' @param data Input data containing both data to transform and reference data.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_fix Accession name of data fix.
+#' @param accession_data_ref Accession name of reference data.
 #'
 #' @export
 get_compared_timepoints <- function(data,
                                     accession_data_to_transform = "Col0",
-                                    accession_data_fix = "Ro18") {
-  # Filter data fix from the whole dataset
-  data_fix <- data$shifted_time[data$accession == accession_data_fix]
+                                    accession_data_ref = "Ro18") {
+  # Filter reference data from the whole dataset
+  data_ref <- data$shifted_time[data$accession == accession_data_ref]
 
-  min_data_fix <- min(data_fix)
-  max_data_fix <- max(data_fix)
+  min_data_ref <- min(data_ref)
+  max_data_ref <- max(data_ref)
 
   # Get time points of data to transform which are used
   data$is_compared <- FALSE
-  data$is_compared[(data$accession == accession_data_to_transform & (data$shifted_time >= min_data_fix & data$shifted_time <= max_data_fix))] <- TRUE
+  data$is_compared[(data$accession == accession_data_to_transform & (data$shifted_time >= min_data_ref & data$shifted_time <= max_data_ref))] <- TRUE
 
-  # Get the extreme data fix times which used - bigger or equal than max of data to transform, and smaller or equal than  min data to transform, because have to project data to transform onto data fix
+  # Get the extreme reference data times which used - bigger or equal than max of data to transform, and smaller or equal than  min data to transform, because have to project data to transform onto reference data
   max_data_to_transform <- max(data$shifted_time[data$accession == accession_data_to_transform & data$is_compared == TRUE])
   min_data_to_transform <- min(data$shifted_time[data$accession == accession_data_to_transform & data$is_compared == TRUE])
-  max_data_fix <- max_is_compared_to_data_to_transform(
+  max_data_ref <- max_is_compared_to_data_to_transform(
     data_to_transform_time = max_data_to_transform,
-    data_fix = data[data$accession == accession_data_fix, ]
+    data_ref = data[data$accession == accession_data_ref, ]
   )
-  min_data_fix <- min_is_compared_to_data_to_transform(
+  min_data_ref <- min_is_compared_to_data_to_transform(
     data_to_transform_time = min_data_to_transform,
-    data_fix = data[data$accession == accession_data_fix, ]
+    data_ref = data[data$accession == accession_data_ref, ]
   )
 
   # use these to get all the brassica times which used
-  data$is_compared[(data$accession == accession_data_fix & (data$shifted_time >= min_data_fix & data$shifted_time <= max_data_fix))] <- TRUE
+  data$is_compared[(data$accession == accession_data_ref & (data$shifted_time >= min_data_ref & data$shifted_time <= max_data_ref))] <- TRUE
 
   return(data)
 }
 
-#' Calculate prediction of data fix expression value
+#' Calculate prediction of reference data expression value
 #'
 #' @param data_to_transform_time Input time from data to transform.
-#' @param data_fix_dt Input data fix data frame.
+#' @param data_ref_dt Input reference data data frame.
 #'
 #' @return Expression prediction.
-interpolate_data_fix_comparison_expression <- function(data_to_transform_time,
-                                                       data_fix_dt) {
-  data_fix_dt$diff <- data_fix_dt$shifted_time - data_to_transform_time
+interpolate_data_ref_comparison_expression <- function(data_to_transform_time,
+                                                       data_ref_dt) {
+  data_ref_dt$diff <- data_ref_dt$shifted_time - data_to_transform_time
 
-  # If outside of comparable range (time is smaller than all data_fix_dt time or bigger than all)
-  if (all(data_fix_dt$diff > 0) | all(data_fix_dt$diff < 0)) {
+  # If outside of comparable range (time is smaller than all data_ref_dt time or bigger than all)
+  if (all(data_ref_dt$diff > 0) | all(data_ref_dt$diff < 0)) {
     return(NA)
   }
 
-  # Otherwise, cut down data_fix observations to the two nearest timepoints to the data_to_transform time
-  data_fix_dt$diff <- abs(data_fix_dt$shifted_time - data_to_transform_time)
-  data.table::setorder(data_fix_dt, diff)
-  nearest.points <- data_fix_dt[1:2, ]
+  # Otherwise, cut down data_ref observations to the two nearest timepoints to the data_to_transform time
+  data_ref_dt$diff <- abs(data_ref_dt$shifted_time - data_to_transform_time)
+  data.table::setorder(data_ref_dt, diff)
+  nearest.points <- data_ref_dt[1:2, ]
 
   # Linearly interpolate between these points to estimate the comparison expression value
   data.table::setorder(nearest.points, shifted_time) # so [1] is earlier time

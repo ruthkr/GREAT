@@ -2,12 +2,12 @@
 #'
 #' `get_extreme_shifts_for_all` is used to calculate the minimum and maximum shifts can apply to data after the stretch transformation.
 #'
-#' @param mean_df Input dataframe containing data to transform and data fix.
+#' @param mean_df Input dataframe containing data to transform and reference data.
 #' @param stretch_factor Stretch transformation factor wanted.
 #' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
 #' @param shift_extreme Approximation of maximum and minimum shifts allowed.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_fix Accession name of data fix.
+#' @param accession_data_ref Accession name of reference data.
 #'
 #' @return minimum and maximum values of shifts
 #' @export
@@ -16,7 +16,7 @@ get_extreme_shifts_for_all <- function(mean_df,
                                        min_num_overlapping_points,
                                        shift_extreme,
                                        accession_data_to_transform,
-                                       accession_data_fix) {
+                                       accession_data_ref) {
 
 
   # This function is a wrapper for calc_extreme_shifts() to be able to move it out of the loop so don't calculate for every gene.
@@ -27,7 +27,7 @@ get_extreme_shifts_for_all <- function(mean_df,
   # Transform timepoint to be time from first timepoint
   mean_df[, delta_time := timepoint - min(timepoint), by = .(accession)]
 
-  # Apply stretch_factor to the data to transform, leave the data fix as it is
+  # Apply stretch_factor to the data to transform, leave the reference data as it is
   mean_df$delta_time[mean_df$accession == accession_data_to_transform] <- mean_df$delta_time[mean_df$accession == accession_data_to_transform] * stretch_factor
 
   # Calculate max and min shifts
@@ -36,7 +36,7 @@ get_extreme_shifts_for_all <- function(mean_df,
     min_num_overlapping_points,
     shift_extreme,
     accession_data_to_transform,
-    accession_data_fix
+    accession_data_ref
   )
 
   return(max_min_shifts)
@@ -46,11 +46,11 @@ get_extreme_shifts_for_all <- function(mean_df,
 #'
 #' `calc_extreme_shifts` is used to calculate the minimum and maximum shifts, whilst preserving the criteria that at least min_num_overlapping_points are being compared from both accessions.
 #'
-#' @param mean_df Input dataframe containing data to transform and data fix.
+#' @param mean_df Input dataframe containing data to transform and reference data.
 #' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
 #' @param shift_extreme Approximation of maximum and minimum shifts allowed.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_fix Accession name of data fix.
+#' @param accession_data_ref Accession name of reference data.
 #'
 #' @return minimum and maximum values of shifts
 #'
@@ -59,16 +59,16 @@ calc_extreme_shifts <- function(mean_df,
                                 min_num_overlapping_points,
                                 shift_extreme,
                                 accession_data_to_transform = "Col0",
-                                accession_data_fix = "Ro18") {
+                                accession_data_ref = "Ro18") {
 
   # Make copy of the mean_df to make sure that the original dataframe will not edited
   original <- data.table::copy(mean_df)
   original$shifted_time <- original$delta_time
 
-  # Negative extreme shift will be -1 * exactly the difference between 1 of the stretched data_to_transform (e.g. Col0) timepoints, and the smallest data_fix (e.g. Ro18) timepoint
-  # Positive extreme will be the difference between 1 of the data_to_transform timepoints, and the maximum data_fix timepoint
-  neg_extreme_candidate <- -1 * (original$delta_time[original$accession == accession_data_to_transform] - min(original$delta_time[original$accession == accession_data_fix]))
-  pos_extreme_candidates <- max(original$delta_time[original$accession == accession_data_fix]) - original$delta_time[original$accession == accession_data_to_transform]
+  # Negative extreme shift will be -1 * exactly the difference between 1 of the stretched data_to_transform (e.g. Col0) timepoints, and the smallest data_ref (e.g. Ro18) timepoint
+  # Positive extreme will be the difference between 1 of the data_to_transform timepoints, and the maximum data_ref timepoint
+  neg_extreme_candidate <- -1 * (original$delta_time[original$accession == accession_data_to_transform] - min(original$delta_time[original$accession == accession_data_ref]))
+  pos_extreme_candidates <- max(original$delta_time[original$accession == accession_data_ref]) - original$delta_time[original$accession == accession_data_to_transform]
 
   # Among of these candidates, find the most extreme values which maintaining the required number of overlapping time-points to be considered.
   num_overlapping_points <- sapply(

@@ -356,23 +356,24 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
   # Genes for which the separate model is better than registration model
   genes_to_keep_separate <- model_comparison_dt$gene[!(model_comparison_dt$BIC_registered_is_better)]
 
-  # Generate the columns for these needed to concat with registered_dt
-  separate_dt <- to_shift_df[to_shift_df$locus_name %in% genes_to_keep_separate, ]
-  # In order to ensure that separate copy
-  separate_dt$stretched_time_delta <- 0
-
-  # Apply the stretch transformation to these genes --------------------
-  separate_dt[, stretched_time_delta := timepoint - min(timepoint), by = .(locus_name, accession)]
-
-  # Here, we need to add additional time to make it comparable between data to transform and reference data
-  # Therefore need to to this here, to keep unregistered in same frame as stretch 1, shift 0 registered genes
-  separate_dt$shifted_time <- separate_dt$stretched_time_delta + data_to_transform_time_added
-
-  separate_dt$is_registered <- FALSE
+  if (length(genes_to_keep_separate) > 0) {
+    # Generate the columns for these needed to concat with registered_dt
+    separate_dt <- to_shift_df[to_shift_df$locus_name %in% genes_to_keep_separate, ]
+    # In order to ensure that separate copy
+    separate_dt$stretched_time_delta <- 0
+    # Apply the stretch transformation to these genes
+    separate_dt[, stretched_time_delta := timepoint - min(timepoint), by = .(locus_name, accession)]
+    # Here, we need to add additional time to make it comparable between data to transform and reference data
+    # Therefore need to to this here, to keep unregistered in same frame as stretch 1, shift 0 registered genes
+    separate_dt$shifted_time <- separate_dt$stretched_time_delta + data_to_transform_time_added
+    separate_dt$is_registered <- FALSE
+  }
 
   # Combine both registered and non-registered data frame
-  if (length(gene_to_register > 0)) {
+  if (length(gene_to_register) > 0 & length(genes_to_keep_separate) > 0) {
     out_dt <- rbind(registered_dt, separate_dt)
+  } else if (length(gene_to_register) > 0 & length(genes_to_keep_separate) == 0) {
+    out_dt <- registered_dt
   } else {
     out_dt <- separate_dt
   }

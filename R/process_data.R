@@ -36,19 +36,21 @@ scale_and_register_data <- function(mean_df,
   mean_df <- data.table::as.data.table(mean_df)
   all_data_df <- data.table::as.data.table(all_data_df)
 
+  # TODO: validate colnames
+
   # Apply normalisation of expression for each gene across all timepoints
   mean_df_sc <- data.table::copy(mean_df)
 
   # Apply scaling
-  mean_df_sc[, sc.mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
+  mean_df_sc[, sc.expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
 
   # Apply scaling before registration (if initial_rescale == TRUE), otherwise using original data
   if (initial_rescale == TRUE) {
 
     # apply rescale to mean_df prior to registration
     to_shift_df <- data.table::copy(mean_df_sc)
-    to_shift_df$mean_cpm <- to_shift_df$sc.mean_cpm
-    to_shift_df$sc.mean_cpm <- NULL
+    to_shift_df$expression_value <- to_shift_df$sc.expression_value
+    to_shift_df$sc.expression_value <- NULL
 
     # apply THE SAME rescale to all_data_df prior to registration
     all_data_df <- scale_all_rep_data(mean_df, all_data_df, "scale")
@@ -57,7 +59,7 @@ scale_and_register_data <- function(mean_df,
   }
 
   cli::cli_h1("Information before registration")
-  cli::cli_alert_info("Max value of mean_cpm of all_data_df: {cli::col_cyan(round(max(all_data_df$mean_cpm), 2))}")
+  cli::cli_alert_info("Max value of expression_value of all_data_df: {cli::col_cyan(round(max(all_data_df$expression_value), 2))}")
 
   # Calculate the best registration. Returns all tried registrations, best stretch and shift combo,
   # and AIC/BIC stats for comparison of best registration model to separate models for expression of
@@ -109,7 +111,7 @@ scale_and_register_data <- function(mean_df,
     data_ref_time_added
   )
 
-  cli::cli_alert_info("Max value of mean_cpm: {cli::col_cyan(round(max(shifted_mean_df$mean_cpm), 2))}")
+  cli::cli_alert_info("Max value of expression_value: {cli::col_cyan(round(max(shifted_mean_df$expression_value), 2))}")
 
   # Impute transformed values at times == to the observed reference data points for each shifted transformed gene so can compare using heat maps.
   # transformed curves are the ones that been shifted around. Linear impute values for these
@@ -151,8 +153,8 @@ scale_all_rep_data <- function(mean_df,
   # Calculate the summary stats to use for the rescaling
   gene_expression_stats <- unique(
     mean_df[, .(
-      mean_val = mean(mean_cpm),
-      sd_val = stats::sd(mean_cpm)
+      mean_val = mean(expression_value),
+      sd_val = stats::sd(expression_value)
     ), by = .(locus_name, accession)]
   )
 
@@ -161,9 +163,9 @@ scale_all_rep_data <- function(mean_df,
 
   # Adjust scaling calculation depends on the scale function choice
   if (scale_func == "scale") {
-    all_rep_data$scaled_norm_cpm <- (all_rep_data$mean_cpm - all_rep_data$mean_val) / all_rep_data$sd_val
+    all_rep_data$scaled_norm_expression_value <- (all_rep_data$expression_value - all_rep_data$mean_val) / all_rep_data$sd_val
   } else if (scale_func == "my_scale") {
-    all_rep_data$scaled_norm_cpm <- (all_rep_data$mean_cpm / all_rep_data$mean_val)
+    all_rep_data$scaled_norm_expression_value <- (all_rep_data$expression_value / all_rep_data$mean_val)
   } else {
     message("invalid scale option for scale_all_rep_data")
 
@@ -176,11 +178,11 @@ scale_all_rep_data <- function(mean_df,
                   "accession",
                   "tissue",
                   "timepoint",
-                  "scaled_norm_cpm"
+                  "scaled_norm_expression_value"
                 )
   )
 
-  names(out)[names(out) == "scaled_norm_cpm"] <- "mean_cpm"
+  names(out)[names(out) == "scaled_norm_expression_value"] <- "expression_value"
 
   return(out)
 }
@@ -421,7 +423,7 @@ impute_transformed_exp_values <- function(shifted_mean_df,
     # For each reference data timepoint, interpolate the comparable transformed expression data
     # by linear interpolation between the neighbouring two transformed expression values.
     # If not between two transformed expression values because shifted outside comparable range, set to NA.
-    interp_transformed_df$mean_cpm <- sapply(imputed_timepoints,
+    interp_transformed_df$expression_value <- sapply(imputed_timepoints,
                                              interpolate_data_ref_comparison_expression,
                                              data_ref_dt = transformed_df
     )

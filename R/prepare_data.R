@@ -12,7 +12,7 @@
 #' @param sum_exp_data_ref default is FALSE. If TRUE then sum all gene data.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param ids_data_ref_colnames Column names shared by both reference data and ID table, whose element needs to be unique.
-#' @param max_mean_cpm_wanted Maximum value of expression desired.
+#' @param max_expression_value_wanted Maximum value of expression desired.
 #' @param exp_threshold Minimum expression threshold from which expression below the threshold will be removed.
 #'
 #' @return Combined data frame for both reference data and data to transform: (1) only containing mean of the expression, and (2) still contains replicate data.
@@ -28,7 +28,7 @@ get_mean_and_all_exp_data <- function(filepath_data_ref,
                                       sum_exp_data_ref = FALSE,
                                       accession_data_to_transform = "Col0",
                                       ids_data_ref_colnames = c("CDS.model", "locus_name"),
-                                      max_mean_cpm_wanted = 5,
+                                      max_expression_value_wanted = 5,
                                       exp_threshold = 0.5) {
 
   # Load the expression data for all the curr_GoIs gene models, for data to transform and for reference data
@@ -47,21 +47,21 @@ get_mean_and_all_exp_data <- function(filepath_data_ref,
     ids_data_ref_colnames
   )
 
-  # Calculate mean of each timepoint by adding a column called "mean_cpm"
+  # Calculate mean of each timepoint by adding a column called "expression_value"
   # TODO: make vector in mean_df a non-hardcoded parameter
-  exp[, mean_cpm := mean(norm.cpm), by = list(locus_name, accession, tissue, timepoint)]
-  mean_df <- unique(exp[, c("locus_name", "accession", "tissue", "timepoint", "mean_cpm")])
+  exp[, expression_value := mean(norm.cpm), by = list(locus_name, accession, tissue, timepoint)]
+  mean_df <- unique(exp[, c("locus_name", "accession", "tissue", "timepoint", "expression_value")])
 
   # Filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed greater than 1
   data_ref_df <- mean_df[mean_df$accession != accession_data_to_transform]
-  data_ref_df[, keep := (max(mean_cpm) > max_mean_cpm_wanted | mean(mean_cpm > 1) > exp_threshold), by = .(locus_name)]
+  data_ref_df[, keep := (max(expression_value) > max_expression_value_wanted | mean(expression_value > 1) > exp_threshold), by = .(locus_name)]
 
   keep_data_ref_genes <- unique(data_ref_df$locus_name[data_ref_df$keep == TRUE])
   discard_data_ref_genes <- unique(data_ref_df$locus_name[data_ref_df$keep == FALSE])
 
   # Filter mean_df to remove all data to transform genes with all zeros values
   data_to_transform_df <- mean_df[mean_df$locus_name %in% keep_data_ref_genes & mean_df$accession == accession_data_to_transform]
-  data_to_transform_df[, keep_final := (mean(mean_cpm) != 0 & sd(mean_cpm) != 0), by = .(locus_name)]
+  data_to_transform_df[, keep_final := (mean(expression_value) != 0 & sd(expression_value) != 0), by = .(locus_name)]
   keep_final_genes <- unique(data_to_transform_df$locus_name[data_to_transform_df$keep_final == TRUE])
   discard_final_genes <- unique(data_to_transform_df$locus_name[data_to_transform_df$keep_final == FALSE])
 
@@ -74,7 +74,7 @@ get_mean_and_all_exp_data <- function(filepath_data_ref,
   # Get mean_df, including column "group"
   exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
   exp <- subset(exp, select = c("locus_name", "accession", "tissue", "timepoint", "norm.cpm", "group"))
-  names(exp)[names(exp) == "norm.cpm"] <- "mean_cpm"
+  names(exp)[names(exp) == "norm.cpm"] <- "expression_value"
 
   # Results object
   results_list <- list(mean_df, exp)

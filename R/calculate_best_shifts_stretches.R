@@ -146,27 +146,27 @@ get_best_shift <- function(num_shifts = 25,
     # Renormalise expression using just these timepoints?
     if (do_rescale) {
       # Record the mean and sd of the compared points, used for rescaling in "apply shift" function
-      mean_cpm_transform <- compared$mean_cpm[compared$accession == accession_data_to_transform]
-      data_transform_mean <- mean(mean_cpm_transform)
-      data_transform_sd <- stats::sd(mean_cpm_transform)
-      mean_cpm_ref <- compared$mean_cpm[compared$accession == accession_data_ref]
-      data_ref_mean <- mean(mean_cpm_ref)
-      data_ref_sd <- stats::sd(mean_cpm_ref)
+      expression_value_transform <- compared$expression_value[compared$accession == accession_data_to_transform]
+      data_transform_mean <- mean(expression_value_transform)
+      data_transform_sd <- stats::sd(expression_value_transform)
+      expression_value_ref <- compared$expression_value[compared$accession == accession_data_ref]
+      data_ref_mean <- mean(expression_value_ref)
+      data_ref_sd <- stats::sd(expression_value_ref)
 
       # Do the transformation started from here
       if ((data_transform_sd != 0 | !is.nan(data_transform_sd)) & (data_ref_sd != 0 | !is.nan(data_ref_sd))) {
         # If neither are 0, so won't be dividing by 0 (which gives NaNs)
-        compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
+        compared[, expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(accession)]
       } else { # If at least one of them is all 0
         data_transform_compared <- compared[compared$accession == accession_data_to_transform, ]
         data_ref_compared <- compared[compared$accession == accession_data_ref, ]
         if ((data_transform_sd == 0) & (data_ref_sd != 0 | !is.nan(data_ref_sd))) {
           # If only data_transform_sd==0
-          data_ref_compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
+          data_ref_compared[, expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(accession)]
         }
         if ((data_transform_sd != 0 | !is.nan(data_transform_sd)) & (data_ref_sd == 0)) {
           # If only data_ref_sd == 0
-          data_transform_compared[, mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(accession)]
+          data_transform_compared[, expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(accession)]
         }
         # If both are all 0, then do nothing.
         compared <- rbind(data_transform_compared, data_ref_compared)
@@ -182,7 +182,7 @@ get_best_shift <- function(num_shifts = 25,
     # Data plot of shifted, and normalised gene expression
     # if (testing) {
     #   p <- ggplot2::ggplot(compared) +
-    #     ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
+    #     ggplot2::aes(x = shifted_time, y = expression_value, color = accession) +
     #     ggplot2::geom_point() +
     #     ggplot2::geom_line() +
     #     ggplot2::ggtitle(paste0("shift: ", curr_shift))
@@ -201,7 +201,7 @@ get_best_shift <- function(num_shifts = 25,
 
     # if (testing) {
     #   interpolate_res <- ggplot2::ggplot(compared) +
-    #     ggplot2::aes(x = shifted_time, y = mean_cpm, color = accession) +
+    #     ggplot2::aes(x = shifted_time, y = expression_value, color = accession) +
     #     ggplot2::geom_point() +
     #     ggplot2::geom_line() +
     #     ggplot2::geom_point(data = data_transform_compared, aes(x = shifted_time, y = pred_data_ref_expression), color = "purple") +
@@ -216,13 +216,13 @@ get_best_shift <- function(num_shifts = 25,
 
     # Calculate the score, using the (interpolated) predicted.bra.expression, and the observed arabidopsis expression
     score <- calc_score(
-      data_to_transform_expression = data_transform_compared$mean_cpm,
+      data_to_transform_expression = data_transform_compared$expression_value,
       data_ref_expression = data_transform_compared$pred_data_ref_expression
     )
 
     if (is.na(score)) {
       message("error in get_best_shift(): got a score of NA for gene:")
-      message("data_transform_compared$mean_cpm: ", data_transform_compared$mean_cpm)
+      message("data_transform_compared$expression_value: ", data_transform_compared$expression_value)
       message(data_transform_compared$pred_data_ref_expression)
       message(curr_sym)
       message("with curr_shift=", curr_shift)

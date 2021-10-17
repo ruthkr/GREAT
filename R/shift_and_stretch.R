@@ -255,25 +255,25 @@ apply_best_normalisation <- function(data,
 
       # Make sure that sd is not 0, since we do not want to divide by 0
       if (data_transform_sd != 0) {
-        data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_to_transform] <- (data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_to_transform] - data_transform_mean) / data_transform_sd
+        data$expression_value[data$locus_name == curr_gene & data$accession == accession_data_to_transform] <- (data$expression_value[data$locus_name == curr_gene & data$accession == accession_data_to_transform] - data_transform_mean) / data_transform_sd
       } else {
-        data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_to_transform] <- (data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_to_transform] - data_transform_mean)
+        data$expression_value[data$locus_name == curr_gene & data$accession == accession_data_to_transform] <- (data$expression_value[data$locus_name == curr_gene & data$accession == accession_data_to_transform] - data_transform_mean)
       }
 
       # Make sure that sd is not 0, since we do not want to divide by 0
       if (data_ref_sd != 0) {
-        data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_ref] <- (data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_ref] - data_ref_mean) / data_ref_sd
+        data$expression_value[data$locus_name == curr_gene & data$accession == accession_data_ref] <- (data$expression_value[data$locus_name == curr_gene & data$accession == accession_data_ref] - data_ref_mean) / data_ref_sd
       } else {
-        data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_ref] <- (data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_ref] - data_ref_mean)
+        data$expression_value[data$locus_name == curr_gene & data$accession == accession_data_ref] <- (data$expression_value[data$locus_name == curr_gene & data$accession == accession_data_ref] - data_ref_mean)
       }
 
-      if (any(is.na(data$mean_cpm))) {
-        cli::cli_alert_warning("Have NAs in mean_cpm after rescaling in apply best_normalisation() for gene: {unique(data$locus_name)}")
+      if (any(is.na(data$expression_value))) {
+        cli::cli_alert_warning("Have NAs in expression_value after rescaling in apply best_normalisation() for gene: {unique(data$locus_name)}")
         stop()
       }
     } else {
-      data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_to_transform] <- NA
-      data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_ref] <- NA
+      data$expression_value[data$locus_name == curr_gene & data$accession == accession_data_to_transform] <- NA
+      data$expression_value[data$locus_name == curr_gene & data$accession == accession_data_ref] <- NA
     }
 
     cli::cli_progress_update(force = TRUE)
@@ -327,9 +327,9 @@ compare_registered_to_unregistered_model <- function(curr_sym,
   num.registration.params <- 2 # stretch, shift
   num.obs <- nrow(combined_spline_data)
 
-  data_to_transform_fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_to_transform_spline)
-  data_ref_fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_ref_spline)
-  combined_fit <- stats::lm(mean_cpm ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = combined_spline_data)
+  data_to_transform_fit <- stats::lm(expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_to_transform_spline)
+  data_ref_fit <- stats::lm(expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_ref_spline)
+  combined_fit <- stats::lm(expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = combined_spline_data)
 
   # Calculate the log likelihoods
   data_to_transform_logLik <- stats::logLik(data_to_transform_fit)
@@ -360,14 +360,14 @@ compare_registered_to_unregistered_model <- function(curr_sym,
     ara.pred.df <- unique(
       data.frame(
         "shifted_time" = data_to_transform_spline$shifted_time,
-        "mean_cpm" = ara.pred, "accession" = "Col0"
+        "expression_value" = ara.pred, "accession" = "Col0"
       )
     )
     bra.pred <- stats::predict(data_ref_fit)
     bra.pred.df <- unique(
       data.frame(
         "shifted_time" = data_ref_spline$shifted_time,
-        "mean_cpm" = bra.pred, "accession" = "Ro18"
+        "expression_value" = bra.pred, "accession" = "Ro18"
       )
     )
 
@@ -375,7 +375,7 @@ compare_registered_to_unregistered_model <- function(curr_sym,
     combined.pred.df <- unique(
       data.frame(
         "shifted_time" = combined_spline_data$shifted_time,
-        "mean_cpm" = combined.pred, "accession" = "registered"
+        "expression_value" = combined.pred, "accession" = "registered"
       )
     )
     spline.df <- rbind(ara.pred.df, bra.pred.df, combined.pred.df)
@@ -383,7 +383,7 @@ compare_registered_to_unregistered_model <- function(curr_sym,
     p <- ggplot2::ggplot(data = combined_spline_data) +
       ggplot2::aes(
         x = shifted_time,
-        y = mean_cpm,
+        y = expression_value,
         colour = accession
       ) +
       ggplot2::geom_point() +

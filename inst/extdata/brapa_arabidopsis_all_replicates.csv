@@ -1,4 +1,4 @@
-"locus_name","accession","tissue","timepoint","mean_cpm","group"
+"locus_name","accession","tissue","timepoint","expression_value","group"
 "BRAA02G018970.3C","Ro18","apex",11,0.396873376934661,"Ro18-11-a"
 "BRAA02G018970.3C","Ro18","apex",11,1.41477110131611,"Ro18-11-b"
 "BRAA02G018970.3C","Ro18","apex",11,0.742398383441149,"Ro18-11-c"

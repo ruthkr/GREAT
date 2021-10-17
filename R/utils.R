@@ -64,9 +64,9 @@ interpolate_data_ref_comparison_expression <- function(data_to_transform_time,
   # Linearly interpolate between these points to estimate the comparison expression value
   data.table::setorder(nearest.points, shifted_time) # so [1] is earlier time
   time.diff <- nearest.points$shifted_time[2] - nearest.points$shifted_time[1]
-  expression.diff <- nearest.points$mean_cpm[2] - nearest.points$mean_cpm[1]
+  expression.diff <- nearest.points$expression_value[2] - nearest.points$expression_value[1]
   grad <- expression.diff / time.diff
-  pred.expression <- nearest.points$mean_cpm[1] + (nearest.points$diff[1]) * grad
+  pred.expression <- nearest.points$expression_value[1] + (nearest.points$diff[1]) * grad
 
   return(pred.expression)
 }

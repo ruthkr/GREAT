@@ -57,14 +57,14 @@ test_that("all functions called in scale_and_register_data work", {
   mean_df_sc <- data.table::copy(mean_df)
 
   # Apply scaling
-  mean_df_sc[, sc.mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
+  mean_df_sc[, sc.expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
 
   # Apply scaling before registration (if initial_rescale == TRUE), otherwise using original data
   # if (initial_rescale == TRUE)
   # Apply rescale to mean_df prior to registration
   to_shift_df <- data.table::copy(mean_df_sc)
-  to_shift_df$mean_cpm <- to_shift_df$sc.mean_cpm
-  to_shift_df$sc.mean_cpm <- NULL
+  to_shift_df$expression_value <- to_shift_df$sc.expression_value
+  to_shift_df$sc.expression_value <- NULL
 
   # apply THE SAME rescale to all_data_df prior to registration
   all_data_df_scaled <- scale_all_rep_data(mean_df, all_data_df, "scale")

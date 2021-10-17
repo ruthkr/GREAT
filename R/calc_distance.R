@@ -8,7 +8,7 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
     dt = mean_df,
     sample.id.cols = c("accession", "timepoint"),
     gene_col = "locus_name",
-    expression.col = "mean_cpm"
+    expression.col = "expression_value"
   )
 
   # normalised mean_df
@@ -16,7 +16,7 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
     dt = mean_df.sc,
     sample.id.cols = c("accession", "timepoint"),
     gene_col = "locus_name",
-    expression.col = "sc.mean_cpm"
+    expression.col = "sc.expression_value"
   )
 
   # imputed.mean_df - all genes
@@ -24,7 +24,7 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
     imputed.mean_df,
     sample.id.cols = c("accession", "shifted_time"),
     gene_col = "locus_name",
-    expression.col = "mean_cpm"
+    expression.col = "expression_value"
   )
 
   # TODO: change `condition == FALSE/TRUE` by `isFALSE(condition)/isTRUE(condition)` or `condition/!condition`
@@ -80,7 +80,7 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
 
 # sample.id.cols <- c('accession','delta_time')
 # gene_col <- c('locus_name')
-# expression.col <- 'mean_cpm'
+# expression.col <- 'expression_value'
 # dt <- mean_df
 reformat_for_distance_calculation <- function(dt, sample.id.cols, gene_col, expression.col) {
   # Concatenate sample.id columns to generate sample ids

@@ -21,7 +21,7 @@ plot_registered_gene_of_interest <- function(df,
   gg_registered <- ggplot2::ggplot(df) +
     ggplot2::aes(
       x = shifted_time,
-      y = mean_cpm,
+      y = expression_value,
       color = accession,
       fill = accession
     ) +

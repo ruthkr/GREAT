@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Codecov test
+coverage](https://codecov.io/gh/ruthkr/GREAT/branch/master/graph/badge.svg?token=L6TNLEPLLO)](https://codecov.io/gh/ruthkr/GREAT)
 <!-- badges: end -->
 
 The goal of GREAT (Gene Registration from Expression and Time-courses)

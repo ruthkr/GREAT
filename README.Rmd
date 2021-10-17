@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 `r badgecreatr::badge_lifecycle("experimental")`
+[![Codecov test coverage](https://codecov.io/gh/ruthkr/GREAT/branch/master/graph/badge.svg?token=L6TNLEPLLO)](https://codecov.io/gh/ruthkr/GREAT)
 <!-- badges: end -->
 
 The goal of GREAT (Gene Registration from Expression and Time-courses) to estimate the temporal expression pattern of a specific target gene using simple transformations, such as shifts and stretches. 

@@ -22,7 +22,6 @@ calculate_all_best_shifts <- function(num_shifts,
                                       testing = FALSE,
                                       accession_data_to_transform = "Col0",
                                       accession_data_ref = "Ro18") {
-
   # Initialize vectors
   symbols <- c()
   num_points <- c()
@@ -41,10 +40,10 @@ calculate_all_best_shifts <- function(num_shifts,
   min_shift <- extreme_shift[[1]]
   max_shift <- extreme_shift[[2]]
 
-  count <- 0
-  for (i in 1:length(unique(mean_df$locus_name))) {
+  i <- 0
+  cli::cli_progress_step("Calculating score for all shifts ({i}/{length(unique(mean_df$locus_name))})", spinner = TRUE)
+  for (i in seq_along(unique(mean_df$locus_name))) {
     curr_sym <- unique(mean_df$locus_name)[i]
-    print_progress(count, length(unique(mean_df$locus_name)), message_start = "PRINT A: ")
 
     # Out is mean SSD between data to transform (e.g. arabidopsis), and interpolated reference data (interpolated between 2 nearest points, e.g. Brassica)
     # Get "score" for all the candidate shifts. Score is mean error / reference data expression for compared points. If timepoints don't line up, brassica value is linearly imputed
@@ -77,7 +76,7 @@ calculate_all_best_shifts <- function(num_shifts,
     all_scores_list[[i]] <- all_scores
     symbols <- c(symbols, curr_sym)
 
-    count <- count + 1
+    cli::cli_progress_update()
   }
 
   # Bind all scores

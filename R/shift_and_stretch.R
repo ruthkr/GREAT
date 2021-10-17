@@ -73,7 +73,6 @@ calculate_all_model_comparison_stats <- function(all_data_df,
     data_ref_time_added
   )
 
-  message("Calculating registration vs different expression comparison AIC & BIC...")
 
   genes <- unique(shifted_all_data_df$locus_name)
 
@@ -82,9 +81,9 @@ calculate_all_model_comparison_stats <- function(all_data_df,
   out.sepBIC <- numeric(length = length(genes))
   out.combBIC <- numeric(length = length(genes))
 
-  for (i in 1:length(genes)) {
-    print_progress(i, length(genes), message_start = "PRINT B: ")
-
+  i <- 0
+  cli::cli_progress_step("Calculating registration vs different expression comparison AIC & BIC ({i}/{length(genes)})", spinner = TRUE)
+  for (i in seq_along(genes)) {
     curr_sym <- genes[i]
 
     L <- compare_registered_to_unregistered_model(
@@ -99,6 +98,7 @@ calculate_all_model_comparison_stats <- function(all_data_df,
     out.combAIC[i] <- L[["combined.AIC"]]
     out.sepBIC[i] <- L[["separate.BIC"]]
     out.combBIC[i] <- L[["combined.BIC"]]
+    cli::cli_progress_update(force = TRUE)
   }
 
   out <- data.table::data.table(
@@ -146,34 +146,29 @@ apply_best_shift <- function(data,
 
 
   if (!(all(unique(best_shifts$data_transform_compared_mean) == 0)) | !(all(unique(best_shifts$data_ref_compared_mean) == 0))) {
-    message("Normalising expression by mean and sd of compared values...")
-
     processed_data <- apply_best_normalisation(
       data = processed_data,
       best_shifts,
       accession_data_to_transform,
       accession_data_ref
     )
-
-    message("Done!")
   } else {
 
     # If no scaling carried out DURING the registration step
-    message("No normalisation was carried out DURING registration (though may have been, prior to the comparison)")
+    cli::cli_alert_warning("No normalisation was carried out DURING registration (though may have been, prior to the comparison)")
 
     processed_data <- processed_data
   }
 
-  message("Applying best shift...")
-
   # For each gene, shift the data to transform expression by the optimal shift found previously
-
+  i <- 0
+  cli::cli_progress_step("Applying best shift ({i}/{length(unique(processed_data$locus_name))})", spinner = TRUE)
   for (curr_gene in unique(processed_data$locus_name)) {
     curr_best_shift <- best_shifts$shift[best_shifts$gene == curr_gene]
     processed_data$shifted_time[processed_data$accession == accession_data_to_transform & processed_data$locus_name == curr_gene] <- processed_data$shifted_time[processed_data$accession == accession_data_to_transform & processed_data$locus_name == curr_gene] + curr_best_shift
+    cli::cli_progress_update(force = TRUE)
+    i <- i + 1
   }
-
-  message("Done!")
 
   return(processed_data)
 }
@@ -246,10 +241,9 @@ apply_best_normalisation <- function(data,
                                      best_shifts,
                                      accession_data_to_transform = "Col0",
                                      accession_data_ref = "Ro18") {
-  count <- 0
+  i <- 0
+  cli::cli_progress_step("Normalising expression by mean and sd of compared values ({i}/{length(unique(data$locus_name))})", spinner = TRUE)
   for (curr_gene in unique(data$locus_name)) {
-    print_progress(count, length(unique(data$locus_name)), message_start = "PRINT C: ")
-
     data_transform_mean <- best_shifts$data_transform_compared_mean[best_shifts$gene == curr_gene]
     data_ref_mean <- best_shifts$data_ref_compared_mean[best_shifts$gene == curr_gene]
     data_transform_sd <- best_shifts$data_transform_compared_sd[best_shifts$gene == curr_gene]
@@ -273,8 +267,7 @@ apply_best_normalisation <- function(data,
       }
 
       if (any(is.na(data$mean_cpm))) {
-        message("Have NAs in mean_cpm after rescaling in apply best_normalisation() for gene: ")
-        message(unique(data$locus_name))
+        cli::cli_alert_warning("Have NAs in mean_cpm after rescaling in apply best_normalisation() for gene: {unique(data$locus_name)}")
         stop()
       }
     } else {
@@ -282,7 +275,8 @@ apply_best_normalisation <- function(data,
       data$mean_cpm[data$locus_name == curr_gene & data$accession == accession_data_ref] <- NA
     }
 
-    count <- count + 1
+    cli::cli_progress_update(force = TRUE)
+    i <- i + 1
   }
 
   return(data)

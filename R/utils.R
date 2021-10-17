@@ -1,3 +1,8 @@
+.onLoad <- function(libname, pkgname) {
+  options(cli.progress_show_after = 0)
+  options(cli.progress_clear = FALSE)
+}
+
 #' Flag data to transform time points which overlap to reference data timecourse
 #'
 #' `get_compared_timepoints` flags data to transform time points which overlap to reference data timecourse by comparing each data to transform time points to minimum and maximum value of reference data.

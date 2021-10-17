@@ -41,7 +41,7 @@ scale_and_register_data <- function(mean_df,
 
   # Apply scaling
   mean_df_sc[, sc.mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE),
-    by = .(locus_name, accession)
+             by = .(locus_name, accession)
   ]
 
   # Apply scaling before registration (if initial_rescale == TRUE), otherwise using original data
@@ -58,11 +58,14 @@ scale_and_register_data <- function(mean_df,
     to_shift_df <- data.table::copy(mean_df)
   }
 
-  message("Max value of mean_cpm of all_data_df: ", max(all_data_df$mean_cpm))
+  cli::cli_h1("Information before registration")
+  cli::cli_alert_info("Max value of mean_cpm of all_data_df: {round(max(all_data_df$mean_cpm), 2)}")
 
-  # calculate the best registration. Returns all tried registrations, best stretch and shift combo,
+  # Calculate the best registration. Returns all tried registrations, best stretch and shift combo,
   # and AIC/BIC stats for comparison of best registration model to separate models for expression of
-  # each gene in Ro18 and Col0.
+  # each gene in Ro18 and Col0
+  cli::cli_h1("Analysing models for all stretch and shift factor")
+
   L <- get_best_stretch_and_shift(
     to_shift_df,
     all_data_df,
@@ -89,15 +92,15 @@ scale_and_register_data <- function(mean_df,
 
 
   # Report model comparison results
-  message("################## Model comparison results #######################")
-  message("AIC finds registration better than separate for: ", sum(model_comparison_dt$AIC_registered_is_better), " / ", nrow(model_comparison_dt))
-  message("BIC finds registration better than separate for: ", sum(model_comparison_dt$BIC_registered_is_better), " / ", nrow(model_comparison_dt))
-  message("AIC & BIC finds registration better than separate for: ", sum(model_comparison_dt$ABIC_registered_is_better), " / ", nrow(model_comparison_dt))
-  message("###################################################################")
+  cli::cli_h1("Model comparison results")
+  cli::cli_alert_info("AIC finds registration better than separate for: {sum(model_comparison_dt$AIC_registered_is_better) / nrow(model_comparison_dt)}")
+  cli::cli_alert_info("BIC finds registration better than separate for: {sum(model_comparison_dt$BIC_registered_is_better) / nrow(model_comparison_dt)}")
+  cli::cli_alert_info("AIC & BIC finds registration better than separate for: {sum(model_comparison_dt$ABIC_registered_is_better) / nrow(model_comparison_dt)}")
 
   # Get the best-shifted and stretched mean gene expression, only to genes which registration is better than
   # separate models by BIC. Don't stretch out, or shift genes for which separate is better.
 
+  cli::cli_h1("Applying the best-shifts and stretches to gene expression")
   shifted_mean_df <- apply_shift_to_registered_genes_only(
     to_shift_df,
     best_shifts,
@@ -108,7 +111,7 @@ scale_and_register_data <- function(mean_df,
     data_ref_time_added
   )
 
-  message("Max value of mean_cpm: ", max(shifted_mean_df$mean_cpm))
+  cli::cli_alert_info("Max value of mean_cpm: {round(max(shifted_mean_df$mean_cpm), 2)}")
 
   # Impute transformed values at times == to the observed reference data points for each shifted transformed gene so can compare using heat maps.
   # transformed curves are the ones that been shifted around. Linear impute values for these
@@ -170,13 +173,13 @@ scale_all_rep_data <- function(mean_df,
   }
 
   out <- subset(all_rep_data,
-    select = c(
-      "locus_name",
-      "accession",
-      "tissue",
-      "timepoint",
-      "scaled_norm_cpm"
-    )
+                select = c(
+                  "locus_name",
+                  "accession",
+                  "tissue",
+                  "timepoint",
+                  "scaled_norm_cpm"
+                )
   )
 
   names(out)[names(out) == "scaled_norm_cpm"] <- "mean_cpm"
@@ -227,7 +230,8 @@ get_best_stretch_and_shift <- function(to_shift_df,
 
   for (i in 1:length(stretches)) {
     stretch <- stretches[i]
-    message(paste0("testing models for stretch factor = ", stretch))
+    # message(paste0("testing models for stretch factor = ", stretch))
+    cli::cli_h2("Analysing models for stretch factor = {stretch}")
 
     # Calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points
     # if do_rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
@@ -267,15 +271,13 @@ get_best_stretch_and_shift <- function(to_shift_df,
     )
 
     # Add info on the stretch and shift applied
-    model_comparison_dt <- merge(model_comparison_dt, best_shifts[, c("gene", "stretch", "shift"), ],
-      by = "gene"
-    )
+    model_comparison_dt <- merge(model_comparison_dt, best_shifts[, c("gene", "stretch", "shift"), ], by = "gene")
 
     # Record the results for the current stretch factor
     all_all_shifts[[i]] <- all_shifts
     all_best_shifts[[i]] <- best_shifts
     all_model_comparison_dt[[i]] <- model_comparison_dt
-    message(paste0("finished testing models for stretch factor = ", stretch), "\n")
+    cli::cli_alert_success("Finished analysing models for stretch factor = {stretch}")
   }
 
   all_shifts <- do.call("rbind", all_all_shifts) # all the combinations of shift, and stretch tried
@@ -301,8 +303,8 @@ get_best_stretch_and_shift <- function(to_shift_df,
 
   # Cut down best shifts to the best shift for the best stretch only
   best_shifts <- merge(all_best_shifts,
-    best_model_comparison.dt[, c("gene", "stretch", "shift")],
-    by = c("gene", "stretch", "shift")
+                       best_model_comparison.dt[, c("gene", "stretch", "shift")],
+                       by = c("gene", "stretch", "shift")
   )
 
   # There should be only 1 best shift for each gene, stop if it is not the case
@@ -402,7 +404,7 @@ impute_transformed_exp_values <- function(shifted_mean_df,
 
   count <- 0
   for (curr_gene in unique(shifted_mean_df$locus_name)) {
-    print_progress(count, length(unique(shifted_mean_df$locus_name)), message_start = "PRINT D: ")
+    # print_progress(count, length(unique(shifted_mean_df$locus_name)), message_start = "PRINT D: ")
 
     # Get the current gene expression data
     curr_df <- shifted_mean_df[shifted_mean_df$locus_name == curr_gene, ]
@@ -423,8 +425,8 @@ impute_transformed_exp_values <- function(shifted_mean_df,
     # by linear interpolation between the neighbouring two transformed expression values.
     # If not between two transformed expression values because shifted outside comparable range, set to NA.
     interp_transformed_df$mean_cpm <- sapply(imputed_timepoints,
-      interpolate_data_ref_comparison_expression,
-      data_ref_dt = transformed_df
+                                             interpolate_data_ref_comparison_expression,
+                                             data_ref_dt = transformed_df
     )
 
     out_list <- c(out_list, list(interp_transformed_df))

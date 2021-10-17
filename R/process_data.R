@@ -40,9 +40,7 @@ scale_and_register_data <- function(mean_df,
   mean_df_sc <- data.table::copy(mean_df)
 
   # Apply scaling
-  mean_df_sc[, sc.mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE),
-             by = .(locus_name, accession)
-  ]
+  mean_df_sc[, sc.mean_cpm := scale(mean_cpm, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
 
   # Apply scaling before registration (if initial_rescale == TRUE), otherwise using original data
   if (initial_rescale == TRUE) {
@@ -151,12 +149,12 @@ scale_all_rep_data <- function(mean_df,
   # as this is what was used to find the best shift.
 
   # Calculate the summary stats to use for the rescaling
-  gene_expression_stats <- unique(mean_df[, .(
-    mean_val = mean(mean_cpm),
-    sd_val = stats::sd(mean_cpm)
-  ),
-  by = .(locus_name, accession)
-  ])
+  gene_expression_stats <- unique(
+    mean_df[, .(
+      mean_val = mean(mean_cpm),
+      sd_val = stats::sd(mean_cpm)
+    ), by = .(locus_name, accession)]
+  )
 
   # Combine all_rep_data with gene_expression_stats
   all_rep_data <- merge(all_rep_data, gene_expression_stats, by = c("locus_name", "accession"))

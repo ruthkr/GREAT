@@ -59,7 +59,7 @@ scale_and_register_data <- function(mean_df,
   }
 
   cli::cli_h1("Information before registration")
-  cli::cli_alert_info("Max value of mean_cpm of all_data_df: {round(max(all_data_df$mean_cpm), 2)}")
+  cli::cli_alert_info("Max value of mean_cpm of all_data_df: {cli::col_cyan(round(max(all_data_df$mean_cpm), 2))}")
 
   # Calculate the best registration. Returns all tried registrations, best stretch and shift combo,
   # and AIC/BIC stats for comparison of best registration model to separate models for expression of
@@ -93,9 +93,9 @@ scale_and_register_data <- function(mean_df,
 
   # Report model comparison results
   cli::cli_h1("Model comparison results")
-  cli::cli_alert_info("AIC finds registration better than separate for: {sum(model_comparison_dt$AIC_registered_is_better) / nrow(model_comparison_dt)}")
-  cli::cli_alert_info("BIC finds registration better than separate for: {sum(model_comparison_dt$BIC_registered_is_better) / nrow(model_comparison_dt)}")
-  cli::cli_alert_info("AIC & BIC finds registration better than separate for: {sum(model_comparison_dt$ABIC_registered_is_better) / nrow(model_comparison_dt)}")
+  cli::cli_alert_info("AIC finds registration better than separate for: {cli::col_cyan(sum(model_comparison_dt$AIC_registered_is_better), '/', nrow(model_comparison_dt))}")
+  cli::cli_alert_info("BIC finds registration better than separate for: {cli::col_cyan(sum(model_comparison_dt$BIC_registered_is_better), '/', nrow(model_comparison_dt))}")
+  cli::cli_alert_info("AIC & BIC finds registration better than separate for: {cli::col_cyan(sum(model_comparison_dt$ABIC_registered_is_better), '/', nrow(model_comparison_dt))}")
 
   # Get the best-shifted and stretched mean gene expression, only to genes which registration is better than
   # separate models by BIC. Don't stretch out, or shift genes for which separate is better.
@@ -111,7 +111,7 @@ scale_and_register_data <- function(mean_df,
     data_ref_time_added
   )
 
-  cli::cli_alert_info("Max value of mean_cpm: {round(max(shifted_mean_df$mean_cpm), 2)}")
+  cli::cli_alert_info("Max value of mean_cpm: {cli::col_cyan(round(max(shifted_mean_df$mean_cpm), 2))}")
 
   # Impute transformed values at times == to the observed reference data points for each shifted transformed gene so can compare using heat maps.
   # transformed curves are the ones that been shifted around. Linear impute values for these
@@ -402,10 +402,9 @@ impute_transformed_exp_values <- function(shifted_mean_df,
   out_list <- list()
   out_list <- c(out_list, list(shifted_mean_df[shifted_mean_df$accession == accession_data_ref]))
 
-  count <- 0
+  i <- 0
+  cli::cli_progress_step("Imputing transformed expression values ({i}/{length(unique(shifted_mean_df$locus_name))})", spinner = TRUE)
   for (curr_gene in unique(shifted_mean_df$locus_name)) {
-    # print_progress(count, length(unique(shifted_mean_df$locus_name)), message_start = "PRINT D: ")
-
     # Get the current gene expression data
     curr_df <- shifted_mean_df[shifted_mean_df$locus_name == curr_gene, ]
 
@@ -430,7 +429,9 @@ impute_transformed_exp_values <- function(shifted_mean_df,
     )
 
     out_list <- c(out_list, list(interp_transformed_df))
-    count <- count + 1
+
+    cli::cli_progress_update(force = TRUE)
+    i <- i + 1
   }
 
   out_df <- do.call("rbind", out_list)

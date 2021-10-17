@@ -166,6 +166,7 @@ apply_best_shift <- function(data,
   for (curr_gene in unique(processed_data$locus_name)) {
     curr_best_shift <- best_shifts$shift[best_shifts$gene == curr_gene]
     processed_data$shifted_time[processed_data$accession == accession_data_to_transform & processed_data$locus_name == curr_gene] <- processed_data$shifted_time[processed_data$accession == accession_data_to_transform & processed_data$locus_name == curr_gene] + curr_best_shift
+
     cli::cli_progress_update(force = TRUE)
     i <- i + 1
   }

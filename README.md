@@ -11,8 +11,14 @@ coverage](https://codecov.io/gh/ruthkr/GREAT/branch/master/graph/badge.svg?token
 <!-- badges: end -->
 
 The goal of GREAT (Gene Registration from Expression and Time-courses)
-to estimate the temporal expression pattern of a specific target gene
-using simple transformations, such as shifts and stretches.
+to register (align) gene expression profiles between two species
+(reference data and data to transform). Non-reference gene expression
+profiles will be stretched and shifted. The optimality of registration
+parameters (shifts and stretches) will be estimated using least-squares
+criterion. This package is also designed to compare a non-registration
+model versus a non-registration model, as well as determine whether
+registration model performed better than non-registration
+transformation.
 
 ## Installation
 
@@ -31,9 +37,10 @@ And the development version from [GitHub](https://github.com/) with:
 devtools::install_github("ruthkr/GREAT")
 ```
 
-## Example
+## Quick start
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example which shows you how to register (align) gene
+expression profiles over time:
 
 ``` r
 # library(GREAT)

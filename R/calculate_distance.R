@@ -100,14 +100,12 @@ calculate_between_sample_distance <- function(mean_df,
   )
 
   # for use to make heatmaps with shared scales
-  # TODO: $title could be reimplemented using attr() to avoid broadcasting
-  D.mean$title <- "mean expression"
-  D.scaled$title <- "scaled mean expression (all genes)"
-  D.registered$title <- "registered & scaled mean expression (all genes)"
-
-  D.scaled.not.registered.genes$title <- "scaled mean expression (only not-registered genes)"
-  D.scaled.registered.genes$title <- "scaled mean expression (only registered genes)"
-  D.registered.registered.genes$title <- "registered & scaled mean expression (only registered genes)"
+  attr(D.mean, "title") <- "mean expression"
+  attr(D.scaled, "title") <- "scaled mean expression (all genes)"
+  attr(D.registered, "title") <- "registered & scaled mean expression (all genes)"
+  attr(D.scaled.not.registered.genes, "title") <- "scaled mean expression (only not-registered genes)"
+  attr(D.scaled.registered.genes, "title") <- "scaled mean expression (only registered genes)"
+  attr(D.registered.registered.genes, "title") <- "registered & scaled mean expression (only registered genes)"
 
   results_list <- list(
     "D.mean" = D.mean,
@@ -200,7 +198,6 @@ calc_sample_distance <- function(df, gene_col, compare_ref_vs_transform = TRUE, 
 #'
 #' @return Dataframe contains the distance between two samples.
 calculate_pairwise_sample_distance_main <- function(df) {
-
   # Omit NA in the data
   df <- stats::na.omit(df)
 

@@ -7,7 +7,7 @@
 calc_num_overlapping_points(shift, data, accession_data_to_transform = "Col0")
 }
 \arguments{
-\item{shift}{Current shift value}
+\item{shift}{Current shift value.}
 
 \item{data}{Input data.}
 

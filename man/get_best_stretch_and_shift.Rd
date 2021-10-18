@@ -12,7 +12,6 @@ get_best_stretch_and_shift(
   min_num_overlapping_points,
   shift_extreme,
   num_shifts,
-  testing,
   accession_data_to_transform,
   accession_data_ref,
   data_to_transform_time_added,
@@ -26,15 +25,13 @@ get_best_stretch_and_shift(
 
 \item{stretches}{Vector data of stretches.}
 
-\item{do_rescale}{Apply "scale" to compared points for each shift if TRUE, use original mean expression data if FALSE.}
+\item{do_rescale}{Apply "scale" to compared points for each shift if \code{TRUE}, use original mean expression data if \code{FALSE}.}
 
 \item{min_num_overlapping_points}{Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.}
 
 \item{shift_extreme}{Approximation of maximum and minimum shifts allowed.}
 
 \item{num_shifts}{Number of different shifts to be considered.}
-
-\item{testing}{Showing a plot of the progress if TRUE, otherwise if FALSE.}
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 

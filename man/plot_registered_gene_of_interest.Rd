@@ -8,6 +8,8 @@ plot_registered_gene_of_interest(df, gene_accession = "all")
 }
 \arguments{
 \item{df}{Dataframe input after registration.}
+
+\item{gene_accession}{List of gene accessions, default is \code{all}.}
 }
 \value{
 Plot of gene of interest after registration.

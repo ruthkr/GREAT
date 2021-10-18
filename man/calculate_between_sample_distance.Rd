@@ -9,7 +9,7 @@ calculate_between_sample_distance(
   mean_df_sc,
   imputed_mean_df,
   gene_col = "locus_name",
-  comparison = "ref-vs-transform",
+  compare_ref_vs_transform = TRUE,
   accession_data_ref = "Ro18"
 )
 }
@@ -18,7 +18,13 @@ calculate_between_sample_distance(
 
 \item{mean_df_sc}{Input data frame which is identical to \code{mean_df}, with additional column \code{sc.expression_value} which is scaled of expression values.}
 
-\item{imputed_mean_df}{Input data frame contains registered}
+\item{imputed_mean_df}{Input data frame contains registered.}
+
+\item{gene_col}{Column name of gene accession, default is \code{locus_name}.}
+
+\item{compare_ref_vs_transform}{If \code{TRUE}, the default, only comparison between reference data and data to transform is considered.}
+
+\item{accession_data_ref}{Accession name of reference data.}
 }
 \value{
 List of dataframes: (a)\code{D.mean} is distance of mean expression values, (b) \code{D.scaled} is disctance of scaled mean expression (all genes), (c) \code{D.registered} is distance of registered & scaled mean expression (all genes), (d) \code{D.scaled.onlyNR} is distance of scaled mean expression (only not-registered genes) (e) \code{D.scaled.onlyR} is distance of scaled mean expression (only registered genes) (f) \code{D.registered.onlyR} is distance of registered & scaled mean expression (only registered genes).

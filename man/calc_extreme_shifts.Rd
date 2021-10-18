@@ -24,7 +24,7 @@ calc_extreme_shifts(
 \item{accession_data_ref}{Accession name of reference data.}
 }
 \value{
-minimum and maximum values of shifts
+Minimum and maximum values of shifts.
 }
 \description{
 \code{calc_extreme_shifts} is used to calculate the minimum and maximum shifts, whilst preserving the criteria that at least min_num_overlapping_points are being compared from both accessions.

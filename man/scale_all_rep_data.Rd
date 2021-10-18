@@ -11,7 +11,7 @@ scale_all_rep_data(mean_df, all_rep_data, scale_func)
 
 \item{all_rep_data}{Input all data (without taking mean).}
 
-\item{scale_func}{Scaling method choice applied in all_rep_data. There are two options: (a) "scale" where all expression values are subtracted by mean value and divided by standard deviation and (b) "my_scale" where expression values are divided by mean values}
+\item{scale_func}{Scaling method choice applied in all_rep_data. There are two options: (a) "scale" where all expression values are subtracted by mean value and divided by standard deviation and (b) "my_scale" where expression values are divided by mean values.}
 }
 \value{
 Scaled expression data in all_rep_data.

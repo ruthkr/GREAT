@@ -26,9 +26,6 @@ apply_stretch(
 
 \item{data_ref_time_added}{Time points to be added in reference data.}
 }
-\value{
-
-}
 \description{
 Apply stretch factor
 }

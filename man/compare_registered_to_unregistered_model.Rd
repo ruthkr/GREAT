@@ -7,7 +7,6 @@
 compare_registered_to_unregistered_model(
   curr_sym,
   all_data_df,
-  is_testing = FALSE,
   accession_data_to_transform = "Col0",
   accession_data_ref = "Ro18"
 )
@@ -16,8 +15,6 @@ compare_registered_to_unregistered_model(
 \item{curr_sym}{A gene accession.}
 
 \item{all_data_df}{Input data.}
-
-\item{is_testing}{Showing a plot of the progress if \code{TRUE}, otherwise if \code{FALSE}.}
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 

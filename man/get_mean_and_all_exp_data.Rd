@@ -40,7 +40,7 @@ get_mean_and_all_exp_data(
 
 \item{curr_GoIs}{Gene of interest list.}
 
-\item{sum_exp_data_ref}{default is FALSE. If TRUE then sum all gene data.}
+\item{sum_exp_data_ref}{If \code{TRUE} then sum all gene data. Default is \code{FALSE}.}
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 

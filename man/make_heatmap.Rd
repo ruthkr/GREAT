@@ -14,11 +14,11 @@ make_heatmap(
 \arguments{
 \item{sample_dist_df}{Input data frame contains sample distance between two different species.}
 
-\item{ylabel}{Label on y axis.}
+\item{ylabel}{Label on Y axis.}
 
-\item{y_axis_fontsize}{Font size of y axis label.}
+\item{y_axis_fontsize}{Font size of Y axis label.}
 
-\item{same_min_timepoint}{}
+\item{same_min_timepoint}{If \code{TRUE}, the default, takes data with the same minimum timepoint.}
 }
 \value{
 Distance heatmap of gene expression profiles over time between two different species.

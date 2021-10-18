@@ -11,7 +11,6 @@ calculate_all_best_shifts(
   do_rescale,
   shift_extreme,
   min_num_overlapping_points,
-  testing = FALSE,
   accession_data_to_transform = "Col0",
   accession_data_ref = "Ro18"
 )
@@ -23,13 +22,11 @@ calculate_all_best_shifts(
 
 \item{stretch_factor}{Current stretch factor.}
 
-\item{do_rescale}{Apply "scale" to compared points for each shift if TRUE, use original mean expression data if FALSE.}
+\item{do_rescale}{Apply "scale" to compared points for each shift if \code{TRUE}, use original mean expression data if \code{FALSE}.}
 
 \item{shift_extreme}{Approximation of maximum and minimum shifts allowed.}
 
 \item{min_num_overlapping_points}{Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.}
-
-\item{testing}{Showing a plot of the progress if TRUE, otherwise if FALSE.}
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 

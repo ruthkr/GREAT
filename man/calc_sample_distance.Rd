@@ -7,7 +7,7 @@
 calc_sample_distance(
   df,
   gene_col,
-  comparison = "ref-vs-transform",
+  compare_ref_vs_transform = TRUE,
   accession_data_ref
 )
 }
@@ -16,7 +16,7 @@ calc_sample_distance(
 
 \item{gene_col}{Column name of accession gene.}
 
-\item{comparison}{Type of dataframe output wanted, only comparison between reference data and data to transform if "ref-vs-transform".}
+\item{compare_ref_vs_transform}{If \code{TRUE}, the default, only comparison between reference data and data to transform is considered.}
 
 \item{accession_data_ref}{Accession name of reference data.}
 }

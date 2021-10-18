@@ -17,9 +17,6 @@ impute_transformed_exp_values(
 
 \item{accession_data_ref}{Accession name of reference data.}
 }
-\value{
-
-}
 \description{
 \code{impute_transformed_exp_values} is a function to impute transformed times at set of common time points in order to allow sample distance comparison to reference data. this means that transformed expression data were imputed relative to reference data time points. Since the original value of transformed data are not meant to be discarded, the imputed times are generated from minimum and maximum shifted time points of transformed data (not just reference data time points).
 }

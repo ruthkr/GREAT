@@ -7,7 +7,6 @@
 calculate_all_model_comparison_stats(
   all_data_df,
   best_shifts,
-  is_testing,
   accession_data_to_transform,
   accession_data_ref,
   data_to_transform_time_added,
@@ -18,8 +17,6 @@ calculate_all_model_comparison_stats(
 \item{all_data_df}{Input all data (without taking mean).}
 
 \item{best_shifts}{Input data frame containing information of best shifts.}
-
-\item{is_testing}{Showing a plot of the progress if \code{TRUE}, otherwise if \code{FALSE}.}
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 

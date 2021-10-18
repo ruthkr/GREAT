@@ -27,7 +27,7 @@ get_extreme_shifts_for_all(
 \item{accession_data_ref}{Accession name of reference data.}
 }
 \value{
-minimum and maximum values of shifts
+Minimum and maximum values of shifts.
 }
 \description{
 \code{get_extreme_shifts_for_all} is used to calculate the minimum and maximum shifts can apply to data after the stretch transformation.

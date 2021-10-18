@@ -13,7 +13,6 @@ scale_and_register_data(
   min_num_overlapping_points,
   initial_rescale,
   do_rescale,
-  testing,
   accession_data_to_transform,
   accession_data_ref,
   data_to_transform_time_added,
@@ -33,11 +32,9 @@ scale_and_register_data(
 
 \item{min_num_overlapping_points}{Number of minimum overlapping time points.  Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.}
 
-\item{initial_rescale}{Scaling gene expression prior to registration if TRUE.}
+\item{initial_rescale}{Scaling gene expression prior to registration if \code{TRUE}.}
 
 \item{do_rescale}{Scaling gene expression using only overlapping timepoints points during registration.}
-
-\item{testing}{Showing immediate results (including plots) if TRUE.}
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 

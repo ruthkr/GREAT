@@ -4,7 +4,14 @@
 \alias{calculate_between_sample_distance}
 \title{Calculate distance between sample data before and after registration}
 \usage{
-calculate_between_sample_distance(mean_df, mean_df_sc, imputed_mean_df)
+calculate_between_sample_distance(
+  mean_df,
+  mean_df_sc,
+  imputed_mean_df,
+  gene_col = "locus_name",
+  comparison = "ref-vs-transform",
+  accession_data_ref = "Ro18"
+)
 }
 \arguments{
 \item{mean_df}{Input data frame contains the mean gene expression of each gene in each genotype at each timepoint.}

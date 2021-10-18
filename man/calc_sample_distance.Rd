@@ -4,12 +4,21 @@
 \alias{calc_sample_distance}
 \title{Calculate sample distance wrapper}
 \usage{
-calc_sample_distance(df, gene_col)
+calc_sample_distance(
+  df,
+  gene_col,
+  comparison = "ref-vs-transform",
+  accession_data_ref
+)
 }
 \arguments{
 \item{df}{Dataframe contains expression data from each sample.}
 
 \item{gene_col}{Column name of accession gene.}
+
+\item{comparison}{Type of dataframe output wanted, only comparison between reference data and data to transform if "ref-vs-transform".}
+
+\item{accession_data_ref}{Accession name of reference data.}
 }
 \value{
 Dataframe contains squared distance of data.

@@ -2,10 +2,27 @@
 % Please edit documentation in R/visualise_result.R
 \name{make_heatmap}
 \alias{make_heatmap}
-\title{Make heatmap}
+\title{Visualise distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration}
 \usage{
-make_heatmap(D, ylabel, y.axis.fontsize = 6)
+make_heatmap(
+  sample_dist_df,
+  ylabel,
+  y_axis_fontsize = 6,
+  same_min_timepoint = TRUE
+)
+}
+\arguments{
+\item{sample_dist_df}{Input data frame contains sample distance between two different species.}
+
+\item{ylabel}{Label on y axis.}
+
+\item{y_axis_fontsize}{Font size of y axis label.}
+
+\item{same_min_timepoint}{}
+}
+\value{
+Distance heatmap of gene expression profiles over time between two different species.
 }
 \description{
-Make heatmap
+Visualise distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration
 }

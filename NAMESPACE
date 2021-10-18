@@ -3,6 +3,8 @@
 export("%>%")
 export(calculate_between_sample_distance)
 export(get_best_stretch_and_shift)
+export(make_heatmap)
+export(plot_registered_gene_of_interest)
 export(scale_and_register_data)
 import(data.table)
 importFrom(magrittr,"%>%")

@@ -1,40 +1,46 @@
-# mean_df <- real.mean_df
-# mean_df.sc <- real.sc.df
-# imputed.mean_df <- imputed.mean_df
-calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_df) {
+#' Calculate distance between sample data before and after registration
+#'
+#' @param mean_df Input data frame contains the mean gene expression of each gene in each genotype at each timepoint.
+#' @param mean_df_sc Input data frame which is identical to `mean_df`, with additional column `sc.expression_value` which is scaled of expression values.
+#' @param imputed_mean_df Input data frame contains registered
+#'
+#' @return List of dataframes: (a)`D.mean` is distance of mean expression values, (b) `D.scaled` is disctance of scaled mean expression (all genes), (c) `D.registered` is distance of registered & scaled mean expression (all genes), (d) `D.scaled.onlyNR` is distance of scaled mean expression (only not-registered genes) (e) `D.scaled.onlyR` is distance of scaled mean expression (only registered genes) (f) `D.registered.onlyR` is distance of registered & scaled mean expression (only registered genes).
+#' @export
+calculate_between_sample_distance <- function(mean_df, mean_df_sc, imputed_mean_df) {
+
   ### convert all to wide format ready for distance calculation
   # mean_df
   mean.dt.w <- reformat_for_distance_calculation(
     dt = mean_df,
-    sample.id.cols = c("accession", "timepoint"),
+    sample_id_cols = c("accession", "timepoint"),
     gene_col = "locus_name",
-    expression.col = "expression_value"
+    expression_col = "expression_value"
   )
 
   # normalised mean_df
   mean.dt.sc.w <- reformat_for_distance_calculation(
-    dt = mean_df.sc,
-    sample.id.cols = c("accession", "timepoint"),
+    dt = mean_df_sc,
+    sample_id_cols = c("accession", "timepoint"),
     gene_col = "locus_name",
-    expression.col = "sc.expression_value"
+    expression_col = "sc.expression_value"
   )
 
-  # imputed.mean_df - all genes
+  # imputed_mean_df - all genes
   imputed.mean.dt.w <- reformat_for_distance_calculation(
-    imputed.mean_df,
-    sample.id.cols = c("accession", "shifted_time"),
+    imputed_mean_df,
+    sample_id_cols = c("accession", "shifted_time"),
     gene_col = "locus_name",
-    expression.col = "expression_value"
+    expression_col = "expression_value"
   )
 
   # TODO: change `condition == FALSE/TRUE` by `isFALSE(condition)/isTRUE(condition)` or `condition/!condition`
   # same, but for subsets of REGISTERED / NOT REGISTERED genes.
   # distance between samples, only using genes which are found best model is not registered
-  not.registered.genes <- unique(imputed.mean_df$locus_name[imputed.mean_df$is.registered == FALSE])
+  not.registered.genes <- unique(imputed_mean_df$locus_name[imputed_mean_df$is.registered == FALSE])
   mean.dt.sc.w.not.registered <- mean.dt.sc.w[mean.dt.sc.w$locus_name %in% not.registered.genes, ]
 
   # distance between samples, only using genes which are found best when ARE registered
-  registered.genes <- unique(imputed.mean_df$locus_name[imputed.mean_df$is.registered == TRUE])
+  registered.genes <- unique(imputed_mean_df$locus_name[imputed_mean_df$is.registered == TRUE])
   mean.dt.sc.w.registered <- mean.dt.sc.w[mean.dt.sc.w$locus_name %in% registered.genes, ]
 
   # after registration, but only for registered genes
@@ -78,32 +84,31 @@ calculate_between_sample_distance <- function(mean_df, mean_df.sc, imputed.mean_
   return(results_list)
 }
 
-# sample.id.cols <- c('accession','delta_time')
-# gene_col <- c('locus_name')
-# expression.col <- 'expression_value'
-# dt <- mean_df
-reformat_for_distance_calculation <- function(dt, sample.id.cols, gene_col, expression.col) {
+
+reformat_for_distance_calculation <- function(dt, sample_id_cols, gene_col, expression_col) {
+
   # Concatenate sample.id columns to generate sample ids
-  dt$sample.id <- dt[[sample.id.cols[1]]]
-  if (length(sample.id.cols) > 1) {
-    for (i in 2:length(sample.id.cols)) {
+  dt$sample.id <- dt[[sample_id_cols[1]]]
+  if (length(sample_id_cols) > 1) {
+    for (i in 2:length(sample_id_cols)) {
 
       # Pad timepoint to 2 figures to help ordering
-      if (class(dt[[sample.id.cols[i]]]) %in% c("integer", "numeric")) {
-        dt[[sample.id.cols[i]]] <- stringr::str_pad(dt[[sample.id.cols[i]]], 2, pad = "0")
+      if (class(dt[[sample_id_cols[i]]]) %in% c("integer", "numeric")) {
+        dt[[sample_id_cols[i]]] <- stringr::str_pad(dt[[sample_id_cols[i]]], 2, pad = "0")
       }
 
-      dt$sample.id <- paste0(dt[["sample.id"]], "-", dt[[sample.id.cols[i]]])
+      dt$sample.id <- paste0(dt[["sample.id"]], "-", dt[[sample_id_cols[i]]])
     }
   }
 
   # subset to just the relevant columns
-  dt <- subset(dt, select = c("sample.id", gene_col, expression.col))
+  dt <- subset(dt, select = c("sample.id", gene_col, expression_col))
 
   # convert to wide format
-  dt.w <- data.table::dcast(dt, locus_name ~ sample.id, value.var = eval(expression.col))
+  dt.w <- data.table::dcast(dt, locus_name ~ sample.id, value.var = eval(expression_col))
 
   return(dt.w)
+
 }
 
 #' Calculate sample distance wrapper

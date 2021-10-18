@@ -16,7 +16,7 @@
 #' @param data_to_transform_time_added Time points to be added in data to transform.
 #' @param data_ref_time_added Time points to be added in reference data.
 #'
-#' @return List of dataframes: (a) `mean_df` is unchanged by `scale_and_register_data()`, (b) `mean_df_sc` is identical to `mean_df`, with additional column "sc.mean.cpm", (c) `imputed_mean_df` is registered expression data, (d) `all_shifts` is a table of candidate registrations applied, and score for each, and (e) `model_comparison_dt` is a table comparing the optimal registration function for each gene (based on `all_shifts` scores) to model with no registration applied.
+#' @return List of dataframes: (a) `mean_df` is unchanged by `scale_and_register_data()`, (b) `mean_df_sc` is identical to `mean_df`, with additional column `sc.expression_value`, (c) `imputed_mean_df` is registered expression data, (d) `all_shifts` is a table of candidate registrations applied, and score for each, and (e) `model_comparison_dt` is a table comparing the optimal registration function for each gene (based on `all_shifts` scores) to model with no registration applied.
 #'
 #' @export
 scale_and_register_data <- function(mean_df,

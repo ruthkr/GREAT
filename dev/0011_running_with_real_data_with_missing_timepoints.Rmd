@@ -62,10 +62,15 @@ test_using_brapa_data <- GREAT::scale_and_register_data(
   do_rescale = TRUE,
   testing = FALSE,
   accession_data_to_transform = "Col0",
-  accession_data_fix = "Ro18",
+  accession_data_ref = "Ro18",
   data_to_transform_time_added = 11,
-  data_fix_time_added = 11
+  data_ref_time_added = 11
 )
+```
+
+
+```{r plot-original-data, fig.width=10, fig.height=10}
+GREAT::plot_registered_gene_of_interest(test_using_brapa_data[['imputed_mean_df']])
 ```
 
 ### Plot data after registration

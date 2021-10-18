@@ -16,7 +16,6 @@ test_that("scale_and_register_data works", {
     min_num_overlapping_points = 4,
     initial_rescale = FALSE,
     do_rescale = TRUE,
-    testing = FALSE,
     accession_data_to_transform = "Col0",
     accession_data_ref = "Ro18",
     data_to_transform_time_added = 11,
@@ -40,7 +39,6 @@ num_shifts <- 27
 min_num_overlapping_points <- 4
 initial_rescale <- FALSE
 do_rescale <- TRUE
-testing <- FALSE
 accession_data_to_transform <- "Col0"
 accession_data_ref <- "Ro18"
 data_to_transform_time_added <- 11
@@ -87,7 +85,6 @@ test_that("all functions called in scale_and_register_data work", {
     min_num_overlapping_points,
     shift_extreme,
     num_shifts,
-    testing,
     accession_data_to_transform,
     accession_data_ref,
     data_to_transform_time_added,

@@ -14,7 +14,6 @@ registration_results <- scale_and_register_data(
   min_num_overlapping_points = 4,
   initial_rescale = FALSE,
   do_rescale = TRUE,
-  testing = FALSE,
   accession_data_to_transform = "Col0",
   accession_data_ref = "Ro18",
   data_to_transform_time_added = 11,
@@ -23,7 +22,6 @@ registration_results <- scale_and_register_data(
 
 
 test_that("Function to plot of registration result returns gg/ggplot object", {
-
   class_plot_registered_gene_of_interest <- registration_results$imputed_mean_df %>%
     plot_registered_gene_of_interest() %>%
     class()
@@ -32,15 +30,16 @@ test_that("Function to plot of registration result returns gg/ggplot object", {
   expect_equal(class_plot_registered_gene_of_interest[2], "ggplot")
 })
 
-sample_distance_results <- calculate_between_sample_distance(registration_results$mean_df,
-                                                             registration_results$mean_df_sc,
-                                                             registration_results$imputed_mean_df,
-                                                             gene_col = "locus_name",
-                                                             comparison = "ref-vs-transform",
-                                                             accession_data_ref = "Ro18")
+sample_distance_results <- calculate_between_sample_distance(
+  registration_results$mean_df,
+  registration_results$mean_df_sc,
+  registration_results$imputed_mean_df,
+  gene_col = "locus_name",
+  comparison = "ref-vs-transform",
+  accession_data_ref = "Ro18"
+)
 
 test_that("Function make_heatmap to plot of distance heatmap of samples returns gg/ggplot object", {
-
   class_make_heatmap <- sample_distance_results$D.registered %>%
     make_heatmap(ylabel = "Distance") %>%
     class()
@@ -48,4 +47,3 @@ test_that("Function make_heatmap to plot of distance heatmap of samples returns 
   expect_equal(class_make_heatmap[1], "gg")
   expect_equal(class_make_heatmap[2], "ggplot")
 })
-

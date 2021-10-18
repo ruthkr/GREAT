@@ -8,7 +8,6 @@
 #' @param do_rescale Apply "scale" to compared points for each shift if TRUE, use original mean expression data if FALSE.
 #' @param shift_extreme Approximation of maximum and minimum shifts allowed.
 #' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
-#' @param testing Showing a plot of the progress if TRUE, otherwise if FALSE.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
 #'
@@ -19,7 +18,6 @@ calculate_all_best_shifts <- function(num_shifts,
                                       do_rescale,
                                       shift_extreme,
                                       min_num_overlapping_points,
-                                      testing = FALSE,
                                       accession_data_to_transform = "Col0",
                                       accession_data_ref = "Ro18") {
   # Initialize vectors
@@ -55,7 +53,6 @@ calculate_all_best_shifts <- function(num_shifts,
       do_rescale,
       min_shift,
       max_shift,
-      testing,
       accession_data_to_transform,
       accession_data_ref
     )
@@ -96,7 +93,6 @@ calculate_all_best_shifts <- function(num_shifts,
 #' @param do_rescale Apply "scale" to compared points for each shift if TRUE, use original mean expression data if FALSE.
 #' @param min_shift Minimum extreme value of shift.
 #' @param max_shift Maximum extreme value of shift.
-#' @param testing Showing a plot of the progress if TRUE, otherwise if FALSE
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
 get_best_shift <- function(num_shifts = 25,
@@ -106,7 +102,6 @@ get_best_shift <- function(num_shifts = 25,
                            do_rescale,
                            min_shift,
                            max_shift,
-                           testing = FALSE,
                            accession_data_to_transform = "Col0",
                            accession_data_ref = "Ro18") {
   data <- data[data$locus_name == curr_sym, ]
@@ -179,40 +174,11 @@ get_best_shift <- function(num_shifts = 25,
       data_ref_sd <- 1
     }
 
-    # Data plot of shifted, and normalised gene expression
-    # if (testing) {
-    #   p <- ggplot2::ggplot(compared) +
-    #     ggplot2::aes(x = shifted_time, y = expression_value, color = accession) +
-    #     ggplot2::geom_point() +
-    #     ggplot2::geom_line() +
-    #     ggplot2::ggtitle(paste0("shift: ", curr_shift))
-    #
-    #   ggplot2::ggsave(
-    #     plot = p,
-    #     filename = paste0(curr_sym, stretch_factor, "-", curr_shift, ".pdf")
-    #   )
-    # }
-
     # For each data to transform timepoint, linear interpolate between the two nearest reference data timepoints
     data_transform_compared <- compared[compared$accession == accession_data_to_transform]
     data_ref_compared <- compared[compared$accession == accession_data_ref]
 
     data_transform_compared$pred_data_ref_expression <- sapply(data_transform_compared$shifted_time, interpolate_data_ref_comparison_expression, data_ref_dt = data_ref_compared)
-
-    # if (testing) {
-    #   interpolate_res <- ggplot2::ggplot(compared) +
-    #     ggplot2::aes(x = shifted_time, y = expression_value, color = accession) +
-    #     ggplot2::geom_point() +
-    #     ggplot2::geom_line() +
-    #     ggplot2::geom_point(data = data_transform_compared, aes(x = shifted_time, y = pred_data_ref_expression), color = "purple") +
-    #     ggplot2::geom_line(data = data_transform_compared, aes(x = shifted_time, y = pred_data_ref_expression), color = "purple")
-    #
-    #
-    #     ggplot2::ggsave(
-    #       plot = interpolate_res,
-    #       filename = paste0(curr_sym, stretch_factor, "-", curr_shift, "with_interpolation.pdf")
-    #     )
-    # }
 
     # Calculate the score, using the (interpolated) predicted.bra.expression, and the observed arabidopsis expression
     score <- calc_score(

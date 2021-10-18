@@ -14,14 +14,11 @@ registration_results <- scale_and_register_data(
   min_num_overlapping_points = 4,
   initial_rescale = FALSE,
   do_rescale = TRUE,
-  testing = FALSE,
   accession_data_to_transform = "Col0",
   accession_data_ref = "Ro18",
   data_to_transform_time_added = 11,
   data_ref_time_added = 11
 )
-
-
 
 test_that("calculate_between_sample_distance works", {
   sample_distance_results <- calculate_between_sample_distance(registration_results$mean_df,

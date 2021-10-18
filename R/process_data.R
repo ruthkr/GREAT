@@ -10,7 +10,6 @@
 #' @param min_num_overlapping_points Number of minimum overlapping time points.  Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
 #' @param initial_rescale Scaling gene expression prior to registration if TRUE.
 #' @param do_rescale Scaling gene expression using only overlapping timepoints points during registration.
-#' @param testing Showing immediate results (including plots) if TRUE.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
 #' @param data_to_transform_time_added Time points to be added in data to transform.
@@ -27,7 +26,6 @@ scale_and_register_data <- function(mean_df,
                                     min_num_overlapping_points,
                                     initial_rescale,
                                     do_rescale,
-                                    testing,
                                     accession_data_to_transform,
                                     accession_data_ref,
                                     data_to_transform_time_added,
@@ -74,7 +72,6 @@ scale_and_register_data <- function(mean_df,
     min_num_overlapping_points,
     shift_extreme,
     num_shifts,
-    testing,
     accession_data_to_transform,
     accession_data_ref,
     data_to_transform_time_added,
@@ -198,7 +195,6 @@ scale_all_rep_data <- function(mean_df,
 #' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
 #' @param shift_extreme Approximation of maximum and minimum shifts allowed.
 #' @param num_shifts Number of different shifts to be considered.
-#' @param testing Showing a plot of the progress if TRUE, otherwise if FALSE.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
 #' @param data_to_transform_time_added Time points to be added in data to transform.
@@ -214,7 +210,6 @@ get_best_stretch_and_shift <- function(to_shift_df,
                                        min_num_overlapping_points,
                                        shift_extreme,
                                        num_shifts,
-                                       testing,
                                        accession_data_to_transform,
                                        accession_data_ref,
                                        data_to_transform_time_added,
@@ -230,7 +225,6 @@ get_best_stretch_and_shift <- function(to_shift_df,
 
   for (i in 1:length(stretches)) {
     stretch <- stretches[i]
-    # message(paste0("testing models for stretch factor = ", stretch))
     cli::cli_h2("Analysing models for stretch factor = {stretch}")
 
     # Calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points
@@ -242,7 +236,6 @@ get_best_stretch_and_shift <- function(to_shift_df,
       do_rescale,
       shift_extreme,
       min_num_overlapping_points,
-      testing,
       accession_data_to_transform,
       accession_data_ref
     )
@@ -263,7 +256,6 @@ get_best_stretch_and_shift <- function(to_shift_df,
     model_comparison_dt <- calculate_all_model_comparison_stats(
       all_data_df,
       best_shifts,
-      is_testing = testing,
       accession_data_to_transform,
       accession_data_ref,
       data_to_transform_time_added,

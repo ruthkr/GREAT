@@ -43,7 +43,6 @@ get_best_result <- function(df) {
 #'
 #' @param all_data_df Input all data (without taking mean).
 #' @param best_shifts Input data frame containing information of best shifts.
-#' @param is_testing Showing a plot of the progress if \code{TRUE}, otherwise if \code{FALSE}.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
 #' @param data_to_transform_time_added Time points to be added in data to transform.
@@ -52,7 +51,6 @@ get_best_result <- function(df) {
 #' @return AIC and BIC score for registered and unregistered models.
 calculate_all_model_comparison_stats <- function(all_data_df,
                                                  best_shifts,
-                                                 is_testing,
                                                  accession_data_to_transform,
                                                  accession_data_ref,
                                                  data_to_transform_time_added,
@@ -89,7 +87,6 @@ calculate_all_model_comparison_stats <- function(all_data_df,
     L <- compare_registered_to_unregistered_model(
       curr_sym,
       shifted_all_data_df,
-      is_testing,
       accession_data_to_transform,
       accession_data_ref
     )
@@ -291,14 +288,12 @@ apply_best_normalisation <- function(data,
 #'
 #' @param curr_sym A gene accession.
 #' @param all_data_df Input data.
-#' @param is_testing Showing a plot of the progress if \code{TRUE}, otherwise if \code{FALSE}.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
 #'
 #' @return Score of AIC and BIC for both registered and unregistered models.
 compare_registered_to_unregistered_model <- function(curr_sym,
                                                      all_data_df,
-                                                     is_testing = FALSE,
                                                      accession_data_to_transform = "Col0",
                                                      accession_data_ref = "Ro18") {
   curr_data_df <- all_data_df[all_data_df$locus_name == curr_sym]
@@ -353,55 +348,6 @@ compare_registered_to_unregistered_model <- function(curr_sym,
 
   separate.BIC <- calc_BIC(separate_logLik, 2 * num.spline.params, num.obs)
   combined.BIC <- calc_BIC(combined_logLik, num.spline.params + num.registration.params, num.obs)
-
-
-  if (is_testing) {
-    ara.pred <- stats::predict(data_to_transform_fit)
-    ara.pred.df <- unique(
-      data.frame(
-        "shifted_time" = data_to_transform_spline$shifted_time,
-        "expression_value" = ara.pred, "accession" = "Col0"
-      )
-    )
-    bra.pred <- stats::predict(data_ref_fit)
-    bra.pred.df <- unique(
-      data.frame(
-        "shifted_time" = data_ref_spline$shifted_time,
-        "expression_value" = bra.pred, "accession" = "Ro18"
-      )
-    )
-
-    combined.pred <- stats::predict(combined_fit)
-    combined.pred.df <- unique(
-      data.frame(
-        "shifted_time" = combined_spline_data$shifted_time,
-        "expression_value" = combined.pred, "accession" = "registered"
-      )
-    )
-    spline.df <- rbind(ara.pred.df, bra.pred.df, combined.pred.df)
-
-    p <- ggplot2::ggplot(data = combined_spline_data) +
-      ggplot2::aes(
-        x = shifted_time,
-        y = expression_value,
-        colour = accession
-      ) +
-      ggplot2::geom_point() +
-      ggplot2::geom_line(data = spline.df) +
-      ggplot2::ggtitle(
-        paste0(
-          curr_sym, ": sep AIC:combo AIC=", round(separate.AIC), ":", round(combined.AIC),
-          ", sep BIC: combo BIC=", round(separate.BIC), ":", round(combined.BIC)
-        )
-      )
-
-    ggplot2::ggsave(
-      plot = p,
-      filename = paste0(curr_sym, "_", max(ara.pred.df$shifted_time), ".pdf")
-    )
-
-    message("Saving plot as ", paste0(curr_sym, "_", max(ara.pred.df$shifted_time), ".pdf"))
-  }
 
   # Results object
   results_list <- list(

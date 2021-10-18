@@ -24,10 +24,13 @@ registration_results <- scale_and_register_data(
 
 
 test_that("calculate_between_sample_distance works", {
-
   sample_distance_results <- calculate_between_sample_distance(registration_results$mean_df,
-                                                                registration_results$mean_df_sc,
-                                                                registration_results$imputed_mean_df)
+    registration_results$mean_df_sc,
+    registration_results$imputed_mean_df,
+    gene_col = "locus_name",
+    comparison = "ref-vs-transform",
+    accession_data_ref = "Ro18"
+  )
 
   expect_equal(class(sample_distance_results), "list")
   expect_equal(length(names(sample_distance_results)), 6)
@@ -37,5 +40,4 @@ test_that("calculate_between_sample_distance works", {
   expect_equal(class(sample_distance_results$D.scaled.onlyNR)[[1]], "data.table")
   expect_equal(class(sample_distance_results$D.scaled.onlyR)[[1]], "data.table")
   expect_equal(class(sample_distance_results$D.registered.onlyR)[[1]], "data.table")
-
 })

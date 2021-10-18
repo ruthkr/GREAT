@@ -9,7 +9,7 @@
 #' @param colnames_wanted List of column names to keep from both reference data and data to transform.
 #' @param tissue_wanted Name of tissue from which data will be compared.
 #' @param curr_GoIs Gene of interest list.
-#' @param sum_exp_data_ref default is FALSE. If TRUE then sum all gene data.
+#' @param sum_exp_data_ref If \code{TRUE} then sum all gene data. Default is \code{FALSE}.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param ids_data_ref_colnames Column names shared by both reference data and ID table, whose element needs to be unique.
 #' @param max_expression_value_wanted Maximum value of expression desired.
@@ -68,8 +68,8 @@ get_mean_and_all_exp_data <- function(filepath_data_ref,
   mean_df <- mean_df[mean_df$locus_name %in% keep_final_genes, ]
 
   # Printing the keep genes
-  message(paste0(length(keep_data_ref_genes), " brassica genes considered in the comparison"))
-  message(paste0(length(keep_final_genes), " all genes considered in the comparison"))
+  message(length(keep_data_ref_genes), " brassica genes considered in the comparison")
+  message(length(keep_final_genes), " all genes considered in the comparison")
 
   # Get mean_df, including column "group"
   exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
@@ -83,6 +83,7 @@ get_mean_and_all_exp_data <- function(filepath_data_ref,
 }
 
 #' Get expression of interest
+#' @noRd
 get_expression_of_interest <- function(filepath_data_ref,
                                        filepath_data_to_transform,
                                        filepath_id_table,
@@ -95,7 +96,6 @@ get_expression_of_interest <- function(filepath_data_ref,
                                        sum_exp_data_ref = FALSE,
                                        accession_data_to_transform = "Col0",
                                        ids_data_ref_colnames = c("CDS.model", "locus_name")) {
-
   # Load of the single df data
   master_exp <- get_all_data(
     filepath_data_ref,
@@ -173,6 +173,7 @@ get_expression_of_interest <- function(filepath_data_ref,
 
 
 #' Get all data
+#' @noRd
 get_all_data <- function(filepath_data_ref,
                          filepath_data_to_transform,
                          filepath_id_table,
@@ -180,7 +181,6 @@ get_all_data <- function(filepath_data_ref,
                          fix_and_to_transform_data_shared_colname = "locus_name",
                          colnames_id_table = c("CDS.model", "symbol", "locus_name"),
                          colnames_wanted = NULL) {
-
   # Read RDS file
   data_ref <- readRDS(filepath_data_ref)
   data_to_transform <- readRDS(filepath_data_to_transform)
@@ -220,8 +220,6 @@ get_all_data <- function(filepath_data_ref,
       colnames(data_to_transform),
       colnames(data_ref)
     )
-  } else {
-    colnames_wanted <- colnames_wanted
   }
 
   # Join the two datasets into 1 & housekeeping
@@ -235,20 +233,20 @@ get_all_data <- function(filepath_data_ref,
 
 
 #' Shorten groups
-#' @param exp
-#' @param accession_data_to_transform
-shorten_groups <- function(exp) {
+#' @param exp Expression value.
+#' @param accession_data_to_transform Accession name of data which will be transformed.
+shorten_groups <- function(exp, accession_data_to_transform = "Col0") {
   # Get reps for klepikova and for brassica data, make sure it is a data.table
   exp <- data.table::data.table(exp)
 
   # Get the last element of "sample_id" of Brassica data
-  B <- exp[exp$accession != "Col0"]
+  B <- exp[exp$accession != accession_data_to_transform]
   B[, c("j1", "j2", "j3", "j4", "j5", "j6", "rep") := data.table::tstrsplit(sample_id, split = "_")]
   B$rep[is.na(B$rep)] <- 1
   B[, c("j1", "j2", "j3", "j4", "j5", "j6")] <- NULL
 
   # Get the last element of "dataset" of Arabidopsis data
-  A <- exp[exp$accession == "Col0"]
+  A <- exp[exp$accession == accession_data_to_transform]
   A[, c("j1", "j2", "rep") := data.table::tstrsplit(dataset, split = "_")]
   A[, c("j1", "j2")] <- NULL
   # Combine both data

@@ -79,7 +79,7 @@ min_is_compared_to_data_to_transform <- function(data_to_transform_time, data_re
 #' `calc_num_overlapping_points` is used to calculate the number of overlapping points for the species with the fewer overlapping points if the current "shift" is applied to the data to alined delta timepoints.
 #'
 #' @param data Input data.
-#' @param shift Current shift value
+#' @param shift Current shift value.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 calc_num_overlapping_points <- function(shift, data, accession_data_to_transform = "Col0") {
   data$shifted_time[data$accession == accession_data_to_transform] <- data$delta_time[data$accession == accession_data_to_transform] + shift

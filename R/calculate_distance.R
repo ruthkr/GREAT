@@ -2,7 +2,10 @@
 #'
 #' @param mean_df Input data frame contains the mean gene expression of each gene in each genotype at each timepoint.
 #' @param mean_df_sc Input data frame which is identical to `mean_df`, with additional column `sc.expression_value` which is scaled of expression values.
-#' @param imputed_mean_df Input data frame contains registered
+#' @param imputed_mean_df Input data frame contains registered.
+#' @param gene_col Column name of gene accession, default is \code{locus_name}.
+#' @param compare_ref_vs_transform If \code{TRUE}, the default, only comparison between reference data and data to transform is considered.
+#' @param accession_data_ref Accession name of reference data.
 #'
 #' @return List of dataframes: (a)`D.mean` is distance of mean expression values, (b) `D.scaled` is disctance of scaled mean expression (all genes), (c) `D.registered` is distance of registered & scaled mean expression (all genes), (d) `D.scaled.onlyNR` is distance of scaled mean expression (only not-registered genes) (e) `D.scaled.onlyR` is distance of scaled mean expression (only registered genes) (f) `D.registered.onlyR` is distance of registered & scaled mean expression (only registered genes).
 #' @export
@@ -10,7 +13,7 @@ calculate_between_sample_distance <- function(mean_df,
                                               mean_df_sc,
                                               imputed_mean_df,
                                               gene_col = "locus_name",
-                                              comparison = "ref-vs-transform",
+                                              compare_ref_vs_transform = TRUE,
                                               accession_data_ref = "Ro18") {
 
   ### convert all to wide format ready for distance calculation
@@ -58,14 +61,43 @@ calculate_between_sample_distance <- function(mean_df,
   # Distance used is mean of [squared distance between each gene / absolute mean of expression
   # of that gene in the sample]. Is calculated for each gene for which have data in both samples.
   # Mean of these values (divided by number of genes is calculated for) is reported.
-  D.mean <- calc_sample_distance(mean.dt.w, gene_col = gene_col, comparison = comparison, accession_data_ref = accession_data_ref)
-  D.scaled <- calc_sample_distance(mean.dt.sc.w, gene_col = gene_col, comparison = comparison, accession_data_ref = accession_data_ref)
-  D.registered <- calc_sample_distance(imputed.mean.dt.w, gene_col = gene_col, comparison = comparison, accession_data_ref = accession_data_ref)
+  D.mean <- calc_sample_distance(
+    mean.dt.w,
+    gene_col = gene_col,
+    compare_ref_vs_transform = compare_ref_vs_transform,
+    accession_data_ref = accession_data_ref
+  )
+  D.scaled <- calc_sample_distance(
+    mean.dt.sc.w,
+    gene_col = gene_col,
+    compare_ref_vs_transform = compare_ref_vs_transform,
+    accession_data_ref = accession_data_ref
+  )
+  D.registered <- calc_sample_distance(
+    imputed.mean.dt.w,
+    gene_col = gene_col,
+    compare_ref_vs_transform = compare_ref_vs_transform,
+    accession_data_ref = accession_data_ref
+  )
 
-  D.scaled.not.registered.genes <- calc_sample_distance(mean.dt.sc.w.not.registered, gene_col = gene_col, comparison = comparison, accession_data_ref = accession_data_ref)
-  D.scaled.registered.genes <- calc_sample_distance(mean.dt.sc.w.registered, gene_col = gene_col, comparison = comparison, accession_data_ref = accession_data_ref)
-  D.registered.registered.genes <- calc_sample_distance(imputed.mean.dt.w.registered, gene_col = gene_col, comparison = comparison, accession_data_ref = accession_data_ref)
-
+  D.scaled.not.registered.genes <- calc_sample_distance(
+    mean.dt.sc.w.not.registered,
+    gene_col = gene_col,
+    compare_ref_vs_transform = compare_ref_vs_transform,
+    accession_data_ref = accession_data_ref
+  )
+  D.scaled.registered.genes <- calc_sample_distance(
+    mean.dt.sc.w.registered,
+    gene_col = gene_col,
+    compare_ref_vs_transform = compare_ref_vs_transform,
+    accession_data_ref = accession_data_ref
+  )
+  D.registered.registered.genes <- calc_sample_distance(
+    imputed.mean.dt.w.registered,
+    gene_col = gene_col,
+    compare_ref_vs_transform = compare_ref_vs_transform,
+    accession_data_ref = accession_data_ref
+  )
 
   # for use to make heatmaps with shared scales
   # TODO: $title could be reimplemented using attr() to avoid broadcasting
@@ -116,7 +148,6 @@ reformat_for_distance_calculation <- function(dt, sample_id_cols, gene_col, expr
   dt.w <- dt.w[, colSums(is.na(dt.w)) != nrow(dt.w), with = FALSE]
 
   return(dt.w)
-
 }
 
 #' Calculate sample distance wrapper
@@ -125,11 +156,11 @@ reformat_for_distance_calculation <- function(dt, sample_id_cols, gene_col, expr
 #'
 #' @param df Dataframe contains expression data from each sample.
 #' @param gene_col Column name of accession gene.
-#' @param comparison Type of dataframe output wanted, only comparison between reference data and data to transform if "ref-vs-transform".
+#' @param compare_ref_vs_transform If \code{TRUE}, the default, only comparison between reference data and data to transform is considered.
 #' @param accession_data_ref Accession name of reference data.
 #'
 #' @return Dataframe contains squared distance of data.
-calc_sample_distance <- function(df, gene_col, comparison = "ref-vs-transform", accession_data_ref) {
+calc_sample_distance <- function(df, gene_col, compare_ref_vs_transform = TRUE, accession_data_ref) {
   data.cols <- names(df)[names(df) != eval(gene_col)]
 
   # TODO: predefine size of vectors using numeric(length = something)
@@ -151,12 +182,12 @@ calc_sample_distance <- function(df, gene_col, comparison = "ref-vs-transform", 
     }
   }
 
-  if (is.null(comparison)){
-    out_df <- data.table::data.table(data.frame("x_sample" = i.cols, "y_sample" = j.cols, "distance" = ds))
-  } else {
+  if (compare_ref_vs_transform) {
     out_df <- data.table::data.table(data.frame("x_sample" = i.cols, "y_sample" = j.cols, "distance" = ds)) %>%
       dplyr::filter(stringr::str_extract(y_sample, "^.*?(?=-)") != stringr::str_extract(x_sample, "^.*?(?=-)")) %>%
       dplyr::filter(stringr::str_extract(y_sample, "^.*?(?=-)") == accession_data_ref)
+  } else {
+    out_df <- data.table::data.table(data.frame("x_sample" = i.cols, "y_sample" = j.cols, "distance" = ds))
   }
 
   return(out_df)

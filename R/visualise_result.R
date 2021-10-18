@@ -1,19 +1,17 @@
 #' Plot gene of interest after registration
 #'
 #' @param df Dataframe input after registration.
+#' @param gene_accession List of gene accessions, default is \code{all}.
 #'
 #' @return Plot of gene of interest after registration.
 #' @export
 plot_registered_gene_of_interest <- function(df,
                                              gene_accession = "all") {
-
   # Make sure that the accession is in character format
   df$accession <- as.character(df$accession)
 
   # Filter gene using given gene of interests
-  if (gene_accession == "all"){
-    df <- df
-  } else {
+  if (gene_accession != "all") {
     df <- df %>%
       dplyr::filter(accession %in% gene_accession)
   }
@@ -56,14 +54,13 @@ plot_registered_gene_of_interest <- function(df,
 #' Visualise distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration
 #'
 #' @param sample_dist_df Input data frame contains sample distance between two different species.
-#' @param ylabel Label on y axis.
-#' @param y_axis_fontsize Font size of y axis label.
-#' @param same_min_timepoint
+#' @param ylabel Label on Y axis.
+#' @param y_axis_fontsize Font size of Y axis label.
+#' @param same_min_timepoint If \code{TRUE}, the default, takes data with the same minimum timepoint.
 #'
 #' @return Distance heatmap of gene expression profiles over time between two different species.
 #' @export
 make_heatmap <- function(sample_dist_df, ylabel, y_axis_fontsize = 6, same_min_timepoint = TRUE) {
-
   if (same_min_timepoint) {
     sample_dist_df <- sample_dist_df %>%
       dplyr::mutate(
@@ -73,8 +70,6 @@ make_heatmap <- function(sample_dist_df, ylabel, y_axis_fontsize = 6, same_min_t
           as.numeric()
       ) %>%
       dplyr::filter(timepoint_x >= min(timepoint_y))
-  } else {
-    sample_dist_df <- sample_dist_df
   }
 
   # Change class of x_sample and y_sample as factor
@@ -112,5 +107,3 @@ make_heatmap <- function(sample_dist_df, ylabel, y_axis_fontsize = 6, same_min_t
 
   return(p)
 }
-
-

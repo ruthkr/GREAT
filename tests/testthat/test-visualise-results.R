@@ -35,7 +35,7 @@ sample_distance_results <- calculate_between_sample_distance(
   registration_results$mean_df_sc,
   registration_results$imputed_mean_df,
   gene_col = "locus_name",
-  comparison = "ref-vs-transform",
+  compare_ref_vs_transform = TRUE,
   accession_data_ref = "Ro18"
 )
 

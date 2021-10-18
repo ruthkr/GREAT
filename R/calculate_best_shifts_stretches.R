@@ -5,7 +5,7 @@
 #' @param num_shifts Number of different shifts to be considered.
 #' @param mean_df Input data.
 #' @param stretch_factor Current stretch factor.
-#' @param do_rescale Apply "scale" to compared points for each shift if TRUE, use original mean expression data if FALSE.
+#' @param do_rescale Apply "scale" to compared points for each shift if \code{TRUE}, use original mean expression data if \code{FALSE}.
 #' @param shift_extreme Approximation of maximum and minimum shifts allowed.
 #' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
@@ -90,7 +90,7 @@ calculate_all_best_shifts <- function(num_shifts,
 #' @param curr_sym Current gene accession.
 #' @param data Input data.
 #' @param stretch_factor Current stretch factor.
-#' @param do_rescale Apply "scale" to compared points for each shift if TRUE, use original mean expression data if FALSE.
+#' @param do_rescale Apply "scale" to compared points for each shift if \code{TRUE}, use original mean expression data if \code{FALSE}.
 #' @param min_shift Minimum extreme value of shift.
 #' @param max_shift Maximum extreme value of shift.
 #' @param accession_data_to_transform Accession name of data which will be transformed.

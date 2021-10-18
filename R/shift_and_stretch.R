@@ -150,11 +150,8 @@ apply_best_shift <- function(data,
       accession_data_ref
     )
   } else {
-
     # If no scaling carried out DURING the registration step
     cli::cli_alert_warning("No normalisation was carried out DURING registration (though may have been, prior to the comparison)")
-
-    processed_data <- processed_data
   }
 
   # For each gene, shift the data to transform expression by the optimal shift found previously
@@ -180,8 +177,6 @@ apply_best_shift <- function(data,
 #' @param accession_data_ref Accession name of reference data.
 #' @param data_to_transform_time_added Time points to be added in data to transform.
 #' @param data_ref_time_added Time points to be added in reference data.
-#'
-#' @return
 apply_stretch <- function(data,
                           best_shifts,
                           accession_data_to_transform = "Col0",
@@ -265,8 +260,7 @@ apply_best_normalisation <- function(data,
       }
 
       if (any(is.na(data$expression_value))) {
-        cli::cli_alert_warning("Have NAs in expression_value after rescaling in apply best_normalisation() for gene: {unique(data$locus_name)}")
-        stop()
+        stop("Have NAs in expression_value after rescaling in apply best_normalisation() for gene: {unique(data$locus_name)}")
       }
     } else {
       data$expression_value[data$locus_name == curr_gene & data$accession == accession_data_to_transform] <- NA

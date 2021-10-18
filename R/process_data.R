@@ -8,7 +8,7 @@
 #' @param shift_extreme The absolute maximum value which can be applied as a shift to gene expression timecourse (days).
 #' @param num_shifts Number of shifts between minimum and maximum values of shift.
 #' @param min_num_overlapping_points Number of minimum overlapping time points.  Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
-#' @param initial_rescale Scaling gene expression prior to registration if TRUE.
+#' @param initial_rescale Scaling gene expression prior to registration if \code{TRUE}.
 #' @param do_rescale Scaling gene expression using only overlapping timepoints points during registration.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
@@ -135,7 +135,7 @@ scale_and_register_data <- function(mean_df,
 #'
 #' @param mean_df Input data containing mean of each time point.
 #' @param all_rep_data Input all data (without taking mean).
-#' @param scale_func Scaling method choice applied in all_rep_data. There are two options: (a) "scale" where all expression values are subtracted by mean value and divided by standard deviation and (b) "my_scale" where expression values are divided by mean values
+#' @param scale_func Scaling method choice applied in all_rep_data. There are two options: (a) "scale" where all expression values are subtracted by mean value and divided by standard deviation and (b) "my_scale" where expression values are divided by mean values.
 #'
 #' @return Scaled expression data in all_rep_data.
 scale_all_rep_data <- function(mean_df,
@@ -164,9 +164,7 @@ scale_all_rep_data <- function(mean_df,
   } else if (scale_func == "my_scale") {
     all_rep_data$scaled_norm_expression_value <- (all_rep_data$expression_value / all_rep_data$mean_val)
   } else {
-    message("invalid scale option for scale_all_rep_data")
-
-    stop()
+    stop("invalid scale option for scale_all_rep_data")
   }
 
   out <- subset(all_rep_data,
@@ -191,7 +189,7 @@ scale_all_rep_data <- function(mean_df,
 #' @param to_shift_df Input data containing mean of each time point.
 #' @param all_data_df Input all data (without taking mean).
 #' @param stretches Vector data of stretches.
-#' @param do_rescale Apply "scale" to compared points for each shift if TRUE, use original mean expression data if FALSE.
+#' @param do_rescale Apply "scale" to compared points for each shift if \code{TRUE}, use original mean expression data if \code{FALSE}.
 #' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
 #' @param shift_extreme Approximation of maximum and minimum shifts allowed.
 #' @param num_shifts Number of different shifts to be considered.
@@ -287,7 +285,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
 
   # If there is a tie for best registration for a gene, keep the first one as the best
   if (any(duplicated(best_model_comparison.dt$gene))) {
-    message(paste0("found ", sum(duplicated(best_model_comparison.dt$gene)), " tied optimal registrations. Removing duplicates"))
+    message("found ", sum(duplicated(best_model_comparison.dt$gene)), " tied optimal registrations. Removing duplicates")
     best_model_comparison.dt <- best_model_comparison.dt[!(duplicated(best_model_comparison.dt$gene)), ]
   }
 
@@ -382,8 +380,6 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
 #' @param shifted_mean_df All registered data frame.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
-#'
-#' @return
 impute_transformed_exp_values <- function(shifted_mean_df,
                                           accession_data_to_transform,
                                           accession_data_ref) {

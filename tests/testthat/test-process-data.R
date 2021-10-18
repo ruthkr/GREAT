@@ -7,6 +7,7 @@ mean_df <- system.file("extdata/brapa_arabidopsis_mean.csv", package = "GREAT") 
 # Test scale_and_register_data() ----
 
 test_that("scale_and_register_data works", {
+  # Check scale_and_register_data()
   registration_results <- scale_and_register_data(
     mean_df = mean_df,
     all_data_df = all_data_df,
@@ -28,6 +29,38 @@ test_that("scale_and_register_data works", {
   expect_equal(class(registration_results$imputed_mean_df)[[1]], "data.table")
   expect_equal(class(registration_results$all_shifts)[[1]], "data.table")
   expect_equal(class(registration_results$model_comparison_dt)[[1]], "data.table")
+
+  # Check calculate_between_sample_distance()
+  sample_distance_results <- calculate_between_sample_distance(
+    registration_results$mean_df,
+    registration_results$mean_df_sc,
+    registration_results$imputed_mean_df,
+    gene_col = "locus_name",
+    compare_ref_vs_transform = TRUE,
+    accession_data_ref = "Ro18"
+  )
+
+  expect_equal(class(sample_distance_results), "list")
+  expect_equal(length(names(sample_distance_results)), 6)
+  expect_equal(class(sample_distance_results$D.mean)[[1]], "data.table")
+  expect_equal(class(sample_distance_results$D.scaled)[[1]], "data.table")
+  expect_equal(class(sample_distance_results$D.registered)[[1]], "data.table")
+  expect_equal(class(sample_distance_results$D.scaled.onlyNR)[[1]], "data.table")
+  expect_equal(class(sample_distance_results$D.scaled.onlyR)[[1]], "data.table")
+  expect_equal(class(sample_distance_results$D.registered.onlyR)[[1]], "data.table")
+
+  # Check plots
+  gg_registered <- registration_results$imputed_mean_df %>%
+    plot_registered_gene_of_interest()
+
+  expect_equal(class(gg_registered)[[1]], "gg")
+  expect_equal(class(gg_registered)[[2]], "ggplot")
+
+  gg_distance <- sample_distance_results$D.registered %>%
+    make_heatmap()
+
+  expect_equal(class(gg_distance)[[1]], "gg")
+  expect_equal(class(gg_distance)[[2]], "ggplot")
 })
 
 

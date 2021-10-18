@@ -17,7 +17,7 @@ get_mean_and_all_exp_data(
   sum_exp_data_ref = FALSE,
   accession_data_to_transform = "Col0",
   ids_data_ref_colnames = c("CDS.model", "locus_name"),
-  max_mean_cpm_wanted = 5,
+  max_expression_value_wanted = 5,
   exp_threshold = 0.5
 )
 }
@@ -46,7 +46,7 @@ get_mean_and_all_exp_data(
 
 \item{ids_data_ref_colnames}{Column names shared by both reference data and ID table, whose element needs to be unique.}
 
-\item{max_mean_cpm_wanted}{Maximum value of expression desired.}
+\item{max_expression_value_wanted}{Maximum value of expression desired.}
 
 \item{exp_threshold}{Minimum expression threshold from which expression below the threshold will be removed.}
 }

@@ -4,12 +4,21 @@
 \alias{plot_registered_gene_of_interest}
 \title{Plot gene of interest after registration}
 \usage{
-plot_registered_gene_of_interest(df, gene_accession = "all")
+plot_registered_gene_of_interest(
+  df,
+  gene_accession = "all",
+  title = NULL,
+  ncol = NULL
+)
 }
 \arguments{
 \item{df}{Dataframe input after registration.}
 
 \item{gene_accession}{List of gene accessions, default is \code{all}.}
+
+\item{title}{Optional plot title.}
+
+\item{ncol}{Number of columns in the plot grid. By default this is calculated automatically.}
 }
 \value{
 Plot of gene of interest after registration.

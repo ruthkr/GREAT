@@ -6,17 +6,17 @@
 \usage{
 make_heatmap(
   sample_dist_df,
-  ylabel,
-  y_axis_fontsize = 6,
+  title = NULL,
+  axis_fontsize = NULL,
   same_min_timepoint = TRUE
 )
 }
 \arguments{
 \item{sample_dist_df}{Input data frame contains sample distance between two different species.}
 
-\item{ylabel}{Label on Y axis.}
+\item{title}{Optional plot title.}
 
-\item{y_axis_fontsize}{Font size of Y axis label.}
+\item{axis_fontsize}{Font size of X and Y axes labels.}
 
 \item{same_min_timepoint}{If \code{TRUE}, the default, takes data with the same minimum timepoint.}
 }

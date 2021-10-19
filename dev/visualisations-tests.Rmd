@@ -1,0 +1,120 @@
+---
+title: "Untitled"
+output: none
+---
+
+```{r}
+registration_results$mean_df %>% 
+  dplyr::select(accession, timepoint) %>% 
+  group_by(accession, timepoint) %>% 
+  unique()
+```
+
+
+```{r}
+mean.dt.w <- reformat_for_distance_calculation(
+    dt = registration_results$mean_df,
+    sample_id_cols = c("accession", "timepoint"),
+    gene_col = "locus_name",
+    expression_col = "expression_value"
+  )
+
+mean.dt.w
+```
+
+# Analyse imputed df 
+
+```{r}
+imputed_mean_df <- registration_results$imputed_mean_df
+```
+
+```{r}
+imputed_mean_df
+```
+
+```{r}
+unique(imputed_mean_df$locus_name[imputed_mean_df$is_registered == TRUE])
+```
+
+```{r}
+D.mean <- calc_sample_distance(mean.dt.w, gene_col = "locus_name")
+
+D.mean 
+```
+
+
+```{r}
+make_heatmap(D.mean, "test")
+```
+
+
+```{r}
+imputed.mean.dt.w <- reformat_for_distance_calculation(
+  imputed_mean_df,
+  sample_id_cols = c("accession", "shifted_time"),
+  gene_col = "locus_name",
+  expression_col = "expression_value"
+)
+
+imputed.mean.dt.w 
+
+microbenchmark::microbenchmark(
+ a = imputed.mean.dt.w[, colSums(is.na(imputed.mean.dt.w)) < nrow(imputed.mean.dt.w),with = FALSE],
+ b = imputed.mean.dt.w[, colSums(is.na(imputed.mean.dt.w)) != nrow(imputed.mean.dt.w), with = FALSE]
+)
+
+set.seed <- 103
+df <- data.frame( id = 1:10 , nas = rep( NA , 10 ) , vals = sample( c( 1:3 , NA ) , 10 , repl = TRUE ) )
+df
+df[ , ! apply( df , 2 , function(x) all(is.na(x)) ) ]
+df %>% class()
+
+
+
+as.data.frame(imputed.mean.dt.w)[ , ! apply(imputed.mean.dt.w, 2 , function(x) all(is.na(x)) ) ]
+```
+
+```{r}
+# distance between samples, only using genes which are found best when ARE registered
+registered.genes <- unique(imputed_mean_df$locus_name[imputed_mean_df$is_registered == TRUE])
+# mean.dt.sc.w.registered <- mean.dt.sc.w[mean.dt.sc.w$locus_name %in% registered.genes, ]
+
+# after registration, but only for registered genes
+imputed.mean.dt.w.registered <- imputed.mean.dt.w[imputed.mean.dt.w$locus_name %in% registered.genes, ] %>% 
+  dplyr::select(-c("Col0-33", "Col0-34", "Col0-35"))
+```
+
+
+```{r}
+D.registered.registered.genes <- calc_sample_distance(imputed.mean.dt.w.registered, gene_col = "locus_name", accession_data_ref = "Ro18") 
+
+make_heatmap(D.registered.registered.genes, "test")
+
+D.registered.registered.genes
+```
+
+```{r}
+test <- D.registered.registered.genes %>% 
+  dplyr::filter(stringr::str_extract(y_sample, "^.*?(?=-)") != stringr::str_extract(x_sample, "^.*?(?=-)")) %>% 
+  dplyr::filter(stringr::str_extract(y_sample, "^.*?(?=-)") == "Ro18")
+make_heatmap(test, "test")
+```
+```{r}
+D.registered.registered.genes %>% 
+  make_heatmap("test") %>% 
+  class()
+```
+
+
+```{r}
+sample_distance_results$D.registered %>%
+  make_heatmap(ylabel = "") +
+  coord_fixed() +
+  ggplot2::theme(
+      legend.margin = ggplot2::margin(0, 0, 0, 0),
+      legend.box.margin = ggplot2::margin(0, 0, -10, -10),
+      legend.title = ggplot2::element_text(size = 10),
+      legend.key.height = ggplot2::unit(5, "pt"),
+    )
+```
+

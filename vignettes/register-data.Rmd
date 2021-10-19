@@ -1,0 +1,50 @@
+---
+title: "Register data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{register-data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This is a basic example which shows you how to register (align) gene expression profiles over time:
+
+```{r example, message=FALSE}
+# Load the package
+devtools::load_all()
+library(dplyr)
+```
+
+```{r register-data, message=FALSE, warning=FALSE}
+# Define the dataframe from the sample data
+# Gene expression data with replicates
+all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "GREAT") %>%
+  utils::read.csv()
+
+# Mean gene expression 
+mean_df <- system.file("extdata/brapa_arabidopsis_mean.csv", package = "GREAT") %>%
+  utils::read.csv()
+
+# Running the registration
+registration_results <- scale_and_register_data(
+    mean_df = mean_df,
+    all_data_df = all_data_df,
+    stretches = c(2, 1.5, 1),
+    shift_extreme = 4,
+    num_shifts = 27,
+    min_num_overlapping_points = 4,
+    initial_rescale = FALSE,
+    do_rescale = TRUE,
+    accession_data_to_transform = "Col0",
+    accession_data_ref = "Ro18",
+    data_to_transform_time_added = 11,
+    data_ref_time_added = 11
+  )
+```

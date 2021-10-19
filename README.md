@@ -8,7 +8,8 @@
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Codecov test
 coverage](https://codecov.io/gh/ruthkr/GREAT/branch/master/graph/badge.svg?token=L6TNLEPLLO)](https://codecov.io/gh/ruthkr/GREAT)
-<!-- [![](https://img.shields.io/github/last-commit/federicomarini/GeneTonic.svg)](https://github.com/federicomarini/GeneTonic/commits/master) -->
+[![GitHub last
+commit](https://img.shields.io/github/last-commit/ruthkr/GREAT)](https://github.com/ruthkr/GREAT/commits/master)
 <!-- badges: end -->
 
 ## Overview
@@ -87,7 +88,7 @@ plot_registered_gene_of_interest(registration_results[["imputed_mean_df"]], ncol
 <img src="man/figures/README-plot-results-1.png" width="100%" />
 
 More examples are available on functions documentations and vignettes,
-please refer to the documentation.
+please refer to the [documentation](https://ruthkr.github.io/GREAT/).
 
 ## Reference
 

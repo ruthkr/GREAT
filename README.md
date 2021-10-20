@@ -8,6 +8,7 @@
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Codecov test
 coverage](https://codecov.io/gh/ruthkr/GREAT/branch/master/graph/badge.svg?token=L6TNLEPLLO)](https://codecov.io/gh/ruthkr/GREAT)
+[![pkgdown](https://github.com/ruthkr/GREAT/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/ruthkr/GREAT/actions/workflows/pkgdown.yaml)
 [![GitHub last
 commit](https://img.shields.io/github/last-commit/ruthkr/GREAT)](https://github.com/ruthkr/GREAT/commits/master)
 <!-- badges: end -->

@@ -61,6 +61,14 @@ test_that("scale_and_register_data works", {
 
   expect_equal(class(gg_distance)[[1]], "gg")
   expect_equal(class(gg_distance)[[2]], "ggplot")
+
+  # Check summary
+  summary <- summary_model_comparison(registration_results$model_comparison_dt)
+
+  expect_equal(length(summary), 3)
+  expect_equal(class(summary$summary), "data.frame")
+  expect_equal(class(summary$registered_genes), "character")
+  expect_equal(class(summary$non_registered_genes), "character")
 })
 
 

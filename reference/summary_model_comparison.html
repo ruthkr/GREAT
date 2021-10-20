@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get the best result — get_best_result • GREAT</title>
+<title>Summarise registration results — summary_model_comparison • GREAT</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Get the best result — get_best_result" />
-<meta property="og:description" content="get_best_result is a function to get best result obtained from score calculated from applied shifts and stretch factors." />
+<meta property="og:title" content="Summarise registration results — summary_model_comparison" />
+<meta property="og:description" content="Summarise registration results" />
 <meta property="og:image" content="https://ruthkr.github.io/GREAT/logo.png" />
 
 
@@ -132,29 +132,29 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get the best result</h1>
+    <h1>Summarise registration results</h1>
     
-    <div class="hidden name"><code>get_best_result.Rd</code></div>
+    <div class="hidden name"><code>summary_model_comparison.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>get_best_result</code> is a function to get best result obtained from score calculated from applied shifts and stretch factors.</p>
+    <p>Summarise registration results</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_best_result</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>summary_model_comparison</span><span class='op'>(</span><span class='va'>model_comparison</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>df</th>
-      <td><p>Input data frame containing value of applied shifts, stretches, and calculated score.</p></td>
+      <th>model_comparison</th>
+      <td><p>Input data frame, element <code>model_comparison</code> of result list of <code><a href='scale_and_register_data.html'>scale_and_register_data()</a></code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Original data frame input with additional column indicating whether a pair of stretch and shift gives the best score.</p>
+    <p>List containing summary table, registered gene accessions, and non-registered gene accessions.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get the best result — get_best_result • GREAT</title>
+<title>Visualise distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration — plot_heatmap • GREAT</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Get the best result — get_best_result" />
-<meta property="og:description" content="get_best_result is a function to get best result obtained from score calculated from applied shifts and stretch factors." />
+<meta property="og:title" content="Visualise distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration — plot_heatmap" />
+<meta property="og:description" content="Visualise distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration" />
 <meta property="og:image" content="https://ruthkr.github.io/GREAT/logo.png" />
 
 
@@ -132,29 +132,46 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get the best result</h1>
+    <h1>Visualise distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration</h1>
     
-    <div class="hidden name"><code>get_best_result.Rd</code></div>
+    <div class="hidden name"><code>plot_heatmap.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>get_best_result</code> is a function to get best result obtained from score calculated from applied shifts and stretch factors.</p>
+    <p>Visualise distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_best_result</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>plot_heatmap</span><span class='op'>(</span>
+  <span class='va'>sample_dist_df</span>,
+  title <span class='op'>=</span> <span class='cn'>NULL</span>,
+  axis_fontsize <span class='op'>=</span> <span class='cn'>NULL</span>,
+  same_min_timepoint <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>df</th>
-      <td><p>Input data frame containing value of applied shifts, stretches, and calculated score.</p></td>
+      <th>sample_dist_df</th>
+      <td><p>Input data frame contains sample distance between two different species.</p></td>
+    </tr>
+    <tr>
+      <th>title</th>
+      <td><p>Optional plot title.</p></td>
+    </tr>
+    <tr>
+      <th>axis_fontsize</th>
+      <td><p>Font size of X and Y axes labels.</p></td>
+    </tr>
+    <tr>
+      <th>same_min_timepoint</th>
+      <td><p>If <code>TRUE</code>, the default, takes data with the same minimum timepoint.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Original data frame input with additional column indicating whether a pair of stretch and shift gives the best score.</p>
+    <p>Distance heatmap of gene expression profiles over time between two different species.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

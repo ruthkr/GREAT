@@ -5,21 +5,21 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>What the Package Does (One Line, Title Case) • GREAT</title>
+<title>Gene Registration from Expression and Time-courses • GREAT</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="What the Package Does (One Line, Title Case)">
+<script src="pkgdown.js"></script><meta property="og:title" content="Gene Registration from Expression and Time-courses">
 <meta property="og:description" content="What the package does (one paragraph).">
-<meta property="og:image" content="/logo.png">
+<meta property="og:image" content="https://ruthkr.github.io/GREAT/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -119,8 +119,7 @@ install.packages("GREAT")
 <p>This is a basic example which shows you how to register (align) gene expression profiles over time:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Load the package</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">GREAT</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Define the dataframe from the sample data</span>
 <span class="co"># Gene expression data with replicates</span>
@@ -145,7 +144,47 @@ install.packages("GREAT")
     accession_data_ref <span class="op">=</span> <span class="st">"Ro18"</span>,
     data_to_transform_time_added <span class="op">=</span> <span class="fl">11</span>,
     data_ref_time_added <span class="op">=</span> <span class="fl">11</span>
-  <span class="op">)</span></code></pre></div>
+  <span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Information before registration ─────────────────────────────────────────────</span>
+<span class="co">#&gt; ℹ Max value of expression_value of all_data_df: 262.28</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Analysing models for all stretch and shift factor ───────────────────────────</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Analysing models for stretch factor = 2 ──</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [1.9s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [51ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [53ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs different expression comparison AIC &amp; BIC (10/10) [180ms]</span>
+<span class="co">#&gt; ✓ Finished analysing models for stretch factor = 2</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Analysing models for stretch factor = 1.5 ──</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [1.9s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [54ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [52ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs different expression comparison AIC &amp; BIC (10/10) [105ms]</span>
+<span class="co">#&gt; ✓ Finished analysing models for stretch factor = 1.5</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Analysing models for stretch factor = 1 ──</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [1.9s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [57ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [56ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs different expression comparison AIC &amp; BIC (10/10) [118ms]</span>
+<span class="co">#&gt; ✓ Finished analysing models for stretch factor = 1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Model comparison results ────────────────────────────────────────────────────</span>
+<span class="co">#&gt; ℹ AIC finds registration better than separate for: 7/10</span>
+<span class="co">#&gt; ℹ BIC finds registration better than separate for: 10/10</span>
+<span class="co">#&gt; ℹ AIC &amp; BIC finds registration better than separate for: 7/10</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Applying the best-shifts and stretches to gene expression ───────────────────</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [58ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [83ms]</span>
+<span class="co">#&gt; ℹ Max value of expression_value: 10.38</span>
+<span class="co">#&gt; ✓ Imputing transformed expression values (10/10) [145ms]</span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Plot registration result</span>
 <span class="fu"><a href="reference/plot_registered_gene_of_interest.html">plot_registered_gene_of_interest</a></span><span class="op">(</span><span class="va">registration_results</span><span class="op">[[</span><span class="st">"imputed_mean_df"</span><span class="op">]</span><span class="op">]</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
@@ -155,7 +194,7 @@ install.packages("GREAT")
 <div id="reference" class="section level2">
 <h2 class="hasAnchor">
 <a href="#reference" class="anchor"></a>Reference</h2>
-<p><a href="https://www.cambridge.org/core/journals/quantitative-plant-biology/article/comparative-transcriptomics-reveals-desynchronisation-of-gene-expression-during-the-floral-transition-between-arabidopsis-and-brassica-rapa-cultivars/811BFDFA14F4BCC9C7F0ECC7CE103BB6">Calderwood, A., Hepworth, J., Woodhouse, . . . Morris, R. (2021). Comparative transcriptomics reveals desynchronisation of gene expression during the floral transition between Arabidopsis and Brassica rapa cultivars. Quantitative Plant Biology, 2, E4. doi:10.1017/qpb.2021.6</a></p>
+<p>Calderwood, A., Hepworth, J., Woodhouse, … Morris, R. (2021). Comparative transcriptomics reveals desynchronisation of gene expression during the floral transition between Arabidopsis and Brassica rapa cultivars. <em>Quantitative Plant Biology, 2</em>, E4. <a href="https://www.cambridge.org/core/journals/quantitative-plant-biology/article/comparative-transcriptomics-reveals-desynchronisation-of-gene-expression-during-the-floral-transition-between-arabidopsis-and-brassica-rapa-cultivars/811BFDFA14F4BCC9C7F0ECC7CE103BB6">doi:10.1017/qpb.2021.6</a></p>
 </div>
 </div>
   </div>
@@ -170,7 +209,8 @@ install.packages("GREAT")
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Ruth Kristianingsih <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-1873-6203" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>
+<a href="https://ruthkr.com">Ruth Kristianingsih</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-1873-6203" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
@@ -187,7 +227,7 @@ install.packages("GREAT")
 
 
       <footer><div class="copyright">
-  <p>Developed by Ruth Kristianingsih.</p>
+  <p>Developed by <a href="https://ruthkr.com">Ruth Kristianingsih</a>.</p>
 </div>
 
 <div class="pkgdown">

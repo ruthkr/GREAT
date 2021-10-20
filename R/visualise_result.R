@@ -6,6 +6,7 @@
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
 #'
 #' @return Plot of gene of interest after registration.
+#' @importFrom rlang .data
 #' @export
 plot_registered_gene_of_interest <- function(df, gene_accession = "all", title = NULL, ncol = NULL) {
   # Make sure that the accession is in character format
@@ -14,21 +15,21 @@ plot_registered_gene_of_interest <- function(df, gene_accession = "all", title =
   # Filter gene using given gene of interests
   if (gene_accession != "all") {
     df <- df %>%
-      dplyr::filter(accession %in% gene_accession)
+      dplyr::filter(.data$accession %in% gene_accession)
   }
 
   # Plot
   gg_registered <- ggplot2::ggplot(df) +
     ggplot2::aes(
-      x = shifted_time,
-      y = expression_value,
-      color = accession,
-      fill = accession,
+      x = .data$shifted_time,
+      y = .data$expression_value,
+      color = .data$accession,
+      fill = .data$accession,
       # TODO: group = interaction(locus_name, bra_gene)
     ) +
     ggplot2::geom_point(size = 0.4) +
     ggplot2::geom_line() +
-    ggplot2::facet_wrap(~locus_name, scales = "free", ncol = ncol) +
+    ggplot2::facet_wrap(~.data$locus_name, scales = "free", ncol = ncol) +
     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
     ggplot2::theme_bw() +
     ggplot2::theme(
@@ -67,18 +68,19 @@ plot_registered_gene_of_interest <- function(df, gene_accession = "all", title =
 #' @param same_min_timepoint If \code{TRUE}, the default, takes data with the same minimum timepoint.
 #'
 #' @return Distance heatmap of gene expression profiles over time between two different species.
+#' @importFrom rlang .data
 #' @export
 plot_heatmap <- function(sample_dist_df, title = NULL, axis_fontsize = NULL, same_min_timepoint = TRUE) {
   # Take data with the same minimum timepoint
   if (same_min_timepoint) {
     sample_dist_df <- sample_dist_df %>%
       dplyr::mutate(
-        timepoint_x = stringr::str_extract(x_sample, "(?<=-)\\d+") %>%
-          as.numeric(),
-        timepoint_y = stringr::str_extract(y_sample, "(?<=-)\\d+") %>%
-          as.numeric()
+        timepoint_x = as.numeric(stringr::str_extract(.data$x_sample, "(?<=-)\\d+")),
+        timepoint_y = as.numeric(stringr::str_extract(.data$y_sample, "(?<=-)\\d+"))
       ) %>%
-      dplyr::filter(timepoint_x >= min(timepoint_y))
+      dplyr::filter(
+        .data$timepoint_x >= min(.data$timepoint_y)
+      )
   }
 
   # Change class of x_sample and y_sample as factor
@@ -87,9 +89,9 @@ plot_heatmap <- function(sample_dist_df, title = NULL, axis_fontsize = NULL, sam
 
   p <- ggplot2::ggplot(sample_dist_df) +
     ggplot2::aes(
-      x = x_sample,
-      y = y_sample,
-      fill = log(distance)
+      x = .data$x_sample,
+      y = .data$y_sample,
+      fill = log(.data$distance)
     ) +
     ggplot2::geom_tile() +
     ggplot2::theme_bw() +

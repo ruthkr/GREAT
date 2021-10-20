@@ -68,7 +68,7 @@ plot_registered_gene_of_interest <- function(df, gene_accession = "all", title =
 #'
 #' @return Distance heatmap of gene expression profiles over time between two different species.
 #' @export
-make_heatmap <- function(sample_dist_df, title = NULL, axis_fontsize = NULL, same_min_timepoint = TRUE) {
+plot_heatmap <- function(sample_dist_df, title = NULL, axis_fontsize = NULL, same_min_timepoint = TRUE) {
   # Take data with the same minimum timepoint
   if (same_min_timepoint) {
     sample_dist_df <- sample_dist_df %>%

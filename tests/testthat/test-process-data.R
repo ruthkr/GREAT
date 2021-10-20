@@ -57,7 +57,7 @@ test_that("scale_and_register_data works", {
   expect_equal(class(gg_registered)[[2]], "ggplot")
 
   gg_distance <- sample_distance_results$D.registered %>%
-    make_heatmap()
+    plot_heatmap()
 
   expect_equal(class(gg_distance)[[1]], "gg")
   expect_equal(class(gg_distance)[[2]], "ggplot")

@@ -49,8 +49,7 @@ expression profiles over time:
 
 ``` r
 # Load the package
-devtools::load_all()
-library(dplyr)
+library(GREAT)
 ```
 
 ``` r
@@ -78,6 +77,46 @@ registration_results <- scale_and_register_data(
     data_to_transform_time_added = 11,
     data_ref_time_added = 11
   )
+#> 
+#> ── Information before registration ─────────────────────────────────────────────
+#> ℹ Max value of expression_value of all_data_df: 262.28
+#> 
+#> ── Analysing models for all stretch and shift factor ───────────────────────────
+#> 
+#> ── Analysing models for stretch factor = 2 ──
+#> 
+#> ✓ Calculating score for all shifts (10/10) [1.9s]
+#> ✓ Normalising expression by mean and sd of compared values (10/10) [51ms]
+#> ✓ Applying best shift (10/10) [53ms]
+#> ✓ Calculating registration vs different expression comparison AIC & BIC (10/10) [180ms]
+#> ✓ Finished analysing models for stretch factor = 2
+#> 
+#> ── Analysing models for stretch factor = 1.5 ──
+#> 
+#> ✓ Calculating score for all shifts (10/10) [1.9s]
+#> ✓ Normalising expression by mean and sd of compared values (10/10) [54ms]
+#> ✓ Applying best shift (10/10) [52ms]
+#> ✓ Calculating registration vs different expression comparison AIC & BIC (10/10) [105ms]
+#> ✓ Finished analysing models for stretch factor = 1.5
+#> 
+#> ── Analysing models for stretch factor = 1 ──
+#> 
+#> ✓ Calculating score for all shifts (10/10) [1.9s]
+#> ✓ Normalising expression by mean and sd of compared values (10/10) [57ms]
+#> ✓ Applying best shift (10/10) [56ms]
+#> ✓ Calculating registration vs different expression comparison AIC & BIC (10/10) [118ms]
+#> ✓ Finished analysing models for stretch factor = 1
+#> 
+#> ── Model comparison results ────────────────────────────────────────────────────
+#> ℹ AIC finds registration better than separate for: 7/10
+#> ℹ BIC finds registration better than separate for: 10/10
+#> ℹ AIC & BIC finds registration better than separate for: 7/10
+#> 
+#> ── Applying the best-shifts and stretches to gene expression ───────────────────
+#> ✓ Normalising expression by mean and sd of compared values (10/10) [58ms]
+#> ✓ Applying best shift (10/10) [83ms]
+#> ℹ Max value of expression_value: 10.38
+#> ✓ Imputing transformed expression values (10/10) [145ms]
 ```
 
 ``` r
@@ -92,8 +131,8 @@ please refer to the [documentation](https://ruthkr.github.io/GREAT/).
 
 ## Reference
 
-[Calderwood, A., Hepworth, J., Woodhouse, . . . Morris, R. (2021).
+Calderwood, A., Hepworth, J., Woodhouse, … Morris, R. (2021).
 Comparative transcriptomics reveals desynchronisation of gene expression
 during the floral transition between Arabidopsis and Brassica rapa
-cultivars. Quantitative Plant Biology, 2, E4.
-doi:10.1017/qpb.2021.6](https://www.cambridge.org/core/journals/quantitative-plant-biology/article/comparative-transcriptomics-reveals-desynchronisation-of-gene-expression-during-the-floral-transition-between-arabidopsis-and-brassica-rapa-cultivars/811BFDFA14F4BCC9C7F0ECC7CE103BB6)
+cultivars. *Quantitative Plant Biology, 2*, E4.
+[doi:10.1017/qpb.2021.6](https://www.cambridge.org/core/journals/quantitative-plant-biology/article/comparative-transcriptomics-reveals-desynchronisation-of-gene-expression-during-the-floral-transition-between-arabidopsis-and-brassica-rapa-cultivars/811BFDFA14F4BCC9C7F0ECC7CE103BB6)

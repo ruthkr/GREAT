@@ -161,22 +161,26 @@ reformat_for_distance_calculation <- function(dt, sample_id_cols, gene_col, expr
 calc_sample_distance <- function(df, gene_col, compare_ref_vs_transform = TRUE, accession_data_ref) {
   data.cols <- names(df)[names(df) != eval(gene_col)]
 
-  # TODO: predefine size of vectors using numeric(length = something)
-  i.cols <- c()
-  j.cols <- c()
-  ds <- c()
+  # Allocate size for results
+  size <- length(data.cols)
+  i.cols <- numeric(length = size * (size - 1))
+  j.cols <- numeric(length = size * (size - 1))
+  ds <- numeric(length = size * (size - 1))
+  count <- 1
 
-  for (i in 1:(length(data.cols) - 1)) {
+  for (i in 1:(size - 1)) {
     i.col <- data.cols[i]
-    for (j in (i + 1):length(data.cols)) {
+    for (j in (i + 1):size) {
       j.col <- data.cols[j]
 
       curr.dt <- subset(df, select = c(i.col, j.col))
-      d <- calculate_pairwise_sample_distance_main(curr.dt)
+      dist <- calculate_pairwise_sample_distance_main(curr.dt)
 
-      i.cols <- c(i.cols, i.col, j.col) # distance metric is symmetrical
-      j.cols <- c(j.cols, j.col, i.col)
-      ds <- c(ds, d, d)
+      # Distance metric is symmetrical
+      i.cols[2 * count - 1] <- j.cols[2 * count] <- i.col
+      j.cols[2 * count - 1] <- i.cols[2 * count] <- j.col
+      ds[c(2 * count - 1, 2 * count)] <- dist
+      count <- count + 1
     }
   }
 

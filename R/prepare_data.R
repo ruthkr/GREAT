@@ -1,8 +1,8 @@
 #' Simplify reference data and data to transform into one dataframe
 #'
-#' @param filepath_data_ref File name in working directory, path to file of reference data.
-#' @param filepath_data_to_transform File name in working directory, path to file of data to transform.
-#' @param filepath_id_table File name in working directory, path to file of ID table connecting both reference data and data.
+#' @param data_ref File name in working directory, path to file of reference data.
+#' @param data_to_transform File name in working directory, path to file of data to transform.
+#' @param id_table File name in working directory, path to file of ID table connecting both reference data and data.
 #' @param fix_id_table_shared_colname Column names shared by both reference data and ID table.
 #' @param fix_and_to_transform_data_shared_colname Column names shared by both reference data and data to transform.
 #' @param colnames_id_table ID table column names.
@@ -16,9 +16,10 @@
 #' @param exp_threshold Minimum expression threshold from which expression below the threshold will be removed.
 #'
 #' @return Combined data frame for both reference data and data to transform: (1) only containing mean of the expression, and (2) still contains replicate data.
-get_mean_and_all_exp_data <- function(filepath_data_ref,
-                                      filepath_data_to_transform,
-                                      filepath_id_table,
+#' @export
+get_mean_and_all_exp_data <- function(data_ref,
+                                      data_to_transform,
+                                      id_table,
                                       fix_id_table_shared_colname,
                                       fix_and_to_transform_data_shared_colname,
                                       colnames_id_table,
@@ -30,12 +31,11 @@ get_mean_and_all_exp_data <- function(filepath_data_ref,
                                       ids_data_ref_colnames = c("CDS.model", "locus_name"),
                                       max_expression_value_wanted = 5,
                                       exp_threshold = 0.5) {
-
   # Load the expression data for all the curr_GoIs gene models, for data to transform and for reference data
   exp <- get_expression_of_interest(
-    filepath_data_ref,
-    filepath_data_to_transform,
-    filepath_id_table,
+    data_ref,
+    data_to_transform,
+    id_table,
     fix_id_table_shared_colname,
     fix_and_to_transform_data_shared_colname,
     colnames_id_table,
@@ -68,8 +68,8 @@ get_mean_and_all_exp_data <- function(filepath_data_ref,
   mean_df <- mean_df[mean_df$locus_name %in% keep_final_genes, ]
 
   # Printing the keep genes
-  message(length(keep_data_ref_genes), " brassica genes considered in the comparison")
-  message(length(keep_final_genes), " all genes considered in the comparison")
+  cli::cli_alert_info("{length(keep_data_ref_genes)} brassica genes considered in the comparison")
+  cli::cli_alert_info("{length(keep_final_genes)} all genes considered in the comparison")
 
   # Get mean_df, including column "group"
   exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
@@ -84,9 +84,9 @@ get_mean_and_all_exp_data <- function(filepath_data_ref,
 
 #' Get expression of interest
 #' @noRd
-get_expression_of_interest <- function(filepath_data_ref,
-                                       filepath_data_to_transform,
-                                       filepath_id_table,
+get_expression_of_interest <- function(data_ref,
+                                       data_to_transform,
+                                       id_table,
                                        fix_id_table_shared_colname = "CDS.model",
                                        fix_and_to_transform_data_shared_colname = "locus_name",
                                        colnames_id_table = c("CDS.model", "symbol", "locus_name"),
@@ -98,9 +98,9 @@ get_expression_of_interest <- function(filepath_data_ref,
                                        ids_data_ref_colnames = c("CDS.model", "locus_name")) {
   # Load of the single df data
   master_exp <- get_all_data(
-    filepath_data_ref,
-    filepath_data_to_transform,
-    filepath_id_table,
+    data_ref,
+    data_to_transform,
+    id_table,
     fix_id_table_shared_colname,
     fix_and_to_transform_data_shared_colname,
     colnames_id_table,
@@ -174,23 +174,13 @@ get_expression_of_interest <- function(filepath_data_ref,
 
 #' Get all data
 #' @noRd
-get_all_data <- function(filepath_data_ref,
-                         filepath_data_to_transform,
-                         filepath_id_table,
+get_all_data <- function(data_ref,
+                         data_to_transform,
+                         id_table,
                          fix_id_table_shared_colname = "CDS.model",
                          fix_and_to_transform_data_shared_colname = "locus_name",
                          colnames_id_table = c("CDS.model", "symbol", "locus_name"),
                          colnames_wanted = NULL) {
-  # Read RDS file
-  data_ref <- readRDS(filepath_data_ref)
-  data_to_transform <- readRDS(filepath_data_to_transform)
-
-  if (tools::file_ext(filepath_id_table) == "csv") {
-    id_table <- data.table::fread(filepath_id_table)
-  } else {
-    id_table <- readRDS(filepath_id_table)
-  }
-
   # Take unique id_table
   id_table_unique <- unique(id_table[, ..colnames_id_table]) %>%
     dplyr::mutate_all(.funs = toupper)

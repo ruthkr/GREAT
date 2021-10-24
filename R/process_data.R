@@ -59,9 +59,7 @@ scale_and_register_data <- function(mean_df,
   cli::cli_h1("Information before registration")
   cli::cli_alert_info("Max value of expression_value of all_data_df: {cli::col_cyan(round(max(all_data_df$expression_value), 2))}")
 
-  # Calculate the best registration. Returns all tried registrations, best stretch and shift combo,
-  # and AIC/BIC stats for comparison of best registration model to separate models for expression of
-  # each gene in Ro18 and Col0
+  # Calculate the best registration. Returns all tried registrations, best stretch and shift combo,and AIC/BIC stats for comparison of best registration model to separate models for expression ofeach gene in Ro18 and Col0
   cli::cli_h1("Analysing models for all stretch and shift factor")
 
   L <- get_best_stretch_and_shift(
@@ -111,8 +109,7 @@ scale_and_register_data <- function(mean_df,
   cli::cli_alert_info("Max value of expression_value: {cli::col_cyan(round(max(shifted_mean_df$expression_value), 2))}")
 
   # Impute transformed values at times == to the observed reference data points for each shifted transformed gene so can compare using heat maps.
-  # transformed curves are the ones that been shifted around. Linear impute values for these
-  # curves so that reference data samples can be compared to an transformed data point.
+  # Transformed curves are the ones that been shifted around. Linear impute values for these curves so that reference data samples can be compared to an transformed data point.
   imputed_mean_df <- impute_transformed_exp_values(
     shifted_mean_df,
     accession_data_to_transform,
@@ -128,10 +125,9 @@ scale_and_register_data <- function(mean_df,
   )
 }
 
-
 #' Scaling all un-averaged data
 #'
-#' `scale_all_rep_data` is a function to scale
+#' `scale_all_rep_data` is a function to apply the same scaling which done to the mean expression data to all the reps. (subtract mean, and divide by sd), using the values for the mean data as this is what was used to find the best shift.
 #'
 #' @param mean_df Input data containing mean of each time point.
 #' @param all_rep_data Input all data (without taking mean).
@@ -141,13 +137,7 @@ scale_and_register_data <- function(mean_df,
 scale_all_rep_data <- function(mean_df,
                                all_rep_data,
                                scale_func) {
-
-  # apply the same scaling which done to the mean expression data
-  # to all the reps.
-  # (subtract mean, and divide by sd), using the values for the mean data
-  # as this is what was used to find the best shift.
-
-  # Calculate the summary stats to use for the rescaling
+  # Calculate the summary statistics to use for the rescaling
   gene_expression_stats <- unique(
     mean_df[, .(
       mean_val = mean(expression_value),
@@ -156,7 +146,11 @@ scale_all_rep_data <- function(mean_df,
   )
 
   # Combine all_rep_data with gene_expression_stats
-  all_rep_data <- merge(all_rep_data, gene_expression_stats, by = c("locus_name", "accession"))
+  all_rep_data <- merge(
+    all_rep_data,
+    gene_expression_stats,
+    by = c("locus_name", "accession")
+  )
 
   # Adjust scaling calculation depends on the scale function choice
   if (scale_func == "scale") {
@@ -226,8 +220,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
     stretch <- stretches[i]
     cli::cli_h2("Analysing models for stretch factor = {stretch}")
 
-    # Calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points
-    # if do_rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
+    # Calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points if do_rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
     all_shifts <- calculate_all_best_shifts(
       num_shifts,
       mean_df = to_shift_df,
@@ -250,8 +243,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
       stop("get_best_stretch_and_shift(): got non-unique best shifts in best_shifts")
     }
 
-    # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the
-    # gene's expression separately in data to transform and reference data
+    # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the gene's expression separately in data to transform and reference data
     model_comparison_dt <- calculate_all_model_comparison_stats(
       all_data_df,
       best_shifts,
@@ -262,7 +254,11 @@ get_best_stretch_and_shift <- function(to_shift_df,
     )
 
     # Add info on the stretch and shift applied
-    model_comparison_dt <- merge(model_comparison_dt, best_shifts[, c("gene", "stretch", "shift"), ], by = "gene")
+    model_comparison_dt <- merge(
+      model_comparison_dt,
+      best_shifts[, c("gene", "stretch", "shift"), ],
+      by = "gene"
+    )
 
     # Record the results for the current stretch factor
     all_all_shifts[[i]] <- all_shifts
@@ -271,12 +267,14 @@ get_best_stretch_and_shift <- function(to_shift_df,
     cli::cli_alert_success("Finished analysing models for stretch factor = {stretch}")
   }
 
-  all_shifts <- do.call("rbind", all_all_shifts) # all the combinations of shift, and stretch tried
-  all_best_shifts <- do.call("rbind", all_best_shifts) # the best shifts for each stretch
-  all_model_comparison_dt <- do.call("rbind", all_model_comparison_dt) # model comparison of best shift (for each stretch) to separate modeles
+  # all the combinations of shift, and stretch tried
+  all_shifts <- do.call("rbind", all_all_shifts)
+  # the best shifts for each stretch
+  all_best_shifts <- do.call("rbind", all_best_shifts)
+  # model comparison of best shift (for each stretch) to separate modeles
+  all_model_comparison_dt <- do.call("rbind", all_model_comparison_dt)
 
-  # Get the best registration applied (best stretch, and best shift) for each gene,
-  # picking by BIC alone will favour fewer overlapping (considered) data points.
+  # Get the best registration applied (best stretch, and best shift) for each gene, picking by BIC alone will favour fewer overlapping (considered) data points.
   # Pick best in order to maximise how much better register.BIC is than separate.BIC
   all_model_comparison_dt$delta.BIC <- all_model_comparison_dt$registered.BIC - all_model_comparison_dt$separate.BIC
 
@@ -293,9 +291,10 @@ get_best_stretch_and_shift <- function(to_shift_df,
   best_model_comparison.dt$delta.BIC <- NULL
 
   # Cut down best shifts to the best shift for the best stretch only
-  best_shifts <- merge(all_best_shifts,
-                       best_model_comparison.dt[, c("gene", "stretch", "shift")],
-                       by = c("gene", "stretch", "shift")
+  best_shifts <- merge(
+    all_best_shifts,
+    best_model_comparison.dt[, c("gene", "stretch", "shift")],
+    by = c("gene", "stretch", "shift")
   )
 
   # There should be only 1 best shift for each gene, stop if it is not the case
@@ -331,7 +330,7 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
   # Genes for which registration model is better than separate model
   gene_to_register <- model_comparison_dt$gene[model_comparison_dt$BIC_registered_is_better]
 
-  # Apply the registration transformation to these genes --------------------
+  # Apply the registration transformation to these genes
   if (length(gene_to_register > 0)) {
     register.dt <- to_shift_df[to_shift_df$locus_name %in% gene_to_register, ]
     registered_dt <- apply_best_shift(
@@ -384,7 +383,6 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
 impute_transformed_exp_values <- function(shifted_mean_df,
                                           accession_data_to_transform,
                                           accession_data_ref) {
-
   # The imputed transformed data times going to estimate gene expression for
   imputed_timepoints <- round(seq(min(shifted_mean_df$shifted_time), max(shifted_mean_df$shifted_time)))
 
@@ -409,8 +407,7 @@ impute_transformed_exp_values <- function(shifted_mean_df,
       "is_registered" = unique(transformed_df$is_registered)[1]
     )
 
-    # For each reference data timepoint, interpolate the comparable transformed expression data
-    # by linear interpolation between the neighbouring two transformed expression values.
+    # For each reference data timepoint, interpolate the comparable transformed expression data by linear interpolation between the neighbouring two transformed expression values.
     # If not between two transformed expression values because shifted outside comparable range, set to NA.
     interp_transformed_df$expression_value <- sapply(
       imputed_timepoints,

@@ -35,7 +35,7 @@ get_compared_timepoints <- function(data,
     data_ref = data[data$accession == accession_data_ref, ]
   )
 
-  # use these to get all the brassica times which used
+  # Use these to get all the Brassica times which used
   data$is_compared[(data$accession == accession_data_ref & (data$shifted_time >= min_data_ref & data$shifted_time <= max_data_ref))] <- TRUE
 
   return(data)

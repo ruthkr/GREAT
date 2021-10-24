@@ -4,11 +4,12 @@
 #' @param gene_accession List of gene accessions, default is \code{all}.
 #' @param title Optional plot title.
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
+#' @param sync_timepoints Whether to syncrhonise maximum timpoints for each accession, by default \code{FALSE}.
 #'
 #' @return Plot of gene of interest after registration.
 #' @importFrom rlang .data
 #' @export
-plot_registered_gene_of_interest <- function(df, gene_accession = "all", title = NULL, ncol = NULL) {
+plot_registered_gene_of_interest <- function(df, gene_accession = "all", title = NULL, ncol = NULL, sync_timepoints = FALSE) {
   # Make sure that the accession is in character format
   df$accession <- as.character(df$accession)
 
@@ -29,7 +30,7 @@ plot_registered_gene_of_interest <- function(df, gene_accession = "all", title =
     ) +
     ggplot2::geom_point(size = 0.4) +
     ggplot2::geom_line() +
-    ggplot2::facet_wrap(~.data$locus_name, scales = "free", ncol = ncol) +
+    ggplot2::facet_wrap(~ .data$locus_name, scales = "free", ncol = ncol) +
     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
     ggplot2::theme_bw() +
     ggplot2::theme(

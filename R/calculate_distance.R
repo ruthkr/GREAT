@@ -15,8 +15,7 @@ calculate_between_sample_distance <- function(mean_df,
                                               gene_col = "locus_name",
                                               compare_ref_vs_transform = TRUE,
                                               accession_data_ref = "Ro18") {
-
-  ### convert all to wide format ready for distance calculation
+  # Convert all to wide format ready for distance calculation
   # mean_df
   mean.dt.w <- reformat_for_distance_calculation(
     dt = mean_df,
@@ -54,12 +53,11 @@ calculate_between_sample_distance <- function(mean_df,
   # after registration, but only for registered genes
   imputed.mean.dt.w.registered <- imputed.mean.dt.w[imputed.mean.dt.w$locus_name %in% registered.genes, ]
 
-  ### calculate distance between each sample in each of the wide format tables.
+  # Calculate distance between each sample in each of the wide format tables.
   # shifting genes results in NAs for some genes at some timepoints.
   # therefore different numbers of dimensions (genes) depending on the comparison.
   # therefore euclidean distance is not appropriate.
-  # Distance used is mean of [squared distance between each gene / absolute mean of expression
-  # of that gene in the sample]. Is calculated for each gene for which have data in both samples.
+  # Distance used is mean of [squared distance between each gene / absolute mean of expression of that gene in the sample]. Is calculated for each gene for which have data in both samples.
   # Mean of these values (divided by number of genes is calculated for) is reported.
   D.mean <- calc_sample_distance(
     mean.dt.w,
@@ -99,7 +97,7 @@ calculate_between_sample_distance <- function(mean_df,
     accession_data_ref = accession_data_ref
   )
 
-  # for use to make heatmaps with shared scales
+  # Titles for heatmaps with shared scales
   attr(D.mean, "title") <- "mean expression"
   attr(D.scaled, "title") <- "scaled mean expression (all genes)"
   attr(D.registered, "title") <- "registered & scaled mean expression (all genes)"
@@ -119,9 +117,7 @@ calculate_between_sample_distance <- function(mean_df,
   return(results_list)
 }
 
-
 reformat_for_distance_calculation <- function(dt, sample_id_cols, gene_col, expression_col) {
-
   # Concatenate sample.id columns to generate sample ids
   dt$sample.id <- dt[[sample_id_cols[1]]]
   if (length(sample_id_cols) > 1) {
@@ -194,7 +190,6 @@ calc_sample_distance <- function(df, gene_col, compare_ref_vs_transform = TRUE, 
 
   return(out_df)
 }
-
 
 #' Calculate pairwise sample distance
 #'

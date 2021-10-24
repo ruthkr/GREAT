@@ -6,11 +6,9 @@
 #'
 #' @return Original data frame input with additional column indicating whether a pair of stretch and shift gives the best score.
 get_best_result <- function(df) {
-
   # return TRUE/FALSE vector. TRUE for the smallest score
   # if tied for this, true for the one with the smallest stretch. (1x is smaller than 0.75x though)
   # if tied, then the one with the smallest shift
-
   is_best <- df$score == min(df$score)
 
   if (sum(is_best) == 1) {
@@ -35,7 +33,6 @@ get_best_result <- function(df) {
     }
   }
 }
-
 
 #' Wrapper of applying best shifts and compare the registered and unregistered models
 #'
@@ -70,7 +67,6 @@ calculate_all_model_comparison_stats <- function(all_data_df,
     data_to_transform_time_added,
     data_ref_time_added
   )
-
 
   genes <- unique(shifted_all_data_df$locus_name)
 
@@ -109,7 +105,6 @@ calculate_all_model_comparison_stats <- function(all_data_df,
   return(out)
 }
 
-
 #' Register all expression over time using optimal shift found
 #'
 #' `apply_best_shift` is a function to register all unregistered expression overtime using the best/optimal shifts found.
@@ -140,8 +135,6 @@ apply_best_shift <- function(data,
   )
 
   # Normalise the expression data (If was normalised when calculating the expression data, is recorder in the _compared_mean, and _compared_sd columns. If no normalisation was carried out, then these should have values of 0 and 1. This was done using get_best_shift()).
-
-
   if (!(all(unique(best_shifts$data_transform_compared_mean) == 0)) | !(all(unique(best_shifts$data_ref_compared_mean) == 0))) {
     processed_data <- apply_best_normalisation(
       data = processed_data,
@@ -167,7 +160,6 @@ apply_best_shift <- function(data,
 
   return(processed_data)
 }
-
 
 #' Apply stretch factor
 #'
@@ -207,7 +199,8 @@ apply_stretch <- function(data,
   data <- rbind(data_ref, data_to_transform)
 
   # Record the stretched times (before individual shifting applied)
-  data$stretched_time_delta <- data$delta_time # record the time (from start of timecourse) after stretching,
+  # record the time (from start of timecourse) after stretching
+  data$stretched_time_delta <- data$delta_time
   data$shifted_time <- data$delta_time
 
   # After stretching, add the time to the first datapoint back on
@@ -217,8 +210,6 @@ apply_stretch <- function(data,
 
   return(data)
 }
-
-
 
 #' Apply normalisation (after applying stretch)
 #'
@@ -274,8 +265,6 @@ apply_best_normalisation <- function(data,
   return(data)
 }
 
-
-
 #' Comparing registered to unregistered model
 #'
 #' `compare_registered_to_unregistered_model` is a function to compare the overlapping timepoints in reference data and data to transform after best registration and without registration. Same timepoints and stretched data were used for both models.
@@ -292,14 +281,12 @@ compare_registered_to_unregistered_model <- function(curr_sym,
                                                      accession_data_ref = "Ro18") {
   curr_data_df <- all_data_df[all_data_df$locus_name == curr_sym]
 
-
   # Flag the timepoints to be used in the modelling, only the ones which overlap!
   curr_data_df <- get_compared_timepoints(
     curr_data_df,
     accession_data_to_transform,
     accession_data_ref
   )
-
 
   # Cut down to the data for each model
   data_to_transform_spline <- curr_data_df[curr_data_df$is_compared == TRUE &
@@ -328,18 +315,8 @@ compare_registered_to_unregistered_model <- function(curr_sym,
 
   # Calculate the comparison.stats - - AIC, BIC, smaller is better!
   # 2*num.spline.params as fitting separate models for Ara * Col
-  # fix_inf <- function(x) {
-  #   if (is.infinite(x) & sign(x) == -1) {
-  #     x <- 0
-  #   }
-  #
-  #   return(x)
-  # }
-
   separate.AIC <- calc_AIC(separate_logLik, 2 * num.spline.params)
-  # %>% fix_inf()
   combined.AIC <- calc_AIC(combined_logLik, num.spline.params + num.registration.params)
-
   separate.BIC <- calc_BIC(separate_logLik, 2 * num.spline.params, num.obs)
   combined.BIC <- calc_BIC(combined_logLik, num.spline.params + num.registration.params, num.obs)
 

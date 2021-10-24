@@ -16,8 +16,6 @@ get_extreme_shifts_for_all <- function(mean_df,
                                        shift_extreme,
                                        accession_data_to_transform,
                                        accession_data_ref) {
-
-
   # This function is a wrapper for calc_extreme_shifts() to be able to move it out of the loop so don't calculate for every gene.
   # Cut dataframe to a single gene.
   curr_sym <- unique(mean_df$locus_name)[1]

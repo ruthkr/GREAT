@@ -24,7 +24,7 @@ get_mean_and_all_exp_data <- function(data_ref,
                                       fix_and_to_transform_data_shared_colname,
                                       colnames_id_table,
                                       colnames_wanted,
-                                      tissue_wanted,
+                                      tissue_wanted = NULL,
                                       curr_GoIs,
                                       sum_exp_data_ref = FALSE,
                                       accession_data_to_transform = "Col0",
@@ -91,7 +91,7 @@ get_expression_of_interest <- function(data_ref,
                                        fix_and_to_transform_data_shared_colname = "locus_name",
                                        colnames_id_table = c("CDS.model", "symbol", "locus_name"),
                                        colnames_wanted = NULL,
-                                       tissue_wanted,
+                                       tissue_wanted = NULL,
                                        curr_GoIs,
                                        sum_exp_data_ref = FALSE,
                                        accession_data_to_transform = "Col0",
@@ -111,8 +111,10 @@ get_expression_of_interest <- function(data_ref,
 
   # Cut down to common tissue if it is specified
   if (is.null(tissue_wanted)) {
+    cli::cli_alert_info("No tissue was specified, using all data")
     exp <- master_exp
   } else {
+    cli::cli_alert_info("Using data for tissue: {tissue_wanted}")
     exp <- master_exp[master_exp$tissue %in% tissue_wanted, ]
   }
 
@@ -189,7 +191,11 @@ get_all_data <- function(data_ref,
   # dplyr::filter(!is.na(locus_name), !locus_name %in% c("", "-"))
 
   # Add fix dataframe info to reg dataframe from
-  data_ref <- merge(data_ref, id_table_unique, by = fix_id_table_shared_colname)
+  data_ref <- merge(
+    data_ref,
+    id_table_unique,
+    by = fix_id_table_shared_colname
+  )
 
   # Create a column in data_to_transform
   # data_to_transform$locus_name <- data_to_transform$CDS.model

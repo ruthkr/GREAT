@@ -11,6 +11,8 @@ template:
 reference:
 - title: Prepare data
   contents:
+  - rename_columns
+  - get_mean_and_all_exp_data
 
 - title: Process data
   contents:

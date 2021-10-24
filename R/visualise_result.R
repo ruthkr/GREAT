@@ -19,6 +19,30 @@ plot_registered_gene_of_interest <- function(df, gene_accession = "all", title =
       dplyr::filter(.data$accession %in% gene_accession)
   }
 
+  # Synchronise maximum timepoints for each accession
+  # TODO: consider n additional timepoints
+  if (sync_timepoints) {
+    max_timepoints <- df %>%
+      dplyr::filter(
+        !is.na(shifted_time),
+        !is.na(expression_value)
+      ) %>%
+      dplyr::group_by(locus_name, accession) %>%
+      dplyr::summarise(
+        max_timepoint = max(shifted_time),
+        .groups = "drop"
+      ) %>%
+      dplyr::group_by(locus_name) %>%
+      dplyr::summarise(
+        max_timepoint = min(max_timepoint),
+        .groups = "drop"
+      )
+
+    df <- dplyr::left_join(df, max_timepoints, by = "locus_name") %>%
+      dplyr::filter(shifted_time <= max_timepoint) %>%
+      dplyr::select(-max_timepoint)
+  }
+
   # Plot
   gg_registered <- ggplot2::ggplot(df) +
     ggplot2::aes(

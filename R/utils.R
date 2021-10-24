@@ -70,3 +70,12 @@ interpolate_data_ref_comparison_expression <- function(data_to_transform_time,
 
   return(pred.expression)
 }
+
+#' Validate names
+#' @noRd
+match_names <- function(x, lookup) {
+  unmatched <- x[-grep(paste(lookup, collapse = "$|"), x)]
+  if (length(unmatched) > 0) {
+    stop("Valid names are ", paste(lookup, collapse = ", "))
+  }
+}

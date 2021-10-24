@@ -260,3 +260,30 @@ shorten_groups <- function(exp, accession_data_to_transform = "Col0") {
 
   return(exp)
 }
+
+#' Rename columns of original data
+#'
+#' Rename columns of data so it can be used in \code{get_mean_and_all_exp_data()}.
+#'
+#' @param data Data frame to be renamed.
+#' @param colnames List of column names to be renamed.
+#'
+#' @return Data frame with renamed columns.
+#' @export
+rename_columns <- function(data, colnames) {
+  # Validate list names
+  match_names(
+    names(colnames),
+    c("locus_name", "accession", "timepoint", "expression_value", "replicate", "tissue")
+  )
+
+  # Rename columns
+  data_copy <- data.table::copy(data)
+  data <- setnames(
+    data_copy,
+    old = unname(unlist(colnames)),
+    new = names(colnames)
+  )
+
+  return(data)
+}

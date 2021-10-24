@@ -167,14 +167,15 @@ scale_all_rep_data <- function(mean_df,
     stop("invalid scale option for scale_all_rep_data")
   }
 
-  out <- subset(all_rep_data,
-                select = c(
-                  "locus_name",
-                  "accession",
-                  "tissue",
-                  "timepoint",
-                  "scaled_norm_expression_value"
-                )
+  out <- subset(
+    all_rep_data,
+    select = c(
+      "locus_name",
+      "accession",
+      "tissue",
+      "timepoint",
+      "scaled_norm_expression_value"
+    )
   )
 
   names(out)[names(out) == "scaled_norm_expression_value"] <- "expression_value"
@@ -401,7 +402,7 @@ impute_transformed_exp_values <- function(shifted_mean_df,
     interp_transformed_df <- data.table::data.table(
       "locus_name" = curr_gene,
       "accession" = accession_data_to_transform,
-      "tissue" = "apex",
+      "tissue" = transformed_df$tissue[1],
       "timepoint" = NA,
       "stretched_time_delta" = NA,
       "shifted_time" = imputed_timepoints,
@@ -411,9 +412,10 @@ impute_transformed_exp_values <- function(shifted_mean_df,
     # For each reference data timepoint, interpolate the comparable transformed expression data
     # by linear interpolation between the neighbouring two transformed expression values.
     # If not between two transformed expression values because shifted outside comparable range, set to NA.
-    interp_transformed_df$expression_value <- sapply(imputed_timepoints,
-                                             interpolate_data_ref_comparison_expression,
-                                             data_ref_dt = transformed_df
+    interp_transformed_df$expression_value <- sapply(
+      imputed_timepoints,
+      interpolate_data_ref_comparison_expression,
+      data_ref_dt = transformed_df
     )
 
     out_list <- c(out_list, list(interp_transformed_df))

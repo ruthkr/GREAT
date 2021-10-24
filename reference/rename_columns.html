@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Scaling all un-averaged data — scale_all_rep_data • GREAT</title>
+<title>Rename columns of original data — rename_columns • GREAT</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Scaling all un-averaged data — scale_all_rep_data" />
-<meta property="og:description" content="scale_all_rep_data is a function to apply the same scaling which done to the mean expression data to all the reps. (subtract mean, and divide by sd), using the values for the mean data as this is what was used to find the best shift." />
+<meta property="og:title" content="Rename columns of original data — rename_columns" />
+<meta property="og:description" content="Rename columns of data so it can be used in get_mean_and_all_exp_data()." />
 <meta property="og:image" content="https://ruthkr.github.io/GREAT/logo.png" />
 
 
@@ -132,37 +132,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Scaling all un-averaged data</h1>
+    <h1>Rename columns of original data</h1>
     
-    <div class="hidden name"><code>scale_all_rep_data.Rd</code></div>
+    <div class="hidden name"><code>rename_columns.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>scale_all_rep_data</code> is a function to apply the same scaling which done to the mean expression data to all the reps. (subtract mean, and divide by sd), using the values for the mean data as this is what was used to find the best shift.</p>
+    <p>Rename columns of data so it can be used in <code><a href='get_mean_and_all_exp_data.html'>get_mean_and_all_exp_data()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>scale_all_rep_data</span><span class='op'>(</span><span class='va'>mean_df</span>, <span class='va'>all_rep_data</span>, <span class='va'>scale_func</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>rename_columns</span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>colnames</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>mean_df</th>
-      <td><p>Input data containing mean of each time point.</p></td>
+      <th>data</th>
+      <td><p>Data frame to be renamed.</p></td>
     </tr>
     <tr>
-      <th>all_rep_data</th>
-      <td><p>Input all data (without taking mean).</p></td>
-    </tr>
-    <tr>
-      <th>scale_func</th>
-      <td><p>Scaling method choice applied in all_rep_data. There are two options: (a) "scale" where all expression values are subtracted by mean value and divided by standard deviation and (b) "my_scale" where expression values are divided by mean values.</p></td>
+      <th>colnames</th>
+      <td><p>List of column names to be renamed.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Scaled expression data in all_rep_data.</p>
+    <p>Data frame with renamed columns.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

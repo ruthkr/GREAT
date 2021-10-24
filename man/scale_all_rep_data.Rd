@@ -17,5 +17,5 @@ scale_all_rep_data(mean_df, all_rep_data, scale_func)
 Scaled expression data in all_rep_data.
 }
 \description{
-\code{scale_all_rep_data} is a function to scale
+\code{scale_all_rep_data} is a function to apply the same scaling which done to the mean expression data to all the reps. (subtract mean, and divide by sd), using the values for the mean data as this is what was used to find the best shift.
 }

@@ -8,7 +8,8 @@ plot_registered_gene_of_interest(
   df,
   gene_accession = "all",
   title = NULL,
-  ncol = NULL
+  ncol = NULL,
+  sync_timepoints = FALSE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ plot_registered_gene_of_interest(
 \item{title}{Optional plot title.}
 
 \item{ncol}{Number of columns in the plot grid. By default this is calculated automatically.}
+
+\item{sync_timepoints}{Whether to syncrhonise maximum timpoints for each accession, by default \code{FALSE}.}
 }
 \value{
 Plot of gene of interest after registration.

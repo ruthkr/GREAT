@@ -5,14 +5,14 @@
 \title{Simplify reference data and data to transform into one dataframe}
 \usage{
 get_mean_and_all_exp_data(
-  filepath_data_ref,
-  filepath_data_to_transform,
-  filepath_id_table,
+  data_ref,
+  data_to_transform,
+  id_table,
   fix_id_table_shared_colname,
   fix_and_to_transform_data_shared_colname,
   colnames_id_table,
   colnames_wanted,
-  tissue_wanted,
+  tissue_wanted = NULL,
   curr_GoIs,
   sum_exp_data_ref = FALSE,
   accession_data_to_transform = "Col0",
@@ -22,11 +22,11 @@ get_mean_and_all_exp_data(
 )
 }
 \arguments{
-\item{filepath_data_ref}{File name in working directory, path to file of reference data.}
+\item{data_ref}{File name in working directory, path to file of reference data.}
 
-\item{filepath_data_to_transform}{File name in working directory, path to file of data to transform.}
+\item{data_to_transform}{File name in working directory, path to file of data to transform.}
 
-\item{filepath_id_table}{File name in working directory, path to file of ID table connecting both reference data and data.}
+\item{id_table}{File name in working directory, path to file of ID table connecting both reference data and data.}
 
 \item{fix_id_table_shared_colname}{Column names shared by both reference data and ID table.}
 

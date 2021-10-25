@@ -95,22 +95,266 @@
 
     
     
-<p>This is a basic example which shows you how to register (align) gene expression profiles over time:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Load the package</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">GREAT</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></code></pre></div>
+<div id="input-data-requirements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#input-data-requirements" class="anchor"></a>Input data requirements</h2>
+<p>There are two different input data frame required for <code>GREAT</code> to register your gene expression profiles, which are (a) <code>all_data_df</code>: a data frame contains gene expression time-course data with all replicates, and (b) <code>mean_df</code>: a data frame contains the average values of each gene’s expression profiles.</p>
+<div id="data-of-all-expression-profiles-with-replicates" class="section level3">
+<h3 class="hasAnchor">
+<a href="#data-of-all-expression-profiles-with-replicates" class="anchor"></a>Data of all expression profiles with replicates</h3>
+<p>Illustrated diagram below shows the required <code>all_data_df</code> data frame format of <code>GREAT</code>. This data frame must contain:</p>
+<ul>
+<li><p>two different species which users wish to compare (for each gene, at least two replicates are required in all species), and</p></li>
+<li>
+<p>six data columns:</p>
+<ul>
+<li>
+<code>locus_name</code>: accession or unique ID of each gene.</li>
+<li>
+<code>accession</code>: accession or name of the species to compare.</li>
+<li>
+<code>timepoint</code>: time point of the gene expression data.</li>
+<li>
+<code>expression_value</code>: desired RNA-seq expression value or measure of the abundance of gene or transcripts which one wishes to compare. This value can be RPM, RPKM, FPKM, TPM, TMM, DESeq, SCnorm, GeTMM, ComBat-Seq and raw reads counts.</li>
+<li>
+<code>tissue</code>: tissue from which RNA-seq data were extracted.</li>
+<li>
+<code>replicate</code>: replicate ID for each expression value.</li>
+</ul>
+</li>
+</ul>
+<p><img src="figures/all_data_illustration.jpg" width="100%"></p>
+<p><code>GREAT</code> package provides an example of data frame containing two different species <em>Arabidopsis</em> and <em>B. rapa</em> with two and three different replicates, respectively. This data frame can be read as follow:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Define the dataframe from the sample data</span>
-<span class="co"># Gene expression data with replicates</span>
+<code class="sourceCode R"><span class="co"># Gene expression data with replicates</span>
 <span class="va">all_data_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_all_replicates.csv"</span>, package <span class="op">=</span> <span class="st">"GREAT"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="co"># Mean gene expression </span>
+  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">all_data_df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">accession</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">locus_name</th>
+<th align="left">accession</th>
+<th align="left">tissue</th>
+<th align="right">timepoint</th>
+<th align="right">expression_value</th>
+<th align="left">group</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Col0</td>
+<td align="left">apex</td>
+<td align="right">7</td>
+<td align="right">0.4667855</td>
+<td align="left">Col0-07-a</td>
+</tr>
+<tr class="even">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Col0</td>
+<td align="left">apex</td>
+<td align="right">7</td>
+<td align="right">0.0741901</td>
+<td align="left">Col0-07-b</td>
+</tr>
+<tr class="odd">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Col0</td>
+<td align="left">apex</td>
+<td align="right">8</td>
+<td align="right">0.0000000</td>
+<td align="left">Col0-08-a</td>
+</tr>
+<tr class="even">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Col0</td>
+<td align="left">apex</td>
+<td align="right">8</td>
+<td align="right">0.0000000</td>
+<td align="left">Col0-08-b</td>
+</tr>
+<tr class="odd">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Col0</td>
+<td align="left">apex</td>
+<td align="right">9</td>
+<td align="right">0.3722542</td>
+<td align="left">Col0-09-a</td>
+</tr>
+<tr class="even">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Col0</td>
+<td align="left">apex</td>
+<td align="right">9</td>
+<td align="right">0.0000000</td>
+<td align="left">Col0-09-b</td>
+</tr>
+<tr class="odd">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Ro18</td>
+<td align="left">apex</td>
+<td align="right">11</td>
+<td align="right">0.3968734</td>
+<td align="left">Ro18-11-a</td>
+</tr>
+<tr class="even">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Ro18</td>
+<td align="left">apex</td>
+<td align="right">11</td>
+<td align="right">1.4147711</td>
+<td align="left">Ro18-11-b</td>
+</tr>
+<tr class="odd">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Ro18</td>
+<td align="left">apex</td>
+<td align="right">11</td>
+<td align="right">0.7423984</td>
+<td align="left">Ro18-11-c</td>
+</tr>
+<tr class="even">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Ro18</td>
+<td align="left">apex</td>
+<td align="right">29</td>
+<td align="right">11.3007002</td>
+<td align="left">Ro18-29-a</td>
+</tr>
+<tr class="odd">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Ro18</td>
+<td align="left">apex</td>
+<td align="right">29</td>
+<td align="right">23.2055664</td>
+<td align="left">Ro18-29-b</td>
+</tr>
+<tr class="even">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Ro18</td>
+<td align="left">apex</td>
+<td align="right">29</td>
+<td align="right">22.0307747</td>
+<td align="left">Ro18-29-c</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="data-with-average-values-of-each-geness-expression-profiles" class="section level3">
+<h3 class="hasAnchor">
+<a href="#data-with-average-values-of-each-geness-expression-profiles" class="anchor"></a>Data with average values of each genes’s expression profiles</h3>
+<p>Illustrated diagram below shows the required <code>mean_df</code> data frame format of <code>GREAT</code>. This data frame must contain:</p>
+<ul>
+<li><p>two different species which users wish to compare (for each gene, only the average value of a time point is required), and</p></li>
+<li>
+<p>five data columns:</p>
+<ul>
+<li>
+<code>locus_name</code>: accession or unique ID of each gene.</li>
+<li>
+<code>accession</code>: accession or name of the species to compare.</li>
+<li>
+<code>timepoint</code>: time point of the gene expression data.</li>
+<li>
+<code>expression_value</code>: desired RNA-seq expression value or measure of the abundance of gene or transcripts which one wishes to compare. This value can be RPM, RPKM, FPKM, TPM, TMM, DESeq, SCnorm, GeTMM, ComBat-Seq and raw reads counts.</li>
+<li>
+<code>tissue</code>: tissue from which RNA-seq data were extracted.</li>
+</ul>
+</li>
+</ul>
+<p><code>GREAT</code> package also provides an example of <code>mean_df</code> data frame containing two different species <em>Arabidopsis</em> and <em>B. rapa</em> which obtained from <code>all_data_df</code>. This data frame can be read as follow:</p>
+<p><img src="figures/mean_data_illustration.jpg" width="100%"></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Mean gene expression </span>
 <span class="va">mean_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_mean.csv"</span>, package <span class="op">=</span> <span class="st">"GREAT"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="co"># Running the registration</span>
+  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mean_df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">accession</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">locus_name</th>
+<th align="left">accession</th>
+<th align="left">tissue</th>
+<th align="right">timepoint</th>
+<th align="right">expression_value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Col0</td>
+<td align="left">apex</td>
+<td align="right">7</td>
+<td align="right">0.2704878</td>
+</tr>
+<tr class="even">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Col0</td>
+<td align="left">apex</td>
+<td align="right">8</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="odd">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Col0</td>
+<td align="left">apex</td>
+<td align="right">9</td>
+<td align="right">0.2290061</td>
+</tr>
+<tr class="even">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Col0</td>
+<td align="left">apex</td>
+<td align="right">10</td>
+<td align="right">0.1726172</td>
+</tr>
+<tr class="odd">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Ro18</td>
+<td align="left">apex</td>
+<td align="right">11</td>
+<td align="right">0.8513476</td>
+</tr>
+<tr class="even">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Ro18</td>
+<td align="left">apex</td>
+<td align="right">29</td>
+<td align="right">18.8456804</td>
+</tr>
+<tr class="odd">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Ro18</td>
+<td align="left">apex</td>
+<td align="right">31</td>
+<td align="right">24.9297849</td>
+</tr>
+<tr class="even">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Ro18</td>
+<td align="left">apex</td>
+<td align="right">33</td>
+<td align="right">19.9498041</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="register-the-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#register-the-data" class="anchor"></a>Register the data</h2>
+<p>To align gene expression time-course between <em>Arabidopsis</em> Col-0 and <em>B. rapa</em> Ro18, we can use the function <code><a href="../reference/scale_and_register_data.html">scale_and_register_data()</a></code> as shown below:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Running the registration</span>
 <span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/scale_and_register_data.html">scale_and_register_data</a></span><span class="op">(</span>
     mean_df <span class="op">=</span> <span class="va">mean_df</span>,
     all_data_df <span class="op">=</span> <span class="va">all_data_df</span>,
@@ -125,11 +369,14 @@
     data_to_transform_time_added <span class="op">=</span> <span class="fl">11</span>,
     data_ref_time_added <span class="op">=</span> <span class="fl">11</span>
   <span class="op">)</span></code></pre></div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 

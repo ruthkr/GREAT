@@ -64,10 +64,13 @@
     <loc>https://ruthkr.github.io/GREAT//reference/get_compared_timepoints.html</loc>
   </url>
   <url>
+    <loc>https://ruthkr.github.io/GREAT//reference/get_expression_of_interest.html</loc>
+  </url>
+  <url>
     <loc>https://ruthkr.github.io/GREAT//reference/get_extreme_shifts_for_all.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT//reference/get_mean_and_all_exp_data.html</loc>
+    <loc>https://ruthkr.github.io/GREAT//reference/get_mean_data.html</loc>
   </url>
   <url>
     <loc>https://ruthkr.github.io/GREAT//reference/impute_transformed_exp_values.html</loc>

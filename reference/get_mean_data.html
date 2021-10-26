@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Registering data — scale_and_register_data • GREAT</title>
+<title>Calculate mean expression values from all expression data with replicates — get_mean_data • GREAT</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Registering data — scale_and_register_data" />
-<meta property="og:description" content="scale_and_register_data is a function to process all data. This includes scaling data before registration, finding and calculate score of optimal shifts and stretches, apply the best shifts and stretches." />
+<meta property="og:title" content="Calculate mean expression values from all expression data with replicates — get_mean_data" />
+<meta property="og:description" content="Calculate mean expression values from all expression data with replicates" />
 <meta property="og:image" content="https://ruthkr.github.io/GREAT/logo.png" />
 
 
@@ -129,86 +129,41 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Registering data</h1>
+    <h1>Calculate mean expression values from all expression data with replicates</h1>
     
-    <div class="hidden name"><code>scale_and_register_data.Rd</code></div>
+    <div class="hidden name"><code>get_mean_data.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>scale_and_register_data</code> is a function to process all data. This includes scaling data before registration, finding and calculate score of optimal shifts and stretches, apply the best shifts and stretches.</p>
+    <p>Calculate mean expression values from all expression data with replicates</p>
     </div>
 
-    <pre class="usage"><span class='fu'>scale_and_register_data</span><span class='op'>(</span>
-  <span class='va'>input_df</span>,
-  <span class='va'>stretches</span>,
-  <span class='va'>shift_extreme</span>,
-  <span class='va'>num_shifts</span>,
-  <span class='va'>min_num_overlapping_points</span>,
-  <span class='va'>initial_rescale</span>,
-  <span class='va'>do_rescale</span>,
-  <span class='va'>accession_data_to_transform</span>,
-  <span class='va'>accession_data_ref</span>,
-  <span class='va'>data_to_transform_time_added</span>,
-  <span class='va'>data_ref_time_added</span>,
-  max_expression_value_wanted <span class='op'>=</span> <span class='fl'>0.5</span>
+    <pre class="usage"><span class='fu'>get_mean_data</span><span class='op'>(</span>
+  <span class='va'>exp</span>,
+  max_expression_value_wanted <span class='op'>=</span> <span class='fl'>5</span>,
+  accession_data_to_transform <span class='op'>=</span> <span class='st'>"Col0"</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>input_df</th>
+      <th>exp</th>
       <td><p>Input data frame contains all replicates of gene expression in each genotype at each timepoint.</p></td>
-    </tr>
-    <tr>
-      <th>stretches</th>
-      <td><p>Candidate registration stretch factors to apply to data to transform.</p></td>
-    </tr>
-    <tr>
-      <th>shift_extreme</th>
-      <td><p>The absolute maximum value which can be applied as a shift to gene expression timecourse (days).</p></td>
-    </tr>
-    <tr>
-      <th>num_shifts</th>
-      <td><p>Number of shifts between minimum and maximum values of shift.</p></td>
-    </tr>
-    <tr>
-      <th>min_num_overlapping_points</th>
-      <td><p>Number of minimum overlapping time points.  Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.</p></td>
-    </tr>
-    <tr>
-      <th>initial_rescale</th>
-      <td><p>Scaling gene expression prior to registration if <code>TRUE</code>.</p></td>
-    </tr>
-    <tr>
-      <th>do_rescale</th>
-      <td><p>Scaling gene expression using only overlapping timepoints points during registration.</p></td>
-    </tr>
-    <tr>
-      <th>accession_data_to_transform</th>
-      <td><p>Accession name of data which will be transformed.</p></td>
-    </tr>
-    <tr>
-      <th>accession_data_ref</th>
-      <td><p>Accession name of reference data.</p></td>
-    </tr>
-    <tr>
-      <th>data_to_transform_time_added</th>
-      <td><p>Time points to be added in data to transform.</p></td>
-    </tr>
-    <tr>
-      <th>data_ref_time_added</th>
-      <td><p>Time points to be added in reference data.</p></td>
     </tr>
     <tr>
       <th>max_expression_value_wanted</th>
       <td><p>Maximum value of expression desired.</p></td>
     </tr>
+    <tr>
+      <th>accession_data_to_transform</th>
+      <td><p>Accession name of data which will be transformed.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>List of dataframes: (a) <code>mean_df</code> is unchanged by <code>scale_and_register_data()</code>, (b) <code>mean_df_sc</code> is identical to <code>mean_df</code>, with additional column <code>sc.expression_value</code>, (c) <code>imputed_mean_df</code> is registered expression data, (d) <code>all_shifts</code> is a table of candidate registrations applied, and score for each, and (e) <code>model_comparison_dt</code> is a table comparing the optimal registration function for each gene (based on <code>all_shifts</code> scores) to model with no registration applied.</p>
+    <p>A data frame contains only mean expression data.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

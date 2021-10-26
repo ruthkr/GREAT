@@ -5,8 +5,7 @@
 \title{Registering data}
 \usage{
 scale_and_register_data(
-  mean_df,
-  all_data_df,
+  input_df,
   stretches,
   shift_extreme,
   num_shifts,
@@ -16,13 +15,12 @@ scale_and_register_data(
   accession_data_to_transform,
   accession_data_ref,
   data_to_transform_time_added,
-  data_ref_time_added
+  data_ref_time_added,
+  max_expression_value_wanted = 0.5
 )
 }
 \arguments{
-\item{mean_df}{Input data frame contains the mean gene expression of each gene in each genotype at each timepoint.}
-
-\item{all_data_df}{Input data frame contains all replicates of gene expression in each genotype at each timepoint.}
+\item{input_df}{Input data frame contains all replicates of gene expression in each genotype at each timepoint.}
 
 \item{stretches}{Candidate registration stretch factors to apply to data to transform.}
 
@@ -43,6 +41,8 @@ scale_and_register_data(
 \item{data_to_transform_time_added}{Time points to be added in data to transform.}
 
 \item{data_ref_time_added}{Time points to be added in reference data.}
+
+\item{max_expression_value_wanted}{Maximum value of expression desired.}
 }
 \value{
 List of dataframes: (a) \code{mean_df} is unchanged by \code{scale_and_register_data()}, (b) \code{mean_df_sc} is identical to \code{mean_df}, with additional column \code{sc.expression_value}, (c) \code{imputed_mean_df} is registered expression data, (d) \code{all_shifts} is a table of candidate registrations applied, and score for each, and (e) \code{model_comparison_dt} is a table comparing the optimal registration function for each gene (based on \code{all_shifts} scores) to model with no registration applied.

@@ -59,14 +59,9 @@ library(GREAT)
 all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "GREAT") %>%
   utils::read.csv()
 
-# Mean gene expression 
-mean_df <- system.file("extdata/brapa_arabidopsis_mean.csv", package = "GREAT") %>%
-  utils::read.csv()
-
 # Running the registration
 registration_results <- scale_and_register_data(
-    mean_df = mean_df,
-    all_data_df = all_data_df,
+    input_df = all_data_df,
     stretches = c(2, 1.5, 1),
     shift_extreme = 4,
     num_shifts = 27,

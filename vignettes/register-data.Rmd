@@ -97,8 +97,7 @@ To align gene expression time-course between *Arabidopsis* Col-0 and *B. rapa* R
 ```{r register-data, message=FALSE, warning=FALSE}
 # Running the registration
 registration_results <- scale_and_register_data(
-    mean_df = mean_df,
-    all_data_df = all_data_df,
+    input_df = all_data_df,
     stretches = c(2, 1.5, 1),
     shift_extreme = 4,
     num_shifts = 27,

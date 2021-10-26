@@ -30,6 +30,35 @@ test_that("scale_and_register_data works", {
   expect_equal(class(registration_results$all_shifts)[[1]], "data.table")
   expect_equal(class(registration_results$model_comparison_dt)[[1]], "data.table")
 
+  expected_model_comparison_dt <- data.table::data.table(
+    gene = c("BRAA02G043220.3C", "BRAA03G023790.3C", "BRAA03G051930.3C", "BRAA05G005370.3C", "BRAA07G034100.3C", "BRAA09G045310.3C", "BRAA02G018970.3C", "BRAA04G005470.3C", "BRAA06G025360.3C", "BRAA07G030470.3C"),
+    separate.AIC = c(104.27375, 114.99346, 149.47345, 110.40399, 47.83533, 57.25321, 52.33754, 52.05885, 105.19811, 52.94878),
+    separate.BIC = c(127.91726, 140.71107, 175.19107, 136.12161, 70.77961, 82.38534, 75.75246, 75.92666, 129.71473, 76.36370),
+    stretch = c(2, 2, 2, 2, 2, 2, 1.5, 1.5, 1.5, 1.5),
+    shift = c(-3.69230, 0.61538, 3.07692, 0.61538, -4, 0, -0.30769, 4, 1.84615, -0.30769)
+  )
+
+  expect_equal(
+    registration_results$model_comparison_dt$gene,
+    expected_model_comparison_dt$gene
+  )
+  expect_equal(
+    round(registration_results$model_comparison_dt$separate.AIC, 2),
+    round(expected_model_comparison_dt$separate.AIC, 2)
+  )
+  expect_equal(
+    round(registration_results$model_comparison_dt$separate.BIC, 2),
+    round(expected_model_comparison_dt$separate.BIC, 2)
+  )
+  expect_equal(
+    round(registration_results$model_comparison_dt$stretch, 2),
+    round(expected_model_comparison_dt$stretch, 2)
+  )
+  expect_equal(
+    round(registration_results$model_comparison_dt$shift, 2),
+    round(expected_model_comparison_dt$shift, 2)
+  )
+
   # Check calculate_between_sample_distance()
   sample_distance_results <- calculate_between_sample_distance(
     registration_results$mean_df,

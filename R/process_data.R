@@ -11,8 +11,7 @@
 #' @param do_rescale Scaling gene expression using only overlapping timepoints points during registration.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
-#' @param data_to_transform_time_added Time points to be added in data to transform.
-#' @param data_ref_time_added Time points to be added in reference data.
+#' @param start_timepoint Start timepoint used to ... Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.
 #' @param max_expression_value_wanted Maximum value of expression desired.
 #'
 #' @return List of dataframes: (a) `mean_df` is unchanged by `scale_and_register_data()`, (b) `mean_df_sc` is identical to `mean_df`, with additional column `sc.expression_value`, (c) `imputed_mean_df` is registered expression data, (d) `all_shifts` is a table of candidate registrations applied, and score for each, and (e) `model_comparison_dt` is a table comparing the optimal registration function for each gene (based on `all_shifts` scores) to model with no registration applied.
@@ -27,15 +26,28 @@ scale_and_register_data <- function(input_df,
                                     do_rescale,
                                     accession_data_to_transform,
                                     accession_data_ref,
-                                    data_to_transform_time_added,
-                                    data_ref_time_added,
+                                    start_timepoint = c("reference", "transform", "zero"),
                                     max_expression_value_wanted = 0.5) {
+  # Validate parameters
+  start_timepoint <- match.arg(start_timepoint)
+
   # Make sure the data are data.tables
   all_data_df <- data.table::as.data.table(input_df)
 
-  mean_df <- get_mean_data(exp = all_data_df,
-                           max_expression_value_wanted = max_expression_value_wanted,
-                           accession_data_to_transform = accession_data_to_transform)
+  mean_df <- get_mean_data(
+    exp = all_data_df,
+    max_expression_value_wanted = max_expression_value_wanted,
+    accession_data_to_transform = accession_data_to_transform
+  )
+
+  # Parse start_timepoint
+  if (start_timepoint == "reference") {
+    time_to_add <- min(all_data_df[accession == accession_data_ref, timepoint])
+  } else if (start_timepoint == "transform") {
+    time_to_add <- min(all_data_df[accession == accession_data_to_transform, timepoint])
+  } else {
+    time_to_add <- 0
+  }
 
   # Filter genes of original input data as in mean_df
   all_data_df <- all_data_df[all_data_df$locus_name %in% unique(mean_df$locus_name)]
@@ -78,8 +90,7 @@ scale_and_register_data <- function(input_df,
     num_shifts,
     accession_data_to_transform,
     accession_data_ref,
-    data_to_transform_time_added,
-    data_ref_time_added
+    time_to_add
   )
 
   all_shifts <- L[["all_shifts"]]
@@ -108,8 +119,7 @@ scale_and_register_data <- function(input_df,
     model_comparison_dt,
     accession_data_to_transform,
     accession_data_ref,
-    data_to_transform_time_added,
-    data_ref_time_added
+    time_to_add
   )
 
   cli::cli_alert_info("Max value of expression_value: {cli::col_cyan(round(max(shifted_mean_df$expression_value), 2))}")
@@ -196,8 +206,7 @@ scale_all_rep_data <- function(mean_df,
 #' @param num_shifts Number of different shifts to be considered.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
-#' @param data_to_transform_time_added Time points to be added in data to transform.
-#' @param data_ref_time_added Time points to be added in reference data.
+#' @param time_to_add Time points to be added in both reference data and data to transform after shifting and stretching.
 #'
 #' @return List of data frames (a) all_shifts : all the combos of stretching and shifting tried for each gene, (b) best_shifts : the best stretch and shift combo found for each gene, as well as info for scaling, and (c) model_comparison.dt : AIC / BIC scores for best registerd model found, compared to separate model for each genes expression in the 2 accessions.
 #'
@@ -211,8 +220,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
                                        num_shifts,
                                        accession_data_to_transform,
                                        accession_data_ref,
-                                       data_to_transform_time_added,
-                                       data_ref_time_added) {
+                                       time_to_add) {
   # Warning to make sure users have correct accession data
   if (!(accession_data_to_transform %in% all_data_df$accession & accession_data_ref %in% all_data_df$accession)) {
     stop("get_best_stretch_and_shift(): data accessions should have been converted to correct accession.")
@@ -255,8 +263,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
       best_shifts,
       accession_data_to_transform,
       accession_data_ref,
-      data_to_transform_time_added,
-      data_ref_time_added
+      time_to_add
     )
 
     # Add info on the stretch and shift applied
@@ -322,8 +329,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
 #' @param model_comparison_dt Data frame containing information of comparison of BIC and AIC for registred and non-registered genes.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
-#' @param data_to_transform_time_added Time points to be added in data to transform.
-#' @param data_ref_time_added Time points to be added in reference data.
+#' @param time_to_add Time points to be added in both reference data and data to transform after shifting and stretching.
 #'
 #' @return Data frame for all transformed genes for those with better BIC values.
 apply_shift_to_registered_genes_only <- function(to_shift_df,
@@ -331,8 +337,7 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
                                                  model_comparison_dt,
                                                  accession_data_to_transform,
                                                  accession_data_ref,
-                                                 data_to_transform_time_added = 11,
-                                                 data_ref_time_added) {
+                                                 time_to_add) {
   # Genes for which registration model is better than separate model
   gene_to_register <- model_comparison_dt$gene[model_comparison_dt$BIC_registered_is_better]
 
@@ -344,8 +349,7 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
       best_shifts,
       accession_data_to_transform,
       accession_data_ref,
-      data_to_transform_time_added,
-      data_ref_time_added
+      time_to_add
     )
 
     registered_dt$is_registered <- TRUE
@@ -363,7 +367,7 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
     separate_dt[, stretched_time_delta := timepoint - min(timepoint), by = .(locus_name, accession)]
     # Here, we need to add additional time to make it comparable between data to transform and reference data
     # Therefore need to to this here, to keep unregistered in same frame as stretch 1, shift 0 registered genes
-    separate_dt$shifted_time <- separate_dt$stretched_time_delta + data_to_transform_time_added
+    separate_dt$shifted_time <- separate_dt$stretched_time_delta + time_to_add
     separate_dt$is_registered <- FALSE
   }
 

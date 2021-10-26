@@ -42,16 +42,14 @@ get_best_result <- function(df) {
 #' @param best_shifts Input data frame containing information of best shifts.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
-#' @param data_to_transform_time_added Time points to be added in data to transform.
-#' @param data_ref_time_added Time points to be added in reference data.
+#' @param time_to_add Time points to be added in both reference data and data to transform after shifting and stretching.
 #'
 #' @return AIC and BIC score for registered and unregistered models.
 calculate_all_model_comparison_stats <- function(all_data_df,
                                                  best_shifts,
                                                  accession_data_to_transform,
                                                  accession_data_ref,
-                                                 data_to_transform_time_added,
-                                                 data_ref_time_added) {
+                                                 time_to_add) {
   if (!(accession_data_to_transform %in% unique(all_data_df$accession) & accession_data_ref %in% unique(all_data_df$accession))) {
     stop("error in calculate_all_model_comparison_stats() :
          all_data_df doesn't have the correct accession info - should have been
@@ -64,8 +62,7 @@ calculate_all_model_comparison_stats <- function(all_data_df,
     best_shifts,
     accession_data_to_transform,
     accession_data_ref,
-    data_to_transform_time_added,
-    data_ref_time_added
+    time_to_add
   )
 
   genes <- unique(shifted_all_data_df$locus_name)
@@ -113,16 +110,14 @@ calculate_all_model_comparison_stats <- function(all_data_df,
 #' @param best_shifts Input data frame containing information of best shifts.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
-#' @param data_to_transform_time_added Time points to be added in data to transform.
-#' @param data_ref_time_added Time points to be added in reference data.
+#' @param time_to_add Time points to be added in both reference data and data to transform after shifting and stretching.
 #'
 #' @return The registered expression over time for each gene.
 apply_best_shift <- function(data,
                              best_shifts,
                              accession_data_to_transform,
                              accession_data_ref,
-                             data_to_transform_time_added,
-                             data_ref_time_added) {
+                             time_to_add) {
   processed_data <- data.table::copy(data)
 
   processed_data <- apply_stretch(
@@ -130,8 +125,7 @@ apply_best_shift <- function(data,
     best_shifts,
     accession_data_to_transform,
     accession_data_ref,
-    data_to_transform_time_added,
-    data_ref_time_added
+    time_to_add
   )
 
   # Normalise the expression data (If was normalised when calculating the expression data, is recorder in the _compared_mean, and _compared_sd columns. If no normalisation was carried out, then these should have values of 0 and 1. This was done using get_best_shift()).
@@ -167,14 +161,12 @@ apply_best_shift <- function(data,
 #' @param best_shifts Input data frame containing information of best shifts.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
-#' @param data_to_transform_time_added Time points to be added in data to transform.
-#' @param data_ref_time_added Time points to be added in reference data.
+#' @param time_to_add Time points to be added in both reference data and data to transform after shifting and stretching.
 apply_stretch <- function(data,
                           best_shifts,
                           accession_data_to_transform = "Col0",
                           accession_data_ref = "Ro18",
-                          data_to_transform_time_added = 11,
-                          data_ref_time_added = 11) {
+                          time_to_add) {
   data <- data.table::copy(data)
 
   # Stretch the expression of data to transform, leave reference data as is
@@ -204,8 +196,8 @@ apply_stretch <- function(data,
   data$shifted_time <- data$delta_time
 
   # After stretching, add the time to the first datapoint back on
-  data$shifted_time[data$accession == accession_data_to_transform] <- data$shifted_time[data$accession == accession_data_to_transform] + data_to_transform_time_added
-  data$shifted_time[data$accession == accession_data_ref] <- data$shifted_time[data$accession == accession_data_ref] + data_ref_time_added
+  data$shifted_time[data$accession == accession_data_to_transform] <- data$shifted_time[data$accession == accession_data_to_transform] + time_to_add
+  data$shifted_time[data$accession == accession_data_ref] <- data$shifted_time[data$accession == accession_data_ref] + time_to_add
   data$delta_time <- NULL
 
   return(data)

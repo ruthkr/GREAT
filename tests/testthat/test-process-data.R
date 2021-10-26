@@ -1,9 +1,6 @@
 all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "GREAT") %>%
   utils::read.csv()
 
-mean_df <- system.file("extdata/brapa_arabidopsis_mean.csv", package = "GREAT") %>%
-  utils::read.csv()
-
 # Test scale_and_register_data() ----
 
 test_that("scale_and_register_data works", {
@@ -18,8 +15,7 @@ test_that("scale_and_register_data works", {
     do_rescale = TRUE,
     accession_data_to_transform = "Col0",
     accession_data_ref = "Ro18",
-    data_to_transform_time_added = 11,
-    data_ref_time_added = 11
+    start_timepoint = "reference"
   )
 
   expect_equal(class(registration_results), "list")
@@ -110,15 +106,20 @@ initial_rescale <- FALSE
 do_rescale <- TRUE
 accession_data_to_transform <- "Col0"
 accession_data_ref <- "Ro18"
-data_to_transform_time_added <- 11
-data_ref_time_added <- 11
+time_to_add <- 11
 
 # Test each function in function: scale_and_register_data() ----
 
 test_that("all functions called in scale_and_register_data work", {
   # Make sure the data are data.tables
-  mean_df <- data.table::as.data.table(mean_df)
+  # mean_df <- data.table::as.data.table(mean_df)
   all_data_df <- data.table::as.data.table(all_data_df)
+
+  mean_df <- get_mean_data(
+    exp = all_data_df,
+    max_expression_value_wanted = 0.5,
+    accession_data_to_transform = accession_data_to_transform
+  )
 
   # Apply normalisation of expression for each gene across all timepoints
   mean_df_sc <- data.table::copy(mean_df)
@@ -156,8 +157,7 @@ test_that("all functions called in scale_and_register_data work", {
     num_shifts,
     accession_data_to_transform,
     accession_data_ref,
-    data_to_transform_time_added,
-    data_ref_time_added
+    time_to_add
   )
 
   all_shifts <- L[["all_shifts"]]
@@ -185,8 +185,7 @@ test_that("all functions called in scale_and_register_data work", {
     model_comparison_dt,
     accession_data_to_transform,
     accession_data_ref,
-    data_to_transform_time_added,
-    data_ref_time_added
+    time_to_add
   )
 
   # Expected output for apply_shift_to_registered_genes_only()

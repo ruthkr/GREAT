@@ -9,8 +9,7 @@ mean_df <- system.file("extdata/brapa_arabidopsis_mean.csv", package = "GREAT") 
 test_that("scale_and_register_data works", {
   # Check scale_and_register_data()
   registration_results <- scale_and_register_data(
-    mean_df = mean_df,
-    all_data_df = all_data_df,
+    input_df = all_data_df,
     stretches = c(2, 1.5, 1),
     shift_extreme = 4,
     num_shifts = 27,

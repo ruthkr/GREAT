@@ -2,8 +2,7 @@
 #'
 #' `scale_and_register_data` is a function to process all data. This includes scaling data before registration, finding and calculate score of optimal shifts and stretches, apply the best shifts and stretches.
 #'
-#' @param mean_df Input data frame contains the mean gene expression of each gene in each genotype at each timepoint.
-#' @param all_data_df Input data frame contains all replicates of gene expression in each genotype at each timepoint.
+#' @param input_df Input data frame contains all replicates of gene expression in each genotype at each timepoint.
 #' @param stretches Candidate registration stretch factors to apply to data to transform.
 #' @param shift_extreme The absolute maximum value which can be applied as a shift to gene expression timecourse (days).
 #' @param num_shifts Number of shifts between minimum and maximum values of shift.
@@ -14,12 +13,12 @@
 #' @param accession_data_ref Accession name of reference data.
 #' @param data_to_transform_time_added Time points to be added in data to transform.
 #' @param data_ref_time_added Time points to be added in reference data.
+#' @param max_expression_value_wanted Maximum value of expression desired.
 #'
 #' @return List of dataframes: (a) `mean_df` is unchanged by `scale_and_register_data()`, (b) `mean_df_sc` is identical to `mean_df`, with additional column `sc.expression_value`, (c) `imputed_mean_df` is registered expression data, (d) `all_shifts` is a table of candidate registrations applied, and score for each, and (e) `model_comparison_dt` is a table comparing the optimal registration function for each gene (based on `all_shifts` scores) to model with no registration applied.
 #'
 #' @export
-scale_and_register_data <- function(mean_df,
-                                    all_data_df,
+scale_and_register_data <- function(input_df,
                                     stretches,
                                     shift_extreme,
                                     num_shifts,
@@ -29,13 +28,20 @@ scale_and_register_data <- function(mean_df,
                                     accession_data_to_transform,
                                     accession_data_ref,
                                     data_to_transform_time_added,
-                                    data_ref_time_added) {
+                                    data_ref_time_added,
+                                    max_expression_value_wanted = 0.5) {
   # Make sure the data are data.tables
-  mean_df <- data.table::as.data.table(mean_df)
-  all_data_df <- data.table::as.data.table(all_data_df)
+  all_data_df <- data.table::as.data.table(input_df)
+
+  mean_df <- get_mean_data(exp = all_data_df,
+                           max_expression_value_wanted = max_expression_value_wanted,
+                           accession_data_to_transform = accession_data_to_transform)
+
+  # Filter genes of original input data as in mean_df
+  all_data_df <- all_data_df[all_data_df$locus_name %in% unique(mean_df$locus_name)]
+  all_data_df <- subset(all_data_df, select = c("locus_name", "accession", "tissue", "timepoint", "expression_value", "group"))
 
   # TODO: validate colnames
-
   # Apply normalisation of expression for each gene across all timepoints
   mean_df_sc <- data.table::copy(mean_df)
 

@@ -20,8 +20,8 @@ to register (align) gene expression profiles between two species
 (reference data and data to transform). Non-reference gene expression
 profiles will be stretched and shifted. The optimality of registration
 parameters (shifts and stretches) will be estimated using least-squares
-criterion. This package is also designed to compare a non-registration
-model versus a non-registration model, as well as determine whether
+criterion. This package is also designed to compare a registration model
+versus a non-registration model, as well as determine whether
 registration model performed better than non-registration
 transformation.
 

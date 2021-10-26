@@ -71,8 +71,7 @@ registration_results <- scale_and_register_data(
     do_rescale = TRUE,
     accession_data_to_transform = "Col0",
     accession_data_ref = "Ro18",
-    data_to_transform_time_added = 11,
-    data_ref_time_added = 11
+    start_timepoint = "reference"
   )
 ```
 

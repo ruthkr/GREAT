@@ -2,7 +2,7 @@
 title: "Register data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{register-data}
+  %\VignetteIndexEntry{Register data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

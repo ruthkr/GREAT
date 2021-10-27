@@ -2,7 +2,7 @@
 title: "Visualise results"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{visualise-results}
+  %\VignetteIndexEntry{Visualise results}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -2,7 +2,7 @@
 title: "Preparing data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{prepare_data}
+  %\VignetteIndexEntry{Preparing data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

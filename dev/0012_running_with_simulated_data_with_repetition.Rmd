@@ -533,7 +533,7 @@ table %>%
 
 ## ANOVA (ANalysis Of VAriance) test
 
-- Null hypothesis ($H_{0}$): $\mu_{\sigma_i, \forall n} = \mu_{\sigma_i, n = 6} = \dots = \mu_{\sigma_i,n = 4}$.
+- Null hypothesis ($H_{0}$): $\mu_{\sigma_i, \forall n} = \mu_{\sigma_j, \forall n} = \dots = \mu_{\sigma_k, \forall n}$.
 
 That is, for $\sigma_{i}$ all groups with different time points ($n$) have same mean of number registered genes.
 
@@ -544,11 +544,8 @@ The null hypothesis is tested by comparing variances.
 
 ```{r anova-test}
 aov_results <- aov(
-  formula = registered_genes_total10 ~ num_timepoints,
-  data = table %>%
-    dplyr::filter(
-      SD == 0.35
-    )
+  formula = registered_genes_total10 ~ SD,
+  data = table
 )
 ```
 
@@ -556,8 +553,37 @@ aov_results <- aov(
 summary(aov_results)
 ```
 
-The p-value is far below 0.05, so the null is rejected, and it can be concluded there are differences between number of registered genes between different time point groups with SD = 0.35.
+The p-value is far below 0.05, so the null is rejected, and it can be concluded there are differences between mean of number of registered genes between different groups with different SD.
 
 ```{r TukeyHSD-results}
-TukeyHSD(aov_results)
+TukeyHSD_result <- TukeyHSD(aov_results)
+
+TukeyHSD_result$SD %>% 
+  as.data.frame() %>% 
+  tibble::rownames_to_column() %>% 
+  tidyr::separate(rowname, into = c("sd_a", "sd_b"), sep = "-") %>% 
+  dplyr::mutate(
+    across(c(sd_a, sd_b), as.numeric)
+  ) %>% 
+  dplyr::group_by(sd_b) %>% 
+  dplyr::summarise(
+    good = sum(`p adj` >= 0.05),
+    total = dplyr::n()
+  ) %>% 
+  dplyr::filter(good == total)
 ```
+
+
+```{r}
+TukeyHSD_result$SD %>% 
+  as.data.frame() %>% 
+  tibble::rownames_to_column() %>% 
+  tidyr::separate(rowname, into = c("sd_a", "sd_b"), sep = "-") %>% 
+  dplyr::mutate(
+    across(c(sd_a, sd_b), as.numeric)
+) %>% 
+  dplyr::filter(sd_b >= 0.28) %>% 
+  dplyr::select(sd_a, sd_b, `p adj`) %>% 
+  knitr::kable()
+```
+

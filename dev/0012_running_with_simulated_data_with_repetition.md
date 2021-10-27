@@ -522,7 +522,7 @@ table %>%
 ## ANOVA (ANalysis Of VAriance) test
 
 -   Null hypothesis (*H*<sub>0</sub>):
-    *μ*<sub>*σ*<sub>*i*</sub>, ∀*n*</sub> = *μ*<sub>*σ*<sub>*i*</sub>, *n* = 6</sub> = … = *μ*<sub>*σ*<sub>*i*</sub>, *n* = 4</sub>.
+    *μ*<sub>*σ*<sub>*i*</sub>, ∀*n*</sub> = *μ*<sub>*σ*<sub>*j*</sub>, ∀*n*</sub> = … = *μ*<sub>*σ*<sub>*k*</sub>, ∀*n*</sub>.
 
 That is, for *σ*<sub>*i*</sub> all groups with different time points
 (*n*) have same mean of number registered genes.
@@ -534,11 +534,8 @@ The null hypothesis is tested by comparing variances.
 
 ``` r
 aov_results <- aov(
-  formula = registered_genes_total10 ~ num_timepoints,
-  data = table %>%
-    dplyr::filter(
-      SD == 0.35
-    )
+  formula = registered_genes_total10 ~ SD,
+  data = table
 )
 ```
 
@@ -546,27 +543,139 @@ aov_results <- aov(
 summary(aov_results)
 ```
 
-    ##                  Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## num_timepoints    2   1.65  0.8247   15.61 1.95e-07 ***
-    ## Residuals      1497  79.08  0.0528                     
+    ##                Df Sum Sq Mean Sq F value Pr(>F)    
+    ## SD             15   20.4  1.3619   12.56 <2e-16 ***
+    ## Residuals   23984 2601.2  0.1085                   
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 The p-value is far below 0.05, so the null is rejected, and it can be
-concluded there are differences between number of registered genes
-between different time point groups with SD = 0.35.
+concluded there are differences between mean of number of registered
+genes between different groups with different SD.
 
 ``` r
-TukeyHSD(aov_results)
+TukeyHSD_result <- TukeyHSD(aov_results)
+
+TukeyHSD_result$SD %>% 
+  as.data.frame() %>% 
+  tibble::rownames_to_column() %>% 
+  tidyr::separate(rowname, into = c("sd_a", "sd_b"), sep = "-") %>% 
+  dplyr::mutate(
+    across(c(sd_a, sd_b), as.numeric)
+  ) %>% 
+  dplyr::group_by(sd_b) %>% 
+  dplyr::summarise(
+    good = sum(`p adj` >= 0.05),
+    total = dplyr::n()
+  ) %>% 
+  dplyr::filter(good == total)
 ```
 
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = registered_genes_total10 ~ num_timepoints, data = table %>% dplyr::filter(SD == 0.35))
-    ## 
-    ## $num_timepoints
-    ##        diff         lwr         upr     p adj
-    ## 6-4  -0.074 -0.10810347 -0.03989653 0.0000012
-    ## 10-4 -0.066 -0.10010347 -0.03189653 0.0000181
-    ## 10-6  0.008 -0.02610347  0.04210347 0.8463227
+    ## # A tibble: 11 × 3
+    ##     sd_b  good total
+    ##    <dbl> <int> <int>
+    ##  1  0.29    11    11
+    ##  2  0.3     10    10
+    ##  3  0.31     9     9
+    ##  4  0.32     8     8
+    ##  5  0.33     7     7
+    ##  6  0.34     6     6
+    ##  7  0.35     5     5
+    ##  8  0.36     4     4
+    ##  9  0.37     3     3
+    ## 10  0.38     2     2
+    ## 11  0.39     1     1
+
+``` r
+TukeyHSD_result$SD %>% 
+  as.data.frame() %>% 
+  tibble::rownames_to_column() %>% 
+  tidyr::separate(rowname, into = c("sd_a", "sd_b"), sep = "-") %>% 
+  dplyr::mutate(
+    across(c(sd_a, sd_b), as.numeric)
+) %>% 
+  dplyr::filter(sd_b >= 0.28) %>% 
+  dplyr::select(sd_a, sd_b, `p adj`) %>% 
+  knitr::kable()
+```
+
+| sd_a | sd_b |     p adj |
+|-----:|-----:|----------:|
+| 0.29 | 0.28 | 0.4754574 |
+| 0.30 | 0.28 | 0.2853074 |
+| 0.31 | 0.28 | 0.0946194 |
+| 0.32 | 0.28 | 0.0033593 |
+| 0.33 | 0.28 | 0.0946194 |
+| 0.34 | 0.28 | 0.0229234 |
+| 0.35 | 0.28 | 0.0575491 |
+| 0.36 | 0.28 | 0.0575491 |
+| 0.37 | 0.28 | 0.0188213 |
+| 0.38 | 0.28 | 0.0007865 |
+| 0.39 | 0.28 | 0.0033593 |
+| 0.40 | 0.28 | 0.0052914 |
+| 0.30 | 0.29 | 1.0000000 |
+| 0.31 | 0.29 | 0.9999973 |
+| 0.32 | 0.29 | 0.9561576 |
+| 0.33 | 0.29 | 0.9999973 |
+| 0.34 | 0.29 | 0.9988203 |
+| 0.35 | 0.29 | 0.9999579 |
+| 0.36 | 0.29 | 0.9999579 |
+| 0.37 | 0.29 | 0.9979993 |
+| 0.38 | 0.29 | 0.8280694 |
+| 0.39 | 0.29 | 0.9561576 |
+| 0.40 | 0.29 | 0.9762240 |
+| 0.31 | 0.30 | 1.0000000 |
+| 0.32 | 0.30 | 0.9921120 |
+| 0.33 | 0.30 | 1.0000000 |
+| 0.34 | 0.30 | 0.9999579 |
+| 0.35 | 0.30 | 0.9999997 |
+| 0.36 | 0.30 | 0.9999997 |
+| 0.37 | 0.30 | 0.9999087 |
+| 0.38 | 0.30 | 0.9423659 |
+| 0.39 | 0.30 | 0.9921120 |
+| 0.40 | 0.30 | 0.9967313 |
+| 0.32 | 0.31 | 0.9999087 |
+| 0.33 | 0.31 | 1.0000000 |
+| 0.34 | 0.31 | 1.0000000 |
+| 0.35 | 0.31 | 1.0000000 |
+| 0.36 | 0.31 | 1.0000000 |
+| 0.37 | 0.31 | 1.0000000 |
+| 0.38 | 0.31 | 0.9967313 |
+| 0.39 | 0.31 | 0.9999087 |
+| 0.40 | 0.31 | 0.9999818 |
+| 0.33 | 0.32 | 0.9999087 |
+| 0.34 | 0.32 | 1.0000000 |
+| 0.35 | 0.32 | 0.9999927 |
+| 0.36 | 0.32 | 0.9999927 |
+| 0.37 | 0.32 | 1.0000000 |
+| 0.38 | 0.32 | 1.0000000 |
+| 0.39 | 0.32 | 1.0000000 |
+| 0.40 | 0.32 | 1.0000000 |
+| 0.34 | 0.33 | 1.0000000 |
+| 0.35 | 0.33 | 1.0000000 |
+| 0.36 | 0.33 | 1.0000000 |
+| 0.37 | 0.33 | 1.0000000 |
+| 0.38 | 0.33 | 0.9967313 |
+| 0.39 | 0.33 | 0.9999087 |
+| 0.40 | 0.33 | 0.9999818 |
+| 0.35 | 0.34 | 1.0000000 |
+| 0.36 | 0.34 | 1.0000000 |
+| 0.37 | 0.34 | 1.0000000 |
+| 0.38 | 0.34 | 0.9999818 |
+| 0.39 | 0.34 | 1.0000000 |
+| 0.40 | 0.34 | 1.0000000 |
+| 0.36 | 0.35 | 1.0000000 |
+| 0.37 | 0.35 | 1.0000000 |
+| 0.38 | 0.35 | 0.9993321 |
+| 0.39 | 0.35 | 0.9999927 |
+| 0.40 | 0.35 | 0.9999991 |
+| 0.37 | 0.36 | 1.0000000 |
+| 0.38 | 0.36 | 0.9993321 |
+| 0.39 | 0.36 | 0.9999927 |
+| 0.40 | 0.36 | 0.9999991 |
+| 0.38 | 0.37 | 0.9999927 |
+| 0.39 | 0.37 | 1.0000000 |
+| 0.40 | 0.37 | 1.0000000 |
+| 0.39 | 0.38 | 1.0000000 |
+| 0.40 | 0.38 | 1.0000000 |
+| 0.40 | 0.39 | 1.0000000 |

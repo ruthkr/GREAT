@@ -1,0 +1,100 @@
+---
+title: "Using GREAT using human and mouse fetal retina transcriptomic data"
+output:
+  github_document:
+    toc: true
+---
+
+## Introduction
+
+Using the human and mouse transcriptomic data from [Hoshino et. al](https://www.sciencedirect.com/science/article/pii/S1534580717308730#!) to test GREAT package. 
+
+```{r setup, include=FALSE}
+# Load libraries
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(GREAT)
+```
+
+## Understand the data
+
+```{r human-data}
+human_data <- data.table::fread("~/PhD/main_phd/genalignR_development/data_hoshino_et_al_2017_human_retina/GSE104827_Normalized_Gene_CPM.txt")
+
+human_data
+```
+
+```{r mouse-data}
+mouse_data <- data.table::fread("~/PhD/main_phd/genalignR_development/data_hoshino_et_al_2017_human_retina/GSE101986_Gene_Normalized-CPM.txt") %>% 
+  mutate(Gene_name = toupper(external_gene_name))
+
+mouse_data
+```
+
+
+## Visualising the data
+
+```{r}
+list_gene <- intersect(human_data$Gene_name, mouse_data$Gene_name) %>% head(10) 
+
+mouse_data <- mouse_data %>% filter(Gene_name %in% list_gene) %>% 
+  select(-c("V1", "chromosome_name", "strand", 
+            "start_position", "end_position", "external_gene_name", 
+            "description", "transcript_count", "gene_biotype", 
+            "source", "status")) %>% 
+  select(c("Gene_name", everything())) %>% 
+  tidyr::pivot_longer(!Gene_name, names_to = "dev_stage", values_to = "exp_value") %>% 
+  tidyr::separate(
+    col = dev_stage,
+    into = c("dev_stage", "replicate"),
+    sep = "\\."
+  ) 
+
+mouse_dev_stage <- c("E11", "E12", "E14", "E16", "P0", "P2", "P4", "P6", "P10", "P14", "P21", "P28")
+
+mouse_data  <- mouse_data  %>% 
+  group_by(Gene_name, dev_stage, .drop = TRUE) %>% 
+  summarise(mean = mean(exp_value)) %>% 
+  rename(expression_value = mean) %>% 
+  filter(dev_stage %in% mouse_dev_stage) %>% 
+  mutate(species = "mouse")
+```
+
+```{r}
+human_dev_stage <- c("D52.54", "D53", "D57", "D67", "D80", "D94", "D105", "D107", "D115", "D125", "D132", "D136")
+
+human_data <- human_data %>% 
+  filter(Gene_name %in% list_gene) %>% 
+  select(-c("V1", "Chr", "Strand", "Start", "End", "Description", "TransCount", "Gene_type", 
+            "Source", "Status", "D94.2")) %>% 
+  tidyr::pivot_longer(!Gene_name, names_to = "dev_stage", values_to = "expression_value")  
+
+human_data <- human_data %>% 
+  dplyr::filter(dev_stage %in% human_dev_stage) %>% 
+  dplyr::mutate(species = "human")
+
+human_data
+```
+
+
+
+```{r fig.width=10, fig.height=25}
+all_data <- human_data %>% 
+  rbind(mouse_data) %>% 
+  dplyr::mutate(
+    dev_stage = factor(dev_stage, levels = c(human_dev_stage, mouse_dev_stage))
+  )
+
+p <- all_data %>%
+  ggplot2::ggplot() +
+  ggplot2::aes(y = expression_value, x = dev_stage, group = species, color = species) +
+  ggplot2::geom_point() +
+  ggplot2::geom_line() +
+  ggplot2::facet_wrap(Gene_name ~ species, scales = "free", ncol = 2)
+
+p
+```
+
+
+

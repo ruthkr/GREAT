@@ -53,8 +53,8 @@ get_extreme_shifts_for_all <- function(mean_df,
 calc_extreme_shifts <- function(mean_df,
                                 min_num_overlapping_points,
                                 shift_extreme,
-                                accession_data_to_transform = "Col0",
-                                accession_data_ref = "Ro18") {
+                                accession_data_to_transform,
+                                accession_data_ref) {
 
   # Make copy of the mean_df to make sure that the original dataframe will not edited
   original <- data.table::copy(mean_df)
@@ -70,7 +70,8 @@ calc_extreme_shifts <- function(mean_df,
     neg_extreme_candidate,
     FUN = calc_num_overlapping_points,
     data = original,
-    accession_data_to_transform = accession_data_to_transform
+    accession_data_to_transform = accession_data_to_transform,
+    accession_data_ref = accession_data_ref
   )
 
   if (all(num_overlapping_points < min_num_overlapping_points)) {
@@ -89,7 +90,8 @@ calc_extreme_shifts <- function(mean_df,
     pos_extreme_candidates,
     FUN = calc_num_overlapping_points,
     data = original,
-    accession_data_to_transform = accession_data_to_transform
+    accession_data_to_transform = accession_data_to_transform,
+    accession_data_ref = accession_data_ref
   )
 
   pos_extreme <- max(pos_extreme_candidates[num_overlapping_points >= min_num_overlapping_points])

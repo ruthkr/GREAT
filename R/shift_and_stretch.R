@@ -164,8 +164,8 @@ apply_best_shift <- function(data,
 #' @param time_to_add Time points to be added in both reference data and data to transform after shifting and stretching.
 apply_stretch <- function(data,
                           best_shifts,
-                          accession_data_to_transform = "Col0",
-                          accession_data_ref = "Ro18",
+                          accession_data_to_transform,
+                          accession_data_ref,
                           time_to_add) {
   data <- data.table::copy(data)
 
@@ -215,8 +215,8 @@ apply_stretch <- function(data,
 #' @return Normalised data.
 apply_best_normalisation <- function(data,
                                      best_shifts,
-                                     accession_data_to_transform = "Col0",
-                                     accession_data_ref = "Ro18") {
+                                     accession_data_to_transform,
+                                     accession_data_ref) {
   i <- 0
   cli::cli_progress_step("Normalising expression by mean and sd of compared values ({i}/{length(unique(data$locus_name))})", spinner = TRUE)
   for (curr_gene in unique(data$locus_name)) {
@@ -269,8 +269,8 @@ apply_best_normalisation <- function(data,
 #' @return Score of AIC and BIC for both registered and unregistered models.
 compare_registered_to_unregistered_model <- function(curr_sym,
                                                      all_data_df,
-                                                     accession_data_to_transform = "Col0",
-                                                     accession_data_ref = "Ro18") {
+                                                     accession_data_to_transform,
+                                                     accession_data_ref) {
   curr_data_df <- all_data_df[all_data_df$locus_name == curr_sym]
 
   # Flag the timepoints to be used in the modelling, only the ones which overlap!

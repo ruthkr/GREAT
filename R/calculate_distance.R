@@ -14,7 +14,7 @@ calculate_between_sample_distance <- function(mean_df,
                                               imputed_mean_df,
                                               gene_col = "locus_name",
                                               compare_ref_vs_transform = TRUE,
-                                              accession_data_ref = "Ro18") {
+                                              accession_data_ref) {
   # Convert all to wide format ready for distance calculation
   # mean_df
   mean.dt.w <- reformat_for_distance_calculation(

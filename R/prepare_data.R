@@ -8,7 +8,7 @@
 #' @export
 get_mean_data <- function(exp,
                           max_expression_value_wanted = 5,
-                          accession_data_to_transform = "Col0") {
+                          accession_data_to_transform) {
 
   # Calculate mean of each timepoint by adding a column called "expression_value"
   # TODO: make vector in mean_df a non-hardcoded parameter
@@ -136,7 +136,7 @@ get_expression_of_interest <- function(data_ref,
   }
 
   # Shorten experiment group names
-  exp <- shorten_groups(exp)
+  exp <- shorten_groups(exp, accession_data_to_transform)
   return(exp)
 }
 
@@ -198,7 +198,7 @@ get_all_data <- function(data_ref,
 #' Shorten groups
 #' @param exp Expression value.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-shorten_groups <- function(exp, accession_data_to_transform = "Col0") {
+shorten_groups <- function(exp, accession_data_to_transform) {
   # Get reps for klepikova and for brassica data, make sure it is a data.table
   exp <- data.table::data.table(exp)
 

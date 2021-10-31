@@ -18,8 +18,8 @@ calculate_all_best_shifts <- function(num_shifts,
                                       do_rescale,
                                       shift_extreme,
                                       min_num_overlapping_points,
-                                      accession_data_to_transform = "Col0",
-                                      accession_data_ref = "Ro18") {
+                                      accession_data_to_transform,
+                                      accession_data_ref) {
   # Initialize vectors
   symbols <- c()
   num_points <- c()
@@ -102,8 +102,8 @@ get_best_shift <- function(num_shifts = 25,
                            do_rescale,
                            min_shift,
                            max_shift,
-                           accession_data_to_transform = "Col0",
-                           accession_data_ref = "Ro18") {
+                           accession_data_to_transform,
+                           accession_data_ref) {
   data <- data[data$locus_name == curr_sym, ]
 
   # Transform timepoint to be time from first timepoint
@@ -135,7 +135,11 @@ get_best_shift <- function(num_shifts = 25,
     data$shifted_time[data$accession == accession_data_to_transform] <- data$delta_time[data$accession == accession_data_to_transform] + curr_shift
 
     # Cut down to just the data to transform and reference data timepoints which compared
-    data <- get_compared_timepoints(data)
+    data <- get_compared_timepoints(
+      data,
+      accession_data_to_transform,
+      accession_data_ref
+    )
     compared <- data[data$is_compared == TRUE, ]
 
     # Renormalise expression using just these timepoints?

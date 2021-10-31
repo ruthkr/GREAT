@@ -153,17 +153,17 @@ get_best_shift <- function(num_shifts = 25,
       data_ref_sd <- stats::sd(expression_value_ref)
 
       # Do the transformation started from here
-      if ((data_transform_sd != 0 | !is.nan(data_transform_sd)) & (data_ref_sd != 0 | !is.nan(data_ref_sd))) {
+      if ((data_transform_sd != 0 & !is.nan(data_transform_sd)) & (data_ref_sd != 0 & !is.nan(data_ref_sd))) {
         # If neither are 0, so won't be dividing by 0 (which gives NaNs)
         compared[, expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(accession)]
       } else { # If at least one of them is all 0
         data_transform_compared <- compared[compared$accession == accession_data_to_transform, ]
         data_ref_compared <- compared[compared$accession == accession_data_ref, ]
-        if ((data_transform_sd == 0) & (data_ref_sd != 0 | !is.nan(data_ref_sd))) {
+        if ((data_transform_sd == 0) & (data_ref_sd != 0 & !is.nan(data_ref_sd))) {
           # If only data_transform_sd==0
           data_ref_compared[, expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(accession)]
         }
-        if ((data_transform_sd != 0 | !is.nan(data_transform_sd)) & (data_ref_sd == 0)) {
+        if ((data_transform_sd != 0 & !is.nan(data_transform_sd)) & (data_ref_sd == 0)) {
           # If only data_ref_sd == 0
           data_transform_compared[, expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(accession)]
         }
@@ -200,6 +200,7 @@ get_best_shift <- function(num_shifts = 25,
       )
     }
 
+    # TODO: should this be in attr() instead?
     all_scores[i] <- score
     all_data_transform_mean[i] <- data_transform_mean
     all_data_ref_mean[i] <- data_ref_mean

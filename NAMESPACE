@@ -2,6 +2,7 @@
 
 export("%>%")
 export(calculate_between_sample_distance)
+export(get_approximate_stretch)
 export(get_best_stretch_and_shift)
 export(get_expression_of_interest)
 export(get_mean_data)

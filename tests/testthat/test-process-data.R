@@ -1,6 +1,20 @@
 all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "GREAT") %>%
   utils::read.csv()
 
+# Test preliminary analysis functions ----
+
+test_that("scale_and_register_data works", {
+  est_stretch <- get_approximate_stretch(
+    all_data_df,
+    accession_data_to_transform = "Col0",
+    accession_data_ref = "Ro18"
+  )
+
+  expect_equal(ceiling(est_stretch), 3)
+  expect_equal(floor(est_stretch), 2)
+})
+
+
 # Test scale_and_register_data() ----
 
 test_that("scale_and_register_data works", {
@@ -217,3 +231,5 @@ test_that("all functions called in scale_and_register_data work", {
     "model_comparison_dt" = model_comparison_dt
   )
 })
+
+

@@ -4,7 +4,7 @@
 \alias{shorten_groups}
 \title{Shorten groups}
 \usage{
-shorten_groups(exp, accession_data_to_transform = "Col0")
+shorten_groups(exp, accession_data_to_transform)
 }
 \arguments{
 \item{exp}{Expression value.}

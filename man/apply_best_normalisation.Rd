@@ -7,8 +7,8 @@
 apply_best_normalisation(
   data,
   best_shifts,
-  accession_data_to_transform = "Col0",
-  accession_data_ref = "Ro18"
+  accession_data_to_transform,
+  accession_data_ref
 )
 }
 \arguments{

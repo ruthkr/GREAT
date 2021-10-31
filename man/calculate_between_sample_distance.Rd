@@ -10,7 +10,7 @@ calculate_between_sample_distance(
   imputed_mean_df,
   gene_col = "locus_name",
   compare_ref_vs_transform = TRUE,
-  accession_data_ref = "Ro18"
+  accession_data_ref
 )
 }
 \arguments{

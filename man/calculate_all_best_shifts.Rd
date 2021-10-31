@@ -11,8 +11,8 @@ calculate_all_best_shifts(
   do_rescale,
   shift_extreme,
   min_num_overlapping_points,
-  accession_data_to_transform = "Col0",
-  accession_data_ref = "Ro18"
+  accession_data_to_transform,
+  accession_data_ref
 )
 }
 \arguments{

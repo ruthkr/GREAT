@@ -81,6 +81,7 @@ min_is_compared_to_data_to_transform <- function(data_to_transform_time, data_re
 #' @param data Input data.
 #' @param shift Current shift value.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
+#' @param accession_data_ref Accession name of reference data.
 calc_num_overlapping_points <- function(shift, data, accession_data_to_transform, accession_data_ref) {
   data$shifted_time[data$accession == accession_data_to_transform] <- data$delta_time[data$accession == accession_data_to_transform] + shift
   data <- get_compared_timepoints(

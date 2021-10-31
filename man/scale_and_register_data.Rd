@@ -14,8 +14,7 @@ scale_and_register_data(
   do_rescale,
   accession_data_to_transform,
   accession_data_ref,
-  data_to_transform_time_added,
-  data_ref_time_added,
+  start_timepoint = c("reference", "transform", "zero"),
   max_expression_value_wanted = 0.5
 )
 }
@@ -38,9 +37,7 @@ scale_and_register_data(
 
 \item{accession_data_ref}{Accession name of reference data.}
 
-\item{data_to_transform_time_added}{Time points to be added in data to transform.}
-
-\item{data_ref_time_added}{Time points to be added in reference data.}
+\item{start_timepoint}{Start timepoint used to ... Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.}
 
 \item{max_expression_value_wanted}{Maximum value of expression desired.}
 }

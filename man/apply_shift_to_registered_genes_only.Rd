@@ -10,8 +10,7 @@ apply_shift_to_registered_genes_only(
   model_comparison_dt,
   accession_data_to_transform,
   accession_data_ref,
-  data_to_transform_time_added = 11,
-  data_ref_time_added
+  time_to_add
 )
 }
 \arguments{
@@ -25,9 +24,7 @@ apply_shift_to_registered_genes_only(
 
 \item{accession_data_ref}{Accession name of reference data.}
 
-\item{data_to_transform_time_added}{Time points to be added in data to transform.}
-
-\item{data_ref_time_added}{Time points to be added in reference data.}
+\item{time_to_add}{Time points to be added in both reference data and data to transform after shifting and stretching.}
 }
 \value{
 Data frame for all transformed genes for those with better BIC values.

@@ -7,10 +7,9 @@
 apply_stretch(
   data,
   best_shifts,
-  accession_data_to_transform = "Col0",
-  accession_data_ref = "Ro18",
-  data_to_transform_time_added = 11,
-  data_ref_time_added = 11
+  accession_data_to_transform,
+  accession_data_ref,
+  time_to_add
 )
 }
 \arguments{
@@ -22,9 +21,7 @@ apply_stretch(
 
 \item{accession_data_ref}{Accession name of reference data.}
 
-\item{data_to_transform_time_added}{Time points to be added in data to transform.}
-
-\item{data_ref_time_added}{Time points to be added in reference data.}
+\item{time_to_add}{Time points to be added in both reference data and data to transform after shifting and stretching.}
 }
 \description{
 Apply stretch factor

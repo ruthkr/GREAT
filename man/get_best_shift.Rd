@@ -12,8 +12,8 @@ get_best_shift(
   do_rescale,
   min_shift,
   max_shift,
-  accession_data_to_transform = "Col0",
-  accession_data_ref = "Ro18"
+  accession_data_to_transform,
+  accession_data_ref
 )
 }
 \arguments{

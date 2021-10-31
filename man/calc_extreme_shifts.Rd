@@ -8,8 +8,8 @@ calc_extreme_shifts(
   mean_df,
   min_num_overlapping_points,
   shift_extreme,
-  accession_data_to_transform = "Col0",
-  accession_data_ref = "Ro18"
+  accession_data_to_transform,
+  accession_data_ref
 )
 }
 \arguments{

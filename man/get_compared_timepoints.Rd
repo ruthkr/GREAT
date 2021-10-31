@@ -4,11 +4,7 @@
 \alias{get_compared_timepoints}
 \title{Flag data to transform time points which overlap to reference data timecourse}
 \usage{
-get_compared_timepoints(
-  data,
-  accession_data_to_transform = "Col0",
-  accession_data_ref = "Ro18"
-)
+get_compared_timepoints(data, accession_data_to_transform, accession_data_ref)
 }
 \arguments{
 \item{data}{Input data containing both data to transform and reference data.}

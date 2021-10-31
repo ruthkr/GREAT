@@ -7,7 +7,7 @@
 get_mean_data(
   exp,
   max_expression_value_wanted = 5,
-  accession_data_to_transform = "Col0"
+  accession_data_to_transform
 )
 }
 \arguments{

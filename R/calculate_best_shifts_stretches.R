@@ -191,12 +191,13 @@ get_best_shift <- function(num_shifts = 25,
     )
 
     if (is.na(score)) {
-      message("error in get_best_shift(): got a score of NA for gene:")
-      message("data_transform_compared$expression_value: ", data_transform_compared$expression_value)
-      message(data_transform_compared$pred_data_ref_expression)
-      message(curr_sym)
-      message("with curr_shift=", curr_shift)
-      stop()
+      stop(
+        "\n  Got a score of NA for gene: ", curr_sym,
+        "\n  expression_value: ", data_transform_compared$expression_value,
+        "\n  pred_data_ref_expression: ", data_transform_compared$pred_data_ref_expression,
+        "\n  with stretch_factor: ", stretch_factor,
+        "\n  with curr_shift: ", curr_shift
+      )
     }
 
     all_scores[i] <- score

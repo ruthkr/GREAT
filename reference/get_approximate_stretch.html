@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Apply shift for all registered genes — apply_shift_to_registered_genes_only • GREAT</title>
+<title>Get approximate stretch factor — get_approximate_stretch • GREAT</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,8 +48,8 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Apply shift for all registered genes — apply_shift_to_registered_genes_only" />
-<meta property="og:description" content="apply_shift_to_registered_genes_only is a function to apply shift for all registered model based on model_comparison_dt using information from best_shifts." />
+<meta property="og:title" content="Get approximate stretch factor — get_approximate_stretch" />
+<meta property="og:description" content="Get approximate stretch factor" />
 <meta property="og:image" content="https://ruthkr.github.io/GREAT/logo.png" />
 
 
@@ -131,38 +131,27 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Apply shift for all registered genes</h1>
+    <h1>Get approximate stretch factor</h1>
     
-    <div class="hidden name"><code>apply_shift_to_registered_genes_only.Rd</code></div>
+    <div class="hidden name"><code>get_approximate_stretch.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>apply_shift_to_registered_genes_only</code> is a function to apply shift for all registered model based on <code>model_comparison_dt</code> using information from <code>best_shifts</code>.</p>
+    <p>Get approximate stretch factor</p>
     </div>
 
-    <pre class="usage"><span class='fu'>apply_shift_to_registered_genes_only</span><span class='op'>(</span>
-  <span class='va'>to_shift_df</span>,
-  <span class='va'>best_shifts</span>,
-  <span class='va'>model_comparison_dt</span>,
+    <pre class="usage"><span class='fu'>get_approximate_stretch</span><span class='op'>(</span>
+  <span class='va'>input_df</span>,
   <span class='va'>accession_data_to_transform</span>,
-  <span class='va'>accession_data_ref</span>,
-  <span class='va'>time_to_add</span>
+  <span class='va'>accession_data_ref</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>to_shift_df</th>
-      <td><p>Input data frame.</p></td>
-    </tr>
-    <tr>
-      <th>best_shifts</th>
-      <td><p>Data frame containing information of best shift and stretch values.</p></td>
-    </tr>
-    <tr>
-      <th>model_comparison_dt</th>
-      <td><p>Data frame containing information of comparison of BIC and AIC for registred and non-registered genes.</p></td>
+      <th>input_df</th>
+      <td><p>Input data frame contains all replicates of gene expression in each genotype at each timepoint.</p></td>
     </tr>
     <tr>
       <th>accession_data_to_transform</th>
@@ -172,15 +161,8 @@
       <th>accession_data_ref</th>
       <td><p>Accession name of reference data.</p></td>
     </tr>
-    <tr>
-      <th>time_to_add</th>
-      <td><p>Time points to be added in both reference data and data to transform after shifting and stretching.</p></td>
-    </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>Data frame for all transformed genes for those with better BIC values.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

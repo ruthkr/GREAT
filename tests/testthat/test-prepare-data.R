@@ -15,15 +15,13 @@ test_that("get_expression_of_interest works", {
     data_ref = brassica_rapa_expression,
     data_to_transform = arabidopsis_expression,
     id_table = id_table,
-    fix_id_table_shared_colname = "CDS.model",
-    fix_and_to_transform_data_shared_colname = "locus_name",
-    colnames_id_table = c("CDS.model", "symbol", "locus_name"),
+    lookup_col_ref_and_id_table = "CDS.model",
+    lookup_col_ref_and_to_transform = "locus_name",
     colnames_wanted = NULL,
     tissue_wanted = "apex",
     curr_GoIs = c("AT1G69120", "AT5G618"),
     sum_exp_data_ref = FALSE,
-    accession_data_to_transform = "Col0",
-    ids_data_ref_colnames = c("CDS.model", "locus_name")
+    accession_data_to_transform = "Col0"
   )
 
   expect_equal(class(exp)[[1]], "data.table")

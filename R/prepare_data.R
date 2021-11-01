@@ -45,37 +45,32 @@ get_mean_data <- function(exp,
 #' @param data_ref File name in working directory, path to file of reference data.
 #' @param data_to_transform File name in working directory, path to file of data to transform.
 #' @param id_table File name in working directory, path to file of ID table connecting both reference data and data.
-#' @param fix_id_table_shared_colname Column names shared by both reference data and ID table.
-#' @param fix_and_to_transform_data_shared_colname Column names shared by both reference data and data to transform.
-#' @param colnames_id_table ID table column names.
+#' @param lookup_col_ref_and_id_table Column names shared by both reference data and ID table.
+#' @param lookup_col_ref_and_to_transform Column names shared by both reference data and data to transform.
 #' @param colnames_wanted List of column names to keep from both reference data and data to transform.
 #' @param tissue_wanted Name of tissue from which data will be compared.
 #' @param curr_GoIs Gene of interest list.
 #' @param sum_exp_data_ref If \code{TRUE} then sum all gene data. Default is \code{FALSE}.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param ids_data_ref_colnames Column names shared by both reference data and ID table, whose element needs to be unique.
 #' @return A data frame contains both reference data and data to transform for selected gene of interest.
 #' @export
 get_expression_of_interest <- function(data_ref,
                                        data_to_transform,
                                        id_table,
-                                       fix_id_table_shared_colname = "CDS.model",
-                                       fix_and_to_transform_data_shared_colname = "locus_name",
-                                       colnames_id_table = c("CDS.model", "symbol", "locus_name"),
+                                       lookup_col_ref_and_id_table = "CDS.model",
+                                       lookup_col_ref_and_to_transform = "locus_name",
                                        colnames_wanted = NULL,
                                        tissue_wanted = NULL,
                                        curr_GoIs,
                                        sum_exp_data_ref = FALSE,
-                                       accession_data_to_transform = "Col0",
-                                       ids_data_ref_colnames = c("CDS.model", "locus_name")) {
+                                       accession_data_to_transform = "Col0") {
   # Load of the single df data
   master_exp <- get_all_data(
     data_ref,
     data_to_transform,
     id_table,
-    fix_id_table_shared_colname,
-    fix_and_to_transform_data_shared_colname,
-    colnames_id_table,
+    lookup_col_ref_and_id_table,
+    lookup_col_ref_and_to_transform,
     colnames_wanted
   )
 
@@ -106,30 +101,31 @@ get_expression_of_interest <- function(data_ref,
     exp_data_to_transform <- exp[exp$accession == accession_data_to_transform, ]
     exp_data_ref <- exp[exp$accession != accession_data_to_transform, ]
 
+    ids_data_ref_colnames <- c(lookup_col_ref_and_id_table, lookup_col_ref_and_to_transform)
     ids_data_ref <- unique(exp_data_ref[, ..ids_data_ref_colnames])
     # exp_data_to_transform$CDS.model <- NULL
 
     exp_data_to_transform <- exp_data_to_transform %>%
-      dplyr::select(-c(fix_id_table_shared_colname))
+      dplyr::select(-c(lookup_col_ref_and_id_table))
 
     exp_data_to_transform <- merge(
       ids_data_ref,
       exp_data_to_transform,
-      by = fix_and_to_transform_data_shared_colname,
+      by = lookup_col_ref_and_to_transform,
       allow.cartesian = TRUE
     )
 
     # Define the same ID and locus name for each data
     exp_data_to_transform <- exp_data_to_transform %>%
       dplyr::mutate(
-        id_transform_data = get(fix_and_to_transform_data_shared_colname),
-        locus_name = get(fix_id_table_shared_colname)
+        id_transform_data = get(lookup_col_ref_and_to_transform),
+        locus_name = get(lookup_col_ref_and_id_table)
       )
 
     exp_data_ref <- exp_data_ref %>%
       dplyr::mutate(
-        id_transform_data = get(fix_and_to_transform_data_shared_colname),
-        locus_name = get(fix_id_table_shared_colname)
+        id_transform_data = get(lookup_col_ref_and_to_transform),
+        locus_name = get(lookup_col_ref_and_id_table)
       )
 
     # exp_data_to_transform$ara.id <- exp_data_to_transform$locus_name
@@ -151,11 +147,11 @@ get_expression_of_interest <- function(data_ref,
 get_all_data <- function(data_ref,
                          data_to_transform,
                          id_table,
-                         fix_id_table_shared_colname = "CDS.model",
-                         fix_and_to_transform_data_shared_colname = "locus_name",
-                         colnames_id_table = c("CDS.model", "symbol", "locus_name"),
+                         lookup_col_ref_and_id_table = "CDS.model",
+                         lookup_col_ref_and_to_transform = "locus_name",
                          colnames_wanted = NULL) {
   # Take unique id_table
+  colnames_id_table <- c(lookup_col_ref_and_id_table, lookup_col_ref_and_to_transform)
   id_table_unique <- unique(id_table[, ..colnames_id_table]) %>%
     dplyr::mutate_all(.funs = toupper)
 
@@ -166,21 +162,21 @@ get_all_data <- function(data_ref,
   data_ref <- merge(
     data_ref,
     id_table_unique,
-    by = fix_id_table_shared_colname
+    by = lookup_col_ref_and_id_table
   )
 
   # Create a column in data_to_transform
   # data_to_transform$locus_name <- data_to_transform$CDS.model
-  data_to_transform[, (fix_and_to_transform_data_shared_colname) := data_to_transform[[fix_id_table_shared_colname]]]
+  data_to_transform[, (lookup_col_ref_and_to_transform) := data_to_transform[[lookup_col_ref_and_id_table]]]
 
   # Cut down to only have genes with ATG locus present in both datasets
   common_symbols <- intersect(
-    data_to_transform[[fix_and_to_transform_data_shared_colname]],
-    data_ref[[fix_and_to_transform_data_shared_colname]]
+    data_to_transform[[lookup_col_ref_and_to_transform]],
+    data_ref[[lookup_col_ref_and_to_transform]]
   )
 
-  data_to_transform <- data_to_transform[data_to_transform[[fix_and_to_transform_data_shared_colname]] %in% common_symbols, ]
-  data_ref <- data_ref[data_ref[[fix_and_to_transform_data_shared_colname]] %in% common_symbols, ]
+  data_to_transform <- data_to_transform[data_to_transform[[lookup_col_ref_and_to_transform]] %in% common_symbols, ]
+  data_ref <- data_ref[data_ref[[lookup_col_ref_and_to_transform]] %in% common_symbols, ]
 
   # Take a common columns
   if (is.null(colnames_wanted)) {
@@ -194,7 +190,7 @@ get_all_data <- function(data_ref,
   expression <- rbind(data_ref[, ..colnames_wanted], data_to_transform[, ..colnames_wanted])
 
   # Cut down to remove the 'blank' symbol
-  expression <- expression[expression[[fix_and_to_transform_data_shared_colname]] != "", ]
+  expression <- expression[expression[[lookup_col_ref_and_to_transform]] != "", ]
 
   return(expression)
 }
@@ -259,70 +255,3 @@ rename_columns <- function(data, colnames) {
 
   return(data)
 }
-
-
-
-# get_mean_and_all_exp_data <- function(data_ref,
-#                                       data_to_transform,
-#                                       id_table,
-#                                       fix_id_table_shared_colname,
-#                                       fix_and_to_transform_data_shared_colname,
-#                                       colnames_id_table,
-#                                       colnames_wanted,
-#                                       tissue_wanted = NULL,
-#                                       curr_GoIs,
-#                                       sum_exp_data_ref = FALSE,
-#                                       accession_data_to_transform = "Col0",
-#                                       ids_data_ref_colnames = c("CDS.model", "locus_name"),
-#                                       expression_value_threshold = 5,
-#                                       exp_threshold = 0.5) {
-#   # Load the expression data for all the curr_GoIs gene models, for data to transform and for reference data
-#   exp <- get_expression_of_interest(
-#     data_ref,
-#     data_to_transform,
-#     id_table,
-#     fix_id_table_shared_colname,
-#     fix_and_to_transform_data_shared_colname,
-#     colnames_id_table,
-#     colnames_wanted,
-#     tissue_wanted,
-#     curr_GoIs,
-#     sum_exp_data_ref,
-#     accession_data_to_transform,
-#     ids_data_ref_colnames
-#   )
-#
-#   # Calculate mean of each timepoint by adding a column called "expression_value"
-#   # TODO: make vector in mean_df a non-hardcoded parameter
-#   exp[, expression_value := mean(norm.cpm), by = list(locus_name, accession, tissue, timepoint)]
-#   mean_df <- unique(exp[, c("locus_name", "accession", "tissue", "timepoint", "expression_value")])
-#
-#   # Filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed greater than 1
-#   data_ref_df <- mean_df[mean_df$accession != accession_data_to_transform]
-#   data_ref_df[, keep := (max(expression_value) > expression_value_threshold | mean(expression_value > 1) > exp_threshold), by = .(locus_name)]
-#
-#   keep_data_ref_genes <- unique(data_ref_df$locus_name[data_ref_df$keep == TRUE])
-#   discard_data_ref_genes <- unique(data_ref_df$locus_name[data_ref_df$keep == FALSE])
-#
-#   # Filter mean_df to remove all data to transform genes with all zeros values
-#   data_to_transform_df <- mean_df[mean_df$locus_name %in% keep_data_ref_genes & mean_df$accession == accession_data_to_transform]
-#   data_to_transform_df[, keep_final := (mean(expression_value) != 0 & stats::sd(expression_value) != 0), by = .(locus_name)]
-#   keep_final_genes <- unique(data_to_transform_df$locus_name[data_to_transform_df$keep_final == TRUE])
-#   discard_final_genes <- unique(data_to_transform_df$locus_name[data_to_transform_df$keep_final == FALSE])
-#
-#   mean_df <- mean_df[mean_df$locus_name %in% keep_final_genes, ]
-#
-#   # Printing the keep genes
-#   cli::cli_alert_info("{length(keep_data_ref_genes)} brassica genes considered in the comparison")
-#   cli::cli_alert_info("{length(keep_final_genes)} all genes considered in the comparison")
-#
-#   # Get mean_df, including column "group"
-#   exp <- exp[exp$locus_name %in% unique(mean_df$locus_name)]
-#   exp <- subset(exp, select = c("locus_name", "accession", "tissue", "timepoint", "norm.cpm", "group"))
-#   names(exp)[names(exp) == "norm.cpm"] <- "expression_value"
-#
-#   # Results object
-#   results_list <- list(mean_df, exp)
-#
-#   return(results_list)
-# }

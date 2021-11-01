@@ -284,8 +284,25 @@ get_best_stretch_and_shift <- function(to_shift_df,
   all_shifts <- do.call("rbind", all_all_shifts)
   # the best shifts for each stretch
   all_best_shifts <- do.call("rbind", all_best_shifts)
-  # model comparison of best shift (for each stretch) to separate modeles
+  # model comparison of best shift (for each stretch) to separate models
   all_model_comparison_dt <- do.call("rbind", all_model_comparison_dt)
+
+  # Correct -Inf BIC and AIC values to -9999 so that delta.BIC is not Inf or NaN
+  all_model_comparison_dt <- all_model_comparison_dt %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+      dplyr::across(
+        .cols = c(registered.BIC, registered.AIC, separate.BIC, separate.AIC),
+        .fns = function(x) {
+          if (!is.finite(x)) {
+            x <- 9999 * sign(x)
+          }
+          return(x)
+        }
+      )
+    ) %>%
+    dplyr::ungroup() %>%
+    data.table::as.data.table()
 
   # Get the best registration applied (best stretch, and best shift) for each gene, picking by BIC alone will favour fewer overlapping (considered) data points.
   # Pick best in order to maximise how much better register.BIC is than separate.BIC
@@ -311,7 +328,9 @@ get_best_stretch_and_shift <- function(to_shift_df,
   )
 
   # There should be only 1 best shift for each gene, stop if it is not the case
-  stopifnot(nrow(best_shifts) == length(unique(to_shift_df$locus_name)))
+  if (!(nrow(best_shifts) == length(unique(to_shift_df$locus_name)))) {
+    stop()
+  }
 
   return(list(
     "all_shifts" = all_shifts,

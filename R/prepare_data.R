@@ -1,13 +1,13 @@
 #' Calculate mean expression values from all expression data with replicates
 #'
 #' @param exp Input data frame contains all replicates of gene expression in each genotype at each timepoint.
-#' @param max_expression_value_wanted Maximum value of expression desired.
+#' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #'
 #' @return A data frame contains only mean expression data.
 #' @export
 get_mean_data <- function(exp,
-                          max_expression_value_wanted = 5,
+                          expression_value_threshold = 5,
                           accession_data_to_transform) {
 
   # Calculate mean of each timepoint by adding a column called "expression_value"
@@ -15,9 +15,14 @@ get_mean_data <- function(exp,
   exp[, mean_expression_value := mean(expression_value), by = list(locus_name, accession, tissue, timepoint)]
   mean_df <- unique(exp[, c("locus_name", "accession", "tissue", "timepoint", "mean_expression_value")])
 
-  # Filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed greater than 1
   data_ref_df <- mean_df[mean_df$accession != accession_data_to_transform]
-  data_ref_df[, keep := (max(mean_expression_value) > max_expression_value_wanted | mean(mean_expression_value > 1) > 0.5), by = .(locus_name)]
+
+  # Filter mean_df to remove genes with expression lower than the threshold, and less than half timepoints expressed greater than 1
+  if (!is.null(expression_value_threshold)) {
+    data_ref_df[, keep := (max(mean_expression_value) > expression_value_threshold | mean(mean_expression_value > 1) > 0.5), by = .(locus_name)]
+  } else {
+    data_ref_df[, keep := TRUE]
+  }
 
   keep_data_ref_genes <- unique(data_ref_df$locus_name[data_ref_df$keep == TRUE])
   discard_data_ref_genes <- unique(data_ref_df$locus_name[data_ref_df$keep == FALSE])
@@ -269,7 +274,7 @@ rename_columns <- function(data, colnames) {
 #                                       sum_exp_data_ref = FALSE,
 #                                       accession_data_to_transform = "Col0",
 #                                       ids_data_ref_colnames = c("CDS.model", "locus_name"),
-#                                       max_expression_value_wanted = 5,
+#                                       expression_value_threshold = 5,
 #                                       exp_threshold = 0.5) {
 #   # Load the expression data for all the curr_GoIs gene models, for data to transform and for reference data
 #   exp <- get_expression_of_interest(
@@ -294,7 +299,7 @@ rename_columns <- function(data, colnames) {
 #
 #   # Filter mean_df to remove genes with very low expression - remove if max is less than 5, and less than half timepoints expressed greater than 1
 #   data_ref_df <- mean_df[mean_df$accession != accession_data_to_transform]
-#   data_ref_df[, keep := (max(expression_value) > max_expression_value_wanted | mean(expression_value > 1) > exp_threshold), by = .(locus_name)]
+#   data_ref_df[, keep := (max(expression_value) > expression_value_threshold | mean(expression_value > 1) > exp_threshold), by = .(locus_name)]
 #
 #   keep_data_ref_genes <- unique(data_ref_df$locus_name[data_ref_df$keep == TRUE])
 #   discard_data_ref_genes <- unique(data_ref_df$locus_name[data_ref_df$keep == FALSE])

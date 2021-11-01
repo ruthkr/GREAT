@@ -32,7 +32,7 @@ test_that("get_expression_of_interest works", {
 test_that("get_mean_data works", {
   mean_data <- get_mean_data(
     all_data_df,
-    max_expression_value_wanted = 5,
+    expression_value_threshold = 5,
     accession_data_to_transform = "Col0"
   )
 

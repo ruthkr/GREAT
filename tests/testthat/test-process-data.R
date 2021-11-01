@@ -131,7 +131,7 @@ test_that("all functions called in scale_and_register_data work", {
 
   mean_df <- get_mean_data(
     exp = all_data_df,
-    max_expression_value_wanted = 0.5,
+    expression_value_threshold = 5,
     accession_data_to_transform = accession_data_to_transform
   )
 

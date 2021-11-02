@@ -57,12 +57,12 @@ plot_registered_gene_of_interest <- function(df, gene_accession = "all", title =
     ggplot2::facet_wrap(~ .data$locus_name, scales = "free", ncol = ncol) +
     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
     ggplot2::theme_bw() +
-    ggplot2::theme(
-      legend.position = "top",
-      legend.title = ggplot2::element_blank(),
-      strip.text = ggplot2::element_text(face = "italic")
-      # legend.margin = ggplot2::margin(21, 0, 0, 0)
-    ) +
+    # ggplot2::theme(
+    #   legend.position = legend_position,
+    #   legend.title = ggplot2::element_blank(),
+    #   strip.text = ggplot2::element_text(face = "italic")
+    #   # legend.margin = ggplot2::margin(21, 0, 0, 0)
+    # ) +
     ggplot2::labs(
       title = title,
       x = "Registered time (d)",

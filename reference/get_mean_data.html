@@ -140,11 +140,7 @@
     <p>Calculate mean expression values from all expression data with replicates</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_mean_data</span><span class='op'>(</span>
-  <span class='va'>exp</span>,
-  max_expression_value_wanted <span class='op'>=</span> <span class='fl'>5</span>,
-  <span class='va'>accession_data_to_transform</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_mean_data</span><span class='op'>(</span><span class='va'>exp</span>, expression_value_threshold <span class='op'>=</span> <span class='fl'>5</span>, <span class='va'>accession_data_to_transform</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -154,8 +150,8 @@
       <td><p>Input data frame contains all replicates of gene expression in each genotype at each timepoint.</p></td>
     </tr>
     <tr>
-      <th>max_expression_value_wanted</th>
-      <td><p>Maximum value of expression desired.</p></td>
+      <th>expression_value_threshold</th>
+      <td><p>Expression value threshold. Remove expressions if maximum is less than the threshold. If <code>NULL</code> keep all data.</p></td>
     </tr>
     <tr>
       <th>accession_data_to_transform</th>

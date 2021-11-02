@@ -21,7 +21,7 @@ get_mean_data <- function(exp,
   if (!is.null(expression_value_threshold)) {
     data_ref_df[, keep := (max(mean_expression_value) > expression_value_threshold | mean(mean_expression_value > 1) > 0.5), by = .(locus_name)]
   } else {
-    data_ref_df[, keep := TRUE]
+    data_ref_df[, keep := mean(mean_expression_value) > 0, by = .(locus_name)]
   }
 
   keep_data_ref_genes <- unique(data_ref_df$locus_name[data_ref_df$keep == TRUE])

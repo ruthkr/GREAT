@@ -8,15 +8,13 @@ get_expression_of_interest(
   data_ref,
   data_to_transform,
   id_table,
-  fix_id_table_shared_colname = "CDS.model",
-  fix_and_to_transform_data_shared_colname = "locus_name",
-  colnames_id_table = c("CDS.model", "symbol", "locus_name"),
+  lookup_col_ref_and_id_table = "CDS.model",
+  lookup_col_ref_and_to_transform = "locus_name",
   colnames_wanted = NULL,
   tissue_wanted = NULL,
   curr_GoIs,
   sum_exp_data_ref = FALSE,
-  accession_data_to_transform = "Col0",
-  ids_data_ref_colnames = c("CDS.model", "locus_name")
+  accession_data_to_transform = "Col0"
 )
 }
 \arguments{
@@ -26,11 +24,9 @@ get_expression_of_interest(
 
 \item{id_table}{File name in working directory, path to file of ID table connecting both reference data and data.}
 
-\item{fix_id_table_shared_colname}{Column names shared by both reference data and ID table.}
+\item{lookup_col_ref_and_id_table}{Column names shared by both reference data and ID table.}
 
-\item{fix_and_to_transform_data_shared_colname}{Column names shared by both reference data and data to transform.}
-
-\item{colnames_id_table}{ID table column names.}
+\item{lookup_col_ref_and_to_transform}{Column names shared by both reference data and data to transform.}
 
 \item{colnames_wanted}{List of column names to keep from both reference data and data to transform.}
 
@@ -41,8 +37,6 @@ get_expression_of_interest(
 \item{sum_exp_data_ref}{If \code{TRUE} then sum all gene data. Default is \code{FALSE}.}
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
-
-\item{ids_data_ref_colnames}{Column names shared by both reference data and ID table, whose element needs to be unique.}
 }
 \value{
 A data frame contains both reference data and data to transform for selected gene of interest.

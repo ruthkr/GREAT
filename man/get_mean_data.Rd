@@ -4,16 +4,12 @@
 \alias{get_mean_data}
 \title{Calculate mean expression values from all expression data with replicates}
 \usage{
-get_mean_data(
-  exp,
-  max_expression_value_wanted = 5,
-  accession_data_to_transform
-)
+get_mean_data(exp, expression_value_threshold = 5, accession_data_to_transform)
 }
 \arguments{
 \item{exp}{Input data frame contains all replicates of gene expression in each genotype at each timepoint.}
 
-\item{max_expression_value_wanted}{Maximum value of expression desired.}
+\item{expression_value_threshold}{Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.}
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 }

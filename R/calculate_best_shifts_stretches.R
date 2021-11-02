@@ -171,6 +171,7 @@ get_best_shift <- function(num_shifts = 25,
         compared <- rbind(data_transform_compared, data_ref_compared)
       }
     } else {
+      cli::cli_alert_info("Not rescaling in get_best_shift()!")
       # If didn't rescale expression for comparison, record values s.t. (x - xmean) / x_sd = x
       data_transform_mean <- 0
       data_ref_mean <- 0

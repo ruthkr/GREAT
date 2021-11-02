@@ -11,12 +11,12 @@ summary_model_comparison <- function(model_comparison) {
   non_reg <- total - reg
   stretch <- model_comparison %>%
     dplyr::filter(BIC_registered_is_better == TRUE) %>%
-    pull(stretch) %>%
+    dplyr::pull(stretch) %>%
     unique() %>%
     sort()
   shift <- model_comparison %>%
     dplyr::filter(BIC_registered_is_better == TRUE) %>%
-    pull(shift) %>%
+    dplyr::pull(shift) %>%
     unique() %>%
     sort()
 

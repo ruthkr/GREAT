@@ -104,7 +104,7 @@ test_that("scale_and_register_data works", {
   summary <- summary_model_comparison(registration_results$model_comparison_dt)
 
   expect_equal(length(summary), 3)
-  expect_equal(class(summary$summary), "data.frame")
+  expect_equal(class(summary$df_summary), "data.frame")
   expect_equal(class(summary$registered_genes), "character")
   expect_equal(class(summary$non_registered_genes), "character")
 })

@@ -7,12 +7,22 @@
 summary_model_comparison <- function(model_comparison) {
   # Summary table
   total <- nrow(model_comparison)
-  reg <- length(model_comparison$BIC_registered_is_better == TRUE)
+  reg <- sum(model_comparison$BIC_registered_is_better)
   non_reg <- total - reg
+  stretch <- model_comparison %>%
+    dplyr::filter(BIC_registered_is_better == TRUE) %>%
+    pull(stretch) %>%
+    unique() %>%
+    sort()
+  shift <- model_comparison %>%
+    dplyr::filter(BIC_registered_is_better == TRUE) %>%
+    pull(shift) %>%
+    unique() %>%
+    sort()
 
   df_summary <- data.frame(
-    Result = c("Total genes", "Registered genes", "Non-registered genes"),
-    Count = c(total, reg, non_reg)
+    Result = c("Total genes", "Registered genes", "Non-registered genes", "Stretch", "Shift"),
+    Value = c(total, reg, non_reg, paste(stretch, collapse = ", "), paste0("[", min(shift), ", ", max(shift), "]"))
   )
 
   # List of registered and non-registered genes
@@ -21,7 +31,7 @@ summary_model_comparison <- function(model_comparison) {
 
   # Results object
   results_list <- list(
-    summary = df_summary,
+    df_summary = df_summary,
     registered_genes = registered_genes,
     non_registered_genes = non_registered_genes
   )

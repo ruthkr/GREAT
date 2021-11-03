@@ -40,7 +40,7 @@ mouse_data %>%
   length()
 ```
 
-### Taking the first 10 same gene between mouse and human retinal data 
+### Taking the first 400 same gene between mouse and human retinal data 
 
 ```{r}
 # Randomly select genes

@@ -3,8 +3,8 @@ Using GREAT to align human and mouse fetal retina transcriptomic data
 
 -   [Introduction](#introduction)
 -   [Understand the data](#understand-the-data)
-    -   [Taking the first 10 same gene between mouse and human retinal
-        data](#taking-the-first-10-same-gene-between-mouse-and-human-retinal-data)
+    -   [Taking the first 400 same gene between mouse and human retinal
+        data](#taking-the-first-400-same-gene-between-mouse-and-human-retinal-data)
     -   [Combine both data and plot](#combine-both-data-and-plot)
 -   [Register data](#register-data)
     -   [Get the summary results](#get-the-summary-results)
@@ -44,7 +44,7 @@ mouse_data %>%
 
     ## [1] 45318
 
-### Taking the first 10 same gene between mouse and human retinal data
+### Taking the first 400 same gene between mouse and human retinal data
 
 ``` r
 # Randomly select genes

@@ -140,7 +140,12 @@
     <p>Calculate mean expression values from all expression data with replicates</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_mean_data</span><span class='op'>(</span><span class='va'>exp</span>, expression_value_threshold <span class='op'>=</span> <span class='fl'>5</span>, <span class='va'>accession_data_to_transform</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_mean_data</span><span class='op'>(</span>
+  <span class='va'>exp</span>,
+  expression_value_threshold <span class='op'>=</span> <span class='fl'>5</span>,
+  <span class='va'>accession_data_to_transform</span>,
+  is_data_normalised <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -156,6 +161,10 @@
     <tr>
       <th>accession_data_to_transform</th>
       <td><p>Accession name of data which will be transformed.</p></td>
+    </tr>
+    <tr>
+      <th>is_data_normalised</th>
+      <td><p>TRUE if dataset has been normalised prior to registration process.</p></td>
     </tr>
     </table>
 

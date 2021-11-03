@@ -13,6 +13,7 @@
 #' @param accession_data_ref Accession name of reference data.
 #' @param start_timepoint Start timepoint used to ... Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.
 #' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
+#' @param is_data_normalised TRUE if dataset has been normalised prior to registration process.
 #'
 #' @return List of dataframes: (a) `mean_df` is unchanged by `scale_and_register_data()`, (b) `mean_df_sc` is identical to `mean_df`, with additional column `sc.expression_value`, (c) `imputed_mean_df` is registered expression data, (d) `all_shifts` is a table of candidate registrations applied, and score for each, and (e) `model_comparison_dt` is a table comparing the optimal registration function for each gene (based on `all_shifts` scores) to model with no registration applied.
 #'
@@ -27,7 +28,8 @@ scale_and_register_data <- function(input_df,
                                     accession_data_to_transform,
                                     accession_data_ref,
                                     start_timepoint = c("reference", "transform", "zero"),
-                                    expression_value_threshold = 5) {
+                                    expression_value_threshold = 5,
+                                    is_data_normalised = FALSE) {
   # Validate parameters
   start_timepoint <- match.arg(start_timepoint)
 
@@ -37,7 +39,8 @@ scale_and_register_data <- function(input_df,
   mean_df <- get_mean_data(
     exp = all_data_df,
     expression_value_threshold = expression_value_threshold,
-    accession_data_to_transform = accession_data_to_transform
+    accession_data_to_transform = accession_data_to_transform,
+    is_data_normalised = is_data_normalised
   )
 
   # Parse start_timepoint

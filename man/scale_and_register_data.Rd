@@ -15,7 +15,8 @@ scale_and_register_data(
   accession_data_to_transform,
   accession_data_ref,
   start_timepoint = c("reference", "transform", "zero"),
-  expression_value_threshold = 5
+  expression_value_threshold = 5,
+  is_data_normalised = FALSE
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ scale_and_register_data(
 \item{start_timepoint}{Start timepoint used to ... Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.}
 
 \item{expression_value_threshold}{Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.}
+
+\item{is_data_normalised}{TRUE if dataset has been normalised prior to registration process.}
 }
 \value{
 List of dataframes: (a) \code{mean_df} is unchanged by \code{scale_and_register_data()}, (b) \code{mean_df_sc} is identical to \code{mean_df}, with additional column \code{sc.expression_value}, (c) \code{imputed_mean_df} is registered expression data, (d) \code{all_shifts} is a table of candidate registrations applied, and score for each, and (e) \code{model_comparison_dt} is a table comparing the optimal registration function for each gene (based on \code{all_shifts} scores) to model with no registration applied.

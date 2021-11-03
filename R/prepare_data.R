@@ -3,12 +3,14 @@
 #' @param exp Input data frame contains all replicates of gene expression in each genotype at each timepoint.
 #' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
+#' @param is_data_normalised TRUE if dataset has been normalised prior to registration process.
 #'
 #' @return A data frame contains only mean expression data.
 #' @export
 get_mean_data <- function(exp,
                           expression_value_threshold = 5,
-                          accession_data_to_transform) {
+                          accession_data_to_transform,
+                          is_data_normalised = FALSE) {
 
   # Calculate mean of each timepoint by adding a column called "expression_value"
   # TODO: make vector in mean_df a non-hardcoded parameter
@@ -17,11 +19,15 @@ get_mean_data <- function(exp,
 
   data_ref_df <- mean_df[mean_df$accession != accession_data_to_transform]
 
-  # Filter mean_df to remove genes with expression lower than the threshold, and less than half timepoints expressed greater than 1
-  if (!is.null(expression_value_threshold)) {
-    data_ref_df[, keep := (max(mean_expression_value) > expression_value_threshold | mean(mean_expression_value > 1) > 0.5), by = .(locus_name)]
+  if (!is_data_normalised) {
+    # Filter mean_df to remove genes with expression lower than the threshold, and less than half timepoints expressed greater than 1
+    if (!is.null(expression_value_threshold)) {
+      data_ref_df[, keep := (max(mean_expression_value) > expression_value_threshold | mean(mean_expression_value > 1) > 0.5), by = .(locus_name)]
+    } else {
+      data_ref_df[, keep := mean(mean_expression_value) > 0, by = .(locus_name)]
+    }
   } else {
-    data_ref_df[, keep := mean(mean_expression_value) > 0, by = .(locus_name)]
+    data_ref_df[, keep := TRUE]
   }
 
   keep_data_ref_genes <- unique(data_ref_df$locus_name[data_ref_df$keep == TRUE])

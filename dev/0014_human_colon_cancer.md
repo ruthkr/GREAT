@@ -1,32 +1,33 @@
----
-title: ""
-output:
-  github_document:
-    toc: true
----
+
+-   [Introduction](#introduction)
+    -   [Processing H2O2 exposured
+        data](#processing-h2o2-exposured-data)
+    -   [Processing menadione exposured
+        data](#processing-menadione-exposured-data)
+    -   [Combine data and select only common
+        genes](#combine-data-and-select-only-common-genes)
+    -   [Plot data](#plot-data)
+-   [Register genes](#register-genes)
+-   [Register data](#register-data)
+    -   [Get summary results](#get-summary-results)
+    -   [Plot the results](#plot-the-results)
 
 ## Introduction
 
-Using time series dataset from [Briede et al.](https://academic.oup.com/toxsci/article/114/2/193/1670401): gene expression by an extensive time series (0.08, 0.25, 0.5, 1, 2, 4, 8, 16, or 24 h) analyses in human colon cancer (caco-2) cells after exposure to H2O2 or the superoxide anion donor menadione. 
+Using time series dataset from [Briede et
+al.](https://academic.oup.com/toxsci/article/114/2/193/1670401): gene
+expression by an extensive time series (0.08, 0.25, 0.5, 1, 2, 4, 8, 16,
+or 24 h) analyses in human colon cancer (caco-2) cells after exposure to
+H2O2 or the superoxide anion donor menadione.
 
-
-```{r setup, include=FALSE}
-# Load libraries
-knitr::opts_chunk$set(echo = TRUE)
-
-library(dplyr)
-library(GREAT)
-library(readxl)
-```
-
-```{r}
+``` r
 caco_h2o2 <- readxl::read_xlsx("~/PhD/main_phd/genalignR_development/data_briede_et_all_2010_colon_cancer/exposure_h2o2.xlsx")
 caco_menadione <- readxl::read_xlsx("~/PhD/main_phd/genalignR_development/data_briede_et_all_2010_colon_cancer/exposure_menadione.xlsx")
 ```
 
 ### Processing H2O2 exposured data
 
-```{r}
+``` r
 caco_h2o2 <- caco_h2o2 %>% 
   tidyr::pivot_longer(!GeneSymbol, names_to = "timepoint", values_to = "expression_value") %>% 
   dplyr::mutate(timepoint = as.numeric(stringr::str_remove_all(timepoint, "h")), 
@@ -37,10 +38,9 @@ caco_h2o2 <- caco_h2o2 %>%
   dplyr::rename(locus_name = GeneSymbol)
 ```
 
-
 ### Processing menadione exposured data
 
-```{r}
+``` r
 caco_menadione <- caco_menadione %>% 
   tidyr::pivot_longer(!GeneSymbol, names_to = "timepoint", values_to = "expression_value") %>% 
   dplyr::mutate(timepoint = as.numeric(stringr::str_remove_all(timepoint, "h")), 
@@ -51,9 +51,9 @@ caco_menadione <- caco_menadione %>%
   dplyr::rename(locus_name = GeneSymbol)
 ```
 
-### Combine data and select only common genes 
+### Combine data and select only common genes
 
-```{r}
+``` r
 common_genes <- intersect(caco_h2o2$locus_name, caco_menadione$locus_name) %>% unique()# %>% head(40)
 
 # Combine together all of data
@@ -68,7 +68,7 @@ subset_gene <- common_genes %>% head(10)
 
 ### Plot data
 
-```{r fig.width=15, fig.height=20, warning=FALSE}
+``` r
 caco_all_common_genes %>%
   dplyr::filter(locus_name %in% subset_gene) %>% 
   ggplot2::ggplot() +
@@ -86,16 +86,20 @@ caco_all_common_genes %>%
   ggplot2::facet_wrap(~locus_name, scales = "free", ncol = 2) 
 ```
 
+![](0014_human_colon_cancer_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ## Register genes
 
-```{r}
+``` r
 # Find the approximation of stretch factor 
 GREAT::get_approximate_stretch(caco_all_common_genes, "h202", "menadione")
 ```
+
+    ## [1] 1
+
 ## Register data
 
-```{r caco-reg-results, eval=FALSE}
+``` r
 caco_reg_results <- scale_and_register_data(
   input_df = caco_all_common_genes,
   stretches = seq(0.9, 1.2, 0.01),
@@ -112,32 +116,33 @@ caco_reg_results <- scale_and_register_data(
 )
 ```
 
-```{r include=FALSE}
-caco_reg_results <- readRDS("caco_reg_results")
-```
-
 ### Get summary results
 
-```{r}
+``` r
 summary_data <- summary_model_comparison(caco_reg_results[["model_comparison_dt"]]) 
 
 summary_data$df_summary
 ```
 
-```{r}
+    ##                 Result          Value
+    ## 1          Total genes            297
+    ## 2     Registered genes              2
+    ## 3 Non-registered genes            295
+    ## 4              Stretch       1.1, 1.2
+    ## 5                Shift [-2.3, 0.2596]
+
+``` r
 summary_data$registered_genes
 ```
 
+    ## [1] "C2orf33" "ZNF133"
+
 ### Plot the results
 
-```{r registered-genes-plot, fig.width=15, warning=FALSE}
+``` r
 caco_reg_results$imputed_mean_df %>% 
   dplyr::filter(locus_name %in% c("C2orf33", "ZNF133")) %>% 
   plot_registered_gene_of_interest()
 ```
 
-
-
-
-
-
+![](0014_human_colon_cancer_files/figure-gfm/registered-genes-plot-1.png)<!-- -->

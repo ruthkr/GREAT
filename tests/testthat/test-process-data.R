@@ -36,7 +36,7 @@ test_that("scale_and_register_data works", {
   expect_equal(class(registration_results$mean_df)[[1]], "data.table")
   expect_equal(class(registration_results$mean_df_sc)[[1]], "data.table")
   expect_equal(class(registration_results$imputed_mean_df)[[1]], "data.table")
-  expect_equal(class(registration_results$all_shifts)[[1]], "data.table")
+  expect_equal(class(registration_results$all_shifts_df)[[1]], "data.table")
   expect_equal(class(registration_results$model_comparison_dt)[[1]], "data.table")
 
   expected_model_comparison_dt <- data.table::data.table(

@@ -372,6 +372,7 @@ table_100simul <- data.table::fread(here::here("dev/table_100simul_reg_with_full
     num_timepoints = as.factor(num_timepoints),
     SD = as.factor(SD)
   )
+
 table <- data.table::fread(here::here("dev/table_reg_with_full_simulated_data_2021-10-11_15-57-54.csv")) %>% 
   dplyr::mutate(
     num_timepoints = as.factor(num_timepoints),
@@ -585,5 +586,94 @@ TukeyHSD_result$SD %>%
   dplyr::filter(sd_b >= 0.28) %>% 
   dplyr::select(sd_a, sd_b, `p adj`) %>% 
   knitr::kable()
+```
+
+## T-tests
+
+```{r}
+table_summary <- table %>%
+  dplyr::group_by(SD, num_timepoints) %>%
+  dplyr::summarise(
+    dplyr::across(
+      .cols = registered_genes_total10,
+      list(mean = mean, sd = sd)
+    ),
+    .groups = "drop"
+  ) %>%
+  dplyr::rename(mean_length = registered_genes_total10_mean, sd_length = registered_genes_total10_sd)
+
+# Plot
+table_summary %>%
+  ggplot() +
+  aes(y = mean_length, x = as.factor(num_timepoints)) +
+  geom_bar(
+    stat = "identity",
+    fill = "#8da0cb",
+    position = position_dodge()
+  ) +
+  geom_errorbar(
+    aes(
+      ymin = mean_length - sd_length,
+      ymax = mean_length + sd_length
+    ),
+    width = .2,
+    position = position_dodge(.9)
+  ) +
+  labs(
+    x = "Number timepoints",
+    y = "Registered genes",
+    title = "Total registered genes"
+  ) +
+  facet_wrap(~SD)
+```
+
+```{r fn-get-poiss-vect}
+get_poiss_vect <- function(table, sd, num) {
+  poiss_vec <- table %>%
+    dplyr::filter(
+      SD == sd,
+      num_timepoints == num
+    ) %>%
+    dplyr::pull(registered_genes_total10)
+
+  return(poiss_vec)
+}
+```
+
+```{r fn-do-t-test}
+do_t_test <- function(table, sd, num_a, num_b) {
+  t_test_results <- t.test(
+    get_poiss_vect(table, sd, num_a),
+    get_poiss_vect(table, sd, num_b)
+  )
+
+  return(t_test_results)
+}
+```
+
+```{r}
+tidyr::crossing(
+  SD = unique(table$SD),
+  unique(table$num_timepoints) %>%
+    as.character() %>% 
+    as.numeric() %>% 
+    sort() %>%
+    combn(2) %>%
+    t() %>%
+    as.data.frame()
+) %>%
+  dplyr::select(SD, num_timepoints_a = V1, num_timepoints_b = V2) %>%
+  dplyr::arrange(SD, num_timepoints_a, num_timepoints_b) %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(
+    SD = SD %>% as.character() %>% as.numeric(),
+    t_test_p_value = do_t_test(table, SD, num_timepoints_a, num_timepoints_b)$p.value
+  ) %>%
+  ggplot() +
+  aes(x = SD, y = t_test_p_value, color = interaction(num_timepoints_a, num_timepoints_b)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0.05, linetype = "dashed") +
+  scale_x_continuous(breaks = seq(0, 1, 0.01)) +
+  labs(color = "pair")
 ```
 

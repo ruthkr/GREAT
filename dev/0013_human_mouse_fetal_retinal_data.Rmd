@@ -165,7 +165,7 @@ all_data %>%
 
 ## Register data
 
-Before registering data, we can use function get_approximate_stretch() to help us finding the approximation of strect factor.
+Before registering data, we can use function get_approximate_stretch() to help us finding the approximation of stretch factor.
 
 ```{r}
 # Find approximation of strect factor

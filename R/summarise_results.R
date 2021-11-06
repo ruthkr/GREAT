@@ -6,6 +6,9 @@
 #' @importFrom rlang .data
 #' @export
 summary_model_comparison <- function(model_comparison) {
+  # Suppress "no visible binding for global variable" note
+  gene <- NULL
+
   # Summary table
   total <- nrow(model_comparison)
   reg <- sum(model_comparison$BIC_registered_is_better)

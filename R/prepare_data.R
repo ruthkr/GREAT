@@ -11,6 +11,15 @@ get_mean_data <- function(exp,
                           expression_value_threshold = 5,
                           accession_data_to_transform,
                           is_data_normalised = FALSE) {
+  # Suppress "no visible binding for global variable" note
+  mean_expression_value <- NULL
+  expression_value <- NULL
+  locus_name <- NULL
+  accession <- NULL
+  tissue <- NULL
+  timepoint <- NULL
+  keep <- NULL
+  keep_final <- NULL
 
   # Calculate mean of each timepoint by adding a column called "expression_value"
   # TODO: make vector in mean_df a non-hardcoded parameter
@@ -71,6 +80,9 @@ get_expression_of_interest <- function(data_ref,
                                        curr_GoIs,
                                        sum_exp_data_ref = FALSE,
                                        accession_data_to_transform = "Col0") {
+  # Suppress "no visible binding for global variable" note
+  ..ids_data_ref_colnames <- NULL
+
   # Load of the single df data
   master_exp <- get_all_data(
     data_ref,
@@ -157,6 +169,10 @@ get_all_data <- function(data_ref,
                          lookup_col_ref_and_id_table = "CDS.model",
                          lookup_col_ref_and_to_transform = "locus_name",
                          colnames_wanted = NULL) {
+  # Suppress "no visible binding for global variable" note
+  ..colnames_id_table <- NULL
+  ..colnames_wanted <- NULL
+
   # Take unique id_table
   colnames_id_table <- c(lookup_col_ref_and_id_table, lookup_col_ref_and_to_transform)
   id_table_unique <- unique(id_table[, ..colnames_id_table]) %>%
@@ -207,6 +223,14 @@ get_all_data <- function(data_ref,
 #' @param exp Expression value.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 shorten_groups <- function(exp, accession_data_to_transform) {
+  # Suppress "no visible binding for global variable" note
+  sample_id <- NULL
+  dataset <- NULL
+  group <- NULL
+  accession <- NULL
+  timepoint <- NULL
+  ds <- NULL
+
   # Get reps for klepikova and for brassica data, make sure it is a data.table
   exp <- data.table::data.table(exp)
 

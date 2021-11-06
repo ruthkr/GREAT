@@ -17,6 +17,12 @@ get_extreme_shifts_for_all <- function(mean_df,
                                        accession_data_to_transform,
                                        accession_data_ref) {
   # This function is a wrapper for calc_extreme_shifts() to be able to move it out of the loop so don't calculate for every gene.
+
+  # Suppress "no visible binding for global variable" note
+  delta_time <- NULL
+  timepoint <- NULL
+  accession <- NULL
+
   # Cut dataframe to a single gene.
   curr_sym <- unique(mean_df$locus_name)[1]
   mean_df <- mean_df[mean_df$locus_name == curr_sym, ]

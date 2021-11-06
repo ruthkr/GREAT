@@ -104,6 +104,13 @@ get_best_shift <- function(num_shifts = 25,
                            max_shift,
                            accession_data_to_transform,
                            accession_data_ref) {
+  # Suppress "no visible binding for global variable" note
+  delta_time <- NULL
+  timepoint <- NULL
+  accession <- NULL
+  expression_value <- NULL
+
+  # Filter locus_name
   data <- data[data$locus_name == curr_sym, ]
 
   # Transform timepoint to be time from first timepoint

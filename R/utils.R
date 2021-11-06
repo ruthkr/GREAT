@@ -47,8 +47,11 @@ get_compared_timepoints <- function(data,
 #' @param data_ref_dt Input reference data data frame.
 #'
 #' @return Expression prediction.
-interpolate_data_ref_comparison_expression <- function(data_to_transform_time,
-                                                       data_ref_dt) {
+interpolate_data_ref_comparison_expression <- function(data_to_transform_time, data_ref_dt) {
+  # Suppress "no visible binding for global variable" note
+  shifted_time <- NULL
+
+  # Calculate diff
   data_ref_dt$diff <- data_ref_dt$shifted_time - data_to_transform_time
 
   # If outside of comparable range (time is smaller than all data_ref_dt time or bigger than all)
@@ -88,6 +91,10 @@ match_names <- function(x, lookup) {
 #' @importFrom rlang .data
 #' @export
 get_approximate_stretch <- function(input_df, accession_data_to_transform, accession_data_ref) {
+  # Suppress "no visible binding for global variable" note
+  accession <- NULL
+
+  # Calculate approximate stretch factor
   deltas <- input_df %>%
     dplyr::group_by(.data$accession) %>%
     dplyr::summarise(

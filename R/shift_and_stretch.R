@@ -177,6 +177,12 @@ apply_stretch <- function(data,
                           accession_data_to_transform,
                           accession_data_ref,
                           time_to_add) {
+  # Suppress "no visible binding for global variable" note
+  delta_time <- NULL
+  timepoint <- NULL
+  accession <- NULL
+
+  # Copy data
   data <- data.table::copy(data)
 
   # Stretch the expression of data to transform, leave reference data as is

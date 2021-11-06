@@ -33,6 +33,13 @@ scale_and_register_data <- function(input_df,
   # Validate parameters
   start_timepoint <- match.arg(start_timepoint)
 
+  # Suppress "no visible binding for global variable" note
+  accession <- NULL
+  timepoint <- NULL
+  sc.expression_value <- NULL
+  expression_value <- NULL
+  locus_name <- NULL
+
   # Make sure the data are data.tables
   all_data_df <- data.table::as.data.table(input_df)
 
@@ -153,9 +160,12 @@ scale_and_register_data <- function(input_df,
 #' @param scale_func Scaling method choice applied in all_rep_data. There are two options: (a) "scale" where all expression values are subtracted by mean value and divided by standard deviation and (b) "my_scale" where expression values are divided by mean values.
 #'
 #' @return Scaled expression data in all_rep_data.
-scale_all_rep_data <- function(mean_df,
-                               all_rep_data,
-                               scale_func) {
+scale_all_rep_data <- function(mean_df, all_rep_data, scale_func) {
+  # Suppress "no visible binding for global variable" note
+  expression_value <- NULL
+  locus_name <- NULL
+  accession <- NULL
+
   # Calculate the summary statistics to use for the rescaling
   gene_expression_stats <- unique(
     mean_df[, .(
@@ -225,6 +235,11 @@ get_best_stretch_and_shift <- function(to_shift_df,
                                        accession_data_to_transform,
                                        accession_data_ref,
                                        time_to_add) {
+  # Suppress "no visible binding for global variable" note
+  is_best <- NULL
+  gene <- NULL
+  delta.BIC <- NULL
+
   # Warning to make sure users have correct accession data
   if (!(accession_data_to_transform %in% all_data_df$accession & accession_data_ref %in% all_data_df$accession)) {
     stop("get_best_stretch_and_shift(): data accessions should have been converted to correct accession.")
@@ -361,6 +376,12 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
                                                  accession_data_to_transform,
                                                  accession_data_ref,
                                                  time_to_add) {
+  # Suppress "no visible binding for global variable" note
+  stretched_time_delta <- NULL
+  timepoint <- NULL
+  locus_name <- NULL
+  accession <- NULL
+
   # Genes for which registration model is better than separate model
   gene_to_register <- model_comparison_dt$gene[model_comparison_dt$BIC_registered_is_better]
 

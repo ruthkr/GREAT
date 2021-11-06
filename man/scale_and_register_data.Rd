@@ -45,7 +45,7 @@ scale_and_register_data(
 \item{is_data_normalised}{TRUE if dataset has been normalised prior to registration process.}
 }
 \value{
-List of dataframes: (a) \code{mean_df} is unchanged by \code{scale_and_register_data()}, (b) \code{mean_df_sc} is identical to \code{mean_df}, with additional column \code{sc.expression_value}, (c) \code{imputed_mean_df} is registered expression data, (d) \code{all_shifts} is a table of candidate registrations applied, and score for each, and (e) \code{model_comparison_dt} is a table comparing the optimal registration function for each gene (based on \code{all_shifts} scores) to model with no registration applied.
+List of dataframes: (a) \code{mean_df} is unchanged by \code{scale_and_register_data()}, (b) \code{mean_df_sc} is identical to \code{mean_df}, with additional column \code{sc.expression_value}, (c) \code{imputed_mean_df} is registered expression data, (d) \code{all_shifts_df} is a table of candidate registrations applied, and score for each, and (e) \code{model_comparison_dt} is a table comparing the optimal registration function for each gene (based on \code{all_shifts_df} scores) to model with no registration applied.
 }
 \description{
 \code{scale_and_register_data} is a function to process all data. This includes scaling data before registration, finding and calculate score of optimal shifts and stretches, apply the best shifts and stretches.

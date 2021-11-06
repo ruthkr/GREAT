@@ -59,6 +59,7 @@ get_mean_data <- function(exp,
 #' @param sum_exp_data_ref If \code{TRUE} then sum all gene data. Default is \code{FALSE}.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @return A data frame contains both reference data and data to transform for selected gene of interest.
+#' @importFrom rlang .data
 #' @export
 get_expression_of_interest <- function(data_ref,
                                        data_to_transform,
@@ -162,7 +163,7 @@ get_all_data <- function(data_ref,
     dplyr::mutate_all(.funs = toupper)
 
   # Filtering NA values in dataframe of table id
-  # dplyr::filter(!is.na(locus_name), !locus_name %in% c("", "-"))
+  # dplyr::filter(!is.na(.data$locus_name), !(.data$locus_name %in% c("", "-")))
 
   # Add fix dataframe info to reg dataframe from
   data_ref <- merge(

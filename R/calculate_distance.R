@@ -154,6 +154,7 @@ reformat_for_distance_calculation <- function(dt, sample_id_cols, gene_col, expr
 #' @param accession_data_ref Accession name of reference data.
 #'
 #' @return Dataframe contains squared distance of data.
+#' @importFrom rlang .data
 calc_sample_distance <- function(df, gene_col, compare_ref_vs_transform = TRUE, accession_data_ref) {
   data.cols <- names(df)[names(df) != eval(gene_col)]
 
@@ -181,11 +182,25 @@ calc_sample_distance <- function(df, gene_col, compare_ref_vs_transform = TRUE, 
   }
 
   if (compare_ref_vs_transform) {
-    out_df <- data.table::data.table(data.frame("x_sample" = i.cols, "y_sample" = j.cols, "distance" = ds)) %>%
-      dplyr::filter(stringr::str_extract(y_sample, "^.*?(?=-)") != stringr::str_extract(x_sample, "^.*?(?=-)")) %>%
-      dplyr::filter(stringr::str_extract(y_sample, "^.*?(?=-)") == accession_data_ref)
+    out_df <- data.table::data.table(
+      data.frame(
+        x_sample = i.cols,
+        y_sample = j.cols,
+        distance = ds
+      )
+    ) %>%
+      dplyr::filter(
+        stringr::str_extract(.data$y_sample, "^.*?(?=-)") != stringr::str_extract(.data$x_sample, "^.*?(?=-)"),
+        stringr::str_extract(.data$y_sample, "^.*?(?=-)") == accession_data_ref
+      )
   } else {
-    out_df <- data.table::data.table(data.frame("x_sample" = i.cols, "y_sample" = j.cols, "distance" = ds))
+    out_df <- data.table::data.table(
+      data.frame(
+        x_sample = i.cols,
+        y_sample = j.cols,
+        distance = ds
+      )
+    )
   }
 
   return(out_df)

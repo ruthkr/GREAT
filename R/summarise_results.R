@@ -3,20 +3,23 @@
 #' @param model_comparison Input data frame, element \code{model_comparison} of result list of \code{scale_and_register_data()}.
 #'
 #' @return List containing summary table, registered gene accessions, and non-registered gene accessions.
+#' @importFrom rlang .data
 #' @export
 summary_model_comparison <- function(model_comparison) {
   # Summary table
   total <- nrow(model_comparison)
   reg <- sum(model_comparison$BIC_registered_is_better)
   non_reg <- total - reg
+
   stretch <- model_comparison %>%
-    dplyr::filter(BIC_registered_is_better == TRUE) %>%
-    dplyr::pull(stretch) %>%
+    dplyr::filter(.data$BIC_registered_is_better == TRUE) %>%
+    dplyr::pull(.data$stretch) %>%
     unique() %>%
     sort()
+
   shift <- model_comparison %>%
-    dplyr::filter(BIC_registered_is_better == TRUE) %>%
-    dplyr::pull(shift) %>%
+    dplyr::filter(.data$BIC_registered_is_better == TRUE) %>%
+    dplyr::pull(.data$shift) %>%
     unique() %>%
     sort()
 

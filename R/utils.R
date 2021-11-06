@@ -85,26 +85,27 @@ match_names <- function(x, lookup) {
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
 #'
+#' @importFrom rlang .data
 #' @export
 get_approximate_stretch <- function(input_df, accession_data_to_transform, accession_data_ref) {
   deltas <- input_df %>%
-    dplyr::group_by(accession) %>%
+    dplyr::group_by(.data$accession) %>%
     dplyr::summarise(
-      min_timepoint = min(timepoint),
-      max_timepoint = max(timepoint),
+      min_timepoint = min(.data$timepoint),
+      max_timepoint = max(.data$timepoint),
       .groups = "drop"
     ) %>%
     dplyr::mutate(
-      delta_timepoint = max_timepoint - min_timepoint
+      delta_timepoint = .data$max_timepoint - .data$min_timepoint
     )
 
   delta_ref <- deltas %>%
     dplyr::filter(accession == accession_data_ref) %>%
-    dplyr::pull(delta_timepoint)
+    dplyr::pull(.data$delta_timepoint)
 
   delta_to_transform <- deltas %>%
     dplyr::filter(accession == accession_data_to_transform) %>%
-    dplyr::pull(delta_timepoint)
+    dplyr::pull(.data$delta_timepoint)
 
   stretch_factor <- delta_ref / delta_to_transform
 

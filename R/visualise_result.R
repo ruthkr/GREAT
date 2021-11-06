@@ -24,23 +24,27 @@ plot_registered_gene_of_interest <- function(df, gene_accession = "all", title =
   if (sync_timepoints) {
     max_timepoints <- df %>%
       dplyr::filter(
-        !is.na(shifted_time),
-        !is.na(expression_value)
+        !is.na(.data$shifted_time),
+        !is.na(.data$expression_value)
       ) %>%
-      dplyr::group_by(locus_name, accession) %>%
+      dplyr::group_by(.data$locus_name, .data$accession) %>%
       dplyr::summarise(
-        max_timepoint = max(shifted_time),
+        max_timepoint = max(.data$shifted_time),
         .groups = "drop"
       ) %>%
-      dplyr::group_by(locus_name) %>%
+      dplyr::group_by(.data$locus_name) %>%
       dplyr::summarise(
-        max_timepoint = min(max_timepoint),
+        max_timepoint = min(.data$max_timepoint),
         .groups = "drop"
       )
 
-    df <- dplyr::left_join(df, max_timepoints, by = "locus_name") %>%
-      dplyr::filter(shifted_time <= max_timepoint) %>%
-      dplyr::select(-max_timepoint)
+    df <- dplyr::left_join(
+      df,
+      max_timepoints,
+      by = "locus_name"
+    ) %>%
+      dplyr::filter(.data$shifted_time <= .data$max_timepoint) %>%
+      dplyr::select(-.data$max_timepoint)
   }
 
   # Plot

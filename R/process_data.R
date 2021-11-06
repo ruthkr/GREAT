@@ -213,6 +213,7 @@ scale_all_rep_data <- function(mean_df,
 #'
 #' @return List of data frames (a) all_shifts : all the combos of stretching and shifting tried for each gene, (b) best_shifts : the best stretch and shift combo found for each gene, as well as info for scaling, and (c) model_comparison.dt : AIC / BIC scores for best registerd model found, compared to separate model for each genes expression in the 2 accessions.
 #'
+#' @importFrom rlang .data
 #' @export
 get_best_stretch_and_shift <- function(to_shift_df,
                                        all_data_df,
@@ -295,7 +296,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
     dplyr::rowwise() %>%
     dplyr::mutate(
       dplyr::across(
-        .cols = c(registered.BIC, registered.AIC, separate.BIC, separate.AIC),
+        .cols = c(.data$registered.BIC, .data$registered.AIC, .data$separate.BIC, .data$separate.AIC),
         .fns = function(x) {
           if (!is.finite(x)) {
             x <- 9999 * sign(x)

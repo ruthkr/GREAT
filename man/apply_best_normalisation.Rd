@@ -14,7 +14,7 @@ apply_best_normalisation(
 \arguments{
 \item{data}{Input data (after applying stretching).}
 
-\item{best_shifts}{Input dataframe containing information of best shifts.}
+\item{best_shifts}{Input data frame containing information of best shifts.}
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
@@ -24,5 +24,5 @@ apply_best_normalisation(
 Normalised data.
 }
 \description{
-\code{apply_best_normalisation} is a function to normalise by the mean and standard deviation of the compared points (after applying stretching) for each gene, in each accesion (reference data and data to transform). If the gene wasn't compared, set the expression value to NA.
+\code{apply_best_normalisation} is a function to normalise by the mean and standard deviation of the compared points (after applying stretching) for each gene, in each accession (reference data and data to transform). If the gene wasn't compared, set the expression value to NA.
 }

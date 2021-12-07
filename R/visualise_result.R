@@ -16,7 +16,7 @@ plot_registered_gene_of_interest <- function(df, gene_accession = "all", title =
   # Filter gene using given gene of interests
   if (gene_accession != "all") {
     df <- df %>%
-      dplyr::filter(.data$accession %in% gene_accession)
+      dplyr::filter(.data$locus_name %in% gene_accession)
   }
 
   # Synchronise maximum timepoints for each accession

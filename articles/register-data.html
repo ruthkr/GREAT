@@ -27,6 +27,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -39,18 +41,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">GREAT</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.9000</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -98,11 +94,11 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Load the package</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">GREAT</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></code></pre></div>
-<div id="input-data-requirements" class="section level2">
-<h2 class="hasAnchor">
-<a href="#input-data-requirements" class="anchor"></a>Input data requirements</h2>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">GREAT</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></code></pre></div>
+<div class="section level2">
+<h2 id="input-data-requirements">Input data requirements<a class="anchor" aria-label="anchor" href="#input-data-requirements"></a>
+</h2>
 <p>Input data frame required for <code>GREAT</code> to register your gene expression profiles is a data frame contains gene expression time-course data with all replicates. Illustrated diagram below shows the required <code>input_df</code> data frame format of <code>GREAT</code>. This data frame must contain:</p>
 <ul>
 <li><p>two different species which users wish to compare (for each gene, at least two replicates are required in all species), and</p></li>
@@ -120,21 +116,23 @@
 <li>
 <code>tissue</code>: tissue from which RNA-seq data were extracted.</li>
 <li>
-<code>replicate</code>: replicate ID for each expression value.</li>
+<code>group</code>: replicate ID for each expression value.</li>
 </ul>
 </li>
 </ul>
+<p><br></p>
 <p><img src="figures/all_data_illustration.jpg" width="100%"></p>
+<p><br></p>
 <p><code>GREAT</code> package provides an example of data frame containing two different species <em>Arabidopsis</em> and <em>B. rapa</em> with two and three different replicates, respectively. This data frame can be read as follow:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Gene expression data with replicates</span>
-<span class="va">all_data_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_all_replicates.csv"</span>, package <span class="op">=</span> <span class="st">"GREAT"</span><span class="op">)</span> <span class="op"><a href="../reference/%&gt;%.html">%&gt;%</a></span>
-  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="va">all_data_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_all_replicates.csv"</span>, package <span class="op">=</span> <span class="st">"GREAT"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">all_data_df</span> <span class="op"><a href="../reference/%&gt;%.html">%&gt;%</a></span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">accession</span><span class="op">)</span> <span class="op"><a href="../reference/%&gt;%.html">%&gt;%</a></span> 
-  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span> <span class="op"><a href="../reference/%&gt;%.html">%&gt;%</a></span> 
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">all_data_df</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">accession</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">locus_name</th>
@@ -244,15 +242,15 @@
 </tbody>
 </table>
 </div>
-<div id="register-the-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#register-the-data" class="anchor"></a>Register the data</h2>
+<div class="section level2">
+<h2 id="register-the-data">Register the data<a class="anchor" aria-label="anchor" href="#register-the-data"></a>
+</h2>
 <p>To align gene expression time-course between <em>Arabidopsis</em> Col-0 and <em>B. rapa</em> Ro18, we can use the function <code><a href="../reference/scale_and_register_data.html">scale_and_register_data()</a></code> as shown below:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Running the registration</span>
 <span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/scale_and_register_data.html">scale_and_register_data</a></span><span class="op">(</span>
     input_df <span class="op">=</span> <span class="va">all_data_df</span>,
-    stretches <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1.5</span>, <span class="fl">1</span><span class="op">)</span>,
+    stretches <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1.5</span>, <span class="fl">1</span><span class="op">)</span>,
     shift_extreme <span class="op">=</span> <span class="fl">4</span>,
     num_shifts <span class="op">=</span> <span class="fl">27</span>,
     min_num_overlapping_points <span class="op">=</span> <span class="fl">4</span>,
@@ -276,11 +274,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="https://ruthkr.com">Ruth Kristianingsih</a>.</p>
+  <p></p>
+<p>Developed by <a href="https://ruthkr.com" class="external-link">Ruth Kristianingsih</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -288,6 +288,8 @@
 
   
 
+
+  
 
   </body>
 </html>

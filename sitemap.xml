@@ -28,88 +28,16 @@
     <loc>https://ruthkr.github.io/GREAT/reference/GREAT.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/apply_best_normalisation.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/apply_best_shift.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/apply_shift_to_registered_genes_only.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/apply_stretch.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/calc_AIC.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/calc_BIC.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/calc_extreme_shifts.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/calc_num_overlapping_points.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/calc_sample_distance.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/calc_score.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/calculate_all_best_shifts.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/calculate_all_model_comparison_stats.html</loc>
-  </url>
-  <url>
     <loc>https://ruthkr.github.io/GREAT/reference/calculate_between_sample_distance.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/calculate_pairwise_sample_distance_main.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/compare_registered_to_unregistered_model.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/get_approximate_stretch.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/get_best_result.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/get_best_shift.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/get_best_stretch_and_shift.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/get_compared_timepoints.html</loc>
   </url>
   <url>
     <loc>https://ruthkr.github.io/GREAT/reference/get_expression_of_interest.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/get_extreme_shifts_for_all.html</loc>
-  </url>
-  <url>
     <loc>https://ruthkr.github.io/GREAT/reference/get_mean_data.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/impute_transformed_exp_values.html</loc>
-  </url>
-  <url>
     <loc>https://ruthkr.github.io/GREAT/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/interpolate_data_ref_comparison_expression.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/max_is_compared_to_data_to_transform.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/min_is_compared_to_data_to_transform.html</loc>
   </url>
   <url>
     <loc>https://ruthkr.github.io/GREAT/reference/pipe.html</loc>
@@ -121,16 +49,10 @@
     <loc>https://ruthkr.github.io/GREAT/reference/plot_registered_gene_of_interest.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/rename_columns.html</loc>
-  </url>
-  <url>
     <loc>https://ruthkr.github.io/GREAT/reference/scale_all_rep_data.html</loc>
   </url>
   <url>
     <loc>https://ruthkr.github.io/GREAT/reference/scale_and_register_data.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/shorten_groups.html</loc>
   </url>
   <url>
     <loc>https://ruthkr.github.io/GREAT/reference/summary_model_comparison.html</loc>

@@ -2,7 +2,7 @@
 % Please edit documentation in R/process_data.R
 \name{scale_and_register_data}
 \alias{scale_and_register_data}
-\title{Registering data}
+\title{Register or synchronize different expression profiles}
 \usage{
 scale_and_register_data(
   input_df,
@@ -20,11 +20,11 @@ scale_and_register_data(
 )
 }
 \arguments{
-\item{input_df}{Input data frame contains all replicates of gene expression in each genotype at each timepoint.}
+\item{input_df}{Input data frame contains all replicates of gene expression in each genotype at each time point.}
 
 \item{stretches}{Candidate registration stretch factors to apply to data to transform.}
 
-\item{shift_extreme}{The absolute maximum value which can be applied as a shift to gene expression timecourse (days).}
+\item{shift_extreme}{The absolute maximum value which can be applied as a shift to gene expression time course (days).}
 
 \item{num_shifts}{Number of shifts between minimum and maximum values of shift.}
 
@@ -32,21 +32,27 @@ scale_and_register_data(
 
 \item{initial_rescale}{Scaling gene expression prior to registration if \code{TRUE}.}
 
-\item{do_rescale}{Scaling gene expression using only overlapping timepoints points during registration.}
+\item{do_rescale}{Scaling gene expression using only overlapping time points points during registration.}
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
 \item{accession_data_ref}{Accession name of reference data.}
 
-\item{start_timepoint}{Start timepoint used to ... Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.}
+\item{start_timepoint}{Start time point used to ... Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.}
 
 \item{expression_value_threshold}{Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.}
 
 \item{is_data_normalised}{TRUE if dataset has been normalised prior to registration process.}
 }
 \value{
-List of dataframes: (a) \code{mean_df} is unchanged by \code{scale_and_register_data()}, (b) \code{mean_df_sc} is identical to \code{mean_df}, with additional column \code{sc.expression_value}, (c) \code{imputed_mean_df} is registered expression data, (d) \code{all_shifts_df} is a table of candidate registrations applied, and score for each, and (e) \code{model_comparison_dt} is a table comparing the optimal registration function for each gene (based on \code{all_shifts_df} scores) to model with no registration applied.
+List of data frames:
+
+a. \code{mean_df} is unchanged by \code{scale_and_register_data()}
+b. \code{mean_df_sc} is identical to \code{mean_df}, with additional column \code{sc.expression_value}
+c. \code{imputed_mean_df} is registered expression data
+d. \code{all_shifts_df} is a table of candidate registrations applied, and score for each
+e. \code{model_comparison_dt} is a table comparing the optimal registration function for each gene (based on \code{all_shifts_df} scores) to model with no registration applied
 }
 \description{
-\code{scale_and_register_data} is a function to process all data. This includes scaling data before registration, finding and calculate score of optimal shifts and stretches, apply the best shifts and stretches.
+\code{scale_and_register_data()} is a function to register expression profiles a user wish to compare. This includes an option to scale data before registration, find and calculate score of optimal shifts and stretches, as well as apply the best shifts and stretches.
 }

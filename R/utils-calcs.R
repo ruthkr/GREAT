@@ -1,36 +1,20 @@
 #' Calculate Akaike's ‘An Information Criterion’
 #'
-#' `calc_AIC` is a generic function calculating Akaike's ‘An Information Criterion’ for one or several fitted model objects for which a log-likelihood value can be obtained.
-#'
-#' @param logL Loglikelihoods value obtained by stats::logLik().
-#' @param num_params Number of parameters in the fitted model.
-#'
-#' @return AIC criterion value.
+#' @noRd
 calc_AIC <- function(logL, num_params) {
   return((-2 * logL) + 2 * num_params)
 }
 
 #' Calculate Bayesian Information Criterion
 #'
-#' `calc_BIC` is a function calculating Bayesian Information Criterion, which is a special case of AIC when k = log(n), where n being the number of observations.
-#'
-#' @param logL Loglikelihoods value obtained by stats::logLik().
-#' @param num_params Number of parameters in the fitted model.
-#' @param num_obs Number of observations.
-#'
-#' @return AIC criterion value.
+#' @noRd
 calc_BIC <- function(logL, num_params, num_obs) {
   return((-2 * logL) + log(num_obs) * num_params)
 }
 
 #' Calculate mean score of observed expression data and expected value
 #'
-#' `calc_score` is a function to calculate a mean of a score of difference of observed expression data and expected expression value, by executing score = (sum(observed-expected)**2). The mean is taken to compare the variable number of datapoints.
-#'
-#' @param data_to_transform_expression Input expression of data_to_transform.
-#' @param data_ref_expression Input expression of data_ref.
-#'
-#' @return Mean of score value.
+#' @noRd
 calc_score <- function(data_to_transform_expression, data_ref_expression) {
   # if don't regularise / penalise for shift applied, then like uniform prior on it.
   # maybe should penalise for comparing fewer timepoints?
@@ -42,10 +26,7 @@ calc_score <- function(data_to_transform_expression, data_ref_expression) {
 
 #' Get the largest time point of reference data
 #'
-#' `max_is_compared_to_data_to_transform` is used to get the largest time reference data which is used in comparison t the data_to_transform time.
-#'
-#' @param data_to_transform_time Maximum time points of candidate data to transform.
-#' @param data_ref A data frame containing reference data.
+#' @noRd
 max_is_compared_to_data_to_transform <- function(data_to_transform_time, data_ref) {
   # If using for rep data, then repeats of the same points screws it up
   data_ref <- unique(subset(data_ref, select = c("timepoint", "shifted_time")))
@@ -60,10 +41,7 @@ max_is_compared_to_data_to_transform <- function(data_to_transform_time, data_re
 
 #' Get the smallest time point of reference data
 #'
-#' `min_is_compared_to_data_to_transform` is used to get the smallest time reference data which is used in comparison t the data_to_transform time.
-#'
-#' @param data_to_transform_time Minimum time points of candidate data to transform.
-#' @param data_ref A data frame containing reference data.
+#' @noRd
 min_is_compared_to_data_to_transform <- function(data_to_transform_time, data_ref) {
   # If using for rep data, then repeats of the same points screws it up
   data_ref <- unique(subset(data_ref, select = c("timepoint", "shifted_time")))
@@ -76,12 +54,7 @@ min_is_compared_to_data_to_transform <- function(data_to_transform_time, data_re
 
 #' Calculate the number of overlapping points
 #'
-#' `calc_num_overlapping_points` is used to calculate the number of overlapping points for the species with the fewer overlapping points if the current "shift" is applied to the data to alined delta timepoints.
-#'
-#' @param data Input data.
-#' @param shift Current shift value.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
+#' @noRd
 calc_num_overlapping_points <- function(shift, data, accession_data_to_transform, accession_data_ref) {
   # Suppress "no visible binding for global variable" note
   num.compared <- NULL

@@ -117,6 +117,9 @@ calculate_between_sample_distance <- function(mean_df,
   return(results_list)
 }
 
+#' Reformat distance calculation
+#'
+#' @noRd
 reformat_for_distance_calculation <- function(dt, sample_id_cols, gene_col, expression_col) {
   # Concatenate sample.id columns to generate sample ids
   dt$sample.id <- dt[[sample_id_cols[1]]]
@@ -146,15 +149,7 @@ reformat_for_distance_calculation <- function(dt, sample_id_cols, gene_col, expr
 
 #' Calculate sample distance wrapper
 #'
-#' `calc_sample_distance` is a wrapper to  calculate_pairwise_sample_distance to calculate distance for all compared samples.
-#'
-#' @param df Dataframe contains expression data from each sample.
-#' @param gene_col Column name of accession gene.
-#' @param compare_ref_vs_transform If \code{TRUE}, the default, only comparison between reference data and data to transform is considered.
-#' @param accession_data_ref Accession name of reference data.
-#'
-#' @return Dataframe contains squared distance of data.
-#' @importFrom rlang .data
+#' @noRd
 calc_sample_distance <- function(df, gene_col, compare_ref_vs_transform = TRUE, accession_data_ref) {
   data.cols <- names(df)[names(df) != eval(gene_col)]
 
@@ -208,9 +203,7 @@ calc_sample_distance <- function(df, gene_col, compare_ref_vs_transform = TRUE, 
 
 #' Calculate pairwise sample distance
 #'
-#' @param df Dataframe contains the wide format expression of the two samples to be compared. Only genes which have data in both samples are considered (only relevant for registration case).
-#'
-#' @return Dataframe contains the distance between two samples.
+#' @noRd
 calculate_pairwise_sample_distance_main <- function(df) {
   # Omit NA in the data
   df <- stats::na.omit(df)

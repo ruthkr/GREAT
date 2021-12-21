@@ -81,7 +81,7 @@ get_expression_of_interest <- function(data_ref,
                                        sum_exp_data_ref = FALSE,
                                        accession_data_to_transform = "Col0") {
   # Suppress "no visible binding for global variable" note
-  ..ids_data_ref_colnames <- NULL
+  # ..ids_data_ref_colnames <- NULL
 
   # Load of the single df data
   master_exp <- get_all_data(
@@ -170,8 +170,8 @@ get_all_data <- function(data_ref,
                          lookup_col_ref_and_to_transform = "locus_name",
                          colnames_wanted = NULL) {
   # Suppress "no visible binding for global variable" note
-  ..colnames_id_table <- NULL
-  ..colnames_wanted <- NULL
+  # ..colnames_id_table <- NULL
+  # ..colnames_wanted <- NULL
 
   # Take unique id_table
   colnames_id_table <- c(lookup_col_ref_and_id_table, lookup_col_ref_and_to_transform)
@@ -220,8 +220,8 @@ get_all_data <- function(data_ref,
 
 
 #' Shorten groups
-#' @param exp Expression value.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
+#'
+#' @noRd
 shorten_groups <- function(exp, accession_data_to_transform) {
   # Suppress "no visible binding for global variable" note
   sample_id <- NULL
@@ -262,13 +262,7 @@ shorten_groups <- function(exp, accession_data_to_transform) {
 
 #' Rename columns of original data
 #'
-#' Rename columns of data so it can be used in \code{get_mean_and_all_exp_data()}.
-#'
-#' @param data Data frame to be renamed.
-#' @param colnames List of column names to be renamed.
-#'
-#' @return Data frame with renamed columns.
-#' @export
+#' @noRd
 rename_columns <- function(data, colnames) {
   # Validate list names
   match_names(

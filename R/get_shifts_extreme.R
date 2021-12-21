@@ -1,15 +1,6 @@
 #' Calculate extreme shifts after the stretch transformation
 #'
-#' `get_extreme_shifts_for_all` is used to calculate the minimum and maximum shifts can apply to data after the stretch transformation.
-#'
-#' @param mean_df Input dataframe containing data to transform and reference data.
-#' @param stretch_factor Stretch transformation factor wanted.
-#' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
-#' @param shift_extreme Approximation of maximum and minimum shifts allowed.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
-#'
-#' @return Minimum and maximum values of shifts.
+#' @noRd
 get_extreme_shifts_for_all <- function(mean_df,
                                        stretch_factor,
                                        min_num_overlapping_points,
@@ -47,15 +38,7 @@ get_extreme_shifts_for_all <- function(mean_df,
 
 #' Calculate extreme shifts
 #'
-#' `calc_extreme_shifts` is used to calculate the minimum and maximum shifts, whilst preserving the criteria that at least min_num_overlapping_points are being compared from both accessions.
-#'
-#' @param mean_df Input dataframe containing data to transform and reference data.
-#' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
-#' @param shift_extreme Approximation of maximum and minimum shifts allowed.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
-#'
-#' @return Minimum and maximum values of shifts.
+#' @noRd
 calc_extreme_shifts <- function(mean_df,
                                 min_num_overlapping_points,
                                 shift_extreme,

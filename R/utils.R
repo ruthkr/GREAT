@@ -5,11 +5,7 @@
 
 #' Flag data to transform time points which overlap to reference data timecourse
 #'
-#' `get_compared_timepoints` flags data to transform time points which overlap to reference data timecourse by comparing each data to transform time points to minimum and maximum value of reference data.
-#'
-#' @param data Input data containing both data to transform and reference data.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
+#' @noRd
 get_compared_timepoints <- function(data,
                                     accession_data_to_transform,
                                     accession_data_ref) {
@@ -43,10 +39,7 @@ get_compared_timepoints <- function(data,
 
 #' Calculate prediction of reference data expression value
 #'
-#' @param data_to_transform_time Input time from data to transform.
-#' @param data_ref_dt Input reference data data frame.
-#'
-#' @return Expression prediction.
+#' @noRd
 interpolate_data_ref_comparison_expression <- function(data_to_transform_time, data_ref_dt) {
   # Suppress "no visible binding for global variable" note
   shifted_time <- NULL
@@ -75,6 +68,7 @@ interpolate_data_ref_comparison_expression <- function(data_to_transform_time, d
 }
 
 #' Validate names
+#'
 #' @noRd
 match_names <- function(x, lookup) {
   unmatched <- x[-grep(paste(lookup, collapse = "$|"), x)]
@@ -84,12 +78,8 @@ match_names <- function(x, lookup) {
 }
 
 #' Get approximate stretch factor
-#' @param input_df Input data frame contains all replicates of gene expression in each genotype at each timepoint.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
 #'
-#' @importFrom rlang .data
-#' @export
+#' @noRd
 get_approximate_stretch <- function(input_df, accession_data_to_transform, accession_data_ref) {
   # Suppress "no visible binding for global variable" note
   accession <- NULL

@@ -13,7 +13,7 @@ plot_registered_gene_of_interest(
 )
 }
 \arguments{
-\item{df}{Dataframe input after registration.}
+\item{df}{Data frame input after registration.}
 
 \item{gene_accession}{List of gene accessions, default is \code{all}.}
 
@@ -21,7 +21,7 @@ plot_registered_gene_of_interest(
 
 \item{ncol}{Number of columns in the plot grid. By default this is calculated automatically.}
 
-\item{sync_timepoints}{Whether to syncrhonise maximum timpoints for each accession, by default \code{FALSE}.}
+\item{sync_timepoints}{Whether to synchronise maximum time points for each accession, by default \code{FALSE}.}
 }
 \value{
 Plot of gene of interest after registration.

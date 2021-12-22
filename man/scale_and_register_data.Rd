@@ -38,20 +38,23 @@ scale_and_register_data(
 
 \item{accession_data_ref}{Accession name of reference data.}
 
-\item{start_timepoint}{Start time point used to ... Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.}
+\item{start_timepoint}{Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.}
 
 \item{expression_value_threshold}{Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.}
 
 \item{is_data_normalised}{TRUE if dataset has been normalised prior to registration process.}
 }
 \value{
-List of data frames:
-
-a. \code{mean_df} is unchanged by \code{scale_and_register_data()}
-b. \code{mean_df_sc} is identical to \code{mean_df}, with additional column \code{sc.expression_value}
-c. \code{imputed_mean_df} is registered expression data
-d. \code{all_shifts_df} is a table of candidate registrations applied, and score for each
-e. \code{model_comparison_dt} is a table comparing the optimal registration function for each gene (based on \code{all_shifts_df} scores) to model with no registration applied
+This function returns a list of data frames, containing:
+\itemize{
+\item \code{mean_df} is a data frame containing mean expression value of each gene and accession for every time point.
+\item \code{mean_df_sc} is identical to \code{mean_df}, with additional column \code{sc.expression_value} which the scaled mean expression values.
+\item \code{to_shift_df} is a processed input data frame ready to be registered.
+\item \code{shifted_mean_df} is the registration result - after stretching and shifting.
+\item \code{imputed_mean_df} is the imputed registration result.
+\item \code{all_shifts_df} is a table containing candidates of registration parameters and a score after applying each parameter (stretch and shift factor).
+\item \code{model_comparison_df} is a table comparing the optimal registration function for each gene (based on \code{all_shifts_df} scores) to model with no registration applied.
+}
 }
 \description{
 \code{scale_and_register_data()} is a function to register expression profiles a user wish to compare. This includes an option to scale data before registration, find and calculate score of optimal shifts and stretches, as well as apply the best shifts and stretches.

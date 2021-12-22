@@ -1,21 +1,30 @@
-#' Registering data
+#' Register or synchronize different expression profiles
 #'
-#' `scale_and_register_data` is a function to process all data. This includes scaling data before registration, finding and calculate score of optimal shifts and stretches, apply the best shifts and stretches.
+#' @description
+#' `scale_and_register_data()` is a function to register expression profiles a user wish to compare. This includes an option to scale data before registration, find and calculate score of optimal shifts and stretches, as well as apply the best shifts and stretches.
 #'
-#' @param input_df Input data frame contains all replicates of gene expression in each genotype at each timepoint.
+#' @param input_df Input data frame contains all replicates of gene expression in each genotype at each time point.
 #' @param stretches Candidate registration stretch factors to apply to data to transform.
-#' @param shift_extreme The absolute maximum value which can be applied as a shift to gene expression timecourse (days).
+#' @param shift_extreme The absolute maximum value which can be applied as a shift to gene expression time course (days).
 #' @param num_shifts Number of shifts between minimum and maximum values of shift.
 #' @param min_num_overlapping_points Number of minimum overlapping time points.  Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
 #' @param initial_rescale Scaling gene expression prior to registration if \code{TRUE}.
-#' @param do_rescale Scaling gene expression using only overlapping timepoints points during registration.
+#' @param do_rescale Scaling gene expression using only overlapping time points points during registration.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
-#' @param start_timepoint Start timepoint used to ... Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.
+#' @param start_timepoint Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.
 #' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
 #' @param is_data_normalised TRUE if dataset has been normalised prior to registration process.
 #'
-#' @return List of dataframes: (a) `mean_df` is unchanged by `scale_and_register_data()`, (b) `mean_df_sc` is identical to `mean_df`, with additional column `sc.expression_value`, (c) `imputed_mean_df` is registered expression data, (d) `all_shifts_df` is a table of candidate registrations applied, and score for each, and (e) `model_comparison_dt` is a table comparing the optimal registration function for each gene (based on `all_shifts_df` scores) to model with no registration applied.
+#' @return This function returns a list of data frames, containing:
+#'
+#' * `mean_df` is a data frame containing mean expression value of each gene and accession for every time point.
+#' * `mean_df_sc` is identical to `mean_df`, with additional column `sc.expression_value` which the scaled mean expression values.
+#' * `to_shift_df` is a processed input data frame ready to be registered.
+#' * `shifted_mean_df` is the registration result - after stretching and shifting.
+#' * `imputed_mean_df` is the imputed registration result.
+#' * `all_shifts_df` is a table containing candidates of registration parameters and a score after applying each parameter (stretch and shift factor).
+#' * `model_comparison_df` is a table comparing the optimal registration function for each gene (based on `all_shifts_df` scores) to model with no registration applied.
 #'
 #' @export
 scale_and_register_data <- function(input_df,
@@ -134,6 +143,7 @@ scale_and_register_data <- function(input_df,
 
   cli::cli_alert_info("Max value of expression_value: {cli::col_cyan(round(max(shifted_mean_df$expression_value), 2))}")
 
+
   # Impute transformed values at times == to the observed reference data points for each shifted transformed gene so can compare using heat maps.
   # Transformed curves are the ones that been shifted around. Linear impute values for these curves so that reference data samples can be compared to an transformed data point.
   imputed_mean_df <- impute_transformed_exp_values(
@@ -145,9 +155,11 @@ scale_and_register_data <- function(input_df,
   out <- list(
     "mean_df" = mean_df,
     "mean_df_sc" = mean_df_sc,
+    "to_shift_df" = to_shift_df,
+    "shifted_mean_df" = shifted_mean_df,
     "imputed_mean_df" = imputed_mean_df,
     "all_shifts_df" = all_shifts,
-    "model_comparison_dt" = model_comparison_dt
+    "model_comparison_df" = model_comparison_dt
   )
 }
 
@@ -208,23 +220,7 @@ scale_all_rep_data <- function(mean_df, all_rep_data, scale_func) {
 
 #' Calculate best shifts and stretches for each gene, also calculate AIC/BIC under registration or non-registration
 #'
-#' `get_best_stretch_and_shift` is a function to stretch in all stretches and calculates best shift, by comparing SUM of squares difference. For the best shift in each stretch, compares to separate models to calculate AIC/BIC under registration or no registration.
-#'
-#' @param to_shift_df Input data containing mean of each time point.
-#' @param all_data_df Input all data (without taking mean).
-#' @param stretches Vector data of stretches.
-#' @param do_rescale Apply "scale" to compared points for each shift if \code{TRUE}, use original mean expression data if \code{FALSE}.
-#' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
-#' @param shift_extreme Approximation of maximum and minimum shifts allowed.
-#' @param num_shifts Number of different shifts to be considered.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
-#' @param time_to_add Time points to be added in both reference data and data to transform after shifting and stretching.
-#'
-#' @return List of data frames (a) all_shifts : all the combos of stretching and shifting tried for each gene, (b) best_shifts : the best stretch and shift combo found for each gene, as well as info for scaling, and (c) model_comparison.dt : AIC / BIC scores for best registerd model found, compared to separate model for each genes expression in the 2 accessions.
-#'
-#' @importFrom rlang .data
-#' @export
+#' @noRd
 get_best_stretch_and_shift <- function(to_shift_df,
                                        all_data_df,
                                        stretches,
@@ -360,16 +356,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
 
 #' Apply shift for all registered genes
 #'
-#' `apply_shift_to_registered_genes_only` is a function to apply shift for all registered model based on `model_comparison_dt` using information from `best_shifts`.
-#'
-#' @param to_shift_df Input data frame.
-#' @param best_shifts Data frame containing information of best shift and stretch values.
-#' @param model_comparison_dt Data frame containing information of comparison of BIC and AIC for registred and non-registered genes.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
-#' @param time_to_add Time points to be added in both reference data and data to transform after shifting and stretching.
-#'
-#' @return Data frame for all transformed genes for those with better BIC values.
+#' @noRd
 apply_shift_to_registered_genes_only <- function(to_shift_df,
                                                  best_shifts,
                                                  model_comparison_dt,
@@ -429,17 +416,14 @@ apply_shift_to_registered_genes_only <- function(to_shift_df,
 
 #' Setting transformed expression data and reference data to be the same in a set of common time points
 #'
-#' `impute_transformed_exp_values` is a function to impute transformed times at set of common time points in order to allow sample distance comparison to reference data. this means that transformed expression data were imputed relative to reference data time points. Since the original value of transformed data are not meant to be discarded, the imputed times are generated from minimum and maximum shifted time points of transformed data (not just reference data time points).
-#'
-#' @param shifted_mean_df All registered data frame.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
+#' @noRd
 impute_transformed_exp_values <- function(shifted_mean_df,
                                           accession_data_to_transform,
                                           accession_data_ref) {
   # The imputed transformed data times going to estimate gene expression for
   imputed_timepoints <- round(seq(min(shifted_mean_df$shifted_time), max(shifted_mean_df$shifted_time)))
 
+  # browser()
   out_list <- list()
   out_list <- c(out_list, list(shifted_mean_df[shifted_mean_df$accession == accession_data_ref]))
 
@@ -460,6 +444,7 @@ impute_transformed_exp_values <- function(shifted_mean_df,
       "shifted_time" = imputed_timepoints,
       "is_registered" = unique(transformed_df$is_registered)[1]
     )
+
 
     # For each reference data timepoint, interpolate the comparable transformed expression data by linear interpolation between the neighbouring two transformed expression values.
     # If not between two transformed expression values because shifted outside comparable range, set to NA.

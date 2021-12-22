@@ -7,7 +7,13 @@
 #' @param compare_ref_vs_transform If \code{TRUE}, the default, only comparison between reference data and data to transform is considered.
 #' @param accession_data_ref Accession name of reference data.
 #'
-#' @return List of dataframes: (a)`D.mean` is distance of mean expression values, (b) `D.scaled` is disctance of scaled mean expression (all genes), (c) `D.registered` is distance of registered & scaled mean expression (all genes), (d) `D.scaled.onlyNR` is distance of scaled mean expression (only not-registered genes) (e) `D.scaled.onlyR` is distance of scaled mean expression (only registered genes) (f) `D.registered.onlyR` is distance of registered & scaled mean expression (only registered genes).
+#' @return This function returns a list of data frames which includes:
+#' * `D.mean` is distance of mean expression values,
+#' * `D.scaled` is disctance of scaled mean expression (all genes),
+#' * `D.registered` is distance of registered & scaled mean expression (all genes),
+#' * `D.scaled.onlyNR` is distance of scaled mean expression (only not-registered genes)
+#' * `D.scaled.onlyR` is distance of scaled mean expression (only registered genes)
+#' * `D.registered.onlyR` is distance of registered & scaled mean expression (only registered genes).
 #' @export
 calculate_between_sample_distance <- function(mean_df,
                                               mean_df_sc,
@@ -65,12 +71,14 @@ calculate_between_sample_distance <- function(mean_df,
     compare_ref_vs_transform = compare_ref_vs_transform,
     accession_data_ref = accession_data_ref
   )
+
   D.scaled <- calc_sample_distance(
     mean.dt.sc.w,
     gene_col = gene_col,
     compare_ref_vs_transform = compare_ref_vs_transform,
     accession_data_ref = accession_data_ref
   )
+
   D.registered <- calc_sample_distance(
     imputed.mean.dt.w,
     gene_col = gene_col,
@@ -84,12 +92,14 @@ calculate_between_sample_distance <- function(mean_df,
     compare_ref_vs_transform = compare_ref_vs_transform,
     accession_data_ref = accession_data_ref
   )
+
   D.scaled.registered.genes <- calc_sample_distance(
     mean.dt.sc.w.registered,
     gene_col = gene_col,
     compare_ref_vs_transform = compare_ref_vs_transform,
     accession_data_ref = accession_data_ref
   )
+
   D.registered.registered.genes <- calc_sample_distance(
     imputed.mean.dt.w.registered,
     gene_col = gene_col,
@@ -106,12 +116,12 @@ calculate_between_sample_distance <- function(mean_df,
   attr(D.registered.registered.genes, "title") <- "registered & scaled mean expression (only registered genes)"
 
   results_list <- list(
-    "D.mean" = D.mean,
-    "D.scaled" = D.scaled,
-    "D.registered" = D.registered,
-    "D.scaled.onlyNR" = D.scaled.not.registered.genes,
-    "D.scaled.onlyR" = D.scaled.registered.genes,
-    "D.registered.onlyR" = D.registered.registered.genes
+    "distance_mean_df" = D.mean,
+    "distance_scaled_mean_df" = D.scaled,
+    "distance_scaled_mean_df_only_nonreg" = D.scaled.not.registered.genes,
+    "distance_scaled_mean_df_only_reg" = D.scaled.registered.genes,
+    "distance_registered_df" = D.registered,
+    "distance_registered_df_only_ref" = D.registered.registered.genes
   )
 
   return(results_list)

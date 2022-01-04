@@ -118,15 +118,15 @@ scale_and_register_data <- function(input_df,
 
   # Add columns which flags which BIC and AIC values are better
   model_comparison_dt$BIC_registered_is_better <- (model_comparison_dt$registered.BIC < model_comparison_dt$separate.BIC)
-  model_comparison_dt$AIC_registered_is_better <- (model_comparison_dt$registered.AIC < model_comparison_dt$separate.AIC)
-  model_comparison_dt$ABIC_registered_is_better <- (model_comparison_dt$BIC_registered_is_better & model_comparison_dt$AIC_registered_is_better)
+  # model_comparison_dt$AIC_registered_is_better <- (model_comparison_dt$registered.AIC < model_comparison_dt$separate.AIC)
+  # model_comparison_dt$ABIC_registered_is_better <- (model_comparison_dt$BIC_registered_is_better & model_comparison_dt$AIC_registered_is_better)
 
 
   # Report model comparison results
   cli::cli_h1("Model comparison results")
-  cli::cli_alert_info("AIC finds registration better than separate for: {cli::col_cyan(sum(model_comparison_dt$AIC_registered_is_better), '/', nrow(model_comparison_dt))}")
-  cli::cli_alert_info("BIC finds registration better than separate for: {cli::col_cyan(sum(model_comparison_dt$BIC_registered_is_better), '/', nrow(model_comparison_dt))}")
-  cli::cli_alert_info("AIC & BIC finds registration better than separate for: {cli::col_cyan(sum(model_comparison_dt$ABIC_registered_is_better), '/', nrow(model_comparison_dt))}")
+  # cli::cli_alert_info("AIC finds registration better than non-registration for: {cli::col_cyan(sum(model_comparison_dt$AIC_registered_is_better), '/', nrow(model_comparison_dt))}")
+  cli::cli_alert_info("BIC finds registration better than non-registration for: {cli::col_cyan(sum(model_comparison_dt$BIC_registered_is_better), '/', nrow(model_comparison_dt))}")
+  # cli::cli_alert_info("AIC & BIC finds registration better than non-registration for: {cli::col_cyan(sum(model_comparison_dt$ABIC_registered_is_better), '/', nrow(model_comparison_dt))}")
 
   # Get the best-shifted and stretched mean gene expression, only to genes which registration is better than
   # separate models by BIC. Don't stretch out, or shift genes for which separate is better.

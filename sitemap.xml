@@ -25,9 +25,6 @@
     <loc>https://ruthkr.github.io/GREAT/index.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/GREAT.html</loc>
-  </url>
-  <url>
     <loc>https://ruthkr.github.io/GREAT/reference/calculate_between_sample_distance.html</loc>
   </url>
   <url>
@@ -47,9 +44,6 @@
   </url>
   <url>
     <loc>https://ruthkr.github.io/GREAT/reference/plot_registered_gene_of_interest.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/scale_all_rep_data.html</loc>
   </url>
   <url>
     <loc>https://ruthkr.github.io/GREAT/reference/scale_and_register_data.html</loc>

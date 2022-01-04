@@ -170,8 +170,7 @@ scale_and_register_data <- function(input_df,
 #' @param mean_df Input data containing mean of each time point.
 #' @param all_rep_data Input all data (without taking mean).
 #' @param scale_func Scaling method choice applied in all_rep_data. There are two options: (a) "scale" where all expression values are subtracted by mean value and divided by standard deviation and (b) "my_scale" where expression values are divided by mean values.
-#'
-#' @return Scaled expression data in all_rep_data.
+#' @noRd
 scale_all_rep_data <- function(mean_df, all_rep_data, scale_func) {
   # Suppress "no visible binding for global variable" note
   expression_value <- NULL

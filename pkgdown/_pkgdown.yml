@@ -8,20 +8,19 @@ template:
   params:
     bootswatch: flatly
 
-# reference:
-# - title: Prepare data
-#   contents:
-#   - rename_columns
-#   - get_mean_data
-#
-# - title: Process data
-#   contents:
-#   - scale_and_register_data
-#   - calculate_between_sample_distance
-#   - get_best_stretch_and_shift
-#
-# - title: Visualise and summarise
-#   contents:
-#   - summary_model_comparison
-#   - plot_registered_gene_of_interest
-#   - plot_heatmap
+reference:
+- title: Prepare data
+  contents:
+  - get_expression_of_interest
+  - get_mean_data
+
+- title: Process data
+  contents:
+  - scale_and_register_data
+
+- title: Summarise and visualise registration results
+  contents:
+  - summary_model_comparison
+  - calculate_between_sample_distance
+  - plot_registered_gene_of_interest
+  - plot_heatmap

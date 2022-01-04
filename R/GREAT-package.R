@@ -5,6 +5,7 @@
 #'
 #' @docType package
 #' @name GREAT
+#' @noRd
 NULL
 
 ## quiets concerns of R CMD check re: the .'s that appear in pipelines

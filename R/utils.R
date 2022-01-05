@@ -79,7 +79,15 @@ match_names <- function(x, lookup) {
 
 #' Get approximate stretch factor
 #'
-#' @noRd
+#' @description
+#' `get_approximate_stretch()` is a function to get a stretch factor estimation given input data.
+#'
+#' @param input_df Input data frame contains all replicates of gene expression in each genotype at each time point.
+#' @param accession_data_to_transform Accession name of data which will be transformed.
+#' @param accession_data_ref Accession name of reference data.
+#'
+#' @return This function returns an estimation of a stretch factor for registering the data.
+#' @export
 get_approximate_stretch <- function(input_df, accession_data_to_transform, accession_data_ref) {
   # Suppress "no visible binding for global variable" note
   accession <- NULL

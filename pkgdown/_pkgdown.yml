@@ -16,6 +16,7 @@ reference:
 
 - title: Process data
   contents:
+  - get_approximate_stretch
   - scale_and_register_data
 
 - title: Summarise and visualise registration results

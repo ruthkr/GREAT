@@ -2,13 +2,14 @@
 % Please edit documentation in R/visualise_result.R
 \name{plot_heatmap}
 \alias{plot_heatmap}
-\title{Visualise distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration}
+\title{Visualise distances between samples from different time points}
 \usage{
 plot_heatmap(
   sample_dist_df,
   title = NULL,
   axis_fontsize = NULL,
-  same_min_timepoint = TRUE
+  same_min_timepoint = FALSE,
+  same_max_timepoint = FALSE
 )
 }
 \arguments{
@@ -18,11 +19,13 @@ plot_heatmap(
 
 \item{axis_fontsize}{Font size of X and Y axes labels.}
 
-\item{same_min_timepoint}{If \code{TRUE}, the default, takes data with the same minimum timepoint.}
+\item{same_min_timepoint}{If \code{FALSE}, the default, will not take data with the same minimum time point.}
+
+\item{same_max_timepoint}{If \code{FALSE}, the default, will not take data with the same maximum time point.}
 }
 \value{
 Distance heatmap of gene expression profiles over time between two different species.
 }
 \description{
-Visualise distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration
+Function \code{plot_heatmap()} allows users to plot distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration.
 }

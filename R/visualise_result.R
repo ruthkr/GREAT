@@ -1,10 +1,10 @@
 #' Plot gene of interest after registration
 #'
-#' @param df Dataframe input after registration.
+#' @param df Data frame input after registration.
 #' @param gene_accession List of gene accessions, default is \code{all}.
 #' @param title Optional plot title.
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
-#' @param sync_timepoints Whether to syncrhonise maximum timpoints for each accession, by default \code{FALSE}.
+#' @param sync_timepoints Whether to synchronise maximum time points for each accession, by default \code{FALSE}.
 #'
 #' @return Plot of gene of interest after registration.
 #' @importFrom rlang .data
@@ -19,8 +19,8 @@ plot_registered_gene_of_interest <- function(df, gene_accession = "all", title =
       dplyr::filter(.data$locus_name %in% gene_accession)
   }
 
-  # Synchronise maximum timepoints for each accession
-  # TODO: consider n additional timepoints
+  # Synchronise maximum time points for each accession
+  # TODO: consider n additional time points
   if (sync_timepoints) {
     max_timepoints <- df %>%
       dplyr::filter(
@@ -89,32 +89,49 @@ plot_registered_gene_of_interest <- function(df, gene_accession = "all", title =
   return(gg_registered)
 }
 
-#' Visualise distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration
+#' Visualise distances between samples from different time points
+#'
+#' @description
+#' Function `plot_heatmap()` allows users to plot distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration.
 #'
 #' @param sample_dist_df Input data frame contains sample distance between two different species.
 #' @param title Optional plot title.
 #' @param axis_fontsize Font size of X and Y axes labels.
-#' @param same_min_timepoint If \code{TRUE}, the default, takes data with the same minimum timepoint.
+#' @param same_min_timepoint If \code{FALSE}, the default, will not take data with the same minimum time point.
+#' @param same_max_timepoint If \code{FALSE}, the default, will not take data with the same maximum time point.
 #'
 #' @return Distance heatmap of gene expression profiles over time between two different species.
 #' @importFrom rlang .data
 #' @export
-plot_heatmap <- function(sample_dist_df, title = NULL, axis_fontsize = NULL, same_min_timepoint = TRUE) {
-  # Take data with the same minimum timepoint
+plot_heatmap <- function(sample_dist_df, title = NULL, axis_fontsize = NULL, same_min_timepoint = FALSE, same_max_timepoint = FALSE) {
+
+  # Define timepoint x and y
+  sample_dist_df <- sample_dist_df %>%
+    dplyr::mutate(
+      timepoint_x = as.numeric(stringr::str_extract(.data$x_sample, "(?<=-)\\d+")),
+      timepoint_y = as.numeric(stringr::str_extract(.data$y_sample, "(?<=-)\\d+"))
+    )
+
+  # Take data with the same minimum time points
   if (same_min_timepoint) {
     sample_dist_df <- sample_dist_df %>%
-      dplyr::mutate(
-        timepoint_x = as.numeric(stringr::str_extract(.data$x_sample, "(?<=-)\\d+")),
-        timepoint_y = as.numeric(stringr::str_extract(.data$y_sample, "(?<=-)\\d+"))
-      ) %>%
       dplyr::filter(
         .data$timepoint_x >= min(.data$timepoint_y)
+      )
+  }
+
+  # Take data with the same maximum time points
+  if (same_max_timepoint) {
+    sample_dist_df <- sample_dist_df %>%
+      dplyr::filter(
+        .data$timepoint_x <= max(.data$timepoint_y)
       )
   }
 
   # Change class of x_sample and y_sample as factor
   sample_dist_df$x_sample <- factor(sample_dist_df$x_sample, levels = unique(sort(sample_dist_df$x_sample)))
   sample_dist_df$y_sample <- factor(sample_dist_df$y_sample, levels = unique(sort(sample_dist_df$y_sample)))
+
 
   p <- ggplot2::ggplot(sample_dist_df) +
     ggplot2::aes(

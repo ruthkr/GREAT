@@ -24,7 +24,7 @@ plot_registered_gene_of_interest(
 \item{sync_timepoints}{Whether to synchronise maximum time points for each accession, by default \code{FALSE}.}
 }
 \value{
-Plot of gene of interest after registration.
+Plot of gene of interest after registration process.
 }
 \description{
 Plot gene of interest after registration

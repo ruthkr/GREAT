@@ -1,10 +1,6 @@
 #' Get the best result
 #'
-#' `get_best_result` is a function to get best result obtained from score calculated from applied shifts and stretch factors.
-#'
-#' @param df Input data frame containing value of applied shifts, stretches, and calculated score.
-#'
-#' @return Original data frame input with additional column indicating whether a pair of stretch and shift gives the best score.
+#' @noRd
 get_best_result <- function(df) {
   # return TRUE/FALSE vector. TRUE for the smallest score
   # if tied for this, true for the one with the smallest stretch. (1x is smaller than 0.75x though)
@@ -36,15 +32,7 @@ get_best_result <- function(df) {
 
 #' Wrapper of applying best shifts and compare the registered and unregistered models
 #'
-#' `calculate_all_model_comparison_stats` is a wrapper function to apply best shifts and compare the registered and unregistered models using compare_registered_to_unregistered_model.
-#'
-#' @param all_data_df Input all data (without taking mean).
-#' @param best_shifts Input data frame containing information of best shifts.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
-#' @param time_to_add Time points to be added in both reference data and data to transform after shifting and stretching.
-#'
-#' @return AIC and BIC score for registered and unregistered models.
+#' @noRd
 calculate_all_model_comparison_stats <- function(all_data_df,
                                                  best_shifts,
                                                  accession_data_to_transform,
@@ -73,7 +61,7 @@ calculate_all_model_comparison_stats <- function(all_data_df,
   out.combBIC <- numeric(length = length(genes))
 
   i <- 0
-  cli::cli_progress_step("Calculating registration vs different expression comparison AIC & BIC ({i}/{length(genes)})", spinner = TRUE)
+  cli::cli_progress_step("Calculating registration vs non-registration comparison AIC & BIC ({i}/{length(genes)})", spinner = TRUE)
   for (i in seq_along(genes)) {
     curr_sym <- genes[i]
 
@@ -104,15 +92,7 @@ calculate_all_model_comparison_stats <- function(all_data_df,
 
 #' Register all expression over time using optimal shift found
 #'
-#' `apply_best_shift` is a function to register all unregistered expression overtime using the best/optimal shifts found.
-#'
-#' @param data Input data (all data).
-#' @param best_shifts Input data frame containing information of best shifts.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
-#' @param time_to_add Time points to be added in both reference data and data to transform after shifting and stretching.
-#'
-#' @return The registered expression over time for each gene.
+#' @noRd
 apply_best_shift <- function(data,
                              best_shifts,
                              accession_data_to_transform,
@@ -131,12 +111,12 @@ apply_best_shift <- function(data,
   # Normalise the expression data (If was normalised when calculating the expression data, is recorded in the _compared_mean, and _compared_sd columns. If no normalisation was carried out, then these should have values of 0 and 1. This was done using get_best_shift()).
   transform_was_not_normalised <- all(unique(best_shifts$data_transform_compared_mean) == 0)
   ref_was_not_normalised <- all(unique(best_shifts$data_ref_compared_mean) == 0)
+  # cli::cli_alert_info("T mean: {unique(best_shifts$data_transform_compared_mean)}")
+  # cli::cli_alert_info("R mean: {unique(best_shifts$data_ref_compared_mean)}")
   if (!transform_was_not_normalised | !ref_was_not_normalised) {
-    cli::cli_alert_info("Applying apply_best_normalisation()...")
-    # cli::cli_alert_info("T mean: {unique(best_shifts$data_transform_compared_mean)}")
-    # cli::cli_alert_info("R mean: {unique(best_shifts$data_ref_compared_mean)}")
-    # cli::cli_alert_info("Expression value human: {paste(round(processed_data %>% dplyr::filter(accession == 'human') %>% dplyr::pull(expression_value), 1), collapse = ' ')}")
-    # cli::cli_alert_info("Expression value mouse: {paste(round(processed_data %>% dplyr::filter(accession == 'mouse') %>% dplyr::pull(expression_value), 1), collapse = ' ')}")
+    # cli::cli_alert_info("Applying apply_best_normalisation()...")
+    # cli::cli_alert_info("Expression value {accession_data_to_transform}: {paste(round(processed_data %>% dplyr::filter(accession == accession_data_to_transform) %>% dplyr::pull(expression_value), 1), collapse = ' ')}")
+    # cli::cli_alert_info("Expression value {accession_data_ref}: {paste(round(processed_data %>% dplyr::filter(accession == accession_data_ref) %>% dplyr::pull(expression_value), 1), collapse = ' ')}")
     processed_data <- apply_best_normalisation(
       data = processed_data,
       best_shifts,
@@ -144,8 +124,8 @@ apply_best_shift <- function(data,
       accession_data_ref
     )
     # cli::cli_alert_info("Applied apply_best_normalisation()")
-    # cli::cli_alert_info("Expression value human: {paste(round(processed_data %>% dplyr::filter(accession == 'human') %>% dplyr::pull(expression_value), 1), collapse = ' ')}")
-    # cli::cli_alert_info("Expression value mouse: {paste(round(processed_data %>% dplyr::filter(accession == 'mouse') %>% dplyr::pull(expression_value), 1), collapse = ' ')}")
+    # cli::cli_alert_info("Expression value {accession_data_to_transform}: {paste(round(processed_data %>% dplyr::filter(accession == accession_data_to_transform) %>% dplyr::pull(expression_value), 1), collapse = ' ')}")
+    # cli::cli_alert_info("Expression value {accession_data_ref}: {paste(round(processed_data %>% dplyr::filter(accession == accession_data_ref) %>% dplyr::pull(expression_value), 1), collapse = ' ')}")
   } else {
     # If no scaling carried out DURING the registration step
     cli::cli_alert_warning("No normalisation was carried out DURING registration (though may have been, prior to the comparison)")
@@ -167,11 +147,7 @@ apply_best_shift <- function(data,
 
 #' Apply stretch factor
 #'
-#' @param data Input data.
-#' @param best_shifts Input data frame containing information of best shifts.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
-#' @param time_to_add Time points to be added in both reference data and data to transform after shifting and stretching.
+#' @noRd
 apply_stretch <- function(data,
                           best_shifts,
                           accession_data_to_transform,
@@ -221,14 +197,7 @@ apply_stretch <- function(data,
 
 #' Apply normalisation (after applying stretch)
 #'
-#' `apply_best_normalisation` is a function to normalise by the mean and standard deviation of the compared points (after applying stretching) for each gene, in each accesion (reference data and data to transform). If the gene wasn't compared, set the expression value to NA.
-#'
-#' @param data Input data (after applying stretching).
-#' @param best_shifts Input dataframe containing information of best shifts.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
-#'
-#' @return Normalised data.
+#' @noRd
 apply_best_normalisation <- function(data,
                                      best_shifts,
                                      accession_data_to_transform,
@@ -275,14 +244,7 @@ apply_best_normalisation <- function(data,
 
 #' Comparing registered to unregistered model
 #'
-#' `compare_registered_to_unregistered_model` is a function to compare the overlapping timepoints in reference data and data to transform after best registration and without registration. Same timepoints and stretched data were used for both models.
-#'
-#' @param curr_sym A gene accession.
-#' @param all_data_df Input data.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
-#'
-#' @return Score of AIC and BIC for both registered and unregistered models.
+#' @noRd
 compare_registered_to_unregistered_model <- function(curr_sym,
                                                      all_data_df,
                                                      accession_data_to_transform,
@@ -308,11 +270,14 @@ compare_registered_to_unregistered_model <- function(curr_sym,
   # for cubic spline, K+3 params where K=num.knots
   # as can omit constant term
   num.spline.params <- 6 # number of parameters for each spline fitting (degree and this used to calculate num knots).
+  # num.spline.params <- 5
   num.registration.params <- 2 # stretch, shift
   num.obs <- nrow(combined_spline_data)
 
   data_to_transform_fit <- stats::lm(expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_to_transform_spline)
+  # message("data_to_transform_fit:", data_to_transform_fit)
   data_ref_fit <- stats::lm(expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_ref_spline)
+  # message("data_ref_fit:", data_ref_fit)
   combined_fit <- stats::lm(expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = combined_spline_data)
 
   # Calculate the log likelihoods

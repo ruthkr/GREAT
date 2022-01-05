@@ -6,7 +6,7 @@
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
 #' @param sync_timepoints Whether to synchronise maximum time points for each accession, by default \code{FALSE}.
 #'
-#' @return Plot of gene of interest after registration.
+#' @return Plot of gene of interest after registration process.
 #' @importFrom rlang .data
 #' @export
 plot_registered_gene_of_interest <- function(df, gene_accession = "all", title = NULL, ncol = NULL, sync_timepoints = FALSE) {

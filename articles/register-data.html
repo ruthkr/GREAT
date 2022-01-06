@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Register data • GREAT</title>
+<title>Registering data • GREAT</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Register data">
+<meta property="og:title" content="Registering data">
 <meta property="og:description" content="GREAT">
 <meta property="og:image" content="https://ruthkr.github.io/GREAT/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -61,10 +61,10 @@
       <a href="../articles/prepare_data.html">Preparing data</a>
     </li>
     <li>
-      <a href="../articles/register-data.html">Register data</a>
+      <a href="../articles/register-data.html">Registering data</a>
     </li>
     <li>
-      <a href="../articles/visualise-results.html">Visualise results</a>
+      <a href="../articles/visualise-results.html">Visualising results</a>
     </li>
   </ul>
 </li>
@@ -82,7 +82,7 @@
       </header><script src="register-data_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Register data</h1>
+      <h1 data-toc-skip>Registering data</h1>
             
       
       
@@ -92,42 +92,28 @@
 
     
     
+<p>This vignette will show users on how to register data using the sample data provided within the package.</p>
+<p><br></p>
+<p><img src="figures/registration_process.png" width="50%"></p>
+<p><br></p>
+<p>Before starting, users need to load all of the packages required:</p>
+<div class="section level2">
+<h2 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
+</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Load the package</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">GREAT</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></code></pre></div>
+</div>
 <div class="section level2">
-<h2 id="input-data-requirements">Input data requirements<a class="anchor" aria-label="anchor" href="#input-data-requirements"></a>
+<h2 id="load-sample-data">Load sample data<a class="anchor" aria-label="anchor" href="#load-sample-data"></a>
 </h2>
-<p>Input data frame required for <code>GREAT</code> to register your gene expression profiles is a data frame contains gene expression time-course data with all replicates. Illustrated diagram below shows the required <code>input_df</code> data frame format of <code>GREAT</code>. This data frame must contain:</p>
-<ul>
-<li><p>two different species which users wish to compare (for each gene, at least two replicates are required in all species), and</p></li>
-<li>
-<p>six data columns:</p>
-<ul>
-<li>
-<code>locus_name</code>: accession or unique ID of each gene.</li>
-<li>
-<code>accession</code>: accession or name of the species to compare.</li>
-<li>
-<code>timepoint</code>: time point of the gene expression data.</li>
-<li>
-<code>expression_value</code>: desired RNA-seq expression value or measure of the abundance of gene or transcripts which one wishes to compare. This value can be RPM, RPKM, FPKM, TPM, TMM, DESeq, SCnorm, GeTMM, ComBat-Seq and raw reads counts.</li>
-<li>
-<code>tissue</code>: tissue from which RNA-seq data were extracted.</li>
-<li>
-<code>group</code>: replicate ID for each expression value.</li>
-</ul>
-</li>
-</ul>
-<p><br></p>
-<p><img src="figures/all_data_illustration.jpg" width="100%"></p>
-<p><br></p>
 <p><code>GREAT</code> package provides an example of data frame containing two different species <em>Arabidopsis</em> and <em>B. rapa</em> with two and three different replicates, respectively. This data frame can be read as follow:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Gene expression data with replicates</span>
 <span class="va">all_data_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_all_replicates.csv"</span>, package <span class="op">=</span> <span class="st">"GREAT"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p>Note that the data has all of six columns required by the package as documented in <a href="https://ruthkr.github.io/GREAT/articles/prepare_data.html">ruthkr.github.io/GREAT/articles/prepare_data.html</a></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">all_data_df</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">accession</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
@@ -245,12 +231,20 @@
 <div class="section level2">
 <h2 id="register-the-data">Register the data<a class="anchor" aria-label="anchor" href="#register-the-data"></a>
 </h2>
-<p>To align gene expression time-course between <em>Arabidopsis</em> Col-0 and <em>B. rapa</em> Ro18, we can use the function <code><a href="../reference/scale_and_register_data.html">scale_and_register_data()</a></code> as shown below:</p>
+<p>To align gene expression time-course between <em>Arabidopsis</em> Col-0 and <em>B. rapa</em> Ro18, we can use function <code><a href="../reference/scale_and_register_data.html">scale_and_register_data()</a></code>. Stretch factors as one of the parameters of function <code><a href="../reference/scale_and_register_data.html">scale_and_register_data()</a></code> can be estimated using function:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/get_approximate_stretch.html">get_approximate_stretch</a></span><span class="op">(</span>
+  input_df <span class="op">=</span> <span class="va">all_data_df</span>,
+  accession_data_to_transform <span class="op">=</span> <span class="st">"Col0"</span>,
+  accession_data_ref <span class="op">=</span> <span class="st">"Ro18"</span>
+<span class="op">)</span>
+<span class="co">#&gt; [1] 2.666667</span></code></pre></div>
+<p>As we can see above, the approximation of the stretch factor is around 2.7. Therefore, users can use some values around the estimation value.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Running the registration</span>
 <span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/scale_and_register_data.html">scale_and_register_data</a></span><span class="op">(</span>
     input_df <span class="op">=</span> <span class="va">all_data_df</span>,
-    stretches <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1.5</span>, <span class="fl">1</span><span class="op">)</span>,
+    stretches <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2.5</span>, <span class="fl">2</span>, <span class="fl">1.5</span>, <span class="fl">1</span><span class="op">)</span>,
     shift_extreme <span class="op">=</span> <span class="fl">4</span>,
     num_shifts <span class="op">=</span> <span class="fl">27</span>,
     min_num_overlapping_points <span class="op">=</span> <span class="fl">4</span>,
@@ -259,7 +253,75 @@
     accession_data_to_transform <span class="op">=</span> <span class="st">"Col0"</span>,
     accession_data_ref <span class="op">=</span> <span class="st">"Ro18"</span>,
     start_timepoint <span class="op">=</span> <span class="st">"reference"</span>
-  <span class="op">)</span></code></pre></div>
+  <span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Information before registration ─────────────────────────────────────────────</span>
+<span class="co">#&gt; ℹ Max value of expression_value of all_data_df: 262.28</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Analysing models for all stretch and shift factor ───────────────────────────</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Analysing models for stretch factor = 3 ──</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [55ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [50ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [134ms]</span>
+<span class="co">#&gt; ✓ Finished analysing models for stretch factor = 3</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Analysing models for stretch factor = 2.5 ──</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2.2s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [55ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [52ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [113ms]</span>
+<span class="co">#&gt; ✓ Finished analysing models for stretch factor = 2.5</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Analysing models for stretch factor = 2 ──</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2.2s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [47ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [50ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [99ms]</span>
+<span class="co">#&gt; ✓ Finished analysing models for stretch factor = 2</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Analysing models for stretch factor = 1.5 ──</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [51ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [52ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [102ms]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ✓ Finished analysing models for stretch factor = 1.5</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Analysing models for stretch factor = 1 ──</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [1.9s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [49ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [49ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [108ms]</span>
+<span class="co">#&gt; ✓ Finished analysing models for stretch factor = 1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Model comparison results ────────────────────────────────────────────────────</span>
+<span class="co">#&gt; ℹ BIC finds registration better than non-registration for: 10/10</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Applying the best-shifts and stretches to gene expression ───────────────────</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [48ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [52ms]</span>
+<span class="co">#&gt; ℹ Max value of expression_value: 9.05</span>
+<span class="co">#&gt; ✓ Imputing transformed expression values (10/10) [144ms]</span>
+<span class="co">#&gt; </span></code></pre></div>
+<p>Function <code><a href="../reference/scale_and_register_data.html">scale_and_register_data()</a></code> returns a list of seven data frames:</p>
+<ul>
+<li>
+<code>mean_df</code> is a data frame containing mean expression value of each gene and accession for every time point.</li>
+<li>
+<code>mean_df_sc</code> is identical to <code>mean_df</code>, with additional column <code>sc.expression_value</code> which the scaled mean expression values.</li>
+<li>
+<code>to_shift_df</code> is a processed input data frame ready to be registered.</li>
+<li>
+<code>shifted_mean_df</code> is the registration result - after stretching and shifting.</li>
+<li>
+<code>imputed_mean_df</code> is the imputed registration result.</li>
+<li>
+<code>all_shifts_df</code> is a table containing candidates of registration parameters and a score after applying each parameter (stretch and shift factor).</li>
+<li>
+<code>model_comparison_df</code> is a table comparing the optimal registration function for each gene (based on <code>all_shifts_df</code> scores) to model with no registration applied.</li>
+</ul>
 </div>
   </div>
 

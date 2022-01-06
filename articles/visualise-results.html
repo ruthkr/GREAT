@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Visualise results • GREAT</title>
+<title>Visualising results • GREAT</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Visualise results">
+<meta property="og:title" content="Visualising results">
 <meta property="og:description" content="GREAT">
 <meta property="og:image" content="https://ruthkr.github.io/GREAT/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -61,10 +61,10 @@
       <a href="../articles/prepare_data.html">Preparing data</a>
     </li>
     <li>
-      <a href="../articles/register-data.html">Register data</a>
+      <a href="../articles/register-data.html">Registering data</a>
     </li>
     <li>
-      <a href="../articles/visualise-results.html">Visualise results</a>
+      <a href="../articles/visualise-results.html">Visualising results</a>
     </li>
   </ul>
 </li>
@@ -82,7 +82,7 @@
       </header><script src="visualise-results_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Visualise results</h1>
+      <h1 data-toc-skip>Visualising results</h1>
             
       
       
@@ -92,13 +92,105 @@
 
     
     
+<p>After running registration function <code><a href="../reference/scale_and_register_data.html">scale_and_register_data()</a></code> as shown <a href="https://ruthkr.github.io/GREAT/articles/register-data.html">ruthkr.github.io/GREAT/articles/register-data.html</a>, users can get summarise and summarise the results as shown below.</p>
+<p><br></p>
+<p><img src="figures/visualisation_process.png" width="80%"></p>
+<p><br></p>
+<div class="section level2">
+<h2 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
+</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">GREAT</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="co"># Load the package</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">GREAT</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="get-summary-from-registration-results">Get summary from registration results<a class="anchor" aria-label="anchor" href="#get-summary-from-registration-results"></a>
+</h2>
+<p>The total number of registered and non-registered genes can be obtained by running function <code><a href="../reference/summary_model_comparison.html">summary_model_comparison()</a></code> with data frame <code>registration_results$model_comparison_df</code> as an input. Function <code><a href="../reference/summary_model_comparison.html">summary_model_comparison()</a></code> returns a list containing three different elements: <code>df_summary</code> as well as list of both registered <code>registered_genes</code> and non-registered gene <code>non_registered_genes</code> accessions.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Get all of summary</span>
+<span class="va">all_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summary_model_comparison.html">summary_model_comparison</a></span><span class="op">(</span><span class="va">registration_results</span><span class="op">$</span><span class="va">model_comparison_df</span><span class="op">)</span>
+
+<span class="va">all_summary</span><span class="op">$</span><span class="va">df_summary</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Result</th>
+<th align="left">Value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Total genes</td>
+<td align="left">10</td>
+</tr>
+<tr class="even">
+<td align="left">Registered genes</td>
+<td align="left">10</td>
+</tr>
+<tr class="odd">
+<td align="left">Non-registered genes</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">Stretch</td>
+<td align="left">1.5, 2, 2.5, 3</td>
+</tr>
+<tr class="odd">
+<td align="left">Shift</td>
+<td align="left">[-3.5, 1.5]</td>
+</tr>
+</tbody>
+</table>
+<p>From the sample data, we can retrieve the accession of registered genes:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">all_summary</span><span class="op">$</span><span class="va">registered_genes</span>
+<span class="co">#&gt;  [1] "BRAA04G005470.3C" "BRAA09G045310.3C" "BRAA03G051930.3C" "BRAA06G025360.3C"</span>
+<span class="co">#&gt;  [5] "BRAA02G043220.3C" "BRAA03G023790.3C" "BRAA05G005370.3C" "BRAA02G018970.3C"</span>
+<span class="co">#&gt;  [9] "BRAA07G030470.3C" "BRAA07G034100.3C"</span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="plot-registration-results">Plot registration results<a class="anchor" aria-label="anchor" href="#plot-registration-results"></a>
+</h2>
+<p>Function <code><a href="../reference/plot_registration_results.html">plot_registration_results()</a></code> allows users to plot registration results of gene of interest.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Plot registration result</span>
+<span class="fu"><a href="../reference/plot_registration_results.html">plot_registration_results</a></span><span class="op">(</span><span class="va">registration_results</span><span class="op">$</span><span class="va">imputed_mean_df</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
+<p><img src="visualise-results_files/figure-html/plot-results-1.png" width="960"> Users also have an option to include information or label on the plot whether particular genes are registered or not, as well as the registration parameters by include model comparison data frame as shown below.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Plot registration result</span>
+<span class="fu"><a href="../reference/plot_registration_results.html">plot_registration_results</a></span><span class="op">(</span><span class="va">registration_results</span><span class="op">$</span><span class="va">imputed_mean_df</span>, <span class="va">registration_results</span><span class="op">$</span><span class="va">model_comparison_df</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
+<p><img src="visualise-results_files/figure-html/plot-results-with-label-1.png" width="960"></p>
+<p>To only include same time points between samples, users can include <code>sync_timepoints = TRUE</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="calculate-and-plot-overall-sample-distance">Calculate and plot overall sample distance<a class="anchor" aria-label="anchor" href="#calculate-and-plot-overall-sample-distance"></a>
+</h2>
+<p>After registering sample data, the package provides a function for user to compare overall similarity before and after registering.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sample_distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_between_sample_distance.html">calculate_between_sample_distance</a></span><span class="op">(</span><span class="va">registration_results</span><span class="op">$</span><span class="va">mean_df</span>, 
+                                    <span class="va">registration_results</span><span class="op">$</span><span class="va">mean_df_sc</span>, 
+                                    <span class="va">registration_results</span><span class="op">$</span><span class="va">imputed_mean_df</span>, 
+                                    accession_data_ref <span class="op">=</span> <span class="st">"Ro18"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">sample_distance</span><span class="op">$</span><span class="va">distance_mean_df</span><span class="op">)</span></code></pre></div>
+<p><img src="visualise-results_files/figure-html/plot-dist-mean-df-1.png" width="768"></p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">sample_distance</span><span class="op">$</span><span class="va">distance_scaled_mean_df</span><span class="op">)</span></code></pre></div>
+<p><img src="visualise-results_files/figure-html/plot-dist-scaled-mean-df-1.png" width="768"></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">sample_distance</span><span class="op">$</span><span class="va">distance_registered_df_only_reg</span><span class="op">)</span></code></pre></div>
+<p><img src="visualise-results_files/figure-html/plot-dist-registered-1.png" width="768"></p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># plot_heatmap(sample_distance$distance_registered_df_only_reg, same_max_timepoint = TRUE, same_min_timepoint = TRUE)</span></code></pre></div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 

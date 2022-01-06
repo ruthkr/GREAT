@@ -61,10 +61,10 @@
       <a href="../articles/prepare_data.html">Preparing data</a>
     </li>
     <li>
-      <a href="../articles/register-data.html">Register data</a>
+      <a href="../articles/register-data.html">Registering data</a>
     </li>
     <li>
-      <a href="../articles/visualise-results.html">Visualise results</a>
+      <a href="../articles/visualise-results.html">Visualising results</a>
     </li>
   </ul>
 </li>
@@ -92,18 +92,41 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">GREAT</span><span class="op">)</span></code></pre></div>
-<p>This is a basic example which shows you how to register (align) gene expression profiles over time:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Load the package</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">GREAT</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></code></pre></div>
+<div class="section level2">
+<h2 id="input-data-requirements">Input data requirements<a class="anchor" aria-label="anchor" href="#input-data-requirements"></a>
+</h2>
+<p>Input data frame required for <code>GREAT</code> to register your gene expression profiles is a data frame contains gene expression time-course data with all replicates. Illustrated diagram below shows the required <code>input_df</code> data frame format of <code>GREAT</code>. This data frame must contain:</p>
+<ul>
+<li><p>two different species which users wish to compare (for each gene, at least two replicates are required in all species), and</p></li>
+<li>
+<p>six data columns:</p>
+<ul>
+<li>
+<code>locus_name</code>: accession or unique ID of each gene.</li>
+<li>
+<code>accession</code>: accession or name of the species to compare.</li>
+<li>
+<code>timepoint</code>: time point of the gene expression data.</li>
+<li>
+<code>expression_value</code>: desired RNA-seq expression value or measure of the abundance of gene or transcripts which one wishes to compare. This value can be RPM, RPKM, FPKM, TPM, TMM, DESeq, SCnorm, GeTMM, ComBat-Seq and raw reads counts.</li>
+<li>
+<code>tissue</code>: tissue from which RNA-seq data were extracted.</li>
+<li>
+<code>group</code>: replicate ID for each expression value.</li>
+</ul>
+</li>
+</ul>
+<p><br></p>
+<p><img src="figures/all_data_illustration.jpg" width="100%"></p>
+<p><br></p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 

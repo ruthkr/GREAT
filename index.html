@@ -61,10 +61,10 @@
       <a href="articles/prepare_data.html">Preparing data</a>
     </li>
     <li>
-      <a href="articles/register-data.html">Register data</a>
+      <a href="articles/register-data.html">Registering data</a>
     </li>
     <li>
-      <a href="articles/visualise-results.html">Visualise results</a>
+      <a href="articles/visualise-results.html">Visualising results</a>
     </li>
   </ul>
 </li>
@@ -90,6 +90,18 @@
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>The goal of GREAT (Gene Registration from Expression and Time-courses) to register (align) gene expression profiles between two species (reference data and data to transform). Non-reference gene expression profiles will be stretched and shifted. The optimality of registration parameters (shifts and stretches) will be estimated using least-squares criterion. This package is also designed to compare a registration model versus a non-registration model, as well as determine whether registration model performed better than non-registration transformation.</p>
+</div>
+<div class="section level2">
+<h2 id="package-workflow">Package workflow<a class="anchor" aria-label="anchor" href="#package-workflow"></a>
+</h2>
+<p>Flowchart below illustrates the workflow of the package given an input data:</p>
+<p><img src="reference/figures/GREAT_workflow.png" width="85%"></p>
+<p>More details on how to use this package are available on functions documentations and vignettes:</p>
+<ol style="list-style-type: decimal">
+<li><a href="https://ruthkr.github.io/GREAT/articles/prepare_data.html">Input requirements</a></li>
+<li><a href="https://ruthkr.github.io/GREAT/articles/register-data.html">Register data</a></li>
+<li><a href="https://ruthkr.github.io/GREAT/articles/visualise-results.html">Visualise registration results</a></li>
+</ol>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -122,7 +134,7 @@ install.packages("GREAT")
 <span class="co"># Running the registration</span>
 <span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/scale_and_register_data.html">scale_and_register_data</a></span><span class="op">(</span>
     input_df <span class="op">=</span> <span class="va">all_data_df</span>,
-    stretches <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1.5</span>, <span class="fl">1</span><span class="op">)</span>,
+    stretches <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2.5</span>, <span class="fl">2</span>, <span class="fl">1.5</span>, <span class="fl">1</span><span class="op">)</span>,
     shift_extreme <span class="op">=</span> <span class="fl">4</span>,
     num_shifts <span class="op">=</span> <span class="fl">27</span>,
     min_num_overlapping_points <span class="op">=</span> <span class="fl">4</span>,
@@ -138,45 +150,51 @@ install.packages("GREAT")
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── Analysing models for all stretch and shift factor ───────────────────────────</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; ── Analysing models for stretch factor = 2 ──</span>
+<span class="co">#&gt; ── Analysing models for stretch factor = 3 ──</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [55ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [50ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [134ms]</span>
+<span class="co">#&gt; ✓ Finished analysing models for stretch factor = 3</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [1.9s]</span>
-<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [51ms]</span>
-<span class="co">#&gt; ✓ Applying best shift (10/10) [53ms]</span>
-<span class="co">#&gt; ✓ Calculating registration vs different expression comparison AIC &amp; BIC (10/10) [180ms]</span>
+<span class="co">#&gt; ── Analysing models for stretch factor = 2.5 ──</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2.2s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [55ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [52ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [113ms]</span>
+<span class="co">#&gt; ✓ Finished analysing models for stretch factor = 2.5</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Analysing models for stretch factor = 2 ──</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2.2s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [47ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [50ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [99ms]</span>
 <span class="co">#&gt; ✓ Finished analysing models for stretch factor = 2</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── Analysing models for stretch factor = 1.5 ──</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [1.9s]</span>
-<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [54ms]</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [51ms]</span>
 <span class="co">#&gt; ✓ Applying best shift (10/10) [52ms]</span>
-<span class="co">#&gt; ✓ Calculating registration vs different expression comparison AIC &amp; BIC (10/10) [105ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [102ms]</span>
+<span class="co">#&gt; </span>
 <span class="co">#&gt; ✓ Finished analysing models for stretch factor = 1.5</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── Analysing models for stretch factor = 1 ──</span>
-<span class="co">#&gt; </span>
 <span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [1.9s]</span>
-<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [57ms]</span>
-<span class="co">#&gt; ✓ Applying best shift (10/10) [56ms]</span>
-<span class="co">#&gt; ✓ Calculating registration vs different expression comparison AIC &amp; BIC (10/10) [118ms]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [49ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [49ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [108ms]</span>
 <span class="co">#&gt; ✓ Finished analysing models for stretch factor = 1</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── Model comparison results ────────────────────────────────────────────────────</span>
-<span class="co">#&gt; ℹ AIC finds registration better than separate for: 7/10</span>
-<span class="co">#&gt; ℹ BIC finds registration better than separate for: 10/10</span>
-<span class="co">#&gt; ℹ AIC &amp; BIC finds registration better than separate for: 7/10</span>
+<span class="co">#&gt; ℹ BIC finds registration better than non-registration for: 10/10</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── Applying the best-shifts and stretches to gene expression ───────────────────</span>
-<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [58ms]</span>
-<span class="co">#&gt; ✓ Applying best shift (10/10) [83ms]</span>
-<span class="co">#&gt; ℹ Max value of expression_value: 10.38</span>
-<span class="co">#&gt; ✓ Imputing transformed expression values (10/10) [145ms]</span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Plot registration result</span>
-<span class="fu"><a href="reference/plot_registered_gene_of_interest.html">plot_registered_gene_of_interest</a></span><span class="op">(</span><span class="va">registration_results</span><span class="op">[[</span><span class="st">"imputed_mean_df"</span><span class="op">]</span><span class="op">]</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-plot-results-1.png" width="100%"></p>
-<p>More examples are available on functions documentations and vignettes, please refer to the <a href="https://ruthkr.github.io/GREAT/">documentation</a>.</p>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [48ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [52ms]</span>
+<span class="co">#&gt; ℹ Max value of expression_value: 9.05</span>
+<span class="co">#&gt; ✓ Imputing transformed expression values (10/10) [144ms]</span>
+<span class="co">#&gt; </span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>

@@ -23,5 +23,5 @@ reference:
   contents:
   - summary_model_comparison
   - calculate_between_sample_distance
-  - plot_registered_gene_of_interest
+  - plot_registration_results
   - plot_heatmap

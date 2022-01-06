@@ -25,6 +25,23 @@ versus a non-registration model, as well as determine whether
 registration model performed better than non-registration
 transformation.
 
+## Package workflow
+
+Flowchart below illustrates the workflow of the package given an input
+data:
+
+<img src="man/figures/GREAT_workflow.png" width="85%" />
+
+More details on how to use this package are available on functions
+documentations and vignettes:
+
+1.  [Input
+    requirements](https://ruthkr.github.io/GREAT/articles/prepare_data.html)
+2.  [Register
+    data](https://ruthkr.github.io/GREAT/articles/register-data.html)
+3.  [Visualise registration
+    results](https://ruthkr.github.io/GREAT/articles/visualise-results.html)
+
 ## Installation
 
 <!--
@@ -62,7 +79,7 @@ all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", packa
 # Running the registration
 registration_results <- scale_and_register_data(
     input_df = all_data_df,
-    stretches = c(2, 1.5, 1),
+    stretches = c(3, 2.5, 2, 1.5, 1),
     shift_extreme = 4,
     num_shifts = 27,
     min_num_overlapping_points = 4,
@@ -78,51 +95,52 @@ registration_results <- scale_and_register_data(
 #> 
 #> ── Analysing models for all stretch and shift factor ───────────────────────────
 #> 
-#> ── Analysing models for stretch factor = 2 ──
+#> ── Analysing models for stretch factor = 3 ──
+#> ✓ Calculating score for all shifts (10/10) [2s]
+#> ✓ Normalising expression by mean and sd of compared values (10/10) [55ms]
+#> ✓ Applying best shift (10/10) [50ms]
+#> ✓ Calculating registration vs non-registration comparison AIC & BIC (10/10) [134ms]
+#> ✓ Finished analysing models for stretch factor = 3
 #> 
-#> ✓ Calculating score for all shifts (10/10) [1.9s]
-#> ✓ Normalising expression by mean and sd of compared values (10/10) [51ms]
-#> ✓ Applying best shift (10/10) [53ms]
-#> ✓ Calculating registration vs different expression comparison AIC & BIC (10/10) [180ms]
+#> ── Analysing models for stretch factor = 2.5 ──
+#> ✓ Calculating score for all shifts (10/10) [2.2s]
+#> ✓ Normalising expression by mean and sd of compared values (10/10) [55ms]
+#> ✓ Applying best shift (10/10) [52ms]
+#> ✓ Calculating registration vs non-registration comparison AIC & BIC (10/10) [113ms]
+#> ✓ Finished analysing models for stretch factor = 2.5
+#> 
+#> ── Analysing models for stretch factor = 2 ──
+#> ✓ Calculating score for all shifts (10/10) [2.2s]
+#> ✓ Normalising expression by mean and sd of compared values (10/10) [47ms]
+#> ✓ Applying best shift (10/10) [50ms]
+#> ✓ Calculating registration vs non-registration comparison AIC & BIC (10/10) [99ms]
 #> ✓ Finished analysing models for stretch factor = 2
 #> 
 #> ── Analysing models for stretch factor = 1.5 ──
-#> 
-#> ✓ Calculating score for all shifts (10/10) [1.9s]
-#> ✓ Normalising expression by mean and sd of compared values (10/10) [54ms]
+#> ✓ Calculating score for all shifts (10/10) [2s]
+#> ✓ Normalising expression by mean and sd of compared values (10/10) [51ms]
 #> ✓ Applying best shift (10/10) [52ms]
-#> ✓ Calculating registration vs different expression comparison AIC & BIC (10/10) [105ms]
+#> ✓ Calculating registration vs non-registration comparison AIC & BIC (10/10) [102ms]
+#> 
 #> ✓ Finished analysing models for stretch factor = 1.5
 #> 
 #> ── Analysing models for stretch factor = 1 ──
-#> 
 #> ✓ Calculating score for all shifts (10/10) [1.9s]
-#> ✓ Normalising expression by mean and sd of compared values (10/10) [57ms]
-#> ✓ Applying best shift (10/10) [56ms]
-#> ✓ Calculating registration vs different expression comparison AIC & BIC (10/10) [118ms]
+#> ✓ Normalising expression by mean and sd of compared values (10/10) [49ms]
+#> ✓ Applying best shift (10/10) [49ms]
+#> ✓ Calculating registration vs non-registration comparison AIC & BIC (10/10) [108ms]
 #> ✓ Finished analysing models for stretch factor = 1
 #> 
 #> ── Model comparison results ────────────────────────────────────────────────────
-#> ℹ AIC finds registration better than separate for: 7/10
-#> ℹ BIC finds registration better than separate for: 10/10
-#> ℹ AIC & BIC finds registration better than separate for: 7/10
+#> ℹ BIC finds registration better than non-registration for: 10/10
 #> 
 #> ── Applying the best-shifts and stretches to gene expression ───────────────────
-#> ✓ Normalising expression by mean and sd of compared values (10/10) [58ms]
-#> ✓ Applying best shift (10/10) [83ms]
-#> ℹ Max value of expression_value: 10.38
-#> ✓ Imputing transformed expression values (10/10) [145ms]
+#> ✓ Normalising expression by mean and sd of compared values (10/10) [48ms]
+#> ✓ Applying best shift (10/10) [52ms]
+#> ℹ Max value of expression_value: 9.05
+#> ✓ Imputing transformed expression values (10/10) [144ms]
+#> 
 ```
-
-``` r
-# Plot registration result
-plot_registered_gene_of_interest(registration_results[["imputed_mean_df"]], ncol = 3)
-```
-
-<img src="man/figures/README-plot-results-1.png" width="100%" />
-
-More examples are available on functions documentations and vignettes,
-please refer to the [documentation](https://ruthkr.github.io/GREAT/).
 
 ## Reference
 

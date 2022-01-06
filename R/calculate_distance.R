@@ -132,6 +132,9 @@ calculate_between_sample_distance <- function(mean_df,
 #'
 #' @noRd
 reformat_for_distance_calculation <- function(dt, sample_id_cols, gene_col, expression_col) {
+  # Avoid dcast() "Aggregate function missing, defaulting to 'length'" error
+  dt <- unique(dt)
+
   # Concatenate sample.id columns to generate sample ids
   dt$sample.id <- dt[[sample_id_cols[1]]]
   if (length(sample_id_cols) > 1) {

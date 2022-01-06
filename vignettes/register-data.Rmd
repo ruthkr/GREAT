@@ -25,19 +25,15 @@ knitr::include_graphics("figures/registration_process.png")
 <br>
 
 
-Before starting, users need to load all of the packages required:
+## Load sample data
 
-## Load packages
+`GREAT` package provides an example of data frame containing two different species *Arabidopsis* and *B. rapa* with two and three different replicates, respectively. This data frame can be read as follow:
 
 ```{r example, message=FALSE}
 # Load the package
 library(GREAT)
 library(dplyr)
 ```
-
-## Load sample data
-
-`GREAT` package provides an example of data frame containing two different species *Arabidopsis* and *B. rapa* with two and three different replicates, respectively. This data frame can be read as follow:
 
 ```{r all-data, message=FALSE, warning=FALSE}
 # Gene expression data with replicates
@@ -76,7 +72,7 @@ registration_results <- scale_and_register_data(
     input_df = all_data_df,
     stretches = c(3, 2.5, 2, 1.5, 1),
     shift_extreme = 4,
-    num_shifts = 27,
+    num_shifts = 33,
     min_num_overlapping_points = 4,
     initial_rescale = FALSE,
     do_rescale = TRUE,
@@ -136,6 +132,7 @@ registration_results <- scale_and_register_data(
 #> ✓ Imputing transformed expression values (10/10) [144ms]
 #> 
 ```
+
 
 Function `scale_and_register_data()` returns a list of seven data frames: 
 

@@ -14,7 +14,7 @@ calculate_between_sample_distance(
 )
 }
 \arguments{
-\item{mean_df}{Input data frame contains the mean gene expression of each gene in each genotype at each timepoint.}
+\item{mean_df}{Input data frame contains the mean gene expression of each gene in each genotype at each time point.}
 
 \item{mean_df_sc}{Input data frame which is identical to \code{mean_df}, with additional column \code{sc.expression_value} which is scaled of expression values.}
 
@@ -28,9 +28,10 @@ calculate_between_sample_distance(
 }
 \value{
 This function returns a list of data frames which includes:
+\item{\code{sequence}}{the sequence(s) from the input data.}
 \itemize{
 \item \code{distance_mean_df} is distance of mean expression values.
-\item \code{distance_scaled_mean_df} is disctance of scaled mean expression (all genes).
+\item \code{distance_scaled_mean_df} is distance of scaled mean expression (all genes).
 \item \code{distance_scaled_mean_df_only_nonreg} is distance of scaled mean expression (only not-registered genes).
 \item \code{distance_scaled_mean_df_only_reg} is distance of scaled mean expression (only registered genes).
 \item \code{distance_registered_df} is distance of registered & scaled mean expression (all genes).

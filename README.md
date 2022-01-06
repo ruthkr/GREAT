@@ -13,9 +13,7 @@ coverage](https://codecov.io/gh/ruthkr/GREAT/branch/master/graph/badge.svg?token
 commit](https://img.shields.io/github/last-commit/ruthkr/GREAT)](https://github.com/ruthkr/GREAT/commits/master)
 <!-- badges: end -->
 
-## Overview
-
-The goal of GREAT (Gene Registration from Expression and Time-courses)
+The goal of `GREAT` (Gene Registration from Expression and Time-courses)
 to register (align) gene expression profiles between two species
 (reference data and data to transform). Non-reference gene expression
 profiles will be stretched and shifted. The optimality of registration
@@ -71,8 +69,7 @@ library(GREAT)
 ```
 
 ``` r
-# Define the dataframe from the sample data
-# Gene expression data with replicates
+# Load a data frame from the sample data
 all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "GREAT") %>%
   utils::read.csv()
 

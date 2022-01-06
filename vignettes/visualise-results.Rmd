@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-After running registration function `scale_and_register_data()` as shown on [ruthkr.github.io/GREAT/articles/register-data.html](https://ruthkr.github.io/GREAT/articles/register-data.html), users can get summary and visualise the results as illustrated in the figure below.
+After running registration function `scale_and_register_data()` as shown in [ruthkr.github.io/GREAT/articles/register-data.html](https://ruthkr.github.io/GREAT/articles/register-data.html), users can get summary and visualise the results as illustrated in the figure below.
 
 <br>
 
@@ -26,7 +26,7 @@ knitr::include_graphics("figures/visualisation_process.png")
 
 ## Get summary from registration results
 
-The total number of registered and non-registered genes can be obtained by running function `summary_model_comparison()` with data frame `registration_results$model_comparison_df` as an input. Function `summary_model_comparison()` returns a list containing three different elements: `df_summary` as well as list of both registered accessions `registered_genes` and non-registered gene accessions `non_registered_genes`. 
+The total number of registered and non-registered genes can be obtained by running function `summary_model_comparison()` with `registration_results$model_comparison_df` as an input. 
 
 ```{r example, message=FALSE}
 # Load the package
@@ -53,6 +53,12 @@ registration_results <- scale_and_register_data(
   )
 ```
 
+Function `summary_model_comparison()` returns a list which contains three different objects: 
+
+- `df_summary` contains result summaries of the registration results, 
+- `registered_genes` is list of gene accessions which were successfully registered, and 
+- `non_registered_genes` is a list of non-registered gene accessions. 
+
 ```{r get-summary-results}
 # Get all of summary
 all_summary <- summary_model_comparison(registration_results$model_comparison_df)
@@ -61,8 +67,7 @@ all_summary$df_summary %>%
   knitr::kable()
 ```
 
-
-From the sample data, we can retrieve the accession of registered genes:
+List of gene accession which were registered can be viewed by calling:
 
 ```{r print-accession-of-registred-genes}
 all_summary$registered_genes
@@ -70,7 +75,7 @@ all_summary$registered_genes
 
 ## Plot registration results
 
-Function `plot_registration_results()` allows users to plot registration results of gene of interest. 
+Function `plot_registration_results()` allows users to plot registration results of the genes of interest. 
 
 ```{r plot-results, fig.height=10, fig.width=10, warning=FALSE}
 # Plot registration result
@@ -83,13 +88,13 @@ Users also have an option to include information or label on the plot whether pa
 plot_registration_results(registration_results$imputed_mean_df, registration_results$model_comparison_df, ncol = 3)
 ```
 
-To only include same time points between samples, users can include `sync_timepoints = TRUE`.
+To only include same time points between samples, users can set `sync_timepoints = TRUE`.
 
 ## Analyse similarity of expression profiles overtime before and after registering
 
 ### Calculate sample distance
 
-After registering sample data, the package provides a function for user to compare overall similarity before and after registering. 
+After registering sample data, users can compare overall similarity before and after registering using the function `calculate_between_sample_distance()`. 
 
 ```{r get-sample-distance}
 sample_distance <- calculate_between_sample_distance(registration_results$mean_df, 
@@ -107,9 +112,11 @@ Function `calculate_between_sample_distance()` returns a list of seven data fram
 - `distance_registered_df` is distance of registered & scaled mean expression (all genes).
 - `distance_registered_df_only_reg` is distance of registered & scaled mean expression (only registered genes).
 
+
+
 ### Plot heatmap of sample distances
 
-Sample distances before and after both scaling and registering can be plot using function `plot_heatmap()`. 
+Each of these data frames above can be visualised using function `plot_heatmap()`. 
 
 ```{r plot-dist-mean-df, fig.height=5, fig.width=5, warning=FALSE}
 # Plot heatmap of mean expression profiles distance before scaling

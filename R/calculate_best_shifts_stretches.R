@@ -1,17 +1,6 @@
 #' Calculate scores for all candidate shifts for all genes in data frame.
 #'
-#' `calculate_all_best_shifts` is a function to get score for all shifts value after stretching with a particular stretch factor. The extremes shift values were defined by allowing 5 overlapping points for comparison.
-#'
-#' @param num_shifts Number of different shifts to be considered.
-#' @param mean_df Input data.
-#' @param stretch_factor Current stretch factor.
-#' @param do_rescale Apply "scale" to compared points for each shift if \code{TRUE}, use original mean expression data if \code{FALSE}.
-#' @param shift_extreme Approximation of maximum and minimum shifts allowed.
-#' @param min_num_overlapping_points Bound the extreme allowed shifts, such than at least this many timepoints are being compared for both accessions.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
-#'
-#' @return \code{all_scores_df}
+#' @noRd
 calculate_all_best_shifts <- function(num_shifts,
                                       mean_df,
                                       stretch_factor,
@@ -84,17 +73,7 @@ calculate_all_best_shifts <- function(num_shifts,
 
 #' Calculate the score for all shifts
 #'
-#' `get_best_shift` is used to calculate the score for all shifts (for the current gene, and current stretch_factor), and return the scores for all as a table, and the value of the optimal shift. Shift extremes are defined s.t. at least 5 points are compared.
-#'
-#' @param num_shifts Number of different shifts to be considered.
-#' @param curr_sym Current gene accession.
-#' @param data Input data.
-#' @param stretch_factor Current stretch factor.
-#' @param do_rescale Apply "scale" to compared points for each shift if \code{TRUE}, use original mean expression data if \code{FALSE}.
-#' @param min_shift Minimum extreme value of shift.
-#' @param max_shift Maximum extreme value of shift.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
+#' @noRd
 get_best_shift <- function(num_shifts = 25,
                            curr_sym,
                            data,

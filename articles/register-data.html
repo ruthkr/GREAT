@@ -96,19 +96,14 @@
 <p><br></p>
 <p><img src="figures/registration_process.png" width="50%"></p>
 <p><br></p>
-<p>Before starting, users need to load all of the packages required:</p>
-<div class="section level2">
-<h2 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
-</h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Load the package</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">GREAT</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></code></pre></div>
-</div>
 <div class="section level2">
 <h2 id="load-sample-data">Load sample data<a class="anchor" aria-label="anchor" href="#load-sample-data"></a>
 </h2>
 <p><code>GREAT</code> package provides an example of data frame containing two different species <em>Arabidopsis</em> and <em>B. rapa</em> with two and three different replicates, respectively. This data frame can be read as follow:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Load the package</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">GREAT</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Gene expression data with replicates</span>
 <span class="va">all_data_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_all_replicates.csv"</span>, package <span class="op">=</span> <span class="st">"GREAT"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
@@ -246,7 +241,7 @@
     input_df <span class="op">=</span> <span class="va">all_data_df</span>,
     stretches <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2.5</span>, <span class="fl">2</span>, <span class="fl">1.5</span>, <span class="fl">1</span><span class="op">)</span>,
     shift_extreme <span class="op">=</span> <span class="fl">4</span>,
-    num_shifts <span class="op">=</span> <span class="fl">27</span>,
+    num_shifts <span class="op">=</span> <span class="fl">33</span>,
     min_num_overlapping_points <span class="op">=</span> <span class="fl">4</span>,
     initial_rescale <span class="op">=</span> <span class="cn">FALSE</span>,
     do_rescale <span class="op">=</span> <span class="cn">TRUE</span>,

@@ -92,22 +92,18 @@
 
     
     
-<p>After running registration function <code><a href="../reference/scale_and_register_data.html">scale_and_register_data()</a></code> as shown <a href="https://ruthkr.github.io/GREAT/articles/register-data.html">ruthkr.github.io/GREAT/articles/register-data.html</a>, users can get summarise and summarise the results as shown below.</p>
+<p>After running registration function <code><a href="../reference/scale_and_register_data.html">scale_and_register_data()</a></code> as shown on <a href="https://ruthkr.github.io/GREAT/articles/register-data.html">ruthkr.github.io/GREAT/articles/register-data.html</a>, users can get summary and visualise the results as illustrated in the figure below.</p>
 <p><br></p>
 <p><img src="figures/visualisation_process.png" width="80%"></p>
 <p><br></p>
 <div class="section level2">
-<h2 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
+<h2 id="get-summary-from-registration-results">Get summary from registration results<a class="anchor" aria-label="anchor" href="#get-summary-from-registration-results"></a>
 </h2>
+<p>The total number of registered and non-registered genes can be obtained by running function <code><a href="../reference/summary_model_comparison.html">summary_model_comparison()</a></code> with data frame <code>registration_results$model_comparison_df</code> as an input. Function <code><a href="../reference/summary_model_comparison.html">summary_model_comparison()</a></code> returns a list containing three different elements: <code>df_summary</code> as well as list of both registered accessions <code>registered_genes</code> and non-registered gene accessions <code>non_registered_genes</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Load the package</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">GREAT</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="get-summary-from-registration-results">Get summary from registration results<a class="anchor" aria-label="anchor" href="#get-summary-from-registration-results"></a>
-</h2>
-<p>The total number of registered and non-registered genes can be obtained by running function <code><a href="../reference/summary_model_comparison.html">summary_model_comparison()</a></code> with data frame <code>registration_results$model_comparison_df</code> as an input. Function <code><a href="../reference/summary_model_comparison.html">summary_model_comparison()</a></code> returns a list containing three different elements: <code>df_summary</code> as well as list of both registered <code>registered_genes</code> and non-registered gene <code>non_registered_genes</code> accessions.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get all of summary</span>
 <span class="va">all_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summary_model_comparison.html">summary_model_comparison</a></span><span class="op">(</span><span class="va">registration_results</span><span class="op">$</span><span class="va">model_comparison_df</span><span class="op">)</span>
@@ -164,25 +160,50 @@
 <p>To only include same time points between samples, users can include <code>sync_timepoints = TRUE</code>.</p>
 </div>
 <div class="section level2">
-<h2 id="calculate-and-plot-overall-sample-distance">Calculate and plot overall sample distance<a class="anchor" aria-label="anchor" href="#calculate-and-plot-overall-sample-distance"></a>
+<h2 id="analyse-similarity-of-expression-profiles-overtime-before-and-after-registering">Analyse similarity of expression profiles overtime before and after registering<a class="anchor" aria-label="anchor" href="#analyse-similarity-of-expression-profiles-overtime-before-and-after-registering"></a>
 </h2>
+<div class="section level3">
+<h3 id="calculate-sample-distance">Calculate sample distance<a class="anchor" aria-label="anchor" href="#calculate-sample-distance"></a>
+</h3>
 <p>After registering sample data, the package provides a function for user to compare overall similarity before and after registering.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sample_distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_between_sample_distance.html">calculate_between_sample_distance</a></span><span class="op">(</span><span class="va">registration_results</span><span class="op">$</span><span class="va">mean_df</span>, 
                                     <span class="va">registration_results</span><span class="op">$</span><span class="va">mean_df_sc</span>, 
                                     <span class="va">registration_results</span><span class="op">$</span><span class="va">imputed_mean_df</span>, 
                                     accession_data_ref <span class="op">=</span> <span class="st">"Ro18"</span><span class="op">)</span></code></pre></div>
+<p>Function <code><a href="../reference/calculate_between_sample_distance.html">calculate_between_sample_distance()</a></code> returns a list of seven data frames:</p>
+<ul>
+<li>
+<code>distance_mean_df</code> is distance of mean expression values.</li>
+<li>
+<code>distance_scaled_mean_df</code> is distance of scaled mean expression (all genes).</li>
+<li>
+<code>distance_scaled_mean_df_only_nonreg</code> is distance of scaled mean expression (only not-registered genes).</li>
+<li>
+<code>distance_scaled_mean_df_only_reg</code> is distance of scaled mean expression (only registered genes).</li>
+<li>
+<code>distance_registered_df</code> is distance of registered &amp; scaled mean expression (all genes).</li>
+<li>
+<code>distance_registered_df_only_reg</code> is distance of registered &amp; scaled mean expression (only registered genes).</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="plot-heatmap-of-sample-distances">Plot heatmap of sample distances<a class="anchor" aria-label="anchor" href="#plot-heatmap-of-sample-distances"></a>
+</h3>
+<p>Sample distances before and after both scaling and registering can be plot using function <code><a href="../reference/plot_heatmap.html">plot_heatmap()</a></code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">sample_distance</span><span class="op">$</span><span class="va">distance_mean_df</span><span class="op">)</span></code></pre></div>
-<p><img src="visualise-results_files/figure-html/plot-dist-mean-df-1.png" width="768"></p>
+<code class="sourceCode R"><span class="co"># Plot heatmap of mean expression profiles distance before scaling</span>
+<span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">sample_distance</span><span class="op">$</span><span class="va">distance_mean_df</span><span class="op">)</span></code></pre></div>
+<p><img src="visualise-results_files/figure-html/plot-dist-mean-df-1.png" width="480"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">sample_distance</span><span class="op">$</span><span class="va">distance_scaled_mean_df</span><span class="op">)</span></code></pre></div>
-<p><img src="visualise-results_files/figure-html/plot-dist-scaled-mean-df-1.png" width="768"></p>
+<code class="sourceCode R"><span class="co"># Plot heatmap of mean expression profiles distance after scaling</span>
+<span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">sample_distance</span><span class="op">$</span><span class="va">distance_scaled_mean_df</span><span class="op">)</span></code></pre></div>
+<p><img src="visualise-results_files/figure-html/plot-dist-scaled-mean-df-1.png" width="480"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">sample_distance</span><span class="op">$</span><span class="va">distance_registered_df_only_reg</span><span class="op">)</span></code></pre></div>
-<p><img src="visualise-results_files/figure-html/plot-dist-registered-1.png" width="768"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># plot_heatmap(sample_distance$distance_registered_df_only_reg, same_max_timepoint = TRUE, same_min_timepoint = TRUE)</span></code></pre></div>
+<code class="sourceCode R"><span class="co"># Plot heatmap of mean expression profiles distance after registration process</span>
+<span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">sample_distance</span><span class="op">$</span><span class="va">distance_registered_df_only_reg</span>, same_max_timepoint <span class="op">=</span> <span class="cn">TRUE</span>, same_min_timepoint <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<p><img src="visualise-results_files/figure-html/plot-dist-registered-1.png" width="480"></p>
+</div>
 </div>
   </div>
 

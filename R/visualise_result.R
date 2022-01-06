@@ -1,6 +1,7 @@
 #' Plot gene of interest after registration
 #'
-#' @param df Data frame input after registration.
+#' @param reg_result_df Data frame of registration results, output from registration process.
+#' @param model_comparison_df Data frame of model comparison, also output from registration process.
 #' @param gene_accession List of gene accessions, default is \code{first_genes} which will take first 25 genes.
 #' @param title Optional plot title.
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
@@ -9,30 +10,32 @@
 #' @return Plot of gene of interest after registration process.
 #' @importFrom rlang .data
 #' @export
-plot_registered_gene_of_interest <- function(df, gene_accession = "first_genes", title = NULL, ncol = NULL, sync_timepoints = FALSE) {
+plot_registration_results <- function(reg_result_df, model_comparison_df = NULL, gene_accession = "first_genes", title = NULL, ncol = NULL, sync_timepoints = FALSE) {
   # Make sure that the accession is in character format
-  df$accession <- as.character(df$accession)
+  reg_result_df$accession <- as.character(reg_result_df$accession)
 
   # Filter gene using given gene of interests
   if (gene_accession == "first_genes") {
-    first_25_genes <- df %>%
+
+    first_25_genes <- reg_result_df %>%
       dplyr::pull(.data$locus_name) %>%
       unique() %>%
-      head(25)
+      utils::head(25)
 
-    df <- df %>%
+    reg_result_df <- reg_result_df %>%
       dplyr::filter(.data$locus_name %in% first_25_genes)
+
   } else {
-    df <- df %>%
+
+    reg_result_df <- reg_result_df %>%
       dplyr::filter(.data$locus_name %in% gene_accession)
+
   }
-
-
 
   # Synchronise maximum time points for each accession
   # TODO: consider n additional time points
   if (sync_timepoints) {
-    max_timepoints <- df %>%
+    max_timepoints <- reg_result_df %>%
       dplyr::filter(
         !is.na(.data$shifted_time),
         !is.na(.data$expression_value)
@@ -48,8 +51,8 @@ plot_registered_gene_of_interest <- function(df, gene_accession = "first_genes",
         .groups = "drop"
       )
 
-    df <- dplyr::left_join(
-      df,
+    reg_result_df <- dplyr::left_join(
+      reg_result_df,
       max_timepoints,
       by = "locus_name"
     ) %>%
@@ -57,46 +60,59 @@ plot_registered_gene_of_interest <- function(df, gene_accession = "first_genes",
       dplyr::select(-.data$max_timepoint)
   }
 
-  # Plot
-  gg_registered <- ggplot2::ggplot(df) +
-    ggplot2::aes(
-      x = .data$shifted_time,
-      y = .data$expression_value,
-      color = .data$accession,
-      fill = .data$accession,
-      # TODO: group = interaction(locus_name, bra_gene)
-    ) +
-    ggplot2::geom_point(size = 0.4) +
-    ggplot2::geom_line() +
-    ggplot2::facet_wrap(~ .data$locus_name, scales = "free", ncol = ncol) +
-    ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
-    ggplot2::theme_bw() +
-    # ggplot2::theme(
-    #   legend.position = legend_position,
-    #   legend.title = ggplot2::element_blank(),
-    #   strip.text = ggplot2::element_text(face = "italic")
-    #   # legend.margin = ggplot2::margin(21, 0, 0, 0)
-    # ) +
-    ggplot2::labs(
-      title = title,
-      x = "Registered time (d)",
-      y = "Normalised expression"
-    )
+  if (!is.null(model_comparison_df)) {
 
-  # TODO: handle replicates
-  # if (FALSE) {
-  #   gg_registered <- gg_registered +
-  #     ggplot2::stat_summary(fun = mean, geom = "line", size = 1) +
-  #     ggplot2::stat_summary(
-  #       fun.data = mean_se,
-  #       fun.args = list(mult = 1),
-  #       geom = "ribbon",
-  #       color = NA,
-  #       alpha = 0.3
-  #     )
-  # }
+    reg_result_df <- reg_result_df %>%
+      dplyr::left_join(
+        model_comparison_df %>%
+        dplyr::select(locus_name = .data$gene, .data$stretch, .data$shift),
+        by = "locus_name"
+      ) %>%
+      dplyr::mutate(
+        is_registered = ifelse(.data$is_registered, "REG", "NO_REG"),
+        locus_name = paste0(
+          .data$locus_name, " - ", .data$is_registered, "\n",
+          "stretch: ", round(.data$stretch, 2),
+          ", shift: ", round(.data$shift, 2)
+        )
+      )
+    }
+
+    # Plot
+    gg_registered <- ggplot2::ggplot(reg_result_df) +
+      ggplot2::aes(
+        x = .data$shifted_time,
+        y = .data$expression_value,
+        color = .data$accession,
+        fill = .data$accession,
+        # TODO: group = interaction(locus_name, bra_gene)
+      ) +
+      ggplot2::geom_point(size = 0.4) +
+      ggplot2::geom_line() +
+      ggplot2::facet_wrap(~ .data$locus_name, scales = "free", ncol = ncol) +
+      ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
+      ggplot2::theme_bw() +
+      ggplot2::labs(
+        title = title,
+        x = "Registered time (d)",
+        y = "Normalised expression"
+      )
+
+    # TODO: handle replicates
+    # if (FALSE) {
+    #   gg_registered <- gg_registered +
+    #     ggplot2::stat_summary(fun = mean, geom = "line", size = 1) +
+    #     ggplot2::stat_summary(
+    #       fun.data = mean_se,
+    #       fun.args = list(mult = 1),
+    #       geom = "ribbon",
+    #       color = NA,
+    #       alpha = 0.3
+    #     )
+    # }
 
   return(gg_registered)
+
 }
 
 #' Visualise distances between samples from different time points

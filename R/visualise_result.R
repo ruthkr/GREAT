@@ -1,7 +1,7 @@
 #' Plot gene of interest after registration
 #'
 #' @param df Data frame input after registration.
-#' @param gene_accession List of gene accessions, default is \code{all}.
+#' @param gene_accession List of gene accessions, default is \code{first_genes} which will take first 25 genes.
 #' @param title Optional plot title.
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
 #' @param sync_timepoints Whether to synchronise maximum time points for each accession, by default \code{FALSE}.
@@ -9,15 +9,25 @@
 #' @return Plot of gene of interest after registration process.
 #' @importFrom rlang .data
 #' @export
-plot_registered_gene_of_interest <- function(df, gene_accession = "all", title = NULL, ncol = NULL, sync_timepoints = FALSE) {
+plot_registered_gene_of_interest <- function(df, gene_accession = "first_genes", title = NULL, ncol = NULL, sync_timepoints = FALSE) {
   # Make sure that the accession is in character format
   df$accession <- as.character(df$accession)
 
   # Filter gene using given gene of interests
-  if (gene_accession != "all") {
+  if (gene_accession == "first_genes") {
+    first_25_genes <- df %>%
+      dplyr::pull(.data$locus_name) %>%
+      unique() %>%
+      head(25)
+
+    df <- df %>%
+      dplyr::filter(.data$locus_name %in% first_25_genes)
+  } else {
     df <- df %>%
       dplyr::filter(.data$locus_name %in% gene_accession)
   }
+
+
 
   # Synchronise maximum time points for each accession
   # TODO: consider n additional time points

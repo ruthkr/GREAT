@@ -1,6 +1,6 @@
 #' Calculate distance between sample data before and after registration
 #'
-#' @param mean_df Input data frame contains the mean gene expression of each gene in each genotype at each timepoint.
+#' @param mean_df Input data frame contains the mean gene expression of each gene in each genotype at each time point.
 #' @param mean_df_sc Input data frame which is identical to `mean_df`, with additional column `sc.expression_value` which is scaled of expression values.
 #' @param imputed_mean_df Input data frame contains registered.
 #' @param gene_col Column name of gene accession, default is \code{locus_name}.
@@ -9,7 +9,7 @@
 #'
 #' @return This function returns a list of data frames which includes:
 #' * `distance_mean_df` is distance of mean expression values.
-#' * `distance_scaled_mean_df` is disctance of scaled mean expression (all genes).
+#' * `distance_scaled_mean_df` is distance of scaled mean expression (all genes).
 #' * `distance_scaled_mean_df_only_nonreg` is distance of scaled mean expression (only not-registered genes).
 #' * `distance_scaled_mean_df_only_reg` is distance of scaled mean expression (only registered genes).
 #' * `distance_registered_df` is distance of registered & scaled mean expression (all genes).

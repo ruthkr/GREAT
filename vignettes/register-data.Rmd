@@ -1,8 +1,8 @@
 ---
-title: "Register data"
+title: "Registering data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Register data}
+  %\VignetteIndexEntry{Registering data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

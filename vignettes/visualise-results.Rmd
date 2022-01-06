@@ -1,8 +1,8 @@
 ---
-title: "Visualise results"
+title: "Visualising results"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Visualise results}
+  %\VignetteIndexEntry{Visualising results}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

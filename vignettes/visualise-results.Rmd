@@ -14,7 +14,102 @@ knitr::opts_chunk$set(
 )
 ```
 
+After running registration function `scale_and_register_data()` as shown [ruthkr.github.io/GREAT/articles/register-data.html](https://ruthkr.github.io/GREAT/articles/register-data.html), users can get summarise and summarise the results as shown below. 
 
-```{r setup}
-library(GREAT)
+<br>
+
+```{r vis-reg-data, echo=FALSE, out.width='80%'}
+knitr::include_graphics("figures/visualisation_process.png")
 ```
+
+<br>
+
+## Load packages
+
+```{r example, message=FALSE}
+# Load the package
+library(GREAT)
+library(dplyr)
+```
+
+## Get summary from registration results
+
+```{r register-data, message=FALSE, warning=FALSE, include=FALSE}
+all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "GREAT") %>%
+  utils::read.csv()
+
+# Running the registration
+registration_results <- scale_and_register_data(
+    input_df = all_data_df,
+    stretches = c(3, 2.5, 2, 1.5, 1),
+    shift_extreme = 4,
+    num_shifts = 33,
+    min_num_overlapping_points = 4,
+    initial_rescale = FALSE,
+    do_rescale = TRUE,
+    accession_data_to_transform = "Col0",
+    accession_data_ref = "Ro18",
+    start_timepoint = "reference"
+  )
+```
+
+The total number of registered and non-registered genes can be obtained by running function `summary_model_comparison()` with data frame `registration_results$model_comparison_df` as an input. Function `summary_model_comparison()` returns a list containing three different elements: `df_summary` as well as list of both registered `registered_genes` and non-registered gene `non_registered_genes` accessions. 
+
+```{r get-summary-results}
+# Get all of summary
+all_summary <- summary_model_comparison(registration_results$model_comparison_df)
+
+all_summary$df_summary %>% 
+  knitr::kable()
+```
+
+
+From the sample data, we can retrieve the accession of registered genes:
+
+```{r print-accession-of-registred-genes}
+all_summary$registered_genes
+```
+
+## Plot registration results
+
+Function `plot_registration_results()` allows users to plot registration results of gene of interest. 
+
+```{r plot-results, fig.height=10, fig.width=10, warning=FALSE}
+# Plot registration result
+plot_registration_results(registration_results$imputed_mean_df, ncol = 3)
+```
+Users also have an option to include information or label on the plot whether particular genes are registered or not, as well as the registration parameters by include model comparison data frame as shown below. 
+
+```{r plot-results-with-label, fig.height=10, fig.width=10, warning=FALSE}
+# Plot registration result
+plot_registration_results(registration_results$imputed_mean_df, registration_results$model_comparison_df, ncol = 3)
+```
+
+To only include same time points between samples, users can include `sync_timepoints = TRUE`.
+
+## Calculate and plot overall sample distance
+
+After registering sample data, the package provides a function for user to compare overall similarity before and after registering. 
+
+```{r get-sample-distance}
+sample_distance <- calculate_between_sample_distance(registration_results$mean_df, 
+                                    registration_results$mean_df_sc, 
+                                    registration_results$imputed_mean_df, 
+                                    accession_data_ref = "Ro18")
+```
+
+```{r plot-dist-mean-df, fig.height=8, fig.width=8, warning=FALSE}
+plot_heatmap(sample_distance$distance_mean_df)
+```
+
+```{r plot-dist-scaled-mean-df, fig.height=8, fig.width=8, warning=FALSE}
+plot_heatmap(sample_distance$distance_scaled_mean_df)
+```
+
+```{r plot-dist-registered, fig.height=8, fig.width=8, warning=FALSE}
+plot_heatmap(sample_distance$distance_registered_df_only_reg)
+# plot_heatmap(sample_distance$distance_registered_df_only_reg, same_max_timepoint = TRUE, same_min_timepoint = TRUE)
+```
+
+
+

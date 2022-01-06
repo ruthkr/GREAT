@@ -73,7 +73,7 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>mean_df</dt>
-<dd><p>Input data frame contains the mean gene expression of each gene in each genotype at each timepoint.</p></dd>
+<dd><p>Input data frame contains the mean gene expression of each gene in each genotype at each time point.</p></dd>
 <dt>mean_df_sc</dt>
 <dd><p>Input data frame which is identical to <code>mean_df</code>, with additional column <code>sc.expression_value</code> which is scaled of expression values.</p></dd>
 <dt>imputed_mean_df</dt>
@@ -87,8 +87,11 @@
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>This function returns a list of data frames which includes:</p><ul><li><p><code>distance_mean_df</code> is distance of mean expression values.</p></li>
-<li><p><code>distance_scaled_mean_df</code> is disctance of scaled mean expression (all genes).</p></li>
+    <p>This function returns a list of data frames which includes:</p>
+<dl><dt><code>sequence</code></dt>
+<dd><p>the sequence(s) from the input data.</p></dd>
+</dl><ul><li><p><code>distance_mean_df</code> is distance of mean expression values.</p></li>
+<li><p><code>distance_scaled_mean_df</code> is distance of scaled mean expression (all genes).</p></li>
 <li><p><code>distance_scaled_mean_df_only_nonreg</code> is distance of scaled mean expression (only not-registered genes).</p></li>
 <li><p><code>distance_scaled_mean_df_only_reg</code> is distance of scaled mean expression (only registered genes).</p></li>
 <li><p><code>distance_registered_df</code> is distance of registered &amp; scaled mean expression (all genes).</p></li>

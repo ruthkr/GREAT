@@ -30,7 +30,7 @@ data:
 
 <img src="man/figures/GREAT_workflow.png" width="85%" />
 
-More details on how to use this package are available on functions
+More details on how to use this package are available on function
 documentations and vignettes:
 
 1.  [Input

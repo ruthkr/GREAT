@@ -34,7 +34,7 @@ knitr::include_graphics("man/figures/GREAT_workflow.png")
 ```
 
 
-More details on how to use this package are available on functions documentations and vignettes:
+More details on how to use this package are available on function documentations and vignettes:
 
 1. [Input requirements](https://ruthkr.github.io/GREAT/articles/prepare_data.html)
 2. [Register data](https://ruthkr.github.io/GREAT/articles/register-data.html)

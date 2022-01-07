@@ -14,8 +14,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Input data requirements
-
 Input data frame required for `GREAT` to register your gene expression profiles is a data frame contains gene expression time-course data with all replicates. Illustrated diagram below shows the required `input_df` data frame format of `GREAT`. This data frame must contain:
 
 - two different species which users wish to compare (for each gene, at least two replicates are required in all species), and

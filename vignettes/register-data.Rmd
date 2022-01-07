@@ -144,3 +144,5 @@ Function `scale_and_register_data()` returns a list of seven data frames:
 - `all_shifts_df` is a table containing candidates of registration parameters and a score after applying each parameter (stretch and shift factor).
 - `model_comparison_df` is a table comparing the optimal registration function for each gene (based on `all_shifts_df` scores) to model with no registration applied.
 
+These data frame outputs can further be summarised and visualised, see the documentation on [visualising results](https://ruthkr.github.io/GREAT/articles/visualise-results.html). 
+

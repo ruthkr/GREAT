@@ -5,8 +5,13 @@ authors:
     href: https://ruthkr.com
 
 template:
-  params:
-    bootswatch: flatly
+  bootstrap: 5
+  bootswatch: litera
+  bslib:
+    primary: "#664d97"
+    base_font: {google: "Lato"}
+    heading_font: {google: "Lato"}
+    code_font: {google: "Fira Code"}
 
 reference:
 - title: Prepare data

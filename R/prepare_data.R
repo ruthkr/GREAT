@@ -148,16 +148,9 @@ get_expression_of_interest <- function(data_ref,
         locus_name = get(lookup_col_ref_and_id_table)
       )
 
-    # exp_data_to_transform$ara.id <- exp_data_to_transform$locus_name
-    # exp_data_to_transform$locus_name <- exp_data_to_transform$CDS.model
-    # exp_data_ref$ara.id <- exp_data_ref$locus_name
-    # exp_data_ref$locus_name <- exp_data_ref$CDS.model
-
     exp <- rbind(exp_data_to_transform, exp_data_ref)
   }
 
-  # Shorten experiment group names
-  # exp <- shorten_groups(exp, accession_data_to_transform)
   return(exp)
 }
 
@@ -217,67 +210,4 @@ get_all_data <- function(data_ref,
   expression <- expression[expression[[lookup_col_ref_and_to_transform]] != "", ]
 
   return(expression)
-}
-
-
-#' Shorten groups
-#'
-#' @noRd
-shorten_groups <- function(exp, accession_data_to_transform) {
-  # Suppress "no visible binding for global variable" note
-  sample_id <- NULL
-  dataset <- NULL
-  group <- NULL
-  accession <- NULL
-  timepoint <- NULL
-  ds <- NULL
-
-  # Get reps for klepikova and for brassica data, make sure it is a data.table
-  exp <- data.table::data.table(exp)
-
-  # Get the last element of "sample_id" of Brassica data
-  B <- exp[exp$accession != accession_data_to_transform]
-  B[, c("j1", "j2", "j3", "j4", "j5", "j6", "rep") := data.table::tstrsplit(sample_id, split = "_")]
-  B$rep[is.na(B$rep)] <- 1
-  B[, c("j1", "j2", "j3", "j4", "j5", "j6")] <- NULL
-
-  # Get the last element of "dataset" of Arabidopsis data
-  A <- exp[exp$accession == accession_data_to_transform]
-  A[, c("j1", "j2", "rep") := data.table::tstrsplit(dataset, split = "_")]
-  A[, c("j1", "j2")] <- NULL
-  # Combine both data
-  exp <- rbind(B, A)
-
-  exp$ds <- factor(
-    exp$rep,
-    levels = c("1", "2", "3", "4"),
-    labels = c("a", "b", "c", "d")
-  ) %>%
-    as.character()
-
-  exp <- data.table::data.table(exp)
-  exp[, group := paste(accession, sprintf("%02d", timepoint), ds, sep = "-")]
-
-  return(exp)
-}
-
-#' Rename columns of original data
-#'
-#' @noRd
-rename_columns <- function(data, colnames) {
-  # Validate list names
-  match_names(
-    names(colnames),
-    c("locus_name", "accession", "timepoint", "expression_value", "replicate", "tissue")
-  )
-
-  # Rename columns
-  data_copy <- data.table::copy(data)
-  data <- setnames(
-    data_copy,
-    old = unname(unlist(colnames)),
-    new = names(colnames)
-  )
-
-  return(data)
 }

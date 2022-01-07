@@ -8,12 +8,12 @@
 #' @param accession_data_ref Accession name of reference data.
 #'
 #' @return This function returns a list of data frames which includes:
-#' * `distance_mean_df` is distance of mean expression values.
-#' * `distance_scaled_mean_df` is distance of scaled mean expression (all genes).
-#' * `distance_scaled_mean_df_only_nonreg` is distance of scaled mean expression (only not-registered genes).
-#' * `distance_scaled_mean_df_only_reg` is distance of scaled mean expression (only registered genes).
-#' * `distance_registered_df` is distance of registered & scaled mean expression (all genes).
-#' * `distance_registered_df_only_reg` is distance of registered & scaled mean expression (only registered genes).
+#' \item{distance_mean_df}{distance of mean expression values.}
+#' \item{distance_scaled_mean_df}{distance of scaled mean expression (all genes).}
+#' \item{distance_scaled_mean_df_only_nonreg}{distance of scaled mean expression (only non-registered genes).}
+#' \item{distance_scaled_mean_df_only_reg}{distance of scaled mean expression (only registered genes).}
+#' \item{distance_registered_df}{distance of registered & scaled mean expression (all genes).}
+#' \item{distance_registered_df_only_reg}{distance of registered & scaled mean expression (only registered genes).}
 #'
 #' @export
 calculate_between_sample_distance <- function(mean_df,

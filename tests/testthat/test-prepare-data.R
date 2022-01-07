@@ -19,7 +19,7 @@ test_that("get_expression_of_interest works", {
     lookup_col_ref_and_to_transform = "locus_name",
     colnames_wanted = NULL,
     tissue_wanted = "apex",
-    curr_GoIs = c("AT1G69120", "AT5G618"),
+    gene_of_interest_acc = c("AT1G69120", "AT5G618"),
     sum_exp_data_ref = FALSE,
     accession_data_to_transform = "Col0"
   )

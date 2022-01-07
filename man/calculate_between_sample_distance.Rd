@@ -28,15 +28,12 @@ calculate_between_sample_distance(
 }
 \value{
 This function returns a list of data frames which includes:
-\item{\code{sequence}}{the sequence(s) from the input data.}
-\itemize{
-\item \code{distance_mean_df} is distance of mean expression values.
-\item \code{distance_scaled_mean_df} is distance of scaled mean expression (all genes).
-\item \code{distance_scaled_mean_df_only_nonreg} is distance of scaled mean expression (only not-registered genes).
-\item \code{distance_scaled_mean_df_only_reg} is distance of scaled mean expression (only registered genes).
-\item \code{distance_registered_df} is distance of registered & scaled mean expression (all genes).
-\item \code{distance_registered_df_only_reg} is distance of registered & scaled mean expression (only registered genes).
-}
+\item{distance_mean_df}{distance of mean expression values.}
+\item{distance_scaled_mean_df}{distance of scaled mean expression (all genes).}
+\item{distance_scaled_mean_df_only_nonreg}{distance of scaled mean expression (only non-registered genes).}
+\item{distance_scaled_mean_df_only_reg}{distance of scaled mean expression (only registered genes).}
+\item{distance_registered_df}{distance of registered & scaled mean expression (all genes).}
+\item{distance_registered_df_only_reg}{distance of registered & scaled mean expression (only registered genes).}
 }
 \description{
 Calculate distance between sample data before and after registration

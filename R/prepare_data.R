@@ -24,6 +24,7 @@ get_mean_data <- function(exp,
   # Calculate mean of each timepoint by adding a column called "expression_value"
   # TODO: make vector in mean_df a non-hardcoded parameter
   exp[, mean_expression_value := mean(expression_value), by = list(locus_name, accession, tissue, timepoint)]
+
   mean_df <- unique(exp[, c("locus_name", "accession", "tissue", "timepoint", "mean_expression_value")])
 
   data_ref_df <- mean_df[mean_df$accession != accession_data_to_transform]
@@ -64,7 +65,7 @@ get_mean_data <- function(exp,
 #' @param lookup_col_ref_and_to_transform Column names shared by both reference data and data to transform.
 #' @param colnames_wanted List of column names to keep from both reference data and data to transform.
 #' @param tissue_wanted Name of tissue from which data will be compared.
-#' @param curr_GoIs Gene of interest list.
+#' @param gene_of_interest_acc Gene accession list from data to transform.
 #' @param sum_exp_data_ref If \code{TRUE} then sum all gene data. Default is \code{FALSE}.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @return A data frame contains both reference data and data to transform for selected gene of interest.
@@ -77,7 +78,7 @@ get_expression_of_interest <- function(data_ref,
                                        lookup_col_ref_and_to_transform = "locus_name",
                                        colnames_wanted = NULL,
                                        tissue_wanted = NULL,
-                                       curr_GoIs,
+                                       gene_of_interest_acc,
                                        sum_exp_data_ref = FALSE,
                                        accession_data_to_transform = "Col0") {
   # Suppress "no visible binding for global variable" note
@@ -105,7 +106,7 @@ get_expression_of_interest <- function(data_ref,
   }
 
   # Cut down to genes of interest (based on membership of comparison_genes.tsv)
-  exp <- exp[exp$locus_name %in% curr_GoIs, ]
+  exp <- exp[exp[[lookup_col_ref_and_to_transform]] %in% gene_of_interest_acc, ]
 
   # Reformat depending on how want to compare candidate transformed data to fix data, using individual fix data, or summed fix data genes
   # Example: if want to used summed brassica data to compare to the brassica: get symbol level expression total. Locus_name identity is ATG id
@@ -156,7 +157,7 @@ get_expression_of_interest <- function(data_ref,
   }
 
   # Shorten experiment group names
-  exp <- shorten_groups(exp, accession_data_to_transform)
+  # exp <- shorten_groups(exp, accession_data_to_transform)
   return(exp)
 }
 

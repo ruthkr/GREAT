@@ -12,7 +12,7 @@ get_expression_of_interest(
   lookup_col_ref_and_to_transform = "locus_name",
   colnames_wanted = NULL,
   tissue_wanted = NULL,
-  curr_GoIs,
+  gene_of_interest_acc,
   sum_exp_data_ref = FALSE,
   accession_data_to_transform = "Col0"
 )
@@ -32,7 +32,7 @@ get_expression_of_interest(
 
 \item{tissue_wanted}{Name of tissue from which data will be compared.}
 
-\item{curr_GoIs}{Gene of interest list.}
+\item{gene_of_interest_acc}{Gene accession list from data to transform.}
 
 \item{sum_exp_data_ref}{If \code{TRUE} then sum all gene data. Default is \code{FALSE}.}
 

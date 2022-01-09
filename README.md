@@ -118,7 +118,6 @@ registration_results <- scale_and_register_data(
 #> ✓ Normalising expression by mean and sd of compared values (10/10) [51ms]
 #> ✓ Applying best shift (10/10) [52ms]
 #> ✓ Calculating registration vs non-registration comparison AIC & BIC (10/10) [102ms]
-#> 
 #> ✓ Finished analysing models for stretch factor = 1.5
 #> 
 #> ── Analysing models for stretch factor = 1 ──
@@ -136,7 +135,6 @@ registration_results <- scale_and_register_data(
 #> ✓ Applying best shift (10/10) [52ms]
 #> ℹ Max value of expression_value: 9.05
 #> ✓ Imputing transformed expression values (10/10) [144ms]
-#> 
 ```
 
 ## Reference

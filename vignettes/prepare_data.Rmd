@@ -33,3 +33,100 @@ knitr::include_graphics("figures/all_data_illustration.jpg")
 ```
 
 <br>
+
+`GREAT` package provides a helper function `get_expression_of_interest()` to combine reference and query (data to register) data frames, if table ID which connect reference and query data frames provided. This package also provides data frames as examples to use this function. Those data frames are expression data of *B. rapa* ([Calderwood et al., 2021](https://www.cambridge.org/core/journals/quantitative-plant-biology/article/comparative-transcriptomics-reveals-desynchronisation-of-gene-expression-during-the-floral-transition-between-arabidopsis-and-brassica-rapa-cultivars/811BFDFA14F4BCC9C7F0ECC7CE103BB6)), *Arabidopsis* ([Klepikova et al., 2015](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-015-1688-9)), and join table or table ID which contains both accession of *B. rapa* and *Arabidopsis*. This table ID is important to combine both *B. rapa* and *Arabidopsis* data frames. 
+
+### Load and view example data
+
+```{r example, message=FALSE}
+# Load the package
+library(GREAT)
+library(dplyr)
+```
+
+```{r load-data, message=FALSE, warning=FALSE}
+# Load example data
+id_table_rapa_subset <- system.file(
+  "extdata/sample_data/id_table_5genes.RDS", 
+  package = "GREAT") %>% 
+  readRDS()
+klepikova_subset <- system.file(
+  "extdata/sample_data/arabidopsis_expression_5genes.RDS", 
+  package = "GREAT") %>% 
+  readRDS()
+rapa_subset <- system.file(
+  "extdata/sample_data/brassica_rapa_expression_5genes.RDS", 
+  package = "GREAT") %>% 
+  readRDS()
+```
+
+```{r view-id-table}
+# View table ID
+id_table_rapa_subset %>%
+  dplyr::select(CDS.model, locus_name, symbol, gene_id) %>% 
+  utils::head(3) %>%
+  knitr::kable()
+```
+
+```{r view-ref}
+# View reference data
+rapa_subset %>%
+  utils::head(3) %>%
+  knitr::kable()
+```
+
+```{r view-data-to-transform}
+# View query data
+klepikova_subset %>%
+  utils::head(3) %>%
+  knitr::kable()
+```
+
+### Combine data
+
+Users can use function `get_expression_of_interest()` to combine all those three data. 
+
+```{r combine-dataframes, message=FALSE, warning=FALSE}
+all_data <- get_expression_of_interest(
+  data_ref = rapa_subset,
+  data_to_transform = klepikova_subset,
+  id_table = id_table_rapa_subset,
+  lookup_col_ref_and_id_table = "CDS.model",
+  lookup_col_ref_and_to_transform = "locus_name",
+  colnames_wanted = NULL,
+  tissue_wanted = "apex",
+  gene_of_interest_acc = c("AT1G69120", "AT5G618"),
+  sum_exp_data_ref = FALSE,
+  accession_data_to_transform = "Col0"
+)
+```
+
+```{r view-combined-data}
+# View data
+all_data %>%
+  dplyr::group_by(accession) %>%
+  dplyr::slice(1:6) %>%
+  knitr::kable()
+```
+
+
+After combining reference data and data to transform, users need to adjust it to the required input data, this can be done as follows. 
+
+```{r transform-to-final-data, message=FALSE, warning=FALSE}
+all_data_final <- all_data %>% 
+  dplyr::select(
+    locus_name, 
+    accession, 
+    timepoint, 
+    expression_value = norm.cpm, 
+    tissue, 
+    group
+  )
+
+all_data_final %>%
+  dplyr::group_by(accession) %>%
+  dplyr::slice(1:6) %>%
+  knitr::kable()
+```
+
+

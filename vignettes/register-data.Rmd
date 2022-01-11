@@ -27,21 +27,21 @@ knitr::include_graphics("figures/registration_process.png")
 
 ## Load sample data
 
-`GREAT` package provides an example of data frame containing two different species *Arabidopsis* and *B. rapa* with two and three different replicates, respectively. This data frame can be read as follow:
+`greatR` package provides an example of data frame containing two different species *Arabidopsis* and *B. rapa* with two and three different replicates, respectively. This data frame can be read as follow:
 
 ```{r example, message=FALSE}
 # Load the package
-library(GREAT)
+library(greatR)
 library(dplyr)
 ```
 
 ```{r all-data, message=FALSE, warning=FALSE}
 # Gene expression data with replicates
-all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "GREAT") %>%
+all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") %>%
   utils::read.csv()
 ```
 
-Note that the data has all of six columns required by the package as documented on the [preparing data](https://ruthkr.github.io/GREAT/articles/prepare_data.html) article.
+Note that the data has all of six columns required by the package as documented on the [preparing data](https://ruthkr.github.io/greatR/articles/prepare_data.html) article.
 
 ```{r all-data-kable}
 all_data_df %>%
@@ -144,4 +144,4 @@ Function `scale_and_register_data()` returns a list of seven data frames:
 - `all_shifts_df` is a table containing candidates of registration parameters and a score after applying each parameter (stretch and shift factor).
 - `model_comparison_df` is a table comparing the optimal registration function for each gene (based on `all_shifts_df` scores) to the model with no registration applied.
 
-These data frame outputs can further be summarised and visualised; see the documentation on the [visualising results](https://ruthkr.github.io/GREAT/articles/visualise-results.html) article.
+These data frame outputs can further be summarised and visualised; see the documentation on the [visualising results](https://ruthkr.github.io/greatR/articles/visualise-results.html) article.

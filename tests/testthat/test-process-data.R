@@ -1,4 +1,4 @@
-all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "GREAT") %>%
+all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") %>%
   utils::read.csv()
 
 # Test preliminary analysis functions ----

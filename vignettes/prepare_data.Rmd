@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ## Data requirements
 
-Input data frame required for `GREAT` to register your gene expression profiles is a data frame that contains gene expression time-course data with all replicates. The illustrated diagram below shows the required `input_df` data frame format of `GREAT`. This data frame must contain:
+Input data frame required for `greatR` to register your gene expression profiles is a data frame that contains gene expression time-course data with all replicates. The illustrated diagram below shows the required `input_df` data frame format of `greatR`. This data frame must contain:
 
 - two different species which users wish to compare (for each gene, at least two replicates are required in all species), and
 - six data columns: 
@@ -39,12 +39,12 @@ knitr::include_graphics("figures/all_data_illustration.jpg")
 
 ## Using a helper function to prepare input data
 
-`GREAT` package provides a helper function `get_expression_of_interest()` to combine reference and query (data to register) data frames, if table ID which connect reference and query data frames provided (as illustrated in the figure below). 
+`greatR` package provides a helper function `get_expression_of_interest()` to combine reference and query (data to register) data frames, if table ID which connect reference and query data frames provided (as illustrated in the figure below). 
 
 <br>
 
-```{r combine-data, echo=FALSE, out.width='120%'}
-knitr::include_graphics("figures/Prepare_data_plus.png")
+```{r combine-data, echo=FALSE, out.width='100%'}
+knitr::include_graphics("figures/prepare_data.png")
 ```
 
 <br>
@@ -55,7 +55,7 @@ This package also provides data frames as examples to use this function. Those d
 
 ```{r example, message=FALSE}
 # Load the package
-library(GREAT)
+library(greatR)
 library(dplyr)
 ```
 
@@ -65,15 +65,15 @@ To load example data frames provided within the package, users need to run the f
 # Load example data
 id_table_rapa_subset <- system.file(
   "extdata/sample_data/id_table_5genes.RDS", 
-  package = "GREAT") %>% 
+  package = "greatR") %>% 
   readRDS()
 klepikova_subset <- system.file(
   "extdata/sample_data/arabidopsis_expression_5genes.RDS", 
-  package = "GREAT") %>% 
+  package = "greatR") %>% 
   readRDS()
 rapa_subset <- system.file(
   "extdata/sample_data/brassica_rapa_expression_5genes.RDS", 
-  package = "GREAT") %>% 
+  package = "greatR") %>% 
   readRDS()
 ```
 

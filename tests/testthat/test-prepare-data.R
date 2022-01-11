@@ -1,12 +1,12 @@
-id_table <- system.file("extdata/sample_data/id_table.RDS", package = "GREAT") %>% readRDS()
-arabidopsis_expression <- system.file("extdata/sample_data/arabidopsis_expression.RDS", package = "GREAT") %>% readRDS()
-brassica_rapa_expression <- system.file("extdata/sample_data/brassica_rapa_expression.RDS", package = "GREAT") %>% readRDS()
+id_table <- system.file("extdata/sample_data/id_table.RDS", package = "greatR") %>% readRDS()
+arabidopsis_expression <- system.file("extdata/sample_data/arabidopsis_expression.RDS", package = "greatR") %>% readRDS()
+brassica_rapa_expression <- system.file("extdata/sample_data/brassica_rapa_expression.RDS", package = "greatR") %>% readRDS()
 
-all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "GREAT") %>%
+all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") %>%
   utils::read.csv() %>%
   as.data.table()
 
-mean_df <- system.file("extdata/brapa_arabidopsis_mean.csv", package = "GREAT") %>%
+mean_df <- system.file("extdata/brapa_arabidopsis_mean.csv", package = "greatR") %>%
   utils::read.csv() %>%
   as.data.table()
 

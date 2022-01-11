@@ -1,4 +1,4 @@
 library(testthat)
-library(GREAT)
+library(greatR)
 
-test_check("GREAT", reporter = c("progress", "list", "fail"))
+test_check("greatR", reporter = c("progress", "list", "fail"))

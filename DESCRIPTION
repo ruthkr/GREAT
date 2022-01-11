@@ -1,5 +1,5 @@
 Package: greatR
-Title: Gene Registration from Expression and Time-courses in R
+Title: Gene Registration from Expression and Time-Courses in R
 Version: 0.1.0
 Authors@R: 
     person(given = "Ruth",

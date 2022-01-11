@@ -8,7 +8,7 @@
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/greatR)](https://cran.r-project.org/package=greatR)
 [![lifecycle](https://lifecycle.r-lib.org/articles/figures/lifecycle-stable.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![R-CMD-check](https://github.com/ruthkr/greatR/workflows/R-CMD-check/badge.svg)](https://github.com/ruthkr/greatR/actions)
-[![codecov](https://codecov.io/gh/ruthkr/greatR/branch/master/graph/badge.svg?token=L6TNLEPLLO)](https://codecov.io/gh/ruthkr/greatR)
+[![codecov](https://codecov.io/gh/ruthkr/greatR/branch/master/graph/badge.svg?token=L6TNLEPLLO)](https://app.codecov.io/gh/ruthkr/greatR)
 [![pkgdown](https://github.com/ruthkr/greatR/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/ruthkr/greatR/actions/workflows/pkgdown.yaml)
 [![GitHub last
 commit](https://img.shields.io/github/last-commit/ruthkr/greatR)](https://github.com/ruthkr/greatR/commits/master)

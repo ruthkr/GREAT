@@ -1,20 +1,20 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# GREAT <img src="man/figures/logo.png" align="right" width="120"/>
+# greatR <img src="man/figures/logo.png" align="right" width="120"/>
 
 <!-- badges: start -->
 
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Codecov test
-coverage](https://codecov.io/gh/ruthkr/GREAT/branch/master/graph/badge.svg?token=L6TNLEPLLO)](https://codecov.io/gh/ruthkr/GREAT)
-[![pkgdown](https://github.com/ruthkr/GREAT/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/ruthkr/GREAT/actions/workflows/pkgdown.yaml)
+coverage](https://codecov.io/gh/ruthkr/greatR/branch/master/graph/badge.svg?token=L6TNLEPLLO)](https://codecov.io/gh/ruthkr/greatR)
+[![pkgdown](https://github.com/ruthkr/greatR/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/ruthkr/greatR/actions/workflows/pkgdown.yaml)
 [![GitHub last
-commit](https://img.shields.io/github/last-commit/ruthkr/GREAT)](https://github.com/ruthkr/GREAT/commits/master)
+commit](https://img.shields.io/github/last-commit/ruthkr/greatR)](https://github.com/ruthkr/greatR/commits/master)
 <!-- badges: end -->
 
-The goal of `GREAT` (Gene Registration from Expression and Time-courses)
-to register (align) gene expression profiles between two species
+The goal of `greatR` (Gene Registration from Expression and Time-courses
+in R) to register (align) gene expression profiles between two species
 (reference data and data to transform). Non-reference gene expression
 profiles will be stretched and shifted. The optimality of registration
 parameters (shifts and stretches) will be estimated using least-squares
@@ -28,34 +28,34 @@ transformation.
 Flowchart below illustrates the workflow of the package given an input
 data:
 
-<img src="man/figures/GREAT_workflow.png" width="85%" />
+<img src="man/figures/greatR_workflow.png" width="85%" />
 
 More details on how to use this package are available on function
 documentations and vignettes:
 
 1.  [Input
-    requirements](https://ruthkr.github.io/GREAT/articles/prepare_data.html)
+    requirements](https://ruthkr.github.io/greatR/articles/prepare_data.html)
 2.  [Register
-    data](https://ruthkr.github.io/GREAT/articles/register-data.html)
+    data](https://ruthkr.github.io/greatR/articles/register-data.html)
 3.  [Visualise registration
-    results](https://ruthkr.github.io/GREAT/articles/visualise-results.html)
+    results](https://ruthkr.github.io/greatR/articles/visualise-results.html)
 
 ## Installation
 
 <!--
-You can install the released version of GREAT from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of greatR from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-install.packages("GREAT")
+install.packages("greatR")
 ```
 -->
 
-And the development version of `GREAT` from
+And the development version of `greatR` from
 [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("ruthkr/GREAT")
+devtools::install_github("ruthkr/greatR")
 ```
 
 ## Usage - quick start
@@ -65,12 +65,12 @@ expression profiles over time:
 
 ``` r
 # Load the package
-library(GREAT)
+library(greatR)
 ```
 
 ``` r
 # Load a data frame from the sample data
-all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "GREAT") %>%
+all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") %>%
   utils::read.csv()
 
 # Running the registration

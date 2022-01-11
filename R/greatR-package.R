@@ -1,10 +1,10 @@
-#' \code{GREAT} package
+#' \code{greatR} package
 #'
 #' See the README on
-#' \href{https://github.com/ruthkr/GREAT/}{GitHub}
+#' \href{https://github.com/ruthkr/greatR/}{GitHub}
 #'
 #' @docType package
-#' @name GREAT
+#' @name greatR
 #' @noRd
 NULL
 

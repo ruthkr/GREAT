@@ -61,7 +61,7 @@ This function returns a list of data frames, containing:
 \examples{
 \dontrun{
 # Load a data frame from the sample data
-all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "GREAT") \%>\%
+all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") \%>\%
     utils::read.csv()
 
 # Running the registration

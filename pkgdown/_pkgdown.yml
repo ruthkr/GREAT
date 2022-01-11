@@ -1,4 +1,4 @@
-url: https://ruthkr.github.io/GREAT/
+url: https://ruthkr.github.io/greatR/
 
 authors:
   Ruth Kristianingsih:
@@ -8,7 +8,7 @@ template:
   bootstrap: 5
   bootswatch: litera
   bslib:
-    primary: "#664d97"
+    primary: "#7e57c2"
     base_font: {google: "Lato"}
     heading_font: {google: "Lato"}
     code_font: {google: "Fira Code"}

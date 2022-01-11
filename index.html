@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="A tool for registering (aligning) gene expression profiles
     between two species (reference data and data to transform).">
-<title>Gene Registration from Expression and Time-courses in R • greatR</title>
+<title>Gene Registration from Expression and Time-Courses in R • greatR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -21,7 +21,7 @@
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
-<meta property="og:title" content="Gene Registration from Expression and Time-courses in R">
+<meta property="og:title" content="Gene Registration from Expression and Time-Courses in R">
 <meta property="og:description" content="A tool for registering (aligning) gene expression profiles
     between two species (reference data and data to transform).">
 <meta property="og:image" content="https://ruthkr.github.io/greatR/logo.png">
@@ -66,7 +66,14 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
 </form>
 
-      <ul class="navbar-nav"></ul>
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/ruthkr/greatR/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 
     
@@ -80,7 +87,7 @@
 </div>
 <!-- badges: start -->
 
-<p>The goal of <code>greatR</code> (Gene Registration from Expression and Time-courses in R) to register (align) gene expression profiles between two species (reference data and data to transform). Non-reference gene expression profiles will be stretched and shifted. The optimality of registration parameters (shifts and stretches) will be estimated using least-squares criterion. This package is also designed to compare a registration model versus a non-registration model, as well as determine whether registration model performed better than non-registration transformation.</p>
+<p>The goal of <code>greatR</code> (<strong>G</strong>ene <strong>R</strong>egistration from <strong>E</strong>xpression <strong>a</strong>nd <strong>T</strong>ime-courses in <strong>R</strong>) to register (align) gene expression profiles between two species (reference data and data to transform). Non-reference gene expression profiles will be stretched and shifted. The optimality of registration parameters (shifts and stretches) will be estimated using least-squares criterion. This package is also designed to compare a registration model versus a non-registration model, as well as determine whether registration model performed better than non-registration transformation.</p>
 <div class="section level2">
 <h2 id="package-workflow">Package workflow<a class="anchor" aria-label="anchor" href="#package-workflow"></a>
 </h2>
@@ -114,7 +121,7 @@ install.packages("greatR")
 <p>This is a basic example which shows you how to register (align) gene expression profiles over time:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Load the package</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">greatR</span><span class="op">)</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ruthkr.github.io/greatR/">greatR</a></span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Load a data frame from the sample data</span>
 <span class="va">all_data_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_all_replicates.csv"</span>, package <span class="op">=</span> <span class="st">"greatR"</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
@@ -189,7 +196,15 @@ install.packages("greatR")
 <p>Calderwood, A., Hepworth, J., Woodhouse, … Morris, R. (2021). Comparative transcriptomics reveals desynchronisation of gene expression during the floral transition between Arabidopsis and Brassica rapa cultivars. <em>Quantitative Plant Biology, 2</em>, E4. <a href="https://www.cambridge.org/core/journals/quantitative-plant-biology/article/comparative-transcriptomics-reveals-desynchronisation-of-gene-expression-during-the-floral-transition-between-arabidopsis-and-brassica-rapa-cultivars/811BFDFA14F4BCC9C7F0ECC7CE103BB6" class="external-link">doi:10.1017/qpb.2021.6</a></p>
 </div>
 </div>
-  </main><aside class="col-md-3"><div class="license">
+  </main><aside class="col-md-3"><div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/ruthkr/greatR/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/ruthkr/greatR/issues/" class="external-link">Report a bug</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
@@ -219,7 +234,7 @@ install.packages("greatR")
 <li><a href="https://cran.r-project.org/package=greatR" class="external-link"><img src="https://www.r-pkg.org/badges/version/greatR" alt="CRAN_Status_Badge"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://lifecycle.r-lib.org/articles/figures/lifecycle-stable.svg" alt="lifecycle"></a></li>
 <li><a href="https://github.com/ruthkr/greatR/actions" class="external-link"><img src="https://github.com/ruthkr/greatR/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/gh/ruthkr/greatR" class="external-link"><img src="https://codecov.io/gh/ruthkr/greatR/branch/master/graph/badge.svg?token=L6TNLEPLLO" alt="codecov"></a></li>
+<li><a href="https://app.codecov.io/gh/ruthkr/greatR" class="external-link"><img src="https://codecov.io/gh/ruthkr/greatR/branch/master/graph/badge.svg?token=L6TNLEPLLO" alt="codecov"></a></li>
 <li><a href="https://github.com/ruthkr/greatR/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/ruthkr/greatR/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a></li>
 <li><a href="https://github.com/ruthkr/greatR/commits/master" class="external-link"><img src="https://img.shields.io/github/last-commit/ruthkr/greatR" alt="GitHub last commit"></a></li>
 </ul>

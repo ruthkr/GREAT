@@ -64,15 +64,15 @@ To load example data frames provided within the package, users need to run the f
 ```{r load-data, message=FALSE, warning=FALSE}
 # Load example data
 id_table_rapa_subset <- system.file(
-  "extdata/sample_data/id_table_5genes.RDS", 
+  "extdata/sample_data/id_table_5genes.rds", 
   package = "greatR") %>% 
   readRDS()
 klepikova_subset <- system.file(
-  "extdata/sample_data/arabidopsis_expression_5genes.RDS", 
+  "extdata/sample_data/arabidopsis_expression_5genes.rds", 
   package = "greatR") %>% 
   readRDS()
 rapa_subset <- system.file(
-  "extdata/sample_data/brassica_rapa_expression_5genes.RDS", 
+  "extdata/sample_data/brassica_rapa_expression_5genes.rds", 
   package = "greatR") %>% 
   readRDS()
 ```

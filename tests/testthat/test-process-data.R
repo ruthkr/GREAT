@@ -107,7 +107,6 @@ test_that("scale_and_register_data works", {
   expect_equal(class(summary$df_summary), "data.frame")
   expect_equal(class(summary$registered_genes), "character")
   expect_equal(class(summary$non_registered_genes), "character")
-
 })
 
 
@@ -232,5 +231,3 @@ test_that("all functions called in scale_and_register_data work", {
     "model_comparison_dt" = model_comparison_dt
   )
 })
-
-

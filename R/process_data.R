@@ -29,24 +29,24 @@
 #' @export
 #'
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' # Load a data frame from the sample data
 #' all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") %>%
-#'     utils::read.csv()
+#'   utils::read.csv()
 #'
-#'# Running the registration
-#'registration_results <- scale_and_register_data(
-#'     input_df = all_data_df,
-#'     stretches = c(3, 2.5, 2, 1.5, 1),
-#'     shift_extreme = 4,
-#'     num_shifts = 27,
-#'     min_num_overlapping_points = 4,
-#'     initial_rescale = FALSE,
-#'     do_rescale = TRUE,
-#'     accession_data_to_transform = "Col0",
-#'     accession_data_ref = "Ro18",
-#'     start_timepoint = "reference"
-#'  )
+#' # Running the registration
+#' registration_results <- scale_and_register_data(
+#'   input_df = all_data_df,
+#'   stretches = c(3, 2.5, 2, 1.5, 1),
+#'   shift_extreme = 4,
+#'   num_shifts = 27,
+#'   min_num_overlapping_points = 4,
+#'   initial_rescale = FALSE,
+#'   do_rescale = TRUE,
+#'   accession_data_to_transform = "Col0",
+#'   accession_data_ref = "Ro18",
+#'   start_timepoint = "reference"
+#' )
 #' }
 scale_and_register_data <- function(input_df,
                                     stretches,

@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://ruthkr.github.io/GREAT/404.html</loc>
+    <loc>https://ruthkr.github.io/greatR/404.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/LICENSE.html</loc>
+    <loc>https://ruthkr.github.io/greatR/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/articles/index.html</loc>
+    <loc>https://ruthkr.github.io/greatR/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/articles/prepare_data.html</loc>
+    <loc>https://ruthkr.github.io/greatR/articles/prepare_data.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/articles/register-data.html</loc>
+    <loc>https://ruthkr.github.io/greatR/articles/register-data.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/articles/visualise-results.html</loc>
+    <loc>https://ruthkr.github.io/greatR/articles/visualise-results.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/authors.html</loc>
+    <loc>https://ruthkr.github.io/greatR/authors.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/index.html</loc>
+    <loc>https://ruthkr.github.io/greatR/index.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/calculate_between_sample_distance.html</loc>
+    <loc>https://ruthkr.github.io/greatR/reference/calculate_between_sample_distance.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/get_approximate_stretch.html</loc>
+    <loc>https://ruthkr.github.io/greatR/reference/get_approximate_stretch.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/get_expression_of_interest.html</loc>
+    <loc>https://ruthkr.github.io/greatR/reference/get_expression_of_interest.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/get_mean_data.html</loc>
+    <loc>https://ruthkr.github.io/greatR/reference/get_mean_data.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/index.html</loc>
+    <loc>https://ruthkr.github.io/greatR/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/pipe.html</loc>
+    <loc>https://ruthkr.github.io/greatR/reference/pipe.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/plot_heatmap.html</loc>
+    <loc>https://ruthkr.github.io/greatR/reference/plot_heatmap.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/plot_registration_results.html</loc>
+    <loc>https://ruthkr.github.io/greatR/reference/plot_registration_results.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/scale_and_register_data.html</loc>
+    <loc>https://ruthkr.github.io/greatR/reference/scale_and_register_data.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/GREAT/reference/summary_model_comparison.html</loc>
+    <loc>https://ruthkr.github.io/greatR/reference/summary_model_comparison.html</loc>
   </url>
 </urlset>

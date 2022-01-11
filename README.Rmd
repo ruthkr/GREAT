@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # greatR <img src="man/figures/logo.png" align="right" width="120"/>
 
 <!-- badges: start -->
-`r badgecreatr::badge_lifecycle("experimental")`
+`r badgecreatr::badge_lifecycle("stable")`
 [![Codecov test coverage](https://codecov.io/gh/ruthkr/greatR/branch/master/graph/badge.svg?token=L6TNLEPLLO)](https://codecov.io/gh/ruthkr/greatR)
 [![pkgdown](https://github.com/ruthkr/greatR/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/ruthkr/greatR/actions/workflows/pkgdown.yaml)
 [![GitHub last commit](https://img.shields.io/github/last-commit/ruthkr/greatR)](https://github.com/ruthkr/greatR/commits/master)

@@ -44,17 +44,17 @@ More details on how to use this package are available on function documentations
 
 ## Installation
 
-<!--
-You can install the released version of greatR from [CRAN](https://CRAN.R-project.org) with:
 
-``` r
+You can install the released version of `greatR` from [CRAN](https://CRAN.R-project.org) with:
+
+```r
 install.packages("greatR")
 ```
--->
+
 
 And the development version of `greatR` from [GitHub](https://github.com/) with:
 
-``` r
+```r
 # install.packages("devtools")
 devtools::install_github("ruthkr/greatR")
 ```

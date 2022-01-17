@@ -43,13 +43,12 @@ documentations and vignettes:
 
 ## Installation
 
-<!--
-You can install the released version of greatR from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of `greatR` from
+[CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("greatR")
 ```
--->
 
 And the development version of `greatR` from
 [GitHub](https://github.com/) with:

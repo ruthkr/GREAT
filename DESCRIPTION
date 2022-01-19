@@ -2,11 +2,15 @@ Package: greatR
 Title: Gene Registration from Expression and Time-Courses in R
 Version: 0.1.0
 Authors@R: 
-    person(given = "Ruth",
+    c(person(given = "Ruth",
            family = "Kristianingsih",
            role = c("aut", "cre"),
            email = "ruth.kristianingsih30@gmail.com",
-           comment = c(ORCID = "0000-0003-1873-6203"))
+           comment = c(ORCID = "0000-0003-1873-6203")), 
+      person(given = "Alex",
+           family = "Calderwood",
+           role = c("aut"),
+           email = "Alexander.Calderwood@jic.ac.uk"))
 Description: A tool for registering (aligning) gene expression profiles
     between two species (reference data and data to transform).
 License: GPL (>= 3)

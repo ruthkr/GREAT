@@ -259,26 +259,29 @@ compare_registered_to_unregistered_model <- function(curr_sym,
   )
 
   # Cut down to the data for each model
-  data_to_transform_spline <- curr_data_df[curr_data_df$is_compared == TRUE &
-    curr_data_df$accession == accession_data_to_transform, ]
-  data_ref_spline <- curr_data_df[curr_data_df$is_compared == TRUE &
-    curr_data_df$accession == accession_data_ref, ]
+  data_to_transform_spline <- curr_data_df[curr_data_df$is_compared == TRUE & curr_data_df$accession == accession_data_to_transform, ]
+  data_ref_spline <- curr_data_df[curr_data_df$is_compared == TRUE & curr_data_df$accession == accession_data_ref, ]
   combined_spline_data <- curr_data_df[curr_data_df$is_compared == TRUE, ]
 
   # Fit the models - fit regression splines.
   # http://www.utstat.utoronto.ca/reid/sta450/feb23.pdf
-  # for cubic spline, K+3 params where K=num.knots
-  # as can omit constant term
+  # For cubic spline, K+3 params where K=num.knots as can omit constant term
   num.spline.params <- 6 # number of parameters for each spline fitting (degree and this used to calculate num knots).
-  # num.spline.params <- 5
   num.registration.params <- 2 # stretch, shift
   num.obs <- nrow(combined_spline_data)
 
-  data_to_transform_fit <- stats::lm(expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_to_transform_spline)
-  # message("data_to_transform_fit:", data_to_transform_fit)
-  data_ref_fit <- stats::lm(expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = data_ref_spline)
-  # message("data_ref_fit:", data_ref_fit)
-  combined_fit <- stats::lm(expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3), data = combined_spline_data)
+  data_to_transform_fit <- stats::lm(
+    expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3),
+    data = data_to_transform_spline
+  )
+  data_ref_fit <- stats::lm(
+    expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3),
+    data = data_ref_spline
+  )
+  combined_fit <- stats::lm(
+    expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3),
+    data = combined_spline_data
+  )
 
   # Calculate the log likelihoods
   data_to_transform_logLik <- stats::logLik(data_to_transform_fit)

@@ -32,8 +32,8 @@ calculate_all_best_shifts <- function(num_shifts,
   for (i in seq_along(unique(mean_df$locus_name))) {
     curr_sym <- unique(mean_df$locus_name)[i]
 
-    # Out is mean SSD between data to transform (e.g. arabidopsis), and interpolated reference data (interpolated between 2 nearest points, e.g. Brassica)
-    # Get "score" for all the candidate shifts. Score is mean error / reference data expression for compared points. If timepoints don't line up, brassica value is linearly imputed
+    # Out is mean SSD between data to transform (e.g. Arabidopsis), and interpolated reference data (interpolated between 2 nearest points, e.g. Brassica)
+    # Get "score" for all the candidate shifts. Score is mean error / reference data expression for compared points. If time points don't line up, Brassica value is linearly imputed
     out <- get_best_shift(
       num_shifts,
       curr_sym,
@@ -92,7 +92,7 @@ get_best_shift <- function(num_shifts = 25,
   # Filter locus_name
   data <- data[data$locus_name == curr_sym, ]
 
-  # Transform timepoint to be time from first timepoint
+  # Transform time point to be time from first time point
   data[, delta_time := timepoint - min(timepoint), by = .(accession)]
 
   # Apply stretch_factor to the data to transform, leave the reference data as it is
@@ -120,7 +120,7 @@ get_best_shift <- function(num_shifts = 25,
     data$shifted_time <- data$delta_time
     data$shifted_time[data$accession == accession_data_to_transform] <- data$delta_time[data$accession == accession_data_to_transform] + curr_shift
 
-    # Cut down to just the data to transform and reference data timepoints which compared
+    # Cut down to just the data to transform and reference data time points which compared
     data <- get_compared_timepoints(
       data,
       accession_data_to_transform,
@@ -128,7 +128,7 @@ get_best_shift <- function(num_shifts = 25,
     )
     compared <- data[data$is_compared == TRUE, ]
 
-    # Renormalise expression using just these timepoints?
+    # Renormalise expression using just these time points?
     if (do_rescale) {
       # Record the mean and sd of the compared points, used for rescaling in "apply shift" function
       expression_value_transform <- compared$expression_value[compared$accession == accession_data_to_transform]

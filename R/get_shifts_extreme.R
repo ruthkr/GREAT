@@ -14,11 +14,11 @@ get_extreme_shifts_for_all <- function(mean_df,
   timepoint <- NULL
   accession <- NULL
 
-  # Cut dataframe to a single gene.
+  # Cut data frame to a single gene.
   curr_sym <- unique(mean_df$locus_name)[1]
   mean_df <- mean_df[mean_df$locus_name == curr_sym, ]
 
-  # Transform timepoint to be time from first timepoint
+  # Transform time point to be time from first time point
   mean_df[, delta_time := timepoint - min(timepoint), by = .(accession)]
 
   # Apply stretch_factor to the data to transform, leave the reference data as it is
@@ -45,12 +45,12 @@ calc_extreme_shifts <- function(mean_df,
                                 accession_data_to_transform,
                                 accession_data_ref) {
 
-  # Make copy of the mean_df to make sure that the original dataframe will not edited
+  # Make copy of the mean_df to make sure that the original data frame will not edited
   original <- data.table::copy(mean_df)
   original$shifted_time <- original$delta_time
 
-  # Negative extreme shift will be -1 * exactly the difference between 1 of the stretched data_to_transform (e.g. Col0) timepoints, and the smallest data_ref (e.g. Ro18) timepoint
-  # Positive extreme will be the difference between 1 of the data_to_transform timepoints, and the maximum data_ref timepoint
+  # Negative extreme shift will be -1 * exactly the difference between 1 of the stretched data_to_transform (e.g. Col0) time points, and the smallest data_ref (e.g. Ro18) time point
+  # Positive extreme will be the difference between 1 of the data_to_transform time points, and the maximum data_ref time point
   neg_extreme_candidate <- -1 * (original$delta_time[original$accession == accession_data_to_transform] - min(original$delta_time[original$accession == accession_data_ref]))
   pos_extreme_candidates <- max(original$delta_time[original$accession == accession_data_ref]) - original$delta_time[original$accession == accession_data_to_transform]
 

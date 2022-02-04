@@ -50,8 +50,7 @@
 #' }
 scale_and_register_data <- function(input_df,
                                     stretches,
-                                    shift_extreme,
-                                    num_shifts,
+                                    shifts,
                                     min_num_overlapping_points,
                                     initial_rescale,
                                     do_rescale,
@@ -124,10 +123,9 @@ scale_and_register_data <- function(input_df,
     to_shift_df,
     all_data_df,
     stretches,
+    shifts,
     do_rescale,
     min_num_overlapping_points,
-    shift_extreme,
-    num_shifts,
     accession_data_to_transform,
     accession_data_ref,
     time_to_add
@@ -244,10 +242,9 @@ scale_all_rep_data <- function(mean_df, all_rep_data, scale_func) {
 get_best_stretch_and_shift <- function(to_shift_df,
                                        all_data_df,
                                        stretches,
+                                       shifts,
                                        do_rescale,
                                        min_num_overlapping_points,
-                                       shift_extreme,
-                                       num_shifts,
                                        accession_data_to_transform,
                                        accession_data_ref,
                                        time_to_add) {
@@ -271,11 +268,10 @@ get_best_stretch_and_shift <- function(to_shift_df,
 
     # Calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points if do_rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
     all_shifts <- calculate_all_best_shifts(
-      num_shifts,
       mean_df = to_shift_df,
       stretch_factor = stretch,
+      shifts,
       do_rescale,
-      shift_extreme,
       min_num_overlapping_points,
       accession_data_to_transform,
       accession_data_ref

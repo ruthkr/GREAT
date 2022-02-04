@@ -22,8 +22,7 @@ test_that("scale_and_register_data works", {
   registration_results <- scale_and_register_data(
     input_df = all_data_df,
     stretches = c(2, 1.5, 1),
-    shift_extreme = 4,
-    num_shifts = 27,
+    shifts = seq(-4, 4, length.out = 27),
     min_num_overlapping_points = 4,
     initial_rescale = FALSE,
     do_rescale = TRUE,
@@ -113,8 +112,7 @@ test_that("scale_and_register_data works", {
 # Pipeline parameters ----
 
 stretches <- c(2, 1.5, 1)
-shift_extreme <- 4
-num_shifts <- 27
+shifts <- seq(-4, 4, length.out = 27)
 min_num_overlapping_points <- 4
 initial_rescale <- FALSE
 do_rescale <- TRUE
@@ -165,10 +163,9 @@ test_that("all functions called in scale_and_register_data work", {
     to_shift_df,
     all_data_df,
     stretches,
+    shifts,
     do_rescale,
     min_num_overlapping_points,
-    shift_extreme,
-    num_shifts,
     accession_data_to_transform,
     accession_data_ref,
     time_to_add

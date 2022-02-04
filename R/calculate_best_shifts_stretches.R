@@ -1,11 +1,10 @@
 #' Calculate scores for all candidate shifts for all genes in data frame.
 #'
 #' @noRd
-calculate_all_best_shifts <- function(num_shifts,
-                                      mean_df,
+calculate_all_best_shifts <- function(mean_df,
                                       stretch_factor,
+                                      shifts,
                                       do_rescale,
-                                      shift_extreme,
                                       min_num_overlapping_points,
                                       accession_data_to_transform,
                                       accession_data_ref) {
@@ -15,17 +14,29 @@ calculate_all_best_shifts <- function(num_shifts,
   all_scores_list <- rep(list(0), length(unique(mean_df$locus_name)))
 
   # Get the extreme shifts which can be applied to the genes
-  extreme_shift <- get_extreme_shifts_for_all(
-    mean_df,
-    stretch_factor,
-    min_num_overlapping_points,
-    shift_extreme,
-    accession_data_to_transform,
-    accession_data_ref
-  )
+  # TODO: add optimise_shift_extreme parameter
+  optimise_shift_extreme <- TRUE
+  if (optimise_shift_extreme) {
+    shift_extreme <- max(abs(shifts))
 
-  min_shift <- extreme_shift[[1]]
-  max_shift <- extreme_shift[[2]]
+    extreme_shift <- get_extreme_shifts_for_all(
+      mean_df,
+      stretch_factor,
+      min_num_overlapping_points,
+      shift_extreme,
+      accession_data_to_transform,
+      accession_data_ref
+    )
+
+    min_shift <- extreme_shift[[1]]
+    max_shift <- extreme_shift[[2]]
+
+    # Update shifts list
+    # shift_step <- shifts[2] - shifts[1]
+    # shifts <- seq(min_shift, max_shift, by = shift_step)
+    shift_length <- length(shifts)
+    shifts <- seq(min_shift, max_shift, length.out = shift_length)
+  }
 
   i <- 0
   cli::cli_progress_step("Calculating score for all shifts ({i}/{length(unique(mean_df$locus_name))})", spinner = TRUE)
@@ -35,13 +46,11 @@ calculate_all_best_shifts <- function(num_shifts,
     # Out is mean SSD between data to transform (e.g. Arabidopsis), and interpolated reference data (interpolated between 2 nearest points, e.g. Brassica)
     # Get "score" for all the candidate shifts. Score is mean error / reference data expression for compared points. If time points don't line up, Brassica value is linearly imputed
     out <- get_best_shift(
-      num_shifts,
+      shifts,
       curr_sym,
       data = mean_df,
       stretch_factor,
       do_rescale,
-      min_shift,
-      max_shift,
       accession_data_to_transform,
       accession_data_ref
     )
@@ -74,13 +83,11 @@ calculate_all_best_shifts <- function(num_shifts,
 #' Calculate the score for all shifts
 #'
 #' @noRd
-get_best_shift <- function(num_shifts = 25,
+get_best_shift <- function(shifts,
                            curr_sym,
                            data,
                            stretch_factor,
                            do_rescale,
-                           min_shift,
-                           max_shift,
                            accession_data_to_transform,
                            accession_data_ref) {
   # Suppress "no visible binding for global variable" note
@@ -88,6 +95,11 @@ get_best_shift <- function(num_shifts = 25,
   timepoint <- NULL
   accession <- NULL
   expression_value <- NULL
+
+  # Parse shifts parameters
+  num_shifts <- length(shifts)
+  min_shift <- min(shifts)
+  max_shift <- max(shifts)
 
   # Filter locus_name
   data <- data[data$locus_name == curr_sym, ]

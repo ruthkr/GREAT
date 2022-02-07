@@ -14,7 +14,8 @@
 #' @param accession_data_ref Accession name of reference data.
 #' @param start_timepoint Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.
 #' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
-#' @param is_data_normalised TRUE if dataset has been normalised prior to registration process.
+#' @param is_data_normalised \code{TRUE} if dataset has been normalised prior to registration process.
+#' @param optimise_shift_extreme Whether to optimise extreme (minimum and maximum) values of \code{shifts}. By default, \code{FALSE}.
 #'
 #' @return This function returns a list of data frames, containing:
 #'
@@ -58,7 +59,8 @@ scale_and_register_data <- function(input_df,
                                     accession_data_ref,
                                     start_timepoint = c("reference", "transform", "zero"),
                                     expression_value_threshold = 5,
-                                    is_data_normalised = FALSE) {
+                                    is_data_normalised = FALSE,
+                                    optimise_shift_extreme = FALSE) {
   # Validate parameters
   start_timepoint <- match.arg(start_timepoint)
 
@@ -128,7 +130,8 @@ scale_and_register_data <- function(input_df,
     min_num_overlapping_points,
     accession_data_to_transform,
     accession_data_ref,
-    time_to_add
+    time_to_add,
+    optimise_shift_extreme
   )
 
   all_shifts <- L[["all_shifts"]]
@@ -247,7 +250,8 @@ get_best_stretch_and_shift <- function(to_shift_df,
                                        min_num_overlapping_points,
                                        accession_data_to_transform,
                                        accession_data_ref,
-                                       time_to_add) {
+                                       time_to_add,
+                                       optimise_shift_extreme) {
   # Suppress "no visible binding for global variable" note
   is_best <- NULL
   gene <- NULL
@@ -274,7 +278,8 @@ get_best_stretch_and_shift <- function(to_shift_df,
       do_rescale,
       min_num_overlapping_points,
       accession_data_to_transform,
-      accession_data_ref
+      accession_data_ref,
+      optimise_shift_extreme
     )
 
     all_shifts <- unique(all_shifts) # ensure no duplicated rows

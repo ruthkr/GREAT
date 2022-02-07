@@ -7,8 +7,7 @@
 scale_and_register_data(
   input_df,
   stretches,
-  shift_extreme,
-  num_shifts,
+  shifts,
   min_num_overlapping_points,
   initial_rescale,
   do_rescale,
@@ -16,7 +15,8 @@ scale_and_register_data(
   accession_data_ref,
   start_timepoint = c("reference", "transform", "zero"),
   expression_value_threshold = 5,
-  is_data_normalised = FALSE
+  is_data_normalised = FALSE,
+  optimise_shift_extreme = FALSE
 )
 }
 \arguments{
@@ -24,9 +24,7 @@ scale_and_register_data(
 
 \item{stretches}{Candidate registration stretch factors to apply to data to transform.}
 
-\item{shift_extreme}{The absolute maximum value which can be applied as a shift to gene expression time course (days).}
-
-\item{num_shifts}{Number of shifts between minimum and maximum values of shift.}
+\item{shifts}{Candidate registration shift values to apply to data to transform.}
 
 \item{min_num_overlapping_points}{Number of minimum overlapping time points.  Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.}
 
@@ -42,7 +40,9 @@ scale_and_register_data(
 
 \item{expression_value_threshold}{Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.}
 
-\item{is_data_normalised}{TRUE if dataset has been normalised prior to registration process.}
+\item{is_data_normalised}{\code{TRUE} if dataset has been normalised prior to registration process.}
+
+\item{optimise_shift_extreme}{Whether to optimise extreme (minimum and maximum) values of \code{shifts}. By default, \code{FALSE}.}
 }
 \value{
 This function returns a list of data frames, containing:

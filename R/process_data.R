@@ -5,8 +5,7 @@
 #'
 #' @param input_df Input data frame contains all replicates of gene expression in each genotype at each time point.
 #' @param stretches Candidate registration stretch factors to apply to data to transform.
-#' @param shift_extreme The absolute maximum value which can be applied as a shift to gene expression time course (days).
-#' @param num_shifts Number of shifts between minimum and maximum values of shift.
+#' @param shifts Candidate registration shift values to apply to data to transform.
 #' @param min_num_overlapping_points Number of minimum overlapping time points.  Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
 #' @param initial_rescale Scaling gene expression prior to registration if \code{TRUE}.
 #' @param do_rescale Scaling gene expression using only overlapping time points points during registration.

@@ -28,7 +28,8 @@ test_that("scale_and_register_data works", {
     do_rescale = TRUE,
     accession_data_to_transform = "Col0",
     accession_data_ref = "Ro18",
-    start_timepoint = "reference"
+    start_timepoint = "reference",
+    optimise_shift_extreme = TRUE
   )
 
   expect_equal(class(registration_results), "list")
@@ -168,7 +169,8 @@ test_that("all functions called in scale_and_register_data work", {
     min_num_overlapping_points,
     accession_data_to_transform,
     accession_data_ref,
-    time_to_add
+    time_to_add,
+    optimise_shift_extreme = TRUE
   )
 
   all_shifts <- L[["all_shifts"]]

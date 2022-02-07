@@ -115,17 +115,15 @@ get_best_shift <- function(shifts,
   all_data_transform_sd <- numeric(length = num_shifts)
   all_data_ref_sd <- numeric(length = num_shifts)
 
-  all_shifts <- seq(min_shift, max_shift, length.out = num_shifts)
-
-  if (!(0 %in% all_shifts)) {
+  if (!(0 %in% shifts)) {
     # Include 0 shift in candidates
-    all_shifts <- c(all_shifts, 0)
+    shifts <- c(shifts, 0)
   }
 
   # Start the iteration to calculate score for each shift for all shifts in the list
   i <- 1
-  for (i in seq_along(all_shifts)) {
-    curr_shift <- all_shifts[i]
+  for (i in seq_along(shifts)) {
+    curr_shift <- shifts[i]
 
     # Shift the data to transform expression timings
     data$shifted_time <- data$delta_time
@@ -210,7 +208,7 @@ get_best_shift <- function(shifts,
     data.frame(
       "gene" = curr_sym,
       "stretch" = stretch_factor,
-      "shift" = all_shifts,
+      "shift" = shifts,
       "score" = all_scores,
       "data_transform_compared_mean" = all_data_transform_mean,
       "data_ref_compared_mean" = all_data_ref_mean,

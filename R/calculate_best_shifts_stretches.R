@@ -115,10 +115,10 @@ get_best_shift <- function(shifts,
   all_data_transform_sd <- numeric(length = num_shifts)
   all_data_ref_sd <- numeric(length = num_shifts)
 
-  if (!(0 %in% shifts)) {
-    # Include 0 shift in candidates
-    shifts <- c(shifts, 0)
-  }
+  # if (!(0 %in% shifts)) {
+  #   # Include 0 shift in candidates
+  #   shifts <- c(shifts, 0)
+  # }
 
   # Start the iteration to calculate score for each shift for all shifts in the list
   i <- 1

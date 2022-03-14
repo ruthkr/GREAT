@@ -1,7 +1,3 @@
-test_that("calc_AIC works", {
-  expect_equal(class(calc_AIC(-3, 4)), "numeric")
-})
-
 test_that("calc_BIC works", {
   expect_equal(class(calc_BIC(-3, 4, 1)), "numeric")
 })

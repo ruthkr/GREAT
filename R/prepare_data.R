@@ -1,6 +1,6 @@
 #' Calculate mean expression values from all expression data with replicates
 #'
-#' @param exp Input data frame contains all replicates of gene expression in each genotype at each timepoint.
+#' @param exp Input data frame contains all replicates of gene expression in each genotype at each time point.
 #' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param is_data_normalised TRUE if dataset has been normalised prior to registration process.
@@ -58,9 +58,9 @@ get_mean_data <- function(exp,
 
 #' Get expression of interest
 #'
-#' @param data_ref File name in working directory, path to file of reference data.
-#' @param data_to_transform File name in working directory, path to file of data to transform.
-#' @param id_table File name in working directory, path to file of ID table connecting both reference data and data.
+#' @param data_ref Data frame of reference data.
+#' @param data_to_transform Data frame of data to transform.
+#' @param id_table Data frame of ID table connecting both reference data and data to transform.
 #' @param lookup_col_ref_and_id_table Column names shared by both reference data and ID table.
 #' @param lookup_col_ref_and_to_transform Column names shared by both reference data and data to transform.
 #' @param colnames_wanted List of column names to keep from both reference data and data to transform.

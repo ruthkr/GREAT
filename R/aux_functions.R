@@ -1,4 +1,6 @@
-#' Get BIC score from registering data - as part of optimisation
+#' Get BIC score from registering data
+#'
+#' Simplified version of \code{\link{scale_and_register_data}} for \code{\link{optimise_registration_params}}.
 #'
 #' @noRd
 get_BIC_from_registering_data <- function(input_df,
@@ -80,11 +82,13 @@ get_BIC_from_registering_data <- function(input_df,
     optimise_shift_extreme
   )
 
-  return(L$model_comparison_dt$registered.BIC - L$model_comparison_dt$separate.BIC.after)
+  return(L$model_comparison_dt$registered.BIC - L$model_comparison_dt$separate.BIC)
 }
 
 
-#' Calculate best shifts and stretches for each gene, also calculate AIC/BIC under registration or non-registration (simplified)
+#' Calculate best shifts and stretches for each gene, also calculate AIC/BIC under registration or non-registration
+#'
+#' Simplified version of \code{\link{get_best_stretch_and_shift}} for \code{\link{optimise_registration_params}}.
 #'
 #' @noRd
 get_best_stretch_and_shift_simplified <- function(to_shift_df,
@@ -97,16 +101,10 @@ get_best_stretch_and_shift_simplified <- function(to_shift_df,
                                                   accession_data_ref,
                                                   time_to_add,
                                                   optimise_shift_extreme) {
-  # # Suppress "no visible binding for global variable" note
-  # is_best <- NULL
-  # gene <- NULL
-  # delta.BIC <- NULL
-  #
   # Warning to make sure users have correct accession data
   if (!(accession_data_to_transform %in% all_data_df$accession & accession_data_ref %in% all_data_df$accession)) {
     stop("get_best_stretch_and_shift(): data accessions should have been converted to correct accession.")
   }
-
 
   # Calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points if do_rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
   all_shifts <- calculate_all_best_shifts(

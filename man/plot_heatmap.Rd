@@ -13,7 +13,7 @@ plot_heatmap(
 )
 }
 \arguments{
-\item{sample_dist_df}{Input data frame contains sample distance between two different species.}
+\item{sample_dist_df}{Input data frame containing sample distance between two different species.}
 
 \item{title}{Optional plot title.}
 

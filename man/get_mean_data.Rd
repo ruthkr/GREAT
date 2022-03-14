@@ -12,7 +12,7 @@ get_mean_data(
 )
 }
 \arguments{
-\item{exp}{Input data frame contains all replicates of gene expression in each genotype at each timepoint.}
+\item{exp}{Input data frame containing all replicates of gene expression in each genotype at each time point.}
 
 \item{expression_value_threshold}{Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.}
 

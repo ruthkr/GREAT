@@ -11,7 +11,7 @@ get_approximate_stretch(
 )
 }
 \arguments{
-\item{input_df}{Input data frame contains all replicates of gene expression in each genotype at each time point.}
+\item{input_df}{Input data frame containing all replicates of gene expression in each genotype at each time point.}
 
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 

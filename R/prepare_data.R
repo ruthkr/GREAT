@@ -1,6 +1,6 @@
 #' Calculate mean expression values from all expression data with replicates
 #'
-#' @param exp Input data frame contains all replicates of gene expression in each genotype at each time point.
+#' @param exp Input data frame containing all replicates of gene expression in each genotype at each time point.
 #' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param is_data_normalised TRUE if dataset has been normalised prior to registration process.

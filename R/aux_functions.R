@@ -1,7 +1,6 @@
 #' Get BIC score from registering data - as part of optimisation
 #'
-#' @return
-#' @export
+#' @noRd
 get_BIC_from_registering_data <- function(input_df,
                                           stretches,
                                           shifts,
@@ -17,12 +16,12 @@ get_BIC_from_registering_data <- function(input_df,
   # Validate parameters
   start_timepoint <- match.arg(start_timepoint)
 
-  # # Suppress "no visible binding for global variable" note
-  # accession <- NULL
-  # timepoint <- NULL
-  # sc.expression_value <- NULL
-  # expression_value <- NULL
-  # locus_name <- NULL
+  # Suppress "no visible binding for global variable" note
+  accession <- NULL
+  timepoint <- NULL
+  sc.expression_value <- NULL
+  expression_value <- NULL
+  locus_name <- NULL
 
   # Make sure the data are data.tables
   all_data_df <- data.table::as.data.table(input_df)

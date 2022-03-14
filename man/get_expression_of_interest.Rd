@@ -18,11 +18,11 @@ get_expression_of_interest(
 )
 }
 \arguments{
-\item{data_ref}{File name in working directory, path to file of reference data.}
+\item{data_ref}{Data frame of reference data.}
 
-\item{data_to_transform}{File name in working directory, path to file of data to transform.}
+\item{data_to_transform}{Data frame of data to transform.}
 
-\item{id_table}{File name in working directory, path to file of ID table connecting both reference data and data.}
+\item{id_table}{Data frame of ID table connecting both reference data and data to transform.}
 
 \item{lookup_col_ref_and_id_table}{Column names shared by both reference data and ID table.}
 

@@ -3,10 +3,10 @@
 #' @description
 #' `scale_and_register_data()` is a function to register expression profiles a user wish to compare. This includes an option to scale data before registration, find and calculate score of optimal shifts and stretches, as well as apply the best shifts and stretches.
 #'
-#' @param input_df Input data frame contains all replicates of gene expression in each genotype at each time point.
+#' @param input_df Input data frame containing all replicates of gene expression in each genotype at each time point.
 #' @param stretches Candidate registration stretch factors to apply to data to transform.
 #' @param shifts Candidate registration shift values to apply to data to transform.
-#' @param min_num_overlapping_points Number of minimum overlapping time points.  Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
+#' @param min_num_overlapping_points Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
 #' @param initial_rescale Scaling gene expression prior to registration if \code{TRUE}.
 #' @param do_rescale Scaling gene expression using only overlapping time points points during registration.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
@@ -443,7 +443,6 @@ impute_transformed_exp_values <- function(shifted_mean_df,
   # The imputed transformed data times going to estimate gene expression for
   imputed_timepoints <- round(seq(min(shifted_mean_df$shifted_time), max(shifted_mean_df$shifted_time)))
 
-  # browser()
   out_list <- list()
   out_list <- c(out_list, list(shifted_mean_df[shifted_mean_df$accession == accession_data_ref]))
 

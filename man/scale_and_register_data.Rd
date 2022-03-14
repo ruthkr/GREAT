@@ -20,13 +20,13 @@ scale_and_register_data(
 )
 }
 \arguments{
-\item{input_df}{Input data frame contains all replicates of gene expression in each genotype at each time point.}
+\item{input_df}{Input data frame containing all replicates of gene expression in each genotype at each time point.}
 
 \item{stretches}{Candidate registration stretch factors to apply to data to transform.}
 
 \item{shifts}{Candidate registration shift values to apply to data to transform.}
 
-\item{min_num_overlapping_points}{Number of minimum overlapping time points.  Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.}
+\item{min_num_overlapping_points}{Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.}
 
 \item{initial_rescale}{Scaling gene expression prior to registration if \code{TRUE}.}
 

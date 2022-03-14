@@ -14,11 +14,11 @@ calculate_between_sample_distance(
 )
 }
 \arguments{
-\item{mean_df}{Input data frame contains the mean gene expression of each gene in each genotype at each time point.}
+\item{mean_df}{Input data frame containing the mean gene expression of each gene in each genotype at each time point.}
 
 \item{mean_df_sc}{Input data frame which is identical to \code{mean_df}, with additional column \code{sc.expression_value} which is scaled of expression values.}
 
-\item{imputed_mean_df}{Input data frame contains registered.}
+\item{imputed_mean_df}{Input data frame containing registered.}
 
 \item{gene_col}{Column name of gene accession, default is \code{locus_name}.}
 

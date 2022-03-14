@@ -1,8 +1,8 @@
 #' Calculate distance between sample data before and after registration
 #'
-#' @param mean_df Input data frame contains the mean gene expression of each gene in each genotype at each time point.
+#' @param mean_df Input data frame containing the mean gene expression of each gene in each genotype at each time point.
 #' @param mean_df_sc Input data frame which is identical to `mean_df`, with additional column `sc.expression_value` which is scaled of expression values.
-#' @param imputed_mean_df Input data frame contains registered.
+#' @param imputed_mean_df Input data frame containing registered.
 #' @param gene_col Column name of gene accession, default is \code{locus_name}.
 #' @param compare_ref_vs_transform If \code{TRUE}, the default, only comparison between reference data and data to transform is considered.
 #' @param accession_data_ref Accession name of reference data.

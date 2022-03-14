@@ -82,7 +82,7 @@ match_names <- function(x, lookup) {
 #' @description
 #' `get_approximate_stretch()` is a function to get a stretch factor estimation given input data. This function will take the time point ranges of both reference and query data and compare them to estimate the stretch factor.
 #'
-#' @param input_df Input data frame contains all replicates of gene expression in each genotype at each time point.
+#' @param input_df Input data frame containing all replicates of gene expression in each genotype at each time point.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
 #'

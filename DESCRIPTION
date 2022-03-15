@@ -22,20 +22,15 @@ Depends:
     R (>= 3.5.0)
 Imports: 
     cli,
-    cowplot,
     data.table,
     dplyr,
     ggplot2,
-    ggpubr,
-    ggrepel,
     optimization,
     magrittr,
     rlang,
-    Rtsne,
     scales,
     stats,
-    stringr,
-    viridis
+    stringr
 Suggests: 
     knitr,
     rmarkdown,

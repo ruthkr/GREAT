@@ -152,7 +152,6 @@ plot_heatmap <- function(sample_dist_df, title = NULL, axis_fontsize = NULL, sam
   sample_dist_df$x_sample <- factor(sample_dist_df$x_sample, levels = unique(sort(sample_dist_df$x_sample)))
   sample_dist_df$y_sample <- factor(sample_dist_df$y_sample, levels = unique(sort(sample_dist_df$y_sample)))
 
-
   p <- ggplot2::ggplot(sample_dist_df) +
     ggplot2::aes(
       x = .data$x_sample,
@@ -175,7 +174,7 @@ plot_heatmap <- function(sample_dist_df, title = NULL, axis_fontsize = NULL, sam
     ggplot2::guides(
       fill = ggplot2::guide_colorbar(label.position = "top")
     ) +
-    viridis::scale_fill_viridis() +
+    ggplot2::scale_fill_viridis_c() +
     ggplot2::labs(
       title = title,
       x = "",

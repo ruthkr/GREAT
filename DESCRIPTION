@@ -30,7 +30,8 @@ Imports:
     rlang,
     scales,
     stats,
-    stringr
+    stringr,
+    purrr
 Suggests: 
     knitr,
     rmarkdown,

@@ -57,23 +57,30 @@ get_boundary_box <- function(input_df, accession_data_to_transform, accession_da
 #' Optimise registration parameters with Simulated Annealing
 #'
 #' @param input_df TODO: Input data frame containing all replicates of gene expression in each genotype at each time point.
+#' @param initial_guess Optional initial guess for the Simulated Annealing. Automatic otherwise.
 #' @param initial_rescale Scaling gene expression prior to registration if \code{TRUE}.
 #' @param do_rescale Scaling gene expression using only overlapping time points points during registration.
 #' @param min_num_overlapping_points Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
+#' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
 #' @param num_iterations Maximum number of iterations of the algorithm. Default is 100.
+#' @param boundary_coverage Coverage factor of the boundary box. Default is 1.
 #'
 #' @return List of results. TODO.
 #' @export
-optimise_registration_params <- function(input_df, initial_guess = NA, initial_rescale = TRUE, do_rescale = FALSE,
-                                         min_num_overlapping_points = 4, expression_value_threshold = 5,
-                                         accession_data_to_transform, accession_data_ref,
-                                         num_iterations = 100, boundary_coverage = 1) {
+optimise_registration_params <- function(input_df,
+                                         initial_guess = NA,
+                                         initial_rescale = FALSE,
+                                         do_rescale = TRUE,
+                                         min_num_overlapping_points = 4,
+                                         expression_value_threshold = 5,
+                                         accession_data_to_transform,
+                                         accession_data_ref,
+                                         num_iterations = 100,
+                                         boundary_coverage = 1) {
   # Function to optimise
-  BIC_diff <- function(x, input_df, min_num_overlapping_points,
-                       initial_rescale, do_rescale,
-                       accession_data_to_transform, accession_data_ref) {
+  BIC_diff <- function(x) {
     stretch <- x[1]
     shift <- x[2]
 
@@ -94,7 +101,6 @@ optimise_registration_params <- function(input_df, initial_guess = NA, initial_r
           suppressMessages() %>%
           suppressWarnings()
 
-        message(stretch, " ", shift, " ", BIC)
         return(BIC)
       },
       error = function(error_message) {
@@ -127,12 +133,12 @@ optimise_registration_params <- function(input_df, initial_guess = NA, initial_r
   shift_lower <- boundary_box$shift_lower
   shift_upper <- boundary_box$shift_upper
 
-  message("Stretch: ", round(stretch_init, 2), " in [", stretch_lower, ", ", stretch_upper, "]")
-  message("Shift: ", shift_init, " in [", shift_lower, ", ", shift_upper, "]")
+  cli::cli_alert_info("Stretch: { round(stretch_init, 2) } in [{ stretch_lower }, { stretch_upper }]")
+  cli::cli_alert_info("Shift: { round(shift_init, 2) } in [{ shift_lower }, { shift_upper }]")
 
   # Perform SA using {optimization}
   optim_sa_res <- optimization::optim_sa(
-    fun = function(x) BIC_diff(x, input_df, min_num_overlapping_points, initial_rescale, do_rescale, accession_data_to_transform, accession_data_ref),
+    fun = BIC_diff,
     start = c(stretch_init, shift_init),
     trace = TRUE,
     lower = c(stretch_lower, shift_lower),
@@ -148,18 +154,26 @@ optimise_registration_params <- function(input_df, initial_guess = NA, initial_r
 
   # Parse results
   result_df <- data.frame(
-    stretch = optim_sa_res$start[1],
-    shift = optim_sa_res$start[2],
-    stretch_opt = round(optim_sa_res$par[1], 3),
-    shift_opt = round(optim_sa_res$par[2], 3),
-    value = optim_sa_res$function_value,
+    stretch = round(optim_sa_res$par[1], 3),
+    shift = round(optim_sa_res$par[2], 3),
+    BIC_diff = optim_sa_res$function_value,
     is_registered = optim_sa_res$function_value < 0
   )
 
+  trace_df <- optim_sa_res$trace %>%
+    as.data.frame() %>%
+    dplyr::select(
+      stretch = x_1,
+      shift = x_2,
+      BIC_diff = loss
+    ) %>%
+    dplyr::mutate(is_registered = BIC_diff < 0) %>%
+    dplyr::filter(is_registered) %>%
+    dplyr::distinct()
+
   results_list <- list(
-    result_df = result_df,
-    optim_res = optim_sa_res,
-    boundary_box = boundary_box
+    optimum_params_df = result_df,
+    candidate_params_df = trace_df
   )
 
   return(results_list)

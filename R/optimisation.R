@@ -58,6 +58,7 @@ get_boundary_box <- function(input_df, accession_data_to_transform, accession_da
 
 #' Optimise registration parameters with Simulated Annealing for single gene
 #' @noRd
+#' @importFrom rlang .data
 optimise_registration_params_single_gene <- function(input_df,
                                                      initial_guess = NA,
                                                      initial_rescale = FALSE,
@@ -157,15 +158,15 @@ optimise_registration_params_single_gene <- function(input_df,
     as.data.frame() %>%
     dplyr::mutate(
       locus_name = locus_name,
-      is_registered = loss < 0
+      is_registered = .data$loss < 0
     ) %>%
-    dplyr::filter(is_registered) %>%
+    dplyr::filter(.data$is_registered) %>%
     dplyr::select(
-      locus_name,
-      stretch = x_1,
-      shift = x_2,
-      BIC_diff = loss,
-      is_registered
+      .data$locus_name,
+      stretch = .data$x_1,
+      shift = .data$x_2,
+      BIC_diff = .data$loss,
+      .data$is_registered
     ) %>%
     dplyr::distinct()
 
@@ -192,6 +193,7 @@ optimise_registration_params_single_gene <- function(input_df,
 #'
 #' @return List of optimum registration parameters, \code{optimum_params_df}, and other candidate registration parameters, \code{candidate_params_df} for all genes.
 #' @export
+#' @importFrom rlang .data
 optimise_registration_params <- function(input_df,
                                          genes = NULL,
                                          initial_rescale = FALSE,
@@ -212,7 +214,7 @@ optimise_registration_params <- function(input_df,
     purrr::map(
       function(gene) {
         curr_df <- input_df %>%
-          dplyr::filter(locus_name == gene)
+          dplyr::filter(.data$locus_name == gene)
 
         opt_res <- optimise_registration_params_single_gene(
           input_df = curr_df,
@@ -232,17 +234,17 @@ optimise_registration_params <- function(input_df,
     )
 
   # Parse raw results
-  optimum_params_df <- opt_results_bo %>%
+  optimum_params_reduced <- raw_results %>%
     purrr::map(~ purrr::pluck(.x, "optimum_params_df")) %>%
     purrr::reduce(dplyr::bind_rows)
 
-  candidate_params_df <- opt_results_bo %>%
+  candidate_params_reduced <- raw_results %>%
     purrr::map(~ purrr::pluck(.x, "candidate_params_df")) %>%
     purrr::reduce(dplyr::bind_rows)
 
   results_list <- list(
-    optimum_params_df = result_df,
-    candidate_params_df = trace_df
+    optimum_params_df = optimum_params_reduced,
+    candidate_params_df = candidate_params_reduced
   )
 
   return(results_list)

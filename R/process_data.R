@@ -52,15 +52,14 @@ scale_and_register_data <- function(input_df,
                                     stretches,
                                     shifts,
                                     min_num_overlapping_points,
-                                    initial_rescale,
-                                    do_rescale,
+                                    initial_rescale = FALSE,
+                                    do_rescale = TRUE,
                                     accession_data_to_transform,
                                     accession_data_ref,
                                     start_timepoint = c("reference", "transform", "zero"),
                                     expression_value_threshold = 5,
                                     is_data_normalised = FALSE,
-                                    optimise_shift_extreme = FALSE
-                                    ) {
+                                    optimise_shift_extreme = FALSE) {
   # Validate parameters
   start_timepoint <- match.arg(start_timepoint)
 

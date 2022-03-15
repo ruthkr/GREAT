@@ -87,6 +87,12 @@ calculate_all_model_comparison_stats <- function(all_data_df,
 
 #' Register all expression over time using optimal shift found
 #'
+#' @param data
+#' @param best_shifts
+#' @param accession_data_to_transform Accession name of data which will be transformed.
+#' @param accession_data_ref Accession name of reference data.
+#' @param time_to_add
+#'
 #' @export
 apply_best_shift <- function(data,
                              best_shifts,

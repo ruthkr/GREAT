@@ -14,8 +14,10 @@ get_boundary_box <- function(input_df, accession_data_to_transform, accession_da
   stretch_upper <- 2 * ceiling(stretch_init) - stretch_lower
 
   # Shift limits
+  all_data_df <- data.table::as.data.table(input_df)
+
   mean_df <- get_mean_data(
-    exp = input_df,
+    exp = all_data_df,
     expression_value_threshold = expression_value_threshold,
     accession_data_to_transform = accession_data_to_transform,
     is_data_normalised = FALSE
@@ -38,7 +40,7 @@ get_boundary_box <- function(input_df, accession_data_to_transform, accession_da
     shift_extreme = 1000,
     accession_data_to_transform = accession_data_to_transform,
     accession_data_ref = accession_data_ref
-  )  %>%
+  ) %>%
     .[[1]]
 
   # Results object
@@ -54,31 +56,18 @@ get_boundary_box <- function(input_df, accession_data_to_transform, accession_da
   return(results_list)
 }
 
-#' Optimise registration parameters with Simulated Annealing
-#'
-#' @param input_df TODO: Input data frame containing all replicates of gene expression in each genotype at each time point.
-#' @param initial_guess Optional initial guess for the Simulated Annealing. Automatic otherwise.
-#' @param initial_rescale Scaling gene expression prior to registration if \code{TRUE}.
-#' @param do_rescale Scaling gene expression using only overlapping time points points during registration.
-#' @param min_num_overlapping_points Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
-#' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
-#' @param accession_data_to_transform Accession name of data which will be transformed.
-#' @param accession_data_ref Accession name of reference data.
-#' @param num_iterations Maximum number of iterations of the algorithm. Default is 100.
-#' @param boundary_coverage Coverage factor of the boundary box. Default is 1.
-#'
-#' @return List of results. TODO.
-#' @export
-optimise_registration_params <- function(input_df,
-                                         initial_guess = NA,
-                                         initial_rescale = FALSE,
-                                         do_rescale = TRUE,
-                                         min_num_overlapping_points = 4,
-                                         expression_value_threshold = 5,
-                                         accession_data_to_transform,
-                                         accession_data_ref,
-                                         num_iterations = 100,
-                                         boundary_coverage = 1) {
+#' Optimise registration parameters with Simulated Annealing for single gene
+#' @noRd
+optimise_registration_params_single_gene <- function(input_df,
+                                                     initial_guess = NA,
+                                                     initial_rescale = FALSE,
+                                                     do_rescale = TRUE,
+                                                     min_num_overlapping_points = 4,
+                                                     expression_value_threshold = 5,
+                                                     accession_data_to_transform,
+                                                     accession_data_ref,
+                                                     num_iterations = 100,
+                                                     boundary_coverage = 1) {
   # Function to optimise
   BIC_diff <- function(x) {
     stretch <- x[1]
@@ -119,9 +108,10 @@ optimise_registration_params <- function(input_df,
     min_num_overlapping_points,
     expression_value_threshold,
     boundary_coverage
-  )
+  ) %>%
+    suppressMessages()
 
-  if (is.na(initial_guess)) {
+  if (any(is.na(initial_guess))) {
     stretch_init <- boundary_box$stretch_init
     shift_init <- boundary_box$shift_init
   } else {
@@ -153,7 +143,10 @@ optimise_registration_params <- function(input_df,
   )
 
   # Parse results
+  locus_name <- unique(input_df$locus_name)
+
   result_df <- data.frame(
+    locus_name = locus_name,
     stretch = round(optim_sa_res$par[1], 3),
     shift = round(optim_sa_res$par[2], 3),
     BIC_diff = optim_sa_res$function_value,
@@ -162,14 +155,90 @@ optimise_registration_params <- function(input_df,
 
   trace_df <- optim_sa_res$trace %>%
     as.data.frame() %>%
+    dplyr::mutate(
+      locus_name = locus_name,
+      is_registered = loss < 0
+    ) %>%
+    dplyr::filter(is_registered) %>%
     dplyr::select(
+      locus_name,
       stretch = x_1,
       shift = x_2,
-      BIC_diff = loss
+      BIC_diff = loss,
+      is_registered
     ) %>%
-    dplyr::mutate(is_registered = BIC_diff < 0) %>%
-    dplyr::filter(is_registered) %>%
     dplyr::distinct()
+
+  results_list <- list(
+    optimum_params_df = result_df,
+    candidate_params_df = trace_df
+  )
+
+  return(results_list)
+}
+
+#' Optimise registration parameters with Simulated Annealing
+#'
+#' @param input_df Input data frame containing all replicates of gene expression in each genotype at each time point.
+#' @param genes List of genes to optimise.
+#' @param initial_rescale Scaling gene expression prior to registration if \code{TRUE}.
+#' @param do_rescale Scaling gene expression using only overlapping time points points during registration.
+#' @param min_num_overlapping_points Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
+#' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
+#' @param accession_data_to_transform Accession name of data which will be transformed.
+#' @param accession_data_ref Accession name of reference data.
+#' @param num_iterations Maximum number of iterations of the algorithm. Default is 100.
+#' @param boundary_coverage Coverage factor of the boundary box. Default is 1.
+#'
+#' @return List of optimum registration parameters, \code{optimum_params_df}, and other candidate registration parameters, \code{candidate_params_df} for all genes.
+#' @export
+optimise_registration_params <- function(input_df,
+                                         genes = NULL,
+                                         initial_rescale = FALSE,
+                                         do_rescale = TRUE,
+                                         min_num_overlapping_points = 4,
+                                         expression_value_threshold = 5,
+                                         accession_data_to_transform,
+                                         accession_data_ref,
+                                         num_iterations = 100,
+                                         boundary_coverage = 1) {
+  # Validate genes
+  if (is.null(genes)) {
+    genes <- unique(input_df$locus_name)
+  }
+
+  # Apply optimise_registration_params_single_gene() over all genes
+  raw_results <- genes %>%
+    purrr::map(
+      function(gene) {
+        curr_df <- input_df %>%
+          dplyr::filter(locus_name == gene)
+
+        opt_res <- optimise_registration_params_single_gene(
+          input_df = curr_df,
+          initial_guess = NA,
+          initial_rescale,
+          do_rescale,
+          min_num_overlapping_points,
+          expression_value_threshold,
+          accession_data_to_transform,
+          accession_data_ref,
+          num_iterations,
+          boundary_coverage
+        )
+
+        return(opt_res)
+      }
+    )
+
+  # Parse raw results
+  optimum_params_df <- opt_results_bo %>%
+    purrr::map(~ purrr::pluck(.x, "optimum_params_df")) %>%
+    purrr::reduce(dplyr::bind_rows)
+
+  candidate_params_df <- opt_results_bo %>%
+    purrr::map(~ purrr::pluck(.x, "candidate_params_df")) %>%
+    purrr::reduce(dplyr::bind_rows)
 
   results_list <- list(
     optimum_params_df = result_df,

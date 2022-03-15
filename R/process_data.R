@@ -59,7 +59,8 @@ scale_and_register_data <- function(input_df,
                                     start_timepoint = c("reference", "transform", "zero"),
                                     expression_value_threshold = 5,
                                     is_data_normalised = FALSE,
-                                    optimise_shift_extreme = FALSE) {
+                                    optimise_shift_extreme = FALSE
+                                    ) {
   # Validate parameters
   start_timepoint <- match.arg(start_timepoint)
 
@@ -117,7 +118,7 @@ scale_and_register_data <- function(input_df,
   cli::cli_h1("Information before registration")
   cli::cli_alert_info("Max value of expression_value of all_data_df: {cli::col_cyan(round(max(all_data_df$expression_value), 2))}")
 
-  # Calculate the best registration. Returns all tried registrations, best stretch and shift combo,and AIC/BIC stats for comparison of best registration model to separate models for expression ofeach gene in Ro18 and Col0
+  # Calculate the best registration. Returns all tried registrations, best stretch and shift combo, and AIC/BIC stats for comparison of best registration model to separate models for expression of each gene in reference data and data to transform
   cli::cli_h1("Analysing models for all stretch and shift factor")
 
   L <- get_best_stretch_and_shift(
@@ -137,8 +138,12 @@ scale_and_register_data <- function(input_df,
   best_shifts <- L[["best_shifts"]]
   model_comparison_dt <- L[["model_comparison_dt"]]
 
-  # Add columns which flags which BIC and AIC values are better
+  # Add columns which flags which BIC values are better
+  # BIC_registered_is_better: values compared to before transformation
   model_comparison_dt$BIC_registered_is_better <- (model_comparison_dt$registered.BIC < model_comparison_dt$separate.BIC)
+
+  # BIC_registered_is_better_non_after: values compared to before transformation
+  # model_comparison_dt$BIC_registered_is_better_non_after <- (model_comparison_dt$registered.BIC < model_comparison_dt$separate.BIC.after)
   # model_comparison_dt$AIC_registered_is_better <- (model_comparison_dt$registered.AIC < model_comparison_dt$separate.AIC)
   # model_comparison_dt$ABIC_registered_is_better <- (model_comparison_dt$BIC_registered_is_better & model_comparison_dt$AIC_registered_is_better)
 
@@ -177,6 +182,7 @@ scale_and_register_data <- function(input_df,
     "mean_df" = mean_df,
     "mean_df_sc" = mean_df_sc,
     "to_shift_df" = to_shift_df,
+    "best_shifts" = best_shifts,
     "shifted_mean_df" = shifted_mean_df,
     "imputed_mean_df" = imputed_mean_df,
     "all_shifts_df" = all_shifts,
@@ -281,32 +287,47 @@ get_best_stretch_and_shift <- function(to_shift_df,
       optimise_shift_extreme
     )
 
-    all_shifts <- unique(all_shifts) # ensure no duplicated rows
+    # Ensure no duplicated rows
+    all_shifts <- unique(all_shifts)
 
-    # Cut down to single best shift for each gene
-    all_shifts[, is_best := get_best_result(.SD), by = .(gene)]
-    best_shifts <- all_shifts[is_best == TRUE, ]
-    all_shifts$is_best <- NULL
+    optimise <- FALSE
+    if (optimise) {
+      # Focus on top n best-score candidates
+      candidate_shifts <- all_shifts # ...
 
-    if (nrow(best_shifts) != length(unique(all_data_df$locus_name))) {
-      stop("get_best_stretch_and_shift(): got non-unique best shifts in best_shifts")
+      # Optimise over the subspace with {finetune}
+      # https://www.tmwr.org/iterative-search.html#simulated-annealing
+      # https://www.youtube.com/watch?v=qEeF-ErtUAU
+
+      # Return best candidate
+      best_shifts <- NULL
+    } else {
+      # Cut down to single best shift for each gene (Alex's original logic)
+      all_shifts[, is_best := get_best_result(.SD), by = .(gene)]
+      best_shifts <- all_shifts[is_best == TRUE, ]
+      all_shifts$is_best <- NULL
+
+
+      if (nrow(best_shifts) != length(unique(all_data_df$locus_name))) {
+        stop("get_best_stretch_and_shift(): got non-unique best shifts in best_shifts")
+      }
+
+      # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the gene's expression separately in data to transform and reference data
+      model_comparison_dt <- calculate_all_model_comparison_stats(
+        all_data_df,
+        best_shifts,
+        accession_data_to_transform,
+        accession_data_ref,
+        time_to_add
+      )
+
+      # Add info on the stretch and shift applied
+      model_comparison_dt <- merge(
+        model_comparison_dt,
+        best_shifts[, c("gene", "stretch", "shift", "score"), ],
+        by = "gene"
+      )
     }
-
-    # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the gene's expression separately in data to transform and reference data
-    model_comparison_dt <- calculate_all_model_comparison_stats(
-      all_data_df,
-      best_shifts,
-      accession_data_to_transform,
-      accession_data_ref,
-      time_to_add
-    )
-
-    # Add info on the stretch and shift applied
-    model_comparison_dt <- merge(
-      model_comparison_dt,
-      best_shifts[, c("gene", "stretch", "shift"), ],
-      by = "gene"
-    )
 
     # Record the results for the current stretch factor
     all_all_shifts[[i]] <- all_shifts
@@ -327,7 +348,9 @@ get_best_stretch_and_shift <- function(to_shift_df,
     dplyr::rowwise() %>%
     dplyr::mutate(
       dplyr::across(
-        .cols = c(.data$registered.BIC, .data$registered.AIC, .data$separate.BIC, .data$separate.AIC),
+        # .cols = c(.data$registered.BIC, .data$registered.AIC, .data$separate.BIC, .data$separate.AIC),
+        .cols = c(.data$registered.BIC, .data$separate.BIC),
+        # .cols = c(.data$registered.BIC, .data$separate.BIC.before, .data$separate.BIC.after),
         .fns = function(x) {
           if (!is.finite(x)) {
             x <- 9999 * sign(x)
@@ -341,6 +364,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
 
   # Get the best registration applied (best stretch, and best shift) for each gene, picking by BIC alone will favour fewer overlapping (considered) data points.
   # Pick best in order to maximise how much better register.BIC is than separate.BIC
+  # all_model_comparison_dt$delta.BIC <- all_model_comparison_dt$registered.BIC - all_model_comparison_dt$separate.BIC
   all_model_comparison_dt$delta.BIC <- all_model_comparison_dt$registered.BIC - all_model_comparison_dt$separate.BIC
 
   # Best is one for which registered.BIC is as small as possible compared to separate.BIC

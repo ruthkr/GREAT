@@ -6,12 +6,15 @@
 \usage{
 optimise_registration_params(
   input_df,
+  initial_guess = NA,
   initial_rescale = TRUE,
   do_rescale = FALSE,
   min_num_overlapping_points = 4,
+  expression_value_threshold = 5,
   accession_data_to_transform,
   accession_data_ref,
-  num_iterations = 100
+  num_iterations = 100,
+  boundary_coverage = 1
 )
 }
 \arguments{

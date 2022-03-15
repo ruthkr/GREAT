@@ -6,9 +6,9 @@
 \usage{
 optimise_registration_params(
   input_df,
-  initial_guess = NA,
-  initial_rescale = TRUE,
-  do_rescale = FALSE,
+  genes = NULL,
+  initial_rescale = FALSE,
+  do_rescale = TRUE,
   min_num_overlapping_points = 4,
   expression_value_threshold = 5,
   accession_data_to_transform,
@@ -18,7 +18,9 @@ optimise_registration_params(
 )
 }
 \arguments{
-\item{input_df}{TODO: Input data frame containing all replicates of gene expression in each genotype at each time point.}
+\item{input_df}{Input data frame containing all replicates of gene expression in each genotype at each time point.}
+
+\item{genes}{List of genes to optimise.}
 
 \item{initial_rescale}{Scaling gene expression prior to registration if \code{TRUE}.}
 
@@ -26,14 +28,18 @@ optimise_registration_params(
 
 \item{min_num_overlapping_points}{Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.}
 
+\item{expression_value_threshold}{Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.}
+
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
 \item{accession_data_ref}{Accession name of reference data.}
 
 \item{num_iterations}{Maximum number of iterations of the algorithm. Default is 100.}
+
+\item{boundary_coverage}{Coverage factor of the boundary box. Default is 1.}
 }
 \value{
-List of results. TODO.
+List of optimum registration parameters, \code{optimum_params_df}, and other candidate registration parameters, \code{candidate_params_df} for all genes.
 }
 \description{
 Optimise registration parameters with Simulated Annealing

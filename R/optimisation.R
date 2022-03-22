@@ -69,7 +69,7 @@ optimise_registration_params_single_gene <- function(input_df,
                                                      accession_data_to_transform,
                                                      accession_data_ref,
                                                      start_timepoint,
-                                                     expression_value_threshold,
+                                                     is_data_normalised,
                                                      num_iterations = 100,
                                                      boundary_coverage = 1) {
   # Function to optimise
@@ -84,12 +84,13 @@ optimise_registration_params_single_gene <- function(input_df,
           stretches = stretch,
           shifts = shift,
           min_num_overlapping_points = min_num_overlapping_points,
+          expression_value_threshold = expression_value_threshold,
           initial_rescale = initial_rescale,
           do_rescale = do_rescale,
           accession_data_to_transform = accession_data_to_transform,
           accession_data_ref = accession_data_ref,
           start_timepoint = start_timepoint,
-          expression_value_threshold = expression_value_threshold,
+          is_data_normalised = is_data_normalised,
           optimise_shift_extreme = FALSE
         ) %>%
           suppressMessages() %>%
@@ -207,7 +208,7 @@ optimise_registration_params <- function(input_df,
                                          accession_data_to_transform,
                                          accession_data_ref,
                                          start_timepoint,
-                                         expression_value_threshold,
+                                         is_data_normalised,
                                          num_iterations = 100,
                                          boundary_coverage = 1) {
   # Validate genes
@@ -232,7 +233,7 @@ optimise_registration_params <- function(input_df,
           accession_data_to_transform,
           accession_data_ref,
           start_timepoint,
-          expression_value_threshold,
+          is_data_normalised,
           num_iterations,
           boundary_coverage
         )

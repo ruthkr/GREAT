@@ -153,7 +153,7 @@ test_that("all functions called in scale_and_register_data work", {
   to_shift_df <- data.table::copy(mean_df)
 
   # Calculate the best registration. Returns all tried registrations, best stretch and shift combo,
-  # and AIC/BIC stats for comparison of best registration model to separate models for expression of
+  # and BIC stats for comparison of best registration model to separate models for expression of
   # each gene in Ro18 and Col0
   L <- get_best_stretch_and_shift(
     to_shift_df,
@@ -178,11 +178,6 @@ test_that("all functions called in scale_and_register_data work", {
   expect_equal(class(all_shifts)[[1]], "data.table")
   expect_equal(class(best_shifts)[[1]], "data.table")
   expect_equal(class(model_comparison_dt)[[1]], "data.table")
-
-  # Add columns which flags which BIC and AIC values are better
-  model_comparison_dt$BIC_registered_is_better <- (model_comparison_dt$registered.BIC < model_comparison_dt$separate.BIC)
-  model_comparison_dt$AIC_registered_is_better <- (model_comparison_dt$registered.AIC < model_comparison_dt$separate.AIC)
-  model_comparison_dt$ABIC_registered_is_better <- (model_comparison_dt$BIC_registered_is_better & model_comparison_dt$AIC_registered_is_better)
 
   # Report model comparison results
   # Get the best-shifted and stretched mean gene expression, only to genes which registration is better than

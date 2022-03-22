@@ -10,8 +10,9 @@ get_boundary_box <- function(input_df, accession_data_to_transform, accession_da
     accession_data_ref = accession_data_ref
   )
 
-  stretch_lower <- 1
-  stretch_upper <- 2 * ceiling(stretch_init) - stretch_lower
+  stretch_lower <- 0.5 * stretch_init
+  # stretch_upper <- 1.5 * ceiling(stretch_init) - stretch_lower
+  stretch_upper <- 1.5 * ceiling(stretch_init)
 
   # Shift limits
   all_data_df <- data.table::as.data.table(input_df)
@@ -67,6 +68,8 @@ optimise_registration_params_single_gene <- function(input_df,
                                                      expression_value_threshold = 5,
                                                      accession_data_to_transform,
                                                      accession_data_ref,
+                                                     start_timepoint,
+                                                     expression_value_threshold,
                                                      num_iterations = 100,
                                                      boundary_coverage = 1) {
   # Function to optimise
@@ -85,7 +88,8 @@ optimise_registration_params_single_gene <- function(input_df,
           do_rescale = do_rescale,
           accession_data_to_transform = accession_data_to_transform,
           accession_data_ref = accession_data_ref,
-          start_timepoint = "reference",
+          start_timepoint = start_timepoint,
+          expression_value_threshold = expression_value_threshold,
           optimise_shift_extreme = FALSE
         ) %>%
           suppressMessages() %>%
@@ -147,7 +151,7 @@ optimise_registration_params_single_gene <- function(input_df,
   locus_name <- unique(input_df$locus_name)
 
   result_df <- data.frame(
-    locus_name = locus_name,
+    gene = locus_name,
     stretch = round(optim_sa_res$par[1], 3),
     shift = round(optim_sa_res$par[2], 3),
     BIC_diff = optim_sa_res$function_value,
@@ -157,12 +161,12 @@ optimise_registration_params_single_gene <- function(input_df,
   trace_df <- optim_sa_res$trace %>%
     as.data.frame() %>%
     dplyr::mutate(
-      locus_name = locus_name,
+      gene = locus_name,
       is_registered = .data$loss < 0
     ) %>%
     dplyr::filter(.data$is_registered) %>%
     dplyr::select(
-      .data$locus_name,
+      .data$gene,
       stretch = .data$x_1,
       shift = .data$x_2,
       BIC_diff = .data$loss,
@@ -202,6 +206,8 @@ optimise_registration_params <- function(input_df,
                                          expression_value_threshold = 5,
                                          accession_data_to_transform,
                                          accession_data_ref,
+                                         start_timepoint,
+                                         expression_value_threshold,
                                          num_iterations = 100,
                                          boundary_coverage = 1) {
   # Validate genes
@@ -225,6 +231,8 @@ optimise_registration_params <- function(input_df,
           expression_value_threshold,
           accession_data_to_transform,
           accession_data_ref,
+          start_timepoint,
+          expression_value_threshold,
           num_iterations,
           boundary_coverage
         )

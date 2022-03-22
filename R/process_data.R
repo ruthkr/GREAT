@@ -258,44 +258,30 @@ get_best_stretch_and_shift <- function(to_shift_df,
     # Ensure no duplicated rows
     all_shifts <- unique(all_shifts)
 
-    optimise <- FALSE
-    if (optimise) {
-      # Focus on top n best-score candidates
-      candidate_shifts <- all_shifts # ...
+    # Cut down to single best shift for each gene (Alex's original logic)
+    all_shifts[, is_best := get_best_result(.SD), by = .(gene)]
+    best_shifts <- all_shifts[is_best == TRUE, ]
+    all_shifts$is_best <- NULL
 
-      # Optimise over the subspace with {finetune}
-      # https://www.tmwr.org/iterative-search.html#simulated-annealing
-      # https://www.youtube.com/watch?v=qEeF-ErtUAU
-
-      # Return best candidate
-      best_shifts <- NULL
-    } else {
-      # Cut down to single best shift for each gene (Alex's original logic)
-      all_shifts[, is_best := get_best_result(.SD), by = .(gene)]
-      best_shifts <- all_shifts[is_best == TRUE, ]
-      all_shifts$is_best <- NULL
-
-
-      if (nrow(best_shifts) != length(unique(all_data_df$locus_name))) {
-        stop("get_best_stretch_and_shift(): got non-unique best shifts in best_shifts")
-      }
-
-      # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the gene's expression separately in data to transform and reference data
-      model_comparison_dt <- calculate_all_model_comparison_stats(
-        all_data_df,
-        best_shifts,
-        accession_data_to_transform,
-        accession_data_ref,
-        time_to_add
-      )
-
-      # Add info on the stretch and shift applied
-      model_comparison_dt <- merge(
-        model_comparison_dt,
-        best_shifts[, c("gene", "stretch", "shift", "score"), ],
-        by = "gene"
-      )
+    if (nrow(best_shifts) != length(unique(all_data_df$locus_name))) {
+      stop("get_best_stretch_and_shift(): got non-unique best shifts in best_shifts")
     }
+
+    # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the gene's expression separately in data to transform and reference data
+    model_comparison_dt <- calculate_all_model_comparison_stats(
+      all_data_df,
+      best_shifts,
+      accession_data_to_transform,
+      accession_data_ref,
+      time_to_add
+    )
+
+    # Add info on the stretch and shift applied
+    model_comparison_dt <- merge(
+      model_comparison_dt,
+      best_shifts[, c("gene", "stretch", "shift", "score"), ],
+      by = "gene"
+    )
 
     # Record the results for the current stretch factor
     all_all_shifts[[i]] <- all_shifts

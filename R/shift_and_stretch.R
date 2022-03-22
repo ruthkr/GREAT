@@ -112,21 +112,13 @@ apply_best_shift <- function(data,
   # Normalise the expression data (If was normalised when calculating the expression data, is recorded in the _compared_mean, and _compared_sd columns. If no normalisation was carried out, then these should have values of 0 and 1. This was done using get_best_shift()).
   transform_was_not_normalised <- all(unique(best_shifts$data_transform_compared_mean) == 0)
   ref_was_not_normalised <- all(unique(best_shifts$data_ref_compared_mean) == 0)
-  # cli::cli_alert_info("T mean: {unique(best_shifts$data_transform_compared_mean)}")
-  # cli::cli_alert_info("R mean: {unique(best_shifts$data_ref_compared_mean)}")
   if (!transform_was_not_normalised | !ref_was_not_normalised) {
-    # cli::cli_alert_info("Applying apply_best_normalisation()...")
-    # cli::cli_alert_info("Expression value {accession_data_to_transform}: {paste(round(processed_data %>% dplyr::filter(accession == accession_data_to_transform) %>% dplyr::pull(expression_value), 1), collapse = ' ')}")
-    # cli::cli_alert_info("Expression value {accession_data_ref}: {paste(round(processed_data %>% dplyr::filter(accession == accession_data_ref) %>% dplyr::pull(expression_value), 1), collapse = ' ')}")
     processed_data <- apply_best_normalisation(
       data = processed_data,
       best_shifts,
       accession_data_to_transform,
       accession_data_ref
     )
-    # cli::cli_alert_info("Applied apply_best_normalisation()")
-    # cli::cli_alert_info("Expression value {accession_data_to_transform}: {paste(round(processed_data %>% dplyr::filter(accession == accession_data_to_transform) %>% dplyr::pull(expression_value), 1), collapse = ' ')}")
-    # cli::cli_alert_info("Expression value {accession_data_ref}: {paste(round(processed_data %>% dplyr::filter(accession == accession_data_ref) %>% dplyr::pull(expression_value), 1), collapse = ' ')}")
   } else {
     # If no scaling carried out DURING the registration step
     cli::cli_alert_warning("No normalisation was carried out DURING registration (though may have been, prior to the comparison)")

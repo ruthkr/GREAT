@@ -149,13 +149,10 @@ scale_and_register_data <- function(input_df,
 
   # Report model comparison results
   cli::cli_h1("Model comparison results")
-  # cli::cli_alert_info("AIC finds registration better than non-registration for: {cli::col_cyan(sum(model_comparison_dt$AIC_registered_is_better), '/', nrow(model_comparison_dt))}")
   cli::cli_alert_info("BIC finds registration better than non-registration for: {cli::col_cyan(sum(model_comparison_dt$BIC_registered_is_better), '/', nrow(model_comparison_dt))}")
-  # cli::cli_alert_info("AIC & BIC finds registration better than non-registration for: {cli::col_cyan(sum(model_comparison_dt$ABIC_registered_is_better), '/', nrow(model_comparison_dt))}")
 
   # Get the best-shifted and stretched mean gene expression, only to genes which registration is better than
   # separate models by BIC. Don't stretch out, or shift genes for which separate is better.
-
   cli::cli_h1("Applying the best-shifts and stretches to gene expression")
   shifted_mean_df <- apply_shift_to_registered_genes_only(
     to_shift_df,
@@ -167,7 +164,6 @@ scale_and_register_data <- function(input_df,
   )
 
   cli::cli_alert_info("Max value of expression_value: {cli::col_cyan(round(max(shifted_mean_df$expression_value), 2))}")
-
 
   # Impute transformed values at times == to the observed reference data points for each shifted transformed gene so can compare using heat maps.
   # Transformed curves are the ones that been shifted around. Linear impute values for these curves so that reference data samples can be compared to an transformed data point.

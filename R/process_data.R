@@ -70,49 +70,22 @@ scale_and_register_data <- function(input_df,
   expression_value <- NULL
   locus_name <- NULL
 
-  # Make sure the data are data.tables
-  all_data_df <- data.table::as.data.table(input_df)
-
-  mean_df <- get_mean_data(
-    exp = all_data_df,
-    expression_value_threshold = expression_value_threshold,
+  # Preprocess data
+  processed_data <- preprocess_data(
+    input_df = input_df,
+    initial_rescale = initial_rescale,
     accession_data_to_transform = accession_data_to_transform,
+    accession_data_ref = accession_data_ref,
+    start_timepoint = start_timepoint,
+    expression_value_threshold = expression_value_threshold,
     is_data_normalised = is_data_normalised
   )
 
-  # Parse start_timepoint
-  if (start_timepoint == "reference") {
-    time_to_add <- min(all_data_df[accession == accession_data_ref, timepoint])
-  } else if (start_timepoint == "transform") {
-    time_to_add <- min(all_data_df[accession == accession_data_to_transform, timepoint])
-  } else {
-    time_to_add <- 0
-  }
-
-  # Filter genes of original input data as in mean_df
-  all_data_df <- all_data_df[all_data_df$locus_name %in% unique(mean_df$locus_name)]
-  all_data_df <- subset(all_data_df, select = c("locus_name", "accession", "tissue", "timepoint", "expression_value", "group"))
-
-  # TODO: validate colnames
-  # Apply normalisation of expression for each gene across all timepoints
-  mean_df_sc <- data.table::copy(mean_df)
-
-  # Apply scaling
-  mean_df_sc[, sc.expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
-
-  # Apply scaling before registration (if initial_rescale == TRUE), otherwise using original data
-  if (initial_rescale == TRUE) {
-
-    # apply rescale to mean_df prior to registration
-    to_shift_df <- data.table::copy(mean_df_sc)
-    to_shift_df$expression_value <- to_shift_df$sc.expression_value
-    to_shift_df$sc.expression_value <- NULL
-
-    # apply THE SAME rescale to all_data_df prior to registration
-    all_data_df <- scale_all_rep_data(mean_df, all_data_df, "scale")
-  } else {
-    to_shift_df <- data.table::copy(mean_df)
-  }
+  all_data_df <- processed_data$all_data_df
+  mean_df <- processed_data$mean_df
+  mean_df_sc <- processed_data$mean_df_sc
+  to_shift_df <- processed_data$to_shift_df
+  time_to_add <- processed_data$time_to_add
 
   cli::cli_h1("Information before registration")
   cli::cli_alert_info("Max value of expression_value of all_data_df: {cli::col_cyan(round(max(all_data_df$expression_value), 2))}")
@@ -502,3 +475,66 @@ impute_transformed_exp_values <- function(shifted_mean_df,
 
   return(out_df)
 }
+
+#' @noRd
+preprocess_data <- function(input_df,
+                            initial_rescale,
+                            accession_data_to_transform,
+                            accession_data_ref,
+                            start_timepoint,
+                            expression_value_threshold,
+                            is_data_normalised) {
+  # Make sure the data are data.tables
+  all_data_df <- data.table::as.data.table(input_df)
+
+  mean_df <- get_mean_data(
+    exp = all_data_df,
+    expression_value_threshold = expression_value_threshold,
+    accession_data_to_transform = accession_data_to_transform,
+    is_data_normalised = is_data_normalised
+  )
+
+  # Parse start_timepoint
+  if (start_timepoint == "reference") {
+    time_to_add <- min(all_data_df[accession == accession_data_ref, timepoint])
+  } else if (start_timepoint == "transform") {
+    time_to_add <- min(all_data_df[accession == accession_data_to_transform, timepoint])
+  } else {
+    time_to_add <- 0
+  }
+
+  # Filter genes of original input data as in mean_df
+  all_data_df <- all_data_df[all_data_df$locus_name %in% unique(mean_df$locus_name)]
+  all_data_df <- subset(all_data_df, select = c("locus_name", "accession", "tissue", "timepoint", "expression_value", "group"))
+
+  # TODO: validate colnames
+  # Apply normalisation of expression for each gene across all timepoints
+  mean_df_sc <- data.table::copy(mean_df)
+
+  # Apply scaling
+  mean_df_sc[, sc.expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(locus_name, accession)]
+
+  # Apply scaling before registration (if initial_rescale == TRUE), otherwise using original data
+  if (initial_rescale == TRUE) {
+
+    # apply rescale to mean_df prior to registration
+    to_shift_df <- data.table::copy(mean_df_sc)
+    to_shift_df$expression_value <- to_shift_df$sc.expression_value
+    to_shift_df$sc.expression_value <- NULL
+
+    # apply THE SAME rescale to all_data_df prior to registration
+    all_data_df <- scale_all_rep_data(mean_df, all_data_df, "scale")
+  } else {
+    to_shift_df <- data.table::copy(mean_df)
+  }
+
+  # Results list
+  results_list <- list(
+    all_data_df = all_data_df,
+    mean_df = mean_df,
+    mean_df_sc = mean_df_sc,
+    to_shift_df = to_shift_df,
+    time_to_add = time_to_add
+  )
+
+  return(results_list)

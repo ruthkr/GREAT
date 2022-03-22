@@ -59,7 +59,8 @@ scale_and_register_data <- function(input_df,
                                     start_timepoint = c("reference", "transform", "zero"),
                                     expression_value_threshold = 5,
                                     is_data_normalised = FALSE,
-                                    optimise_shift_extreme = FALSE) {
+                                    optimise_shift_extreme = FALSE,
+                                    optimise_registration_parameters = FALSE) {
   # Validate parameters
   start_timepoint <- match.arg(start_timepoint)
 
@@ -87,56 +88,70 @@ scale_and_register_data <- function(input_df,
   to_shift_df <- processed_data$to_shift_df
   time_to_add <- processed_data$time_to_add
 
-  cli::cli_h1("Information before registration")
-  cli::cli_alert_info("Max value of expression_value of all_data_df: {cli::col_cyan(round(max(all_data_df$expression_value), 2))}")
+  if (!optimise_registration_parameters) {
+    # Proceed with original registration pipeline
+    cli::cli_h1("Information before registration")
+    cli::cli_alert_info("Max value of expression_value of all_data_df: {cli::col_cyan(round(max(all_data_df$expression_value), 2))}")
 
-  # Calculate the best registration. Returns all tried registrations, best stretch and shift combo, and AIC/BIC stats for comparison of best registration model to separate models for expression of each gene in reference data and data to transform
-  cli::cli_h1("Analysing models for all stretch and shift factor")
+    # Calculate the best registration. Returns all tried registrations, best stretch and shift combo, and AIC/BIC stats for comparison of best registration model to separate models for expression of each gene in reference data and data to transform
+    cli::cli_h1("Analysing models for all stretch and shift factor")
+    L <- get_best_stretch_and_shift(
+      to_shift_df,
+      all_data_df,
+      stretches,
+      shifts,
+      do_rescale,
+      min_num_overlapping_points,
+      accession_data_to_transform,
+      accession_data_ref,
+      time_to_add,
+      optimise_shift_extreme
+    )
 
-  L <- get_best_stretch_and_shift(
-    to_shift_df,
-    all_data_df,
-    stretches,
-    shifts,
-    do_rescale,
-    min_num_overlapping_points,
-    accession_data_to_transform,
-    accession_data_ref,
-    time_to_add,
-    optimise_shift_extreme
-  )
+    all_shifts <- L[["all_shifts"]]
+    best_shifts <- L[["best_shifts"]]
+    model_comparison_dt <- L[["model_comparison_dt"]]
 
-  all_shifts <- L[["all_shifts"]]
-  best_shifts <- L[["best_shifts"]]
-  model_comparison_dt <- L[["model_comparison_dt"]]
+    # Add columns which flags which BIC values are better
+    # BIC_registered_is_better: values compared to before transformation
+    model_comparison_dt$BIC_registered_is_better <- (model_comparison_dt$registered.BIC < model_comparison_dt$separate.BIC)
 
-  # Add columns which flags which BIC values are better
-  # BIC_registered_is_better: values compared to before transformation
-  model_comparison_dt$BIC_registered_is_better <- (model_comparison_dt$registered.BIC < model_comparison_dt$separate.BIC)
+    # Report model comparison results
+    cli::cli_h1("Model comparison results")
+    cli::cli_alert_info("BIC finds registration better than non-registration for: {cli::col_cyan(sum(model_comparison_dt$BIC_registered_is_better), '/', nrow(model_comparison_dt))}")
 
-  # BIC_registered_is_better_non_after: values compared to before transformation
-  # model_comparison_dt$BIC_registered_is_better_non_after <- (model_comparison_dt$registered.BIC < model_comparison_dt$separate.BIC.after)
-  # model_comparison_dt$AIC_registered_is_better <- (model_comparison_dt$registered.AIC < model_comparison_dt$separate.AIC)
-  # model_comparison_dt$ABIC_registered_is_better <- (model_comparison_dt$BIC_registered_is_better & model_comparison_dt$AIC_registered_is_better)
+    # Get the best-shifted and stretched mean gene expression, only to genes which registration is better
+    # than separate models by BIC. Don't stretch out, or shift genes for which separate is better.
+    cli::cli_h1("Applying the best-shifts and stretches to gene expression")
+    shifted_mean_df <- apply_shift_to_registered_genes_only(
+      to_shift_df,
+      best_shifts,
+      model_comparison_dt,
+      accession_data_to_transform,
+      accession_data_ref,
+      time_to_add
+    )
 
+    cli::cli_alert_info("Max value of expression_value: {cli::col_cyan(round(max(shifted_mean_df$expression_value), 2))}")
+  } else {
+    # Optimise registration parameters
+    cli::cli_h1("Starting optimisation")
 
-  # Report model comparison results
-  cli::cli_h1("Model comparison results")
-  cli::cli_alert_info("BIC finds registration better than non-registration for: {cli::col_cyan(sum(model_comparison_dt$BIC_registered_is_better), '/', nrow(model_comparison_dt))}")
-
-  # Get the best-shifted and stretched mean gene expression, only to genes which registration is better than
-  # separate models by BIC. Don't stretch out, or shift genes for which separate is better.
-  cli::cli_h1("Applying the best-shifts and stretches to gene expression")
-  shifted_mean_df <- apply_shift_to_registered_genes_only(
-    to_shift_df,
-    best_shifts,
-    model_comparison_dt,
-    accession_data_to_transform,
-    accession_data_ref,
-    time_to_add
-  )
-
-  cli::cli_alert_info("Max value of expression_value: {cli::col_cyan(round(max(shifted_mean_df$expression_value), 2))}")
+    optimised_parameters <- optimise_registration_params(
+      input_df = input_df,
+      genes = NULL,
+      initial_rescale = initial_rescale,
+      do_rescale = do_rescale,
+      min_num_overlapping_points = min_num_overlapping_points,
+      accession_data_to_transform = accession_data_to_transform,
+      accession_data_ref = accession_data_ref,
+      start_timepoint = start_timepoint,
+      expression_value_threshold = expression_value_threshold,
+      is_data_normalised = is_data_normalised,
+      num_iterations = 100,
+      boundary_coverage = 1
+    )
+  }
 
   # Impute transformed values at times == to the observed reference data points for each shifted transformed gene so can compare using heat maps.
   # Transformed curves are the ones that been shifted around. Linear impute values for these curves so that reference data samples can be compared to an transformed data point.
@@ -502,13 +517,12 @@ preprocess_data <- function(input_df,
 
   # Apply scaling before registration (if initial_rescale == TRUE), otherwise using original data
   if (initial_rescale == TRUE) {
-
-    # apply rescale to mean_df prior to registration
+    # Apply rescale to mean_df prior to registration
     to_shift_df <- data.table::copy(mean_df_sc)
     to_shift_df$expression_value <- to_shift_df$sc.expression_value
     to_shift_df$sc.expression_value <- NULL
 
-    # apply THE SAME rescale to all_data_df prior to registration
+    # Apply THE SAME rescale to all_data_df prior to registration
     all_data_df <- scale_all_rep_data(mean_df, all_data_df, "scale")
   } else {
     to_shift_df <- data.table::copy(mean_df)
@@ -524,3 +538,4 @@ preprocess_data <- function(input_df,
   )
 
   return(results_list)
+}

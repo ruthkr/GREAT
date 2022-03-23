@@ -16,7 +16,8 @@ scale_and_register_data(
   start_timepoint = c("reference", "transform", "zero"),
   expression_value_threshold = 5,
   is_data_normalised = FALSE,
-  optimise_shift_extreme = FALSE
+  optimise_shift_extreme = FALSE,
+  optimise_registration_parameters = FALSE
 )
 }
 \arguments{

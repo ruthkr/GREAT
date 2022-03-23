@@ -13,6 +13,8 @@ optimise_registration_params(
   expression_value_threshold = 5,
   accession_data_to_transform,
   accession_data_ref,
+  start_timepoint,
+  is_data_normalised,
   num_iterations = 100,
   boundary_coverage = 1
 )

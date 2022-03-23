@@ -260,7 +260,7 @@ optimise_registration_params <- function(input_df,
 }
 
 
-#' Calculate best shifts and stretches for each gene, also calculate AIC/BIC under registration or non-registration
+#' Calculate best shifts and stretches for each gene, also calculate BIC under registration or non-registration
 #'
 #' @noRd
 get_best_stretch_and_shift_after_optimisation <- function(to_shift_df,
@@ -316,7 +316,7 @@ get_best_stretch_and_shift_after_optimisation <- function(to_shift_df,
       stop("get_best_stretch_and_shift(): got non-unique best shifts in best_shifts")
     }
 
-    # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the gene's expression separately in data to transform and reference data
+    # Calculate the BIC for the best shifts found with this stretch.compared to treating the gene's expression separately in data to transform and reference data
     model_comparison_dt <- calculate_all_model_comparison_stats(
       gene_data_df,
       best_shifts,
@@ -346,14 +346,12 @@ get_best_stretch_and_shift_after_optimisation <- function(to_shift_df,
   # model comparison of best shift (for each gene) to separate models
   all_model_comparison_dt <- do.call("rbind", all_model_comparison_dt)
 
-  # Correct -Inf BIC and AIC values to -9999 so that delta.BIC is not Inf or NaN
+  # Correct -Inf BIC values to -9999 so that delta.BIC is not Inf or NaN
   all_model_comparison_dt <- all_model_comparison_dt %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
       dplyr::across(
-        # .cols = c(.data$registered.BIC, .data$registered.AIC, .data$separate.BIC, .data$separate.AIC),
         .cols = c(.data$registered.BIC, .data$separate.BIC),
-        # .cols = c(.data$registered.BIC, .data$separate.BIC.before, .data$separate.BIC.after),
         .fns = function(x) {
           if (!is.finite(x)) {
             x <- 9999 * sign(x)

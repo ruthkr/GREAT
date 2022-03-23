@@ -1,10 +1,3 @@
-#' Calculate Akaike's ‘An Information Criterion’
-#'
-#' @noRd
-calc_AIC <- function(logL, num_params) {
-  return((-2 * logL) + 2 * num_params)
-}
-
 #' Calculate Bayesian Information Criterion
 #'
 #' @noRd

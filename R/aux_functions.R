@@ -60,7 +60,7 @@ get_BIC_from_registering_data <- function(input_df,
 }
 
 
-#' Calculate best shifts and stretches for each gene, also calculate AIC/BIC under registration or non-registration
+#' Calculate best shifts and stretches for each gene, also calculate BIC under registration or non-registration
 #'
 #' Simplified version of \code{\link{get_best_stretch_and_shift}} for \code{\link{optimise_registration_params}}.
 #'
@@ -96,7 +96,7 @@ get_best_stretch_and_shift_simplified <- function(to_shift_df,
   all_shifts <- unique(all_shifts)
 
 
-  # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the gene's expression separately in data to transform and reference data
+  # Calculate the BIC for the best shifts found with this stretch.compared to treating the gene's expression separately in data to transform and reference data
   model_comparison_dt <- calculate_all_model_comparison_stats(
     all_data_df,
     all_shifts,

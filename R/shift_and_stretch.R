@@ -324,11 +324,10 @@ compare_registered_to_unregistered_model <- function(curr_sym,
   # separate_logLik_before_reg <- data_to_transform_logLik_before_reg + data_ref_logLik_before_reg
 
 
-  # Calculate the comparison.stats - - AIC, BIC, smaller is better!
+  # Calculate the comparison.stats BIC: smaller is better!
   # 2*num.spline.params as fitting separate models for Ara * Col
   separate.BIC <- calc_BIC(separate_logLik, 2 * num.spline.params, num.obs)
   combined.BIC <- calc_BIC(combined_logLik, num.spline.params + num.registration.params, num.obs)
-
   # separate.BIC.before <- calc_BIC(separate_logLik_before_reg, 2 * num.spline.params, nrow(original_data))
 
   # Results object

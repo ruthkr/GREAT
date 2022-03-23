@@ -87,13 +87,13 @@ calculate_all_model_comparison_stats <- function(all_data_df,
 
 #' Register all expression over time using optimal shift found
 #'
-#' @param data
-#' @param best_shifts
+#' @param data Input data frame containing all replicates of gene expression in each genotype at each time point.
+#' @param best_shifts Data frame of best shift parameters for each gene.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
-#' @param time_to_add
+#' @param time_to_add Time to be added when applying shift.
 #'
-#' @export
+#' @noRd
 apply_best_shift <- function(data,
                              best_shifts,
                              accession_data_to_transform,

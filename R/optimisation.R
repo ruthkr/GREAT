@@ -258,3 +258,145 @@ optimise_registration_params <- function(input_df,
 
   return(results_list)
 }
+
+
+#' Calculate best shifts and stretches for each gene, also calculate AIC/BIC under registration or non-registration
+#'
+#' @noRd
+get_best_stretch_and_shift_after_optimisation <- function(to_shift_df,
+                                                          all_data_df,
+                                                          optimised_parameters,
+                                                          do_rescale,
+                                                          min_num_overlapping_points,
+                                                          accession_data_to_transform,
+                                                          accession_data_ref,
+                                                          time_to_add) {
+  # Suppress "no visible binding for global variable" note
+  is_best <- NULL
+  gene <- NULL
+  delta.BIC <- NULL
+
+  # Warning to make sure users have correct accession data
+  if (!(accession_data_to_transform %in% all_data_df$accession & accession_data_ref %in% all_data_df$accession)) {
+    stop("get_best_stretch_and_shift(): data accessions should have been converted to correct accession.")
+  }
+
+  params_df <- optimised_parameters$optimum_params_df
+  gene_list <- params_df$gene
+
+  all_all_shifts <- rep(list(0), length(gene_list))
+  all_best_shifts <- rep(list(0), length(gene_list))
+  all_model_comparison_dt <- rep(list(0), length(gene_list))
+
+  for (i in 1:length(gene_list)) {
+    gene <- gene_list[i]
+    gene_data_df <- all_data_df[locus_name == gene]
+    cli::cli_h2("Analysing models for gene = {gene}")
+
+    # Calculate all the shift scores given this stretch. Score is mean(dist^2), over overlapping points if do_rescale=T, is rescaled by the mean FOR THE OVERLAPPING POINTS. (but not by the SD.)
+    all_shifts <- calculate_all_best_shifts(
+      mean_df = to_shift_df[locus_name == gene],
+      stretch_factor = params_df[params_df$gene == gene, ]$stretch,
+      shifts = params_df[params_df$gene == gene, ]$shift,
+      do_rescale,
+      min_num_overlapping_points,
+      accession_data_to_transform,
+      accession_data_ref,
+      optimise_shift_extreme = FALSE
+    )
+
+    # Ensure no duplicated rows
+    all_shifts <- unique(all_shifts)
+
+    # Cut down to single best shift for each gene (Alex's original logic)
+    best_shifts <- all_shifts
+    best_shifts$is_best <- TRUE
+
+    if (nrow(best_shifts) != length(unique(gene_data_df$locus_name))) {
+      stop("get_best_stretch_and_shift(): got non-unique best shifts in best_shifts")
+    }
+
+    # Calculate the BIC & AIC for the best shifts found with this stretch.compared to treating the gene's expression separately in data to transform and reference data
+    model_comparison_dt <- calculate_all_model_comparison_stats(
+      gene_data_df,
+      best_shifts,
+      accession_data_to_transform,
+      accession_data_ref,
+      time_to_add
+    )
+
+    # Add info on the stretch and shift applied
+    model_comparison_dt <- merge(
+      model_comparison_dt,
+      best_shifts[, c("gene", "stretch", "shift", "score"), ],
+      by = "gene"
+    )
+
+    # Record the results for the current stretch factor
+    all_all_shifts[[i]] <- all_shifts
+    all_best_shifts[[i]] <- best_shifts
+    all_model_comparison_dt[[i]] <- model_comparison_dt
+    cli::cli_alert_success("Finished analysing models for gene = {gene}")
+  }
+
+  # all the combinations of shift, and stretch tried
+  all_shifts <- do.call("rbind", all_all_shifts)
+  # the best shifts for each stretch
+  all_best_shifts <- do.call("rbind", all_best_shifts)
+  # model comparison of best shift (for each gene) to separate models
+  all_model_comparison_dt <- do.call("rbind", all_model_comparison_dt)
+
+  # Correct -Inf BIC and AIC values to -9999 so that delta.BIC is not Inf or NaN
+  all_model_comparison_dt <- all_model_comparison_dt %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+      dplyr::across(
+        # .cols = c(.data$registered.BIC, .data$registered.AIC, .data$separate.BIC, .data$separate.AIC),
+        .cols = c(.data$registered.BIC, .data$separate.BIC),
+        # .cols = c(.data$registered.BIC, .data$separate.BIC.before, .data$separate.BIC.after),
+        .fns = function(x) {
+          if (!is.finite(x)) {
+            x <- 9999 * sign(x)
+          }
+          return(x)
+        }
+      )
+    ) %>%
+    dplyr::ungroup() %>%
+    data.table::as.data.table()
+
+  # Get the best registration applied (best stretch, and best shift) for each gene, picking by BIC alone will favour fewer overlapping (considered) data points.
+  # Pick best in order to maximise how much better register.BIC is than separate.BIC
+  all_model_comparison_dt$delta.BIC <- all_model_comparison_dt$registered.BIC - all_model_comparison_dt$separate.BIC
+
+  # Best is one for which registered.BIC is as small as possible compared to separate.BIC
+  all_model_comparison_dt[, is_best := (delta.BIC == min(delta.BIC)), by = .(gene)]
+  best_model_comparison.dt <- all_model_comparison_dt[all_model_comparison_dt$is_best == TRUE]
+
+  # If there is a tie for best registration for a gene, keep the first one as the best
+  if (any(duplicated(best_model_comparison.dt$gene))) {
+    message("found ", sum(duplicated(best_model_comparison.dt$gene)), " tied optimal registrations. Removing duplicates")
+    best_model_comparison.dt <- best_model_comparison.dt[!(duplicated(best_model_comparison.dt$gene)), ]
+  }
+
+  best_model_comparison.dt$BIC_registered_is_better <- best_model_comparison.dt$delta.BIC < 0
+  best_model_comparison.dt$delta.BIC <- NULL
+
+  # Cut down best shifts to the best shift for the best stretch only
+  best_shifts <- merge(
+    all_best_shifts,
+    best_model_comparison.dt[, c("gene", "stretch", "shift")],
+    by = c("gene", "stretch", "shift")
+  )
+
+  # There should be only 1 best shift for each gene, stop if it is not the case
+  if (!(nrow(best_shifts) == length(unique(to_shift_df$locus_name)))) {
+    stop()
+  }
+
+  return(list(
+    "all_shifts" = all_shifts,
+    "best_shifts" = best_shifts,
+    "model_comparison_dt" = best_model_comparison.dt
+  ))
+}

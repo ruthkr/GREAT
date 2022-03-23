@@ -129,6 +129,27 @@ scale_and_register_data <- function(input_df,
       num_iterations = 100,
       boundary_coverage = 1
     )
+
+    # Proceed with original registration pipeline
+    cli::cli_h1("Information before registration")
+    cli::cli_alert_info("Max value of expression_value of all_data_df: {cli::col_cyan(round(max(all_data_df$expression_value), 2))}")
+
+    # Calculate the best registration. Returns all tried registrations, best stretch and shift combo, and AIC/BIC stats for comparison of best registration model to separate models for expression of each gene in reference data and data to transform
+    cli::cli_h1("Analysing models for all stretch and shift factor")
+    L <- get_best_stretch_and_shift_after_optimisation(
+      to_shift_df,
+      all_data_df,
+      optimised_parameters,
+      do_rescale,
+      min_num_overlapping_points,
+      accession_data_to_transform,
+      accession_data_ref,
+      time_to_add
+    )
+
+    all_shifts <- L[["all_shifts"]]
+    best_shifts <- L[["best_shifts"]]
+    model_comparison_dt <- L[["model_comparison_dt"]]
   }
 
   # Report model comparison results

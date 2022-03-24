@@ -172,7 +172,8 @@ scale_and_register_data <- function(input_df,
     accession_data_ref
   )
 
-  out <- list(
+  # Results object
+  results_list <- list(
     "mean_df" = mean_df,
     "mean_df_sc" = mean_df_sc,
     "to_shift_df" = to_shift_df,
@@ -182,6 +183,8 @@ scale_and_register_data <- function(input_df,
     "all_shifts_df" = all_shifts,
     "model_comparison_df" = model_comparison_dt
   )
+
+  return(results_list)
 }
 
 #' Scaling all un-averaged data
@@ -369,11 +372,14 @@ get_best_stretch_and_shift <- function(to_shift_df,
     stop()
   }
 
-  return(list(
+  # Results object
+  results_list <- list(
     "all_shifts" = all_shifts,
     "best_shifts" = best_shifts,
     "model_comparison_dt" = best_model_comparison.dt
-  ))
+  )
+
+  return(results_list)
 }
 
 #' Apply shift for all registered genes
@@ -481,6 +487,7 @@ impute_transformed_exp_values <- function(shifted_mean_df,
     i <- i + 1
   }
 
+  # Bind results
   out_df <- do.call("rbind", out_list)
 
   return(out_df)
@@ -547,7 +554,7 @@ preprocess_data <- function(input_df,
     to_shift_df <- data.table::copy(mean_df)
   }
 
-  # Results list
+  # Results object
   results_list <- list(
     all_data_df = all_data_df,
     mean_df = mean_df,

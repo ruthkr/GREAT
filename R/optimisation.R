@@ -33,7 +33,6 @@ get_best_stretch_and_shift_simplified <- function(to_shift_df,
   # Ensure no duplicated rows
   all_shifts <- unique(all_shifts)
 
-
   # Calculate the BIC for the best shifts found with this stretch.compared to treating the gene's expression separately in data to transform and reference data
   model_comparison_dt <- calculate_all_model_comparison_stats(
     all_data_df,
@@ -43,9 +42,12 @@ get_best_stretch_and_shift_simplified <- function(to_shift_df,
     time_to_add
   )
 
-  return(
-    list(model_comparison_dt = model_comparison_dt)
+  # Results object
+  results_list <- list(
+    model_comparison_dt = model_comparison_dt
   )
+
+  return(results_list)
 }
 
 
@@ -282,6 +284,7 @@ optimise_registration_params_single_gene <- function(input_df,
     ) %>%
     dplyr::distinct()
 
+  # Results object
   results_list <- list(
     optimum_params_df = result_df,
     candidate_params_df = trace_df
@@ -360,6 +363,7 @@ optimise_registration_params <- function(input_df,
     purrr::map(~ purrr::pluck(.x, "candidate_params_df")) %>%
     purrr::reduce(dplyr::bind_rows)
 
+  # Results object
   results_list <- list(
     optimum_params_df = optimum_params_reduced,
     candidate_params_df = candidate_params_reduced
@@ -501,9 +505,12 @@ get_best_stretch_and_shift_after_optimisation <- function(to_shift_df,
     stop()
   }
 
-  return(list(
+  # Results object
+  results_list <- list(
     "all_shifts" = all_shifts,
     "best_shifts" = best_shifts,
     "model_comparison_dt" = best_model_comparison.dt
-  ))
+  )
+
+  return(results_list)
 }

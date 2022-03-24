@@ -116,6 +116,7 @@ calculate_between_sample_distance <- function(mean_df,
   attr(D.scaled.registered.genes, "title") <- "scaled mean expression (only registered genes)"
   attr(D.registered.registered.genes, "title") <- "registered & scaled mean expression (only registered genes)"
 
+  # Results object
   results_list <- list(
     "distance_mean_df" = D.mean,
     "distance_scaled_mean_df" = D.scaled,

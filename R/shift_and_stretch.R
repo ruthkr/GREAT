@@ -63,7 +63,7 @@ calculate_all_model_comparison_stats <- function(all_data_df,
   for (i in seq_along(genes)) {
     curr_sym <- genes[i]
 
-    L <- compare_registered_to_unregistered_model(
+    BIC_comparison_list <- compare_registered_to_unregistered_model(
       curr_sym,
       original_data = all_data_df,
       data_df = shifted_all_data_df,
@@ -71,18 +71,18 @@ calculate_all_model_comparison_stats <- function(all_data_df,
       accession_data_ref
     )
 
-    out.sepBIC[i] <- L[["separate.BIC"]]
-    out.combBIC[i] <- L[["combined.BIC"]]
+    out.sepBIC[i] <- BIC_comparison_list$separate.BIC
+    out.combBIC[i] <- BIC_comparison_list$combined.BIC
     cli::cli_progress_update(force = TRUE)
   }
 
-  out <- data.table::data.table(
+  model_comparison_dt <- data.table::data.table(
     "gene" = genes,
     "separate.BIC" = out.sepBIC,
     "registered.BIC" = out.combBIC
   )
 
-  return(out)
+  return(model_comparison_dt)
 }
 
 #' Register all expression over time using optimal shift found

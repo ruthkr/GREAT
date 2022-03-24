@@ -155,7 +155,7 @@ test_that("all functions called in scale_and_register_data work", {
   # Calculate the best registration. Returns all tried registrations, best stretch and shift combo,
   # and BIC stats for comparison of best registration model to separate models for expression of
   # each gene in Ro18 and Col0
-  L <- get_best_stretch_and_shift(
+  best_registration_list <- get_best_stretch_and_shift(
     to_shift_df,
     all_data_df,
     stretches,
@@ -168,13 +168,13 @@ test_that("all functions called in scale_and_register_data work", {
     optimise_shift_extreme = TRUE
   )
 
-  all_shifts <- L[["all_shifts"]]
-  best_shifts <- L[["best_shifts"]]
-  model_comparison_dt <- L[["model_comparison_dt"]]
+  all_shifts <- best_registration_list$all_shifts
+  best_shifts <- best_registration_list$best_shifts
+  model_comparison_dt <- best_registration_list$model_comparison_dt
 
   # Expected output for get_best_stretch_and_shift()
-  expect_equal(class(L), "list")
-  expect_equal(names(L), c("all_shifts", "best_shifts", "model_comparison_dt"))
+  expect_equal(class(best_registration_list), "list")
+  expect_equal(names(best_registration_list), c("all_shifts", "best_shifts", "model_comparison_dt"))
   expect_equal(class(all_shifts)[[1]], "data.table")
   expect_equal(class(best_shifts)[[1]], "data.table")
   expect_equal(class(model_comparison_dt)[[1]], "data.table")

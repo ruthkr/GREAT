@@ -89,7 +89,7 @@ scale_and_register_data <- function(input_df,
 
     # Calculate the best registration. Returns all tried registrations, best stretch and shift combo, and BIC stats for comparison of best registration model to separate models for expression of each gene in reference data and data to transform
     cli::cli_h1("Analysing models for all stretch and shift factor")
-    L <- get_best_stretch_and_shift(
+    best_registration_list <- get_best_stretch_and_shift(
       to_shift_df,
       all_data_df,
       stretches,
@@ -102,9 +102,9 @@ scale_and_register_data <- function(input_df,
       optimise_shift_extreme
     )
 
-    all_shifts <- L[["all_shifts"]]
-    best_shifts <- L[["best_shifts"]]
-    model_comparison_dt <- L[["model_comparison_dt"]]
+    all_shifts <- best_registration_list$all_shifts
+    best_shifts <- best_registration_list$best_shifts
+    model_comparison_dt <- best_registration_list$model_comparison_dt
   } else {
     # Optimise registration parameters
     cli::cli_h1("Starting optimisation")
@@ -130,7 +130,7 @@ scale_and_register_data <- function(input_df,
 
     # Calculate the best registration. Returns all tried registrations, best stretch and shift combo, and BIC stats for comparison of best registration model to separate models for expression of each gene in reference data and data to transform
     cli::cli_h1("Analysing models for all stretch and shift factor")
-    L <- get_best_stretch_and_shift_after_optimisation(
+    best_registration_list <- get_best_stretch_and_shift_after_optimisation(
       to_shift_df,
       all_data_df,
       optimised_parameters,
@@ -141,9 +141,9 @@ scale_and_register_data <- function(input_df,
       time_to_add
     )
 
-    all_shifts <- L[["all_shifts"]]
-    best_shifts <- L[["best_shifts"]]
-    model_comparison_dt <- L[["model_comparison_dt"]]
+    all_shifts <- best_registration_list$all_shifts
+    best_shifts <- best_registration_list$best_shifts
+    model_comparison_dt <- best_registration_list$model_comparison_dt
   }
 
   # Report model comparison results

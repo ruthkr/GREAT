@@ -41,7 +41,7 @@ get_BIC_from_registering_data <- function(input_df,
   time_to_add <- processed_data$time_to_add
 
   # Calculate the best registration
-  L <- get_best_stretch_and_shift_simplified(
+  best_registration_list <- get_best_stretch_and_shift_simplified(
     to_shift_df,
     all_data_df,
     stretches,
@@ -54,7 +54,9 @@ get_BIC_from_registering_data <- function(input_df,
     optimise_shift_extreme
   )
 
-  BIC_diff <- L$model_comparison_dt$registered.BIC - L$model_comparison_dt$separate.BIC
+  registered_BIC <- best_registration_list$model_comparison_dt$registered.BIC
+  separate_BIC <- best_registration_list$model_comparison_dt$separate.BIC
+  BIC_diff <- registered_BIC - separate_BIC
 
   return(BIC_diff)
 }

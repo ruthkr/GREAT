@@ -10,11 +10,11 @@ optimise_registration_params(
   initial_rescale = FALSE,
   do_rescale = TRUE,
   min_num_overlapping_points = 4,
-  expression_value_threshold = 5,
   accession_data_to_transform,
   accession_data_ref,
-  start_timepoint,
-  is_data_normalised,
+  start_timepoint = c("reference", "transform", "zero"),
+  expression_value_threshold = 5,
+  is_data_normalised = FALSE,
   num_iterations = 100,
   boundary_coverage = 1
 )
@@ -30,11 +30,15 @@ optimise_registration_params(
 
 \item{min_num_overlapping_points}{Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.}
 
-\item{expression_value_threshold}{Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.}
-
 \item{accession_data_to_transform}{Accession name of data which will be transformed.}
 
 \item{accession_data_ref}{Accession name of reference data.}
+
+\item{start_timepoint}{Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.}
+
+\item{expression_value_threshold}{Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.}
+
+\item{is_data_normalised}{\code{TRUE} if dataset has been normalised prior to registration process.}
 
 \item{num_iterations}{Maximum number of iterations of the algorithm. Default is 100.}
 

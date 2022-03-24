@@ -190,9 +190,11 @@ optimise_registration_params_single_gene <- function(input_df,
 #' @param initial_rescale Scaling gene expression prior to registration if \code{TRUE}.
 #' @param do_rescale Scaling gene expression using only overlapping time points points during registration.
 #' @param min_num_overlapping_points Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
-#' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
+#' @param start_timepoint Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.
+#' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
+#' @param is_data_normalised \code{TRUE} if dataset has been normalised prior to registration process.
 #' @param num_iterations Maximum number of iterations of the algorithm. Default is 100.
 #' @param boundary_coverage Coverage factor of the boundary box. Default is 1.
 #'
@@ -204,11 +206,11 @@ optimise_registration_params <- function(input_df,
                                          initial_rescale = FALSE,
                                          do_rescale = TRUE,
                                          min_num_overlapping_points = 4,
-                                         expression_value_threshold = 5,
                                          accession_data_to_transform,
                                          accession_data_ref,
-                                         start_timepoint,
-                                         is_data_normalised,
+                                         start_timepoint = c("reference", "transform", "zero"),
+                                         expression_value_threshold = 5,
+                                         is_data_normalised = FALSE,
                                          num_iterations = 100,
                                          boundary_coverage = 1) {
   # Validate genes
@@ -275,6 +277,7 @@ get_best_stretch_and_shift_after_optimisation <- function(to_shift_df,
   is_best <- NULL
   gene <- NULL
   delta.BIC <- NULL
+  locus_name <- NULL
 
   # Warning to make sure users have correct accession data
   if (!(accession_data_to_transform %in% all_data_df$accession & accession_data_ref %in% all_data_df$accession)) {

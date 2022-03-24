@@ -15,6 +15,7 @@
 #' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
 #' @param is_data_normalised \code{TRUE} if dataset has been normalised prior to registration process.
 #' @param optimise_shift_extreme Whether to optimise extreme (minimum and maximum) values of \code{shifts}. By default, \code{FALSE}.
+#' @param optimise_registration_parameters Whether to optimise registration parameters with Simulated Annealing. By default, \code{FALSE}.
 #'
 #' @return This function returns a list of data frames, containing:
 #'
@@ -63,13 +64,6 @@ scale_and_register_data <- function(input_df,
                                     optimise_registration_parameters = FALSE) {
   # Validate parameters
   start_timepoint <- match.arg(start_timepoint)
-
-  # Suppress "no visible binding for global variable" note
-  accession <- NULL
-  timepoint <- NULL
-  sc.expression_value <- NULL
-  expression_value <- NULL
-  locus_name <- NULL
 
   # Preprocess data
   processed_data <- preprocess_data(
@@ -492,6 +486,9 @@ impute_transformed_exp_values <- function(shifted_mean_df,
   return(out_df)
 }
 
+
+#' Preprocess data before registration
+#'
 #' @noRd
 preprocess_data <- function(input_df,
                             initial_rescale,
@@ -500,6 +497,13 @@ preprocess_data <- function(input_df,
                             start_timepoint,
                             expression_value_threshold,
                             is_data_normalised) {
+  # Suppress "no visible binding for global variable" note
+  accession <- NULL
+  timepoint <- NULL
+  sc.expression_value <- NULL
+  expression_value <- NULL
+  locus_name <- NULL
+
   # Make sure the data are data.tables
   all_data_df <- data.table::as.data.table(input_df)
 

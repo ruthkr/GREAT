@@ -44,6 +44,8 @@ scale_and_register_data(
 \item{is_data_normalised}{\code{TRUE} if dataset has been normalised prior to registration process.}
 
 \item{optimise_shift_extreme}{Whether to optimise extreme (minimum and maximum) values of \code{shifts}. By default, \code{FALSE}.}
+
+\item{optimise_registration_parameters}{Whether to optimise registration parameters with Simulated Annealing. By default, \code{FALSE}.}
 }
 \value{
 This function returns a list of data frames, containing:

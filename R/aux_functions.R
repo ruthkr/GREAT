@@ -18,13 +18,6 @@ get_BIC_from_registering_data <- function(input_df,
   # Validate parameters
   start_timepoint <- match.arg(start_timepoint)
 
-  # Suppress "no visible binding for global variable" note
-  accession <- NULL
-  timepoint <- NULL
-  sc.expression_value <- NULL
-  expression_value <- NULL
-  locus_name <- NULL
-
   # Preprocess data
   processed_data <- preprocess_data(
     input_df = input_df,
@@ -60,7 +53,6 @@ get_BIC_from_registering_data <- function(input_df,
 
   return(BIC_diff)
 }
-
 
 #' Calculate best shifts and stretches for each gene, also calculate BIC under registration or non-registration
 #'

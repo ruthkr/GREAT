@@ -179,7 +179,7 @@ optimise_registration_params_single_gene <- function(input_df,
                                                      accession_data_ref,
                                                      start_timepoint,
                                                      is_data_normalised,
-                                                     num_iterations = 100,
+                                                     num_iterations = 60,
                                                      boundary_coverage = 1) {
   # Function to optimise
   BIC_diff <- function(x) {
@@ -238,9 +238,12 @@ optimise_registration_params_single_gene <- function(input_df,
   shift_lower <- boundary_box$shift_lower
   shift_upper <- boundary_box$shift_upper
 
-  # cli::cli_alert_info("Initial values for stretch and shift:")
-  # cli::cli_alert_info("Stretch: { round(stretch_init, 2) } in [{ round(stretch_lower, 2) }, { round(stretch_upper, 2) }]")
-  # cli::cli_alert_info("Shift: { round(shift_init, 2) } in [{ round(shift_lower, 2) }, { round(shift_upper, 2) }]")
+  # Calculate cooling schedule
+  t0 <- 1000
+  t_min <- 0.1
+  r_cooling <- (t_min / t0)^(1 / num_iterations)
+  # TODO: Explore best default
+  num_inner_loop_iter <- 100
 
   # Perform SA using {optimization}
   optim_sa_res <- optimization::optim_sa(
@@ -250,9 +253,10 @@ optimise_registration_params_single_gene <- function(input_df,
     lower = c(stretch_lower, shift_lower),
     upper = c(stretch_upper, shift_upper),
     control = list(
-      t0 = 1000,
-      nlimit = num_iterations,
-      r = 0.85,
+      t0 = t0,
+      t_min = t_min,
+      nlimit = num_inner_loop_iter,
+      r = r_cooling,
       rf = 3,
       dyn_rf = FALSE
     )
@@ -322,7 +326,7 @@ optimise_registration_params <- function(input_df,
                                          start_timepoint = c("reference", "transform", "zero"),
                                          expression_value_threshold = 5,
                                          is_data_normalised = FALSE,
-                                         num_iterations = 100,
+                                         num_iterations = 60,
                                          boundary_coverage = 1) {
   # Validate genes
   if (is.null(genes)) {

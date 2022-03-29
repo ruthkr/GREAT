@@ -238,8 +238,9 @@ optimise_registration_params_single_gene <- function(input_df,
   shift_lower <- boundary_box$shift_lower
   shift_upper <- boundary_box$shift_upper
 
-  cli::cli_alert_info("Stretch: { round(stretch_init, 2) } in [{ stretch_lower }, { stretch_upper }]")
-  cli::cli_alert_info("Shift: { round(shift_init, 2) } in [{ shift_lower }, { shift_upper }]")
+  # cli::cli_alert_info("Initial values for stretch and shift:")
+  # cli::cli_alert_info("Stretch: { round(stretch_init, 2) } in [{ round(stretch_lower, 2) }, { round(stretch_upper, 2) }]")
+  # cli::cli_alert_info("Shift: { round(shift_init, 2) } in [{ round(shift_lower, 2) }, { round(shift_upper, 2) }]")
 
   # Perform SA using {optimization}
   optim_sa_res <- optimization::optim_sa(
@@ -329,11 +330,16 @@ optimise_registration_params <- function(input_df,
   }
 
   # Apply optimise_registration_params_single_gene() over all genes
-  raw_results <- genes %>%
+  raw_results <- cli::cli_progress_along(
+    genes,
+    format = "{cli::pb_spin} Optimising registration parameters for genes ({cli::pb_current}/{cli::pb_total})",
+    format_done = "{cli::col_green(cli::symbol$tick)} Optimising registration parameters for genes ({cli::pb_total}/{cli::pb_total}) {cli::col_white(paste0('[', cli::pb_elapsed, ']'))}",
+    clear = FALSE
+  ) %>%
     purrr::map(
       function(gene) {
         curr_df <- input_df %>%
-          dplyr::filter(.data$locus_name == gene)
+          dplyr::filter(.data$locus_name == genes[[gene]])
 
         opt_res <- optimise_registration_params_single_gene(
           input_df = curr_df,

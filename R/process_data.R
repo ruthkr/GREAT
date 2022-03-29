@@ -124,12 +124,9 @@ scale_and_register_data <- function(input_df,
       boundary_coverage = 1
     )
 
-    # Proceed with original registration pipeline
-    cli::cli_h1("Information before registration")
-    cli::cli_alert_info("Max value of expression_value of all_data_df: {cli::col_cyan(round(max(all_data_df$expression_value), 2))}")
+    cli::cli_alert_success("Finished optimisation")
 
-    # Calculate the best registration. Returns all tried registrations, best stretch and shift combo, and BIC stats for comparison of best registration model to separate models for expression of each gene in reference data and data to transform
-    cli::cli_h1("Analysing models for all stretch and shift factor")
+    # Mimic original pipeline data structure to proceed with apply_shift_to_registered_genes_only()
     best_registration_list <- get_best_stretch_and_shift_after_optimisation(
       to_shift_df,
       all_data_df,
@@ -139,7 +136,8 @@ scale_and_register_data <- function(input_df,
       accession_data_to_transform,
       accession_data_ref,
       time_to_add
-    )
+    ) %>%
+      suppressMessages()
 
     all_shifts <- best_registration_list$all_shifts
     best_shifts <- best_registration_list$best_shifts

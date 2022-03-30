@@ -16,6 +16,7 @@
 #' @param is_data_normalised \code{TRUE} if dataset has been normalised prior to registration process.
 #' @param optimise_shift_extreme Whether to optimise extreme (minimum and maximum) values of \code{shifts}. By default, \code{FALSE}.
 #' @param optimise_registration_parameters Whether to optimise registration parameters with Simulated Annealing. By default, \code{FALSE}.
+#' @param num_iterations Maximum number of iterations in the Simulated Annealing optimisation. By default, 60.
 #'
 #' @return This function returns a list of data frames, containing:
 #'
@@ -114,6 +115,7 @@ scale_and_register_data <- function(input_df,
     optimised_parameters <- optimise_registration_params(
       input_df = input_df,
       genes = NULL,
+      stretches_bound = stretches,
       shifts_bound = shifts,
       initial_rescale = initial_rescale,
       do_rescale = do_rescale,

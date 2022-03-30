@@ -111,6 +111,7 @@ get_BIC_from_registering_data <- function(input_df,
 #'
 #' @noRd
 get_boundary_box <- function(input_df,
+                             stretches_bound = NA,
                              shifts_bound = NA,
                              accession_data_to_transform,
                              accession_data_ref,
@@ -125,12 +126,24 @@ get_boundary_box <- function(input_df,
     accession_data_ref = accession_data_ref
   )
 
-  stretch_lower <- 0.5 * stretch_init
-  stretch_upper <- 1.5 * ceiling(stretch_init)
+  if (all(is.na(stretches_bound))) {
+    cli::cli_alert_info("Using computed stretch boundary")
+    stretch_lower <- 0.5 * stretch_init
+    stretch_upper <- 1.5 * ceiling(stretch_init)
+  } else {
+    cli::cli_alert_info("Using user-defined stretches as stretch boundary")
 
+    stretch_lower <- min(stretches_bound)
+    stretch_upper <- max(stretches_bound)
+
+    if (stretch_init < stretch_lower | stretch_init > stretch_upper) {
+      stretch_init <- mean(c(stretch_lower, stretch_upper))
+    }
+  }
 
   # Shift limits
   if (all(is.na(shifts_bound))) {
+    cli::cli_alert_info("Using computed shift boundary")
     all_data_df <- data.table::as.data.table(input_df)
 
     mean_df <- get_mean_data(
@@ -188,6 +201,7 @@ get_boundary_box <- function(input_df,
 #' @importFrom rlang .data
 optimise_registration_params_single_gene <- function(input_df,
                                                      initial_guess = NA,
+                                                     stretches_bound = NA,
                                                      shifts_bound = NA,
                                                      initial_rescale = FALSE,
                                                      do_rescale = TRUE,
@@ -236,6 +250,7 @@ optimise_registration_params_single_gene <- function(input_df,
   # Calculate boundary box and initial guess
   boundary_box <- get_boundary_box(
     input_df,
+    stretches_bound,
     shifts_bound,
     accession_data_to_transform,
     accession_data_ref,
@@ -321,6 +336,8 @@ optimise_registration_params_single_gene <- function(input_df,
 #'
 #' @param input_df Input data frame containing all replicates of gene expression in each genotype at each time point.
 #' @param genes List of genes to optimise.
+#' @param stretches_bound Optional candidate registration stretch factors define search space, otherwise automatic.
+#' @param shifts_bound Optional candidate registration shift values to define search space, otherwise automatic.
 #' @param initial_rescale Scaling gene expression prior to registration if \code{TRUE}.
 #' @param do_rescale Scaling gene expression using only overlapping time points points during registration.
 #' @param min_num_overlapping_points Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
@@ -337,6 +354,7 @@ optimise_registration_params_single_gene <- function(input_df,
 #' @importFrom rlang .data
 optimise_registration_params <- function(input_df,
                                          genes = NULL,
+                                         stretches_bound = NA,
                                          shifts_bound = NA,
                                          initial_rescale = FALSE,
                                          do_rescale = TRUE,
@@ -367,6 +385,7 @@ optimise_registration_params <- function(input_df,
 
         opt_res <- optimise_registration_params_single_gene(
           input_df = curr_df,
+          stretches_bound = stretches_bound,
           shifts_bound = shifts_bound,
           initial_guess = NA,
           initial_rescale,

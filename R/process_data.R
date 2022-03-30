@@ -62,7 +62,7 @@ scale_and_register_data <- function(input_df,
                                     is_data_normalised = FALSE,
                                     optimise_shift_extreme = FALSE,
                                     optimise_registration_parameters = FALSE,
-                                    num_iterations = 100,
+                                    num_iterations = 60,
                                     boundary_coverage = 1) {
   # Validate parameters
   start_timepoint <- match.arg(start_timepoint)
@@ -114,6 +114,7 @@ scale_and_register_data <- function(input_df,
     optimised_parameters <- optimise_registration_params(
       input_df = input_df,
       genes = NULL,
+      shifts_bound = shifts,
       initial_rescale = initial_rescale,
       do_rescale = do_rescale,
       min_num_overlapping_points = min_num_overlapping_points,

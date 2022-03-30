@@ -110,8 +110,14 @@ get_BIC_from_registering_data <- function(input_df,
 #' Calculate boundary box for Simulated Annealing
 #'
 #' @noRd
-get_boundary_box <- function(input_df, accession_data_to_transform, accession_data_ref,
-                             min_num_overlapping_points, expression_value_threshold, boundary_coverage) {
+get_boundary_box <- function(input_df,
+                             shifts_bound = NA,
+                             accession_data_to_transform,
+                             accession_data_ref,
+                             min_num_overlapping_points,
+                             expression_value_threshold,
+                             boundary_coverage) {
+
   # Stretch limits
   stretch_init <- get_approximate_stretch(
     input_df = input_df,
@@ -120,45 +126,56 @@ get_boundary_box <- function(input_df, accession_data_to_transform, accession_da
   )
 
   stretch_lower <- 0.5 * stretch_init
-  # stretch_upper <- 1.5 * ceiling(stretch_init) - stretch_lower
   stretch_upper <- 1.5 * ceiling(stretch_init)
 
+
   # Shift limits
-  all_data_df <- data.table::as.data.table(input_df)
+  if (all(is.na(shifts_bound))) {
+    all_data_df <- data.table::as.data.table(input_df)
 
-  mean_df <- get_mean_data(
-    exp = all_data_df,
-    expression_value_threshold = expression_value_threshold,
-    accession_data_to_transform = accession_data_to_transform,
-    is_data_normalised = FALSE
-  )
+    mean_df <- get_mean_data(
+      exp = all_data_df,
+      expression_value_threshold = expression_value_threshold,
+      accession_data_to_transform = accession_data_to_transform,
+      is_data_normalised = FALSE
+    )
 
-  shift_upper <- get_extreme_shifts_for_all(
-    mean_df,
-    stretch_factor = 1.5,
-    min_num_overlapping_points = min_num_overlapping_points,
-    shift_extreme = 1000,
-    accession_data_to_transform = accession_data_to_transform,
-    accession_data_ref = accession_data_ref
-  ) %>%
-    .[[2]]
+    shift_init <- 0
 
-  shift_lower <- get_extreme_shifts_for_all(
-    mean_df,
-    stretch_factor = stretch_upper,
-    min_num_overlapping_points = 4,
-    shift_extreme = 1000,
-    accession_data_to_transform = accession_data_to_transform,
-    accession_data_ref = accession_data_ref
-  ) %>%
-    .[[1]]
+    shift_upper <- get_extreme_shifts_for_all(
+      mean_df,
+      stretch_factor = 1.5,
+      min_num_overlapping_points = min_num_overlapping_points,
+      shift_extreme = 1000,
+      accession_data_to_transform = accession_data_to_transform,
+      accession_data_ref = accession_data_ref
+    ) %>%
+      .[[2]]
+
+    shift_lower <- get_extreme_shifts_for_all(
+      mean_df,
+      stretch_factor = stretch_upper,
+      min_num_overlapping_points = 4,
+      shift_extreme = 1000,
+      accession_data_to_transform = accession_data_to_transform,
+      accession_data_ref = accession_data_ref
+    ) %>%
+      .[[1]]
+  } else {
+    cli::cli_alert_info("Using user-defined shifts as shift boundary")
+
+    shift_lower <- min(shifts_bound)
+    shift_upper <- max(shifts_bound)
+
+    shift_init <- mean(c(shift_lower, shift_upper))
+  }
 
   # Results object
   results_list <- list(
     stretch_init = stretch_init,
     stretch_lower = stretch_lower,
     stretch_upper = stretch_upper,
-    shift_init = 0,
+    shift_init = shift_init,
     shift_lower = shift_lower * boundary_coverage,
     shift_upper = shift_upper * boundary_coverage
   )
@@ -171,6 +188,7 @@ get_boundary_box <- function(input_df, accession_data_to_transform, accession_da
 #' @importFrom rlang .data
 optimise_registration_params_single_gene <- function(input_df,
                                                      initial_guess = NA,
+                                                     shifts_bound = NA,
                                                      initial_rescale = FALSE,
                                                      do_rescale = TRUE,
                                                      min_num_overlapping_points = 4,
@@ -218,13 +236,13 @@ optimise_registration_params_single_gene <- function(input_df,
   # Calculate boundary box and initial guess
   boundary_box <- get_boundary_box(
     input_df,
+    shifts_bound,
     accession_data_to_transform,
     accession_data_ref,
     min_num_overlapping_points,
     expression_value_threshold,
     boundary_coverage
-  ) %>%
-    suppressMessages()
+  )
 
   if (any(is.na(initial_guess))) {
     stretch_init <- boundary_box$stretch_init
@@ -233,6 +251,7 @@ optimise_registration_params_single_gene <- function(input_df,
     stretch_init <- initial_guess[1]
     shift_init <- initial_guess[2]
   }
+
   stretch_lower <- boundary_box$stretch_lower
   stretch_upper <- boundary_box$stretch_upper
   shift_lower <- boundary_box$shift_lower
@@ -318,6 +337,7 @@ optimise_registration_params_single_gene <- function(input_df,
 #' @importFrom rlang .data
 optimise_registration_params <- function(input_df,
                                          genes = NULL,
+                                         shifts_bound = NA,
                                          initial_rescale = FALSE,
                                          do_rescale = TRUE,
                                          min_num_overlapping_points = 4,
@@ -347,6 +367,7 @@ optimise_registration_params <- function(input_df,
 
         opt_res <- optimise_registration_params_single_gene(
           input_df = curr_df,
+          shifts_bound = shifts_bound,
           initial_guess = NA,
           initial_rescale,
           do_rescale,

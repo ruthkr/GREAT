@@ -17,7 +17,9 @@ scale_and_register_data(
   expression_value_threshold = 5,
   is_data_normalised = FALSE,
   optimise_shift_extreme = FALSE,
-  optimise_registration_parameters = FALSE
+  optimise_registration_parameters = FALSE,
+  num_iterations = 60,
+  boundary_coverage = 1
 )
 }
 \arguments{
@@ -46,6 +48,8 @@ scale_and_register_data(
 \item{optimise_shift_extreme}{Whether to optimise extreme (minimum and maximum) values of \code{shifts}. By default, \code{FALSE}.}
 
 \item{optimise_registration_parameters}{Whether to optimise registration parameters with Simulated Annealing. By default, \code{FALSE}.}
+
+\item{num_iterations}{Maximum number of iterations in the Simulated Annealing optimisation. By default, 60.}
 }
 \value{
 This function returns a list of data frames, containing:

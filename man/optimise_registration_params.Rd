@@ -7,6 +7,8 @@
 optimise_registration_params(
   input_df,
   genes = NULL,
+  stretches_bound = NA,
+  shifts_bound = NA,
   initial_rescale = FALSE,
   do_rescale = TRUE,
   min_num_overlapping_points = 4,
@@ -15,7 +17,7 @@ optimise_registration_params(
   start_timepoint = c("reference", "transform", "zero"),
   expression_value_threshold = 5,
   is_data_normalised = FALSE,
-  num_iterations = 100,
+  num_iterations = 60,
   boundary_coverage = 1
 )
 }
@@ -23,6 +25,10 @@ optimise_registration_params(
 \item{input_df}{Input data frame containing all replicates of gene expression in each genotype at each time point.}
 
 \item{genes}{List of genes to optimise.}
+
+\item{stretches_bound}{Optional candidate registration stretch factors define search space, otherwise automatic.}
+
+\item{shifts_bound}{Optional candidate registration shift values to define search space, otherwise automatic.}
 
 \item{initial_rescale}{Scaling gene expression prior to registration if \code{TRUE}.}
 

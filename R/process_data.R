@@ -86,6 +86,14 @@ scale_and_register_data <- function(input_df,
   time_to_add <- processed_data$time_to_add
 
   if (!optimise_registration_parameters) {
+    # Check that stretches and shifts are numeric
+    if (any(is.na(stretches)) | any(is.na(shifts))) {
+      stop(cli::format_error(c(
+        "{.var stretches} and {.var shifts} must be numeric vectors",
+        "x" = "You supplied vectors with {.cls NA} values."
+      )))
+    }
+
     # Proceed with original registration pipeline
     cli::cli_h1("Information before registration")
     cli::cli_alert_info("Max value of expression_value of all_data_df: {cli::col_cyan(round(max(all_data_df$expression_value), 2))}")

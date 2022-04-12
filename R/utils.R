@@ -92,6 +92,15 @@ get_approximate_stretch <- function(input_df, accession_data_to_transform, acces
   # Suppress "no visible binding for global variable" note
   accession <- NULL
 
+  # Check that input accessions exist in the input data
+  list_of_accessions <- unique(input_df$accession)
+  if (!(accession_data_to_transform %in% list_of_accessions) | !(accession_data_ref %in% list_of_accessions)) {
+    stop(cli::format_error(c(
+      "{.var accession_data_to_transform} and {.var accession_data_ref} can only be {.val {cli::cli_vec(list_of_accessions, style = list(vec_sep = ', ', vec_last = ' or '))}}.",
+      "x" = "You supplied {.val {accession_data_to_transform}} and {.val {accession_data_ref}}."
+    )))
+  }
+
   # Calculate approximate stretch factor
   deltas <- input_df %>%
     dplyr::group_by(.data$accession) %>%

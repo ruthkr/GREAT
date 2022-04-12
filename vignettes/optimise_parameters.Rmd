@@ -30,6 +30,18 @@ knitr::include_graphics("figures/optimisation_workflow_without_initialisation.pn
 
 As an example, the data used on [register data](https://ruthkr.github.io/greatR/articles/register-data.html) section will be used. To do this optimisation process, we just need put parameter `optimise_registration_parameters = TRUE` when using the main function `scale_and_register_data()`. 
 
+```{r example, message=FALSE, include=FALSE}
+# Load the package
+library(greatR)
+library(dplyr)
+```
+
+```{r all-data, message=FALSE, warning=FALSE, include=FALSE}
+# Gene expression data with replicates
+all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") %>%
+  utils::read.csv()
+```
+
 ```{r register-data, message=FALSE, warning=FALSE}
 # Running the registration
 registration_results <- scale_and_register_data(
@@ -44,13 +56,4 @@ registration_results <- scale_and_register_data(
   optimise_registration_parameters = TRUE,
   boundary_coverage = 1
 )
-```
-
-
-
-
-
-
-```{r setup}
-library(greatR)
 ```

@@ -63,8 +63,7 @@ scale_and_register_data <- function(input_df,
                                     is_data_normalised = FALSE,
                                     optimise_shift_extreme = FALSE,
                                     optimise_registration_parameters = FALSE,
-                                    num_iterations = 60,
-                                    boundary_coverage = 1) {
+                                    num_iterations = 60) {
   # Validate parameters
   start_timepoint <- match.arg(start_timepoint)
 
@@ -134,7 +133,7 @@ scale_and_register_data <- function(input_df,
       expression_value_threshold = expression_value_threshold,
       is_data_normalised = is_data_normalised,
       num_iterations = num_iterations,
-      boundary_coverage = boundary_coverage
+      boundary_coverage = 1
     )
 
     cli::cli_alert_success("Finished optimisation")

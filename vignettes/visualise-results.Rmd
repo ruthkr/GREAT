@@ -42,8 +42,7 @@ all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", packa
 registration_results <- scale_and_register_data(
   input_df = all_data_df,
   stretches = c(3, 2.5, 2, 1.5, 1),
-  shift_extreme = 4,
-  num_shifts = 33,
+  shifts = seq(-4, 4, length.out = 33),
   min_num_overlapping_points = 4,
   initial_rescale = FALSE,
   do_rescale = TRUE,
@@ -106,9 +105,7 @@ After registering the sample data, users can compare the overall similarity befo
 
 ```{r get-sample-distance}
 sample_distance <- calculate_between_sample_distance(
-  registration_results$mean_df,
-  registration_results$mean_df_sc,
-  registration_results$imputed_mean_df,
+  registration_results,
   accession_data_ref = "Ro18"
 )
 ```

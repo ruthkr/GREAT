@@ -65,9 +65,7 @@ test_that("scale_and_register_data works", {
 
   # Check calculate_between_sample_distance()
   sample_distance_results <- calculate_between_sample_distance(
-    registration_results$mean_df,
-    registration_results$mean_df_sc,
-    registration_results$imputed_mean_df,
+    registration_results,
     gene_col = "locus_name",
     compare_ref_vs_transform = TRUE,
     accession_data_ref = "Ro18"

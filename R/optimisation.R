@@ -173,7 +173,6 @@ get_boundary_box <- function(input_df,
     shift_lower <- get_extreme_shifts_for_all(
       mean_df,
       stretch_factor = stretch_upper,
-      # min_num_overlapping_points = 4,
       min_num_overlapping_points = min_num_overlapping_points,
       shift_extreme = 1000,
       accession_data_to_transform = accession_data_to_transform,

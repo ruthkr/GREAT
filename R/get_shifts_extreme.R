@@ -44,7 +44,6 @@ calc_extreme_shifts <- function(mean_df,
                                 shift_extreme,
                                 accession_data_to_transform,
                                 accession_data_ref) {
-
   # Make copy of the mean_df to make sure that the original data frame will not edited
   original <- data.table::copy(mean_df)
   original$shifted_time <- original$delta_time

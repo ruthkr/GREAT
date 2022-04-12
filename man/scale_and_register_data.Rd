@@ -6,8 +6,8 @@
 \usage{
 scale_and_register_data(
   input_df,
-  stretches,
-  shifts,
+  stretches = NA,
+  shifts = NA,
   min_num_overlapping_points,
   initial_rescale = FALSE,
   do_rescale = TRUE,

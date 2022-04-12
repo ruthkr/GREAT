@@ -118,7 +118,6 @@ get_boundary_box <- function(input_df,
                              min_num_overlapping_points,
                              expression_value_threshold,
                              boundary_coverage) {
-
   # Stretch limits
   stretch_init <- get_approximate_stretch(
     input_df = input_df,
@@ -132,6 +131,12 @@ get_boundary_box <- function(input_df,
     stretch_upper <- 1.5 * ceiling(stretch_init)
   } else {
     cli::cli_alert_info("Using user-defined stretches as stretch boundary")
+
+    # Make sure stretches_bound defines a range
+    if (length(stretches_bound) < 2) {
+      bound_factor <- 0.5
+      stretches_bound <- c(stretches_bound - bound_factor, stretches_bound + bound_factor)
+    }
 
     stretch_lower <- min(stretches_bound)
     stretch_upper <- max(stretches_bound)
@@ -168,7 +173,8 @@ get_boundary_box <- function(input_df,
     shift_lower <- get_extreme_shifts_for_all(
       mean_df,
       stretch_factor = stretch_upper,
-      min_num_overlapping_points = 4,
+      # min_num_overlapping_points = 4,
+      min_num_overlapping_points = min_num_overlapping_points,
       shift_extreme = 1000,
       accession_data_to_transform = accession_data_to_transform,
       accession_data_ref = accession_data_ref
@@ -176,6 +182,12 @@ get_boundary_box <- function(input_df,
       .[[1]]
   } else {
     cli::cli_alert_info("Using user-defined shifts as shift boundary")
+
+    # Make sure shifts_bound defines a range
+    if (length(shifts_bound) < 2) {
+      bound_factor <- 0.5
+      shifts_bound <- c(shifts_bound - bound_factor, shifts_bound + bound_factor)
+    }
 
     shift_lower <- min(shifts_bound)
     shift_upper <- max(shifts_bound)

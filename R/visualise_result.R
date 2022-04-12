@@ -148,9 +148,22 @@ plot_heatmap <- function(sample_dist_df, title = NULL, axis_fontsize = NULL, sam
       )
   }
 
+  # Manually create timepoint sorting levels for x_sample and y_sample columns
+  x_sample_sorted_levels <- paste(
+    unique(stringr::str_remove_all(sample_dist_df$x_sample, "-\\d+")),
+    unique(sort(sample_dist_df$timepoint_x)),
+    sep = "-"
+  )
+
+  y_sample_sorted_levels <- paste(
+    unique(stringr::str_remove_all(sample_dist_df$y_sample, "-\\d+")),
+    unique(sort(sample_dist_df$timepoint_y)),
+    sep = "-"
+  )
+
   # Change class of x_sample and y_sample as factor
-  sample_dist_df$x_sample <- factor(sample_dist_df$x_sample, levels = unique(sort(sample_dist_df$x_sample)))
-  sample_dist_df$y_sample <- factor(sample_dist_df$y_sample, levels = unique(sort(sample_dist_df$y_sample)))
+  sample_dist_df$x_sample <- factor(sample_dist_df$x_sample, levels = x_sample_sorted_levels)
+  sample_dist_df$y_sample <- factor(sample_dist_df$y_sample, levels = y_sample_sorted_levels)
 
   p <- ggplot2::ggplot(sample_dist_df) +
     ggplot2::aes(

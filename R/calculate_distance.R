@@ -140,12 +140,6 @@ reformat_for_distance_calculation <- function(dt, sample_id_cols, gene_col, expr
   dt$sample.id <- dt[[sample_id_cols[1]]]
   if (length(sample_id_cols) > 1) {
     for (i in 2:length(sample_id_cols)) {
-
-      # Pad timepoint to 2 figures to help ordering
-      if (class(dt[[sample_id_cols[i]]]) %in% c("integer", "numeric")) {
-        dt[[sample_id_cols[i]]] <- stringr::str_pad(dt[[sample_id_cols[i]]], 2, pad = "0")
-      }
-
       dt$sample.id <- paste0(dt[["sample.id"]], "-", dt[[sample_id_cols[i]]])
     }
   }

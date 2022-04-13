@@ -18,8 +18,7 @@ scale_and_register_data(
   is_data_normalised = FALSE,
   optimise_shift_extreme = FALSE,
   optimise_registration_parameters = FALSE,
-  num_iterations = 60,
-  boundary_coverage = 1
+  num_iterations = 60
 )
 }
 \arguments{
@@ -57,6 +56,7 @@ This function returns a list of data frames, containing:
 \item{mean_df}{a data frame containing mean expression value of each gene and accession for every time point.}
 \item{mean_df_sc}{identical to \code{mean_df}, with additional column \code{sc.expression_value} which the scaled mean expression values.}
 \item{to_shift_df}{a processed input data frame which is ready to be registered.}
+\item{best_shifts}{a data frame containing best shift factor for each given stretch.}
 \item{shifted_mean_df}{the registration result - after stretching and shifting.}
 \item{imputed_mean_df}{the imputed (transformed to be the same in a set of common time points) registration result.}
 \item{all_shifts_df}{a table containing candidates of registration parameters and a score after applying each parameter (stretch and shift factor).}
@@ -75,8 +75,7 @@ all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", packa
 registration_results <- scale_and_register_data(
   input_df = all_data_df,
   stretches = c(3, 2.5, 2, 1.5, 1),
-  shift_extreme = 4,
-  num_shifts = 27,
+  shifts = seq(-4, 4, length.out = 33),
   min_num_overlapping_points = 4,
   initial_rescale = FALSE,
   do_rescale = TRUE,

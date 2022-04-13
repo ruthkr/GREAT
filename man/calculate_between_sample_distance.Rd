@@ -5,20 +5,14 @@
 \title{Calculate distance between sample data before and after registration}
 \usage{
 calculate_between_sample_distance(
-  mean_df,
-  mean_df_sc,
-  imputed_mean_df,
+  registration_results,
   gene_col = "locus_name",
   compare_ref_vs_transform = TRUE,
   accession_data_ref
 )
 }
 \arguments{
-\item{mean_df}{Input data frame containing the mean gene expression of each gene in each genotype at each time point.}
-
-\item{mean_df_sc}{Input data frame which is identical to \code{mean_df}, with additional column \code{sc.expression_value} which is scaled of expression values.}
-
-\item{imputed_mean_df}{Input data frame containing registered.}
+\item{registration_results}{Result of registration process using \code{\link{scale_and_register_data}}.}
 
 \item{gene_col}{Column name of gene accession, default is \code{locus_name}.}
 

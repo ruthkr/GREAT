@@ -42,10 +42,18 @@ all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", packa
   utils::read.csv()
 ```
 
+As an example, we will use only one gene `BRAA03G023790.3C`, we can filter the data by doing:
+
+```{r}
+gene_BRAA03G023790.3C_data <- all_data_df %>% 
+  dplyr::filter(locus_name == "BRAA03G023790.3C")
+```
+
+
 ```{r register-data, message=FALSE, warning=FALSE}
 # Running the registration
 registration_results <- scale_and_register_data(
-  input_df = all_data_df,
+  input_df = gene_BRAA03G023790.3C_data,
   min_num_overlapping_points = 4,
   initial_rescale = FALSE,
   do_rescale = TRUE,
@@ -53,7 +61,22 @@ registration_results <- scale_and_register_data(
   accession_data_ref = "Ro18",
   start_timepoint = "reference", 
   optimise_shift_extreme = FALSE,
-  optimise_registration_parameters = TRUE,
-  boundary_coverage = 1
+  optimise_registration_parameters = TRUE
 )
+
+# ── Starting optimisation ────────────────────────────────────────────────────────────────────────────
+# ℹ Using computed stretch boundary                    
+# ℹ Using computed shift boundary                      
+# ✓ Optimising registration parameters for genes (1/1) [11m 30s]
+# ✓ Finished optimisation
+# 
+# ── Model comparison results ─────────────────────────────────────────────────────────────────────────
+# ℹ BIC finds registration better than non-registration for: 1/1
+# 
+# ── Applying the best-shifts and stretches to gene expression ────────────────────────────────────────
+# ✓ Normalising expression by mean and sd of compared values (1/1) [20ms]
+# ✓ Applying best shift (1/1) [26ms]
+# ℹ Max value of expression_value: 1.36
+# ✓ Imputing transformed expression values (1/1) [29ms]
 ```
+

@@ -19,6 +19,16 @@ get_compared_timepoints <- function(data,
   data$is_compared <- FALSE
   data$is_compared[(data$accession == accession_data_to_transform & (data$shifted_time >= min_data_ref & data$shifted_time <= max_data_ref))] <- TRUE
 
+  # Make sure the time points can be compared using user-specified parameters
+  if (nrow(data[data$is_compared == TRUE, ]) == 0) {
+    stop(
+      cli::format_error(c(
+        "No comparable timepoints were found using specified parameters.",
+        "i" = "Try using smaller parameter ranges, or specifying {.var optimise_shift_extreme = TRUE}."
+      ))
+    )
+  }
+
   # Get the extreme reference data times which used - bigger or equal than max of data to transform, and smaller or equal than  min data to transform, because have to project data to transform onto reference data
   max_data_to_transform <- max(data$shifted_time[data$accession == accession_data_to_transform & data$is_compared == TRUE])
   min_data_to_transform <- min(data$shifted_time[data$accession == accession_data_to_transform & data$is_compared == TRUE])

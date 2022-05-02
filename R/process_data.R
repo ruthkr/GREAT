@@ -116,6 +116,14 @@ scale_and_register_data <- function(input_df,
     best_shifts <- best_registration_list$best_shifts
     model_comparison_dt <- best_registration_list$model_comparison_dt
   } else {
+    # Check that stretches and shifts are both numeric or both NA
+    if (length(unique(c(any(is.na(stretches)), any(is.na(shifts))))) == 2) {
+      stop(cli::format_error(c(
+        "{.var stretches} and {.var shifts} must either both be defined or both be {.cls NA}.",
+        "x" = "You supplied {.var stretches} as {.cls {ifelse(any(is.na(stretches)), 'NA', class(stretches))}} and {.var shifts} as {.cls {ifelse(any(is.na(shifts)), 'NA', class(shifts))}}."
+      )))
+    }
+
     # Optimise registration parameters
     cli::cli_h1("Starting optimisation")
 

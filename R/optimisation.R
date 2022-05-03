@@ -117,8 +117,7 @@ get_boundary_box <- function(input_df,
                              accession_data_ref,
                              min_num_overlapping_points,
                              maintain_min_num_overlapping_points = FALSE,
-                             expression_value_threshold,
-                             boundary_coverage) {
+                             expression_value_threshold) {
   # Validate parameters
   are_bounds_defined <- !any(c(any(is.na(stretches_bound)), any(is.na(shifts_bound))))
 
@@ -235,8 +234,8 @@ get_boundary_box <- function(input_df,
     stretch_lower = stretch_lower,
     stretch_upper = stretch_upper,
     shift_init = shift_init,
-    shift_lower = shift_lower * boundary_coverage,
-    shift_upper = shift_upper * boundary_coverage
+    shift_lower = shift_lower,
+    shift_upper = shift_upper
   )
 
   return(results_list)
@@ -258,8 +257,7 @@ optimise_registration_params_single_gene <- function(input_df,
                                                      accession_data_ref,
                                                      start_timepoint,
                                                      is_data_normalised,
-                                                     num_iterations = 60,
-                                                     boundary_coverage = 1) {
+                                                     num_iterations = 60) {
   # Function to optimise
   BIC_diff <- function(x) {
     stretch <- x[1]
@@ -303,8 +301,7 @@ optimise_registration_params_single_gene <- function(input_df,
     accession_data_ref,
     min_num_overlapping_points,
     maintain_min_num_overlapping_points,
-    expression_value_threshold,
-    boundary_coverage
+    expression_value_threshold
   )
 
   if (any(is.na(initial_guess))) {
@@ -395,7 +392,6 @@ optimise_registration_params_single_gene <- function(input_df,
 #' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
 #' @param is_data_normalised \code{TRUE} if dataset has been normalised prior to registration process.
 #' @param num_iterations Maximum number of iterations of the algorithm. Default is 100.
-#' @param boundary_coverage Coverage factor of the boundary box. Default is 1.
 #'
 #' @return List of optimum registration parameters, \code{optimum_params_df}, and other candidate registration parameters, \code{candidate_params_df} for all genes.
 #' @export
@@ -413,8 +409,7 @@ optimise_registration_params <- function(input_df,
                                          start_timepoint = c("reference", "transform", "zero"),
                                          expression_value_threshold = 5,
                                          is_data_normalised = FALSE,
-                                         num_iterations = 60,
-                                         boundary_coverage = 1) {
+                                         num_iterations = 60) {
   # Validate genes
   if (is.null(genes)) {
     genes <- unique(input_df$locus_name)
@@ -446,8 +441,7 @@ optimise_registration_params <- function(input_df,
           accession_data_ref,
           start_timepoint,
           is_data_normalised,
-          num_iterations,
-          boundary_coverage
+          num_iterations
         )
 
         return(opt_res)

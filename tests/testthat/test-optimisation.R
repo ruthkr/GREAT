@@ -33,8 +33,7 @@ test_that("optimise_registration_params works", {
     start_timepoint = start_timepoint,
     expression_value_threshold = expression_value_threshold,
     is_data_normalised = is_data_normalised,
-    num_iterations = num_iterations,
-    boundary_coverage = 1
+    num_iterations = num_iterations
   )
 
   processed_data <- preprocess_data(
@@ -87,8 +86,7 @@ test_that("get_boundary_box works", {
     accession_data_to_transform = accession_data_to_transform,
     accession_data_ref = accession_data_ref,
     min_num_overlapping_points = min_num_overlapping_points,
-    expression_value_threshold = expression_value_threshold,
-    boundary_coverage = 1
+    expression_value_threshold = expression_value_threshold
   )
 
   boundary_box_auto <- get_boundary_box(
@@ -98,8 +96,7 @@ test_that("get_boundary_box works", {
     accession_data_to_transform = accession_data_to_transform,
     accession_data_ref = accession_data_ref,
     min_num_overlapping_points = min_num_overlapping_points,
-    expression_value_threshold = expression_value_threshold,
-    boundary_coverage = 1
+    expression_value_threshold = expression_value_threshold
   )
 
   # Expected output for get_boundary_box()

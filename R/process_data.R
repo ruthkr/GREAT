@@ -141,8 +141,7 @@ scale_and_register_data <- function(input_df,
       start_timepoint = start_timepoint,
       expression_value_threshold = expression_value_threshold,
       is_data_normalised = is_data_normalised,
-      num_iterations = num_iterations,
-      boundary_coverage = 1
+      num_iterations = num_iterations
     )
 
     cli::cli_alert_success("Finished optimisation")

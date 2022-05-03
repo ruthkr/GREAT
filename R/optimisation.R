@@ -116,23 +116,24 @@ get_boundary_box <- function(input_df,
                              accession_data_to_transform,
                              accession_data_ref,
                              min_num_overlapping_points,
+                             optimise_shift_extreme,
                              expression_value_threshold,
                              boundary_coverage) {
-  # Stretch limits
+  # Validate parameters
+  are_bounds_defined <- !any(c(any(is.na(stretches)), any(is.na(shifts))))
+
+  # Initial stretch value
   stretch_init <- get_approximate_stretch(
     input_df = input_df,
     accession_data_to_transform = accession_data_to_transform,
     accession_data_ref = accession_data_ref
   )
 
-  if (all(is.na(stretches_bound))) {
-    cli::cli_alert_info("Using computed stretch boundary")
-    stretch_lower <- 0.5 * stretch_init
-    stretch_upper <- 1.5 * ceiling(stretch_init)
-  } else {
-    cli::cli_alert_info("Using user-defined stretches as stretch boundary")
+  # User defined boundaries
+  if (are_bounds_defined) {
+    # Stretch limits
+    cli::cli_alert_info("Using user-defined stretches and shifts as boundaries")
 
-    # Make sure stretches_bound defines a range
     if (length(stretches_bound) < 2) {
       bound_factor <- 0.5
       stretches_bound <- c(stretches_bound - bound_factor, stretches_bound + bound_factor)
@@ -144,45 +145,7 @@ get_boundary_box <- function(input_df,
     if (stretch_init < stretch_lower | stretch_init > stretch_upper) {
       stretch_init <- mean(c(stretch_lower, stretch_upper))
     }
-  }
 
-  # Shift limits
-  if (all(is.na(shifts_bound))) {
-    cli::cli_alert_info("Using computed shift boundary")
-    all_data_df <- data.table::as.data.table(input_df)
-
-    mean_df <- get_mean_data(
-      exp = all_data_df,
-      expression_value_threshold = expression_value_threshold,
-      accession_data_to_transform = accession_data_to_transform,
-      is_data_normalised = FALSE
-    )
-
-    shift_init <- 0
-
-    shift_upper <- get_extreme_shifts_for_all(
-      mean_df,
-      stretch_factor = 1.5,
-      min_num_overlapping_points = min_num_overlapping_points,
-      shift_extreme = 1000,
-      accession_data_to_transform = accession_data_to_transform,
-      accession_data_ref = accession_data_ref
-    ) %>%
-      .[[2]]
-
-    shift_lower <- get_extreme_shifts_for_all(
-      mean_df,
-      stretch_factor = stretch_upper,
-      min_num_overlapping_points = min_num_overlapping_points,
-      shift_extreme = 1000,
-      accession_data_to_transform = accession_data_to_transform,
-      accession_data_ref = accession_data_ref
-    ) %>%
-      .[[1]]
-  } else {
-    cli::cli_alert_info("Using user-defined shifts as shift boundary")
-
-    # Make sure shifts_bound defines a range
     if (length(shifts_bound) < 2) {
       bound_factor <- 0.5
       shifts_bound <- c(shifts_bound - bound_factor, shifts_bound + bound_factor)
@@ -192,6 +155,78 @@ get_boundary_box <- function(input_df,
     shift_upper <- max(shifts_bound)
 
     shift_init <- mean(c(shift_lower, shift_upper))
+  }
+
+  # Computed boundaries
+  if (!are_bounds_defined) {
+    # Initial stretch limits
+    cli::cli_alert_info("Using computed stretchs and shifts boundares")
+    stretch_lower <- 0.5 * stretch_init
+    stretch_upper <- 1.5 * ceiling(stretch_init)
+
+    # Define stretch and shift limits given min_num_overlapping_points
+    all_data_df <- data.table::as.data.table(input_df)
+
+    mean_df <- get_mean_data(
+      exp = all_data_df,
+      expression_value_threshold = expression_value_threshold,
+      accession_data_to_transform = accession_data_to_transform,
+      is_data_normalised = FALSE
+    )
+
+    # Create candidate shifts limits data frame
+    bound_limits <- seq(round(stretch_lower, 1), round(stretch_upper, 1), 0.1) %>%
+      purrr::map(
+        function(stretch) {
+          extreme_shifts <- tryCatch(
+            {
+              shifts <- get_extreme_shifts_for_all(
+                mean_df,
+                stretch_factor = stretch,
+                min_num_overlapping_points = min_num_overlapping_points,
+                shift_extreme = 1000,
+                accession_data_to_transform = accession_data_to_transform,
+                accession_data_ref = accession_data_ref
+              ) %>%
+                suppressWarnings()
+
+              df <- data.frame(
+                stretch = stretch,
+                shift_lower = shifts[[1]],
+                shift_upper = shifts[[2]]
+              )
+
+              return(df)
+            },
+            error = function(error_message) {
+              df <- data.frame(
+                stretch = stretch,
+                shift_lower = NA,
+                shift_upper = NA
+              )
+
+              return(df)
+            }
+          )
+        }
+      ) %>%
+      purrr::reduce(dplyr::bind_rows) %>%
+      dplyr::filter(!is.na(shift_lower), !is.na(shift_upper))
+
+    # Stretch and shift limits
+    shift_init <- 0
+    stretch_lower <- min(bound_limits$stretch)
+    stretch_upper <- max(bound_limits$stretch)
+
+    if (!optimise_shift_extreme) {
+      # Consider biggest box possible
+      shift_upper <- max(bound_limits$shift_upper)
+      shift_lower <- min(bound_limits$shift_lower)
+    } else {
+      # Restrict box to values to make sure min_num_overlapping_points condition is always maintained
+      shift_upper <- min(bound_limits$shift_upper)
+      shift_lower <- max(bound_limits$shift_lower)
+    }
   }
 
   # Results object
@@ -217,6 +252,7 @@ optimise_registration_params_single_gene <- function(input_df,
                                                      initial_rescale = FALSE,
                                                      do_rescale = TRUE,
                                                      min_num_overlapping_points = 4,
+                                                     optimise_shift_extreme = FALSE,
                                                      expression_value_threshold = 5,
                                                      accession_data_to_transform,
                                                      accession_data_ref,
@@ -266,6 +302,7 @@ optimise_registration_params_single_gene <- function(input_df,
     accession_data_to_transform,
     accession_data_ref,
     min_num_overlapping_points,
+    optimise_shift_extreme,
     expression_value_threshold,
     boundary_coverage
   )
@@ -370,6 +407,7 @@ optimise_registration_params <- function(input_df,
                                          initial_rescale = FALSE,
                                          do_rescale = TRUE,
                                          min_num_overlapping_points = 4,
+                                         optimise_shift_extreme = FALSE,
                                          accession_data_to_transform,
                                          accession_data_ref,
                                          start_timepoint = c("reference", "transform", "zero"),
@@ -402,6 +440,7 @@ optimise_registration_params <- function(input_df,
           initial_rescale,
           do_rescale,
           min_num_overlapping_points,
+          optimise_shift_extreme,
           expression_value_threshold,
           accession_data_to_transform,
           accession_data_ref,

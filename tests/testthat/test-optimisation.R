@@ -104,5 +104,5 @@ test_that("get_boundary_box works", {
 
   # Expected output for get_boundary_box()
   expect_equal(round(unname(unlist(boundary_box_manual)), 2), c(2.02, 2, 2.05, 0.62, 0.6, 0.65))
-  expect_equal(round(unname(unlist(boundary_box_auto)), 2), c(2.67, 1.33, 4.5, 0, -27, 19.5))
+  expect_equal(round(unname(unlist(boundary_box_auto)), 2), c(2.67, 1.3, 4.5, 0, -27, 19.8))
 })

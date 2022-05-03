@@ -9,10 +9,10 @@ get_best_stretch_and_shift_simplified <- function(to_shift_df,
                                                   shifts,
                                                   do_rescale,
                                                   min_num_overlapping_points,
+                                                  maintain_min_num_overlapping_points,
                                                   accession_data_to_transform,
                                                   accession_data_ref,
-                                                  time_to_add,
-                                                  optimise_shift_extreme) {
+                                                  time_to_add) {
   # Warning to make sure users have correct accession data
   if (!(accession_data_to_transform %in% all_data_df$accession & accession_data_ref %in% all_data_df$accession)) {
     stop("get_best_stretch_and_shift(): data accessions should have been converted to correct accession.")
@@ -25,9 +25,9 @@ get_best_stretch_and_shift_simplified <- function(to_shift_df,
     shifts,
     do_rescale,
     min_num_overlapping_points,
+    maintain_min_num_overlapping_points,
     accession_data_to_transform,
-    accession_data_ref,
-    optimise_shift_extreme
+    accession_data_ref
   )
 
   # Ensure no duplicated rows
@@ -60,14 +60,14 @@ get_BIC_from_registering_data <- function(input_df,
                                           stretches,
                                           shifts,
                                           min_num_overlapping_points,
+                                          maintain_min_num_overlapping_points = FALSE,
                                           initial_rescale,
                                           do_rescale,
                                           accession_data_to_transform,
                                           accession_data_ref,
                                           start_timepoint = c("reference", "transform", "zero"),
                                           expression_value_threshold = 5,
-                                          is_data_normalised = FALSE,
-                                          optimise_shift_extreme = FALSE) {
+                                          is_data_normalised = FALSE) {
   # Validate parameters
   start_timepoint <- match.arg(start_timepoint)
 
@@ -94,10 +94,10 @@ get_BIC_from_registering_data <- function(input_df,
     shifts,
     do_rescale,
     min_num_overlapping_points,
+    maintain_min_num_overlapping_points,
     accession_data_to_transform,
     accession_data_ref,
-    time_to_add,
-    optimise_shift_extreme
+    time_to_add
   )
 
   registered_BIC <- best_registration_list$model_comparison_dt$registered.BIC
@@ -116,11 +116,11 @@ get_boundary_box <- function(input_df,
                              accession_data_to_transform,
                              accession_data_ref,
                              min_num_overlapping_points,
-                             optimise_shift_extreme,
+                             maintain_min_num_overlapping_points = FALSE,
                              expression_value_threshold,
                              boundary_coverage) {
   # Validate parameters
-  are_bounds_defined <- !any(c(any(is.na(stretches)), any(is.na(shifts))))
+  are_bounds_defined <- !any(c(any(is.na(stretches_bound)), any(is.na(shifts_bound))))
 
   # Initial stretch value
   stretch_init <- get_approximate_stretch(
@@ -160,7 +160,7 @@ get_boundary_box <- function(input_df,
   # Computed boundaries
   if (!are_bounds_defined) {
     # Initial stretch limits
-    cli::cli_alert_info("Using computed stretchs and shifts boundares")
+    cli::cli_alert_info("Using computed stretches and shifts boundaries")
     stretch_lower <- 0.5 * stretch_init
     stretch_upper <- 1.5 * ceiling(stretch_init)
 
@@ -218,7 +218,7 @@ get_boundary_box <- function(input_df,
     stretch_lower <- min(bound_limits$stretch)
     stretch_upper <- max(bound_limits$stretch)
 
-    if (!optimise_shift_extreme) {
+    if (!maintain_min_num_overlapping_points) {
       # Consider biggest box possible
       shift_upper <- max(bound_limits$shift_upper)
       shift_lower <- min(bound_limits$shift_lower)
@@ -252,7 +252,7 @@ optimise_registration_params_single_gene <- function(input_df,
                                                      initial_rescale = FALSE,
                                                      do_rescale = TRUE,
                                                      min_num_overlapping_points = 4,
-                                                     optimise_shift_extreme = FALSE,
+                                                     maintain_min_num_overlapping_points = FALSE,
                                                      expression_value_threshold = 5,
                                                      accession_data_to_transform,
                                                      accession_data_ref,
@@ -272,14 +272,14 @@ optimise_registration_params_single_gene <- function(input_df,
           stretches = stretch,
           shifts = shift,
           min_num_overlapping_points = min_num_overlapping_points,
+          maintain_min_num_overlapping_points = FALSE,
           expression_value_threshold = expression_value_threshold,
           initial_rescale = initial_rescale,
           do_rescale = do_rescale,
           accession_data_to_transform = accession_data_to_transform,
           accession_data_ref = accession_data_ref,
           start_timepoint = start_timepoint,
-          is_data_normalised = is_data_normalised,
-          optimise_shift_extreme = FALSE
+          is_data_normalised = is_data_normalised
         ) %>%
           suppressMessages() %>%
           suppressWarnings()
@@ -302,7 +302,7 @@ optimise_registration_params_single_gene <- function(input_df,
     accession_data_to_transform,
     accession_data_ref,
     min_num_overlapping_points,
-    optimise_shift_extreme,
+    maintain_min_num_overlapping_points,
     expression_value_threshold,
     boundary_coverage
   )
@@ -407,7 +407,7 @@ optimise_registration_params <- function(input_df,
                                          initial_rescale = FALSE,
                                          do_rescale = TRUE,
                                          min_num_overlapping_points = 4,
-                                         optimise_shift_extreme = FALSE,
+                                         maintain_min_num_overlapping_points = FALSE,
                                          accession_data_to_transform,
                                          accession_data_ref,
                                          start_timepoint = c("reference", "transform", "zero"),
@@ -440,7 +440,7 @@ optimise_registration_params <- function(input_df,
           initial_rescale,
           do_rescale,
           min_num_overlapping_points,
-          optimise_shift_extreme,
+          maintain_min_num_overlapping_points,
           expression_value_threshold,
           accession_data_to_transform,
           accession_data_ref,
@@ -513,9 +513,9 @@ get_best_stretch_and_shift_after_optimisation <- function(to_shift_df,
       shifts = params_df[params_df$gene == gene, ]$shift,
       do_rescale,
       min_num_overlapping_points,
+      maintain_min_num_overlapping_points = FALSE,
       accession_data_to_transform,
-      accession_data_ref,
-      optimise_shift_extreme = FALSE
+      accession_data_ref
     )
 
     # Ensure no duplicated rows

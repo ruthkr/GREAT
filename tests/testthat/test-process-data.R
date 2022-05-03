@@ -24,12 +24,12 @@ test_that("scale_and_register_data works", {
     stretches = c(2, 1.5, 1),
     shifts = seq(-4, 4, length.out = 27),
     min_num_overlapping_points = 4,
+    maintain_min_num_overlapping_points = TRUE,
     initial_rescale = FALSE,
     do_rescale = TRUE,
     accession_data_to_transform = "Col0",
     accession_data_ref = "Ro18",
-    start_timepoint = "reference",
-    optimise_shift_extreme = TRUE
+    start_timepoint = "reference"
   )
 
   expect_equal(class(registration_results), "list")
@@ -160,10 +160,10 @@ test_that("all functions called in scale_and_register_data work", {
     shifts,
     do_rescale,
     min_num_overlapping_points,
+    maintain_min_num_overlapping_points = TRUE,
     accession_data_to_transform,
     accession_data_ref,
-    time_to_add,
-    optimise_shift_extreme = TRUE
+    time_to_add
   )
 
   all_shifts <- best_registration_list$all_shifts

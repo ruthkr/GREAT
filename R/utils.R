@@ -24,7 +24,7 @@ get_compared_timepoints <- function(data,
     stop(
       cli::format_error(c(
         "No comparable timepoints were found using specified parameters.",
-        "i" = "Try using smaller parameter ranges, or specifying {.var optimise_shift_extreme = TRUE}."
+        "i" = "Try using smaller parameter ranges, or specifying {.var maintain_min_num_overlapping_points = TRUE}."
       ))
     )
   }

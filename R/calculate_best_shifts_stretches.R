@@ -6,16 +6,16 @@ calculate_all_best_shifts <- function(mean_df,
                                       shifts,
                                       do_rescale,
                                       min_num_overlapping_points,
+                                      maintain_min_num_overlapping_points,
                                       accession_data_to_transform,
-                                      accession_data_ref,
-                                      optimise_shift_extreme) {
+                                      accession_data_ref) {
   # Initialize vectors
   symbols <- c()
   num_points <- c()
   all_scores_list <- rep(list(0), length(unique(mean_df$locus_name)))
 
   # Get the extreme shifts which can be applied to the genes
-  if (optimise_shift_extreme) {
+  if (maintain_min_num_overlapping_points) {
     shift_extreme <- max(abs(shifts))
 
     extreme_shift <- get_extreme_shifts_for_all(

@@ -14,7 +14,7 @@
 #' @param start_timepoint Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.
 #' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
 #' @param is_data_normalised \code{TRUE} if dataset has been normalised prior to registration process.
-#' @param optimise_shift_extreme Whether to optimise extreme (minimum and maximum) values of \code{shifts}. By default, \code{FALSE}.
+#' @param maintain_min_num_overlapping_points Whether to optimise extreme (minimum and maximum) values of \code{shifts}. By default, \code{FALSE}.
 #' @param optimise_registration_parameters Whether to optimise registration parameters with Simulated Annealing. By default, \code{FALSE}.
 #' @param num_iterations Maximum number of iterations in the Simulated Annealing optimisation. By default, 60.
 #'
@@ -54,6 +54,7 @@ scale_and_register_data <- function(input_df,
                                     stretches = NA,
                                     shifts = NA,
                                     min_num_overlapping_points,
+                                    maintain_min_num_overlapping_points = FALSE,
                                     initial_rescale = FALSE,
                                     do_rescale = TRUE,
                                     accession_data_to_transform,
@@ -61,7 +62,6 @@ scale_and_register_data <- function(input_df,
                                     start_timepoint = c("reference", "transform", "zero"),
                                     expression_value_threshold = 5,
                                     is_data_normalised = FALSE,
-                                    optimise_shift_extreme = FALSE,
                                     optimise_registration_parameters = FALSE,
                                     num_iterations = 60) {
   # Validate parameters
@@ -106,10 +106,10 @@ scale_and_register_data <- function(input_df,
       shifts,
       do_rescale,
       min_num_overlapping_points,
+      maintain_min_num_overlapping_points,
       accession_data_to_transform,
       accession_data_ref,
-      time_to_add,
-      optimise_shift_extreme
+      time_to_add
     )
 
     all_shifts <- best_registration_list$all_shifts
@@ -135,7 +135,7 @@ scale_and_register_data <- function(input_df,
       initial_rescale = initial_rescale,
       do_rescale = do_rescale,
       min_num_overlapping_points = min_num_overlapping_points,
-      optimise_shift_extreme = optimise_shift_extreme,
+      maintain_min_num_overlapping_points = maintain_min_num_overlapping_points,
       accession_data_to_transform = accession_data_to_transform,
       accession_data_ref = accession_data_ref,
       start_timepoint = start_timepoint,
@@ -269,10 +269,10 @@ get_best_stretch_and_shift <- function(to_shift_df,
                                        shifts,
                                        do_rescale,
                                        min_num_overlapping_points,
+                                       maintain_min_num_overlapping_points,
                                        accession_data_to_transform,
                                        accession_data_ref,
-                                       time_to_add,
-                                       optimise_shift_extreme) {
+                                       time_to_add) {
   # Suppress "no visible binding for global variable" note
   is_best <- NULL
   gene <- NULL
@@ -298,9 +298,9 @@ get_best_stretch_and_shift <- function(to_shift_df,
       shifts,
       do_rescale,
       min_num_overlapping_points,
+      maintain_min_num_overlapping_points,
       accession_data_to_transform,
-      accession_data_ref,
-      optimise_shift_extreme
+      accession_data_ref
     )
 
     # Ensure no duplicated rows

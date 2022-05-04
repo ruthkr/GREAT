@@ -9,6 +9,7 @@ scale_and_register_data(
   stretches = NA,
   shifts = NA,
   min_num_overlapping_points,
+  maintain_min_num_overlapping_points = FALSE,
   initial_rescale = FALSE,
   do_rescale = TRUE,
   accession_data_to_transform,
@@ -16,7 +17,6 @@ scale_and_register_data(
   start_timepoint = c("reference", "transform", "zero"),
   expression_value_threshold = 5,
   is_data_normalised = FALSE,
-  optimise_shift_extreme = FALSE,
   optimise_registration_parameters = FALSE,
   num_iterations = 60
 )
@@ -29,6 +29,8 @@ scale_and_register_data(
 \item{shifts}{Candidate registration shift values to apply to data to transform.}
 
 \item{min_num_overlapping_points}{Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.}
+
+\item{maintain_min_num_overlapping_points}{Whether to automatically calculate extreme (minimum and maximum) values of \code{shifts} to maintain specified \code{min_num_overlapping_points} condition. By default, \code{FALSE}.}
 
 \item{initial_rescale}{Scaling gene expression prior to registration if \code{TRUE}.}
 
@@ -43,8 +45,6 @@ scale_and_register_data(
 \item{expression_value_threshold}{Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.}
 
 \item{is_data_normalised}{\code{TRUE} if dataset has been normalised prior to registration process.}
-
-\item{optimise_shift_extreme}{Whether to optimise extreme (minimum and maximum) values of \code{shifts}. By default, \code{FALSE}.}
 
 \item{optimise_registration_parameters}{Whether to optimise registration parameters with Simulated Annealing. By default, \code{FALSE}.}
 

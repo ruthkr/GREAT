@@ -136,7 +136,7 @@ registration_results_with_boundary <- scale_and_register_data(
 After running the registration, we can then visualise the results as follows:
 
 ```{r fig.height=3, fig.width=5, eval=FALSE}
-registration_results_with_boundary$imputed_mean_df %>% 
+registration_results$imputed_mean_df %>% 
   greatR::plot_registration_results() +
   ggplot2::labs(title = "Registration results with boundary initialisation") 
 ```

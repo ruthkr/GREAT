@@ -141,10 +141,6 @@ get_boundary_box <- function(input_df,
     stretch_lower <- min(stretches_bound)
     stretch_upper <- max(stretches_bound)
 
-    if (stretch_init < stretch_lower | stretch_init > stretch_upper) {
-      stretch_init <- mean(c(stretch_lower, stretch_upper))
-    }
-
     if (length(shifts_bound) < 2) {
       bound_factor <- 0.5
       shifts_bound <- c(shifts_bound - bound_factor, shifts_bound + bound_factor)
@@ -210,31 +206,46 @@ get_boundary_box <- function(input_df,
         }
       ) %>%
       purrr::reduce(dplyr::bind_rows) %>%
-      dplyr::filter(!is.na(shift_lower), !is.na(shift_upper),
-                    !is.infinite(shift_lower), !is.infinite(shift_upper))
-
-    # Filter bound_limits df only for those shift_values between Q25% - Q75%
-    quan <- unname(quantile(bound_limits$shift_upper))
-
-    bound_limits <- bound_limits %>%
-      dplyr::filter(shift_upper <= quan[4],
-                    shift_upper >= quan[2])
-
-
-    # Stretch and shift limits
-    shift_init <- 0
-    stretch_lower <- min(bound_limits$stretch)
-    stretch_upper <- max(bound_limits$stretch)
+      dplyr::filter(
+        !is.na(shift_lower),
+        !is.na(shift_upper),
+        !is.infinite(shift_lower),
+        !is.infinite(shift_upper)
+      )
 
     if (!maintain_min_num_overlapping_points) {
       # Consider biggest box possible
       shift_upper <- max(bound_limits$shift_upper)
       shift_lower <- min(bound_limits$shift_lower)
     } else {
-      # Restrict box to values to make sure min_num_overlapping_points condition is always maintained
+      # Filter bound_limits df only for those shift values between Q25% - Q75%
+      quan <- unname(stats::quantile(bound_limits$shift_upper))
+
+      bound_limits <- bound_limits %>%
+        dplyr::filter(
+          shift_upper <= quan[4],
+          shift_upper >= quan[2]
+        )
+
+      # Restrict shift limits to make sure min_num_overlapping_points condition is maintained
       shift_upper <- min(bound_limits$shift_upper)
       shift_lower <- max(bound_limits$shift_lower)
     }
+
+    # Define stretch limits
+    stretch_lower <- min(bound_limits$stretch)
+    stretch_upper <- max(bound_limits$stretch)
+  }
+
+  # Correct initial stretch value
+  if (stretch_init < stretch_lower | stretch_init > stretch_upper) {
+    stretch_init <- mean(c(stretch_lower, stretch_upper))
+  }
+
+  # Correct initial shift value
+  shift_init <- 0
+  if (shift_init < shift_lower | shift_init > shift_upper) {
+    shift_init <- mean(c(shift_lower, shift_upper))
   }
 
   # Results object
@@ -395,6 +406,7 @@ optimise_registration_params_single_gene <- function(input_df,
 #' @param initial_rescale Scaling gene expression prior to registration if \code{TRUE}.
 #' @param do_rescale Scaling gene expression using only overlapping time points points during registration.
 #' @param min_num_overlapping_points Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
+#' @param maintain_min_num_overlapping_points Whether to automatically calculate extreme (minimum and maximum) values of \code{shifts} to maintain specified \code{min_num_overlapping_points} condition. By default, \code{FALSE}.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
 #' @param accession_data_ref Accession name of reference data.
 #' @param start_timepoint Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.

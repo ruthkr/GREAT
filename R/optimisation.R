@@ -210,7 +210,16 @@ get_boundary_box <- function(input_df,
         }
       ) %>%
       purrr::reduce(dplyr::bind_rows) %>%
-      dplyr::filter(!is.na(shift_lower), !is.na(shift_upper))
+      dplyr::filter(!is.na(shift_lower), !is.na(shift_upper),
+                    !is.infinite(shift_lower), !is.infinite(shift_upper))
+
+    # Filter bound_limits df only for those shift_values between Q25% - Q75%
+    quan <- unname(quantile(bound_limits$shift_upper))
+
+    bound_limits <- bound_limits %>%
+      dplyr::filter(shift_upper <= quan[4],
+                    shift_upper >= quan[2])
+
 
     # Stretch and shift limits
     shift_init <- 0

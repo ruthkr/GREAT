@@ -7,6 +7,7 @@
 #' @param stretches Candidate registration stretch factors to apply to data to transform.
 #' @param shifts Candidate registration shift values to apply to data to transform.
 #' @param min_num_overlapping_points Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
+#' @param maintain_min_num_overlapping_points Whether to automatically calculate extreme (minimum and maximum) values of \code{shifts} to maintain specified \code{min_num_overlapping_points} condition. By default, \code{FALSE}.
 #' @param initial_rescale Scaling gene expression prior to registration if \code{TRUE}.
 #' @param do_rescale Scaling gene expression using only overlapping time points points during registration.
 #' @param accession_data_to_transform Accession name of data which will be transformed.
@@ -14,7 +15,6 @@
 #' @param start_timepoint Time points to be added in both reference data and data to transform after shifting and stretching. Can be either \code{"reference"} (the default), \code{"transform"}, or \code{"zero"}.
 #' @param expression_value_threshold Expression value threshold. Remove expressions if maximum is less than the threshold. If \code{NULL} keep all data.
 #' @param is_data_normalised \code{TRUE} if dataset has been normalised prior to registration process.
-#' @param maintain_min_num_overlapping_points Whether to optimise extreme (minimum and maximum) values of \code{shifts}. By default, \code{FALSE}.
 #' @param optimise_registration_parameters Whether to optimise registration parameters with Simulated Annealing. By default, \code{FALSE}.
 #' @param num_iterations Maximum number of iterations in the Simulated Annealing optimisation. By default, 60.
 #'

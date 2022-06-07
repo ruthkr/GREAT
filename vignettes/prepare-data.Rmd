@@ -30,7 +30,7 @@ Input data frame required for `greatR` to register your gene expression profiles
   
 <br>
 
-```{r all-data-illustration, echo=FALSE, out.width='80%'}
+```{r all-data-illustration, echo=FALSE, fig.align='center', out.width='80%'}
 knitr::include_graphics("figures/all_data_illustration.jpg")
 ```
 
@@ -43,7 +43,7 @@ knitr::include_graphics("figures/all_data_illustration.jpg")
 
 <br>
 
-```{r combine-data, echo=FALSE, out.width='100%'}
+```{r combine-data, echo=FALSE, fig.align='center', out.width='100%'}
 knitr::include_graphics("figures/prepare_data.png")
 ```
 

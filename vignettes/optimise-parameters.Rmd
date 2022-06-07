@@ -1,8 +1,8 @@
 ---
-title: "Registering data with parameters optimisation"
+title: "Registering data with parameter optimisation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{optimise_parameters}
+  %\VignetteIndexEntry{Registering data with parameter optimisation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,16 +14,16 @@ knitr::opts_chunk$set(
 )
 ```
 
-Another feature that this package provides is option for users to optimise the parameters value while running the registration process. There are two options to do this process, if a user defines stretch and shift factors boundary, the optimisation process will be processed within the boundary values initialised. If a user does not give any initialisation value, then the optimisation boundary will be automatically calculated. 
+Another feature provided by this package is an option for users to optimise the registration parameter values. To do this procedure, a user is given an option to initialise stretches and shifts. If a user defines stretch and shift factors boundary, the optimisation process will be processed within the boundary values initialised. If a user does not give any initialisation value, then the optimisation boundary will be automatically calculated. 
 
 <br>
 
-## Optimisation process without boundary initialisation 
+## Without boundary initialisation 
 
 The data used on [register data](https://ruthkr.github.io/greatR/articles/register-data.html) section will be used. To do this optimisation process, we just need put parameter `optimise_registration_parameters = TRUE` when using the main function `scale_and_register_data()` as shown in the figure below. 
 
-```{r opt-data-with-initial, echo=FALSE, out.width='50%'}
-knitr::include_graphics("figures/optimisation_workflow_with_initialisation.png")
+```{r opt-data-with-initial, echo=FALSE, fig.align='center', out.width='50%'}
+knitr::include_graphics("figures/optimisation_workflow_without_initialisation.png")
 ```
 
 ```{r example, message=FALSE, include=FALSE}
@@ -61,7 +61,7 @@ registration_results_without_boundary <- scale_and_register_data(
   accession_data_to_transform = "Col0",
   accession_data_ref = "Ro18",
   start_timepoint = "reference", 
-  optimise_shift_extreme = FALSE,
+  maintain_min_num_overlapping_points = FALSE, 
   optimise_registration_parameters = TRUE
 )
 
@@ -84,21 +84,21 @@ registration_results_without_boundary <- scale_and_register_data(
 After running the registration, we can then visualise the results as follows:
 
 ```{r fig.height=3, fig.width=5, eval=FALSE}
-registration_results_with_boundary$imputed_mean_df %>% 
+registration_results_without_boundary$imputed_mean_df %>% 
   greatR::plot_registration_results() +
-  ggplot2::labs(title = "Registration results with boundary initialisation") 
+  ggplot2::labs(title = "Registration results without boundary initialisation") 
 ```
 
-```{r plot-without-boundary, echo=FALSE, out.width='50%'}
+```{r plot-without-boundary, echo=FALSE, fig.align='center', out.width='50%'}
 knitr::include_graphics("figures/reg_results_without_boundary_init.png")
 ```
 
-## Optimisation process with boundary initialisation 
+## With boundary initialisation 
 
 Users can also specify or initialise boundary where the optimisation will be performed by doing the same routine as the process done above, but with the stretch and shift initialisation (see figure below).  
 
-```{r opt-data-without-initial, echo=FALSE, out.width='50%'}
-knitr::include_graphics("figures/optimisation_workflow_without_initialisation.png")
+```{r opt-data-without-initial, echo=FALSE, fig.align='center', out.width='50%'}
+knitr::include_graphics("figures/optimisation_workflow_with_initialisation.png")
 ```
 
 ```{r register-data-with-boundary, message=FALSE, warning=FALSE, eval=FALSE}
@@ -113,7 +113,7 @@ registration_results_with_boundary <- scale_and_register_data(
   accession_data_to_transform = "Col0",
   accession_data_ref = "Ro18",
   start_timepoint = "reference", 
-  optimise_shift_extreme = FALSE,
+  maintain_min_num_overlapping_points = FALSE,
   optimise_registration_parameters = TRUE
 )
 
@@ -141,9 +141,6 @@ registration_results$imputed_mean_df %>%
   ggplot2::labs(title = "Registration results with boundary initialisation") 
 ```
 
-```{r plot-with-boundary, echo=FALSE, out.width='50%'}
+```{r plot-with-boundary, echo=FALSE, fig.align='center', out.width='50%'}
 knitr::include_graphics("figures/reg_results_with_boundary_init.png")
 ```
-
-<br>
-

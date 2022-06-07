@@ -27,8 +27,6 @@ Input data frame required for `greatR` to register your gene expression profiles
   - `expression_value`: desired RNA-seq expression value or measure of the abundance of gene or transcripts which one wishes to compare. This value can be RPM, RPKM, FPKM, TPM, TMM, DESeq, SCnorm, GeTMM, ComBat-Seq and raw reads counts.
   - `tissue`: tissue from which RNA-seq data were extracted. 
   - `group`: replicate ID for each expression value.
-  
-<br>
 
 ```{r all-data-illustration, echo=FALSE, fig.align='center', out.width='80%'}
 knitr::include_graphics("figures/all_data_illustration.jpg")
@@ -40,8 +38,6 @@ knitr::include_graphics("figures/all_data_illustration.jpg")
 ## Using a helper function to prepare input data
 
 `greatR` package provides a helper function `get_expression_of_interest()` to combine reference and query (data to register) data frames, if table ID which connect reference and query data frames provided (as illustrated in the figure below). 
-
-<br>
 
 ```{r combine-data, echo=FALSE, fig.align='center', out.width='100%'}
 knitr::include_graphics("figures/prepare_data.png")

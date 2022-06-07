@@ -16,8 +16,6 @@ knitr::opts_chunk$set(
 
 Another feature provided by this package is an option for users to optimise the registration parameter values. To do this procedure, a user is given an option to initialise stretches and shifts. If a user defines stretch and shift factors boundary, the optimisation process will be processed within the boundary values initialised. If a user does not give any initialisation value, then the optimisation boundary will be automatically calculated. 
 
-<br>
-
 ## Without boundary initialisation 
 
 The data used on [register data](https://ruthkr.github.io/greatR/articles/register-data.html) section will be used. To do this optimisation process, we just need put parameter `optimise_registration_parameters = TRUE` when using the main function `scale_and_register_data()` as shown in the figure below. 

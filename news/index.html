@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">greatR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,11 +57,55 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.0" id="greatr-020">greatR 0.2.0<a class="anchor" aria-label="anchor" href="#greatr-020"></a></h2>
+<ul><li>Added Alex Calderwood as package co-author.</li>
+<li>Added vignette for optimisation process.</li>
+<li>Refactored <code>num_shifts</code> and <code>shift_extreme</code> parameters by simplified <code>shifts</code> parameter.</li>
+</ul><div class="section level3">
+<h3 id="improvements-0-2-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-2-0"></a></h3>
+<ul><li>Improved default parameter values in exported functions.</li>
+<li>Added {optimization}, {purrr} as package dependencies.</li>
+<li>Removed {cowplot}, {ggpubr}, {ggrepel}, {Rtsne}, and {viridis} as package dependencies.</li>
+<li>Cleaned up {cli} messages.</li>
+<li>Removed legacy AIC references, as it is no longer used.</li>
+<li>Updated <code><a href="../reference/calculate_between_sample_distance.html">calculate_between_sample_distance()</a></code> to use <code>registration_results</code> as primary parameter instead of <code>mean_df</code>, <code>mean_df_sc</code>, and <code>imputed_mean_df</code>.</li>
+<li>Added warning if there is no comparable time points found using users’ pre-defined parameters.</li>
+<li>Refactored <code>optimise_shift_extreme</code> as <code>maintain_min_num_overlapping_points</code>, properly defined and corrected the boundary box if number overlapping points whether needed to be maintained or not.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h3>
+<ul><li>Check that input accessions exist in the input data in <code><a href="../reference/get_approximate_stretch.html">get_approximate_stretch()</a></code>.</li>
+<li>Manually create time point sorting levels for <code>x_sample</code> and <code>y_sample</code> columns according in <code><a href="../reference/plot_heatmap.html">plot_heatmap()</a></code>.</li>
+<li>Properly handle <code>-</code> character in accession names in <code><a href="../reference/plot_heatmap.html">plot_heatmap()</a></code> so that time points are parsed correctly.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-0-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>
+<ul><li>Added optional parameter optimisation process using Simulated Annealing through <code><a href="../reference/optimise_registration_params.html">optimise_registration_params()</a></code>.</li></ul></div>
+<div class="section level3">
+<h3 id="new-functions-0-2-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-0-2-0"></a></h3>
+<ul><li>
+<code>preprocess_data()</code> to simplify <code><a href="../reference/scale_and_register_data.html">scale_and_register_data()</a></code> code and reuse logic elsewhere.</li>
+<li>
+<code>get_best_stretch_and_shift_simplified()</code>.</li>
+<li>
+<code>get_BIC_from_registering_data()</code>.</li>
+<li>
+<code>get_boundary_box()</code>.</li>
+<li>
+<code>optimise_registration_params_single_gene()</code>.</li>
+<li>
+<code><a href="../reference/optimise_registration_params.html">optimise_registration_params()</a></code> as wrapper of <code>optimise_registration_params_single_gene()</code> for multiple genes.</li>
+<li>
+<code>get_best_stretch_and_shift_after_optimisation()</code>.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="greatr-010">greatR 0.1.0<a class="anchor" aria-label="anchor" href="#greatr-010"></a></h2><p class="text-muted">CRAN release: 2022-01-12</p>
 <ul><li>Initial release.</li>
 <li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

@@ -10,7 +10,10 @@
     <loc>https://ruthkr.github.io/greatR/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/greatR/articles/prepare_data.html</loc>
+    <loc>https://ruthkr.github.io/greatR/articles/optimise-parameters.html</loc>
+  </url>
+  <url>
+    <loc>https://ruthkr.github.io/greatR/articles/prepare-data.html</loc>
   </url>
   <url>
     <loc>https://ruthkr.github.io/greatR/articles/register-data.html</loc>
@@ -41,6 +44,9 @@
   </url>
   <url>
     <loc>https://ruthkr.github.io/greatR/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://ruthkr.github.io/greatR/reference/optimise_registration_params.html</loc>
   </url>
   <url>
     <loc>https://ruthkr.github.io/greatR/reference/pipe.html</loc>

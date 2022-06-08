@@ -1,11 +1,12 @@
 pandoc: 2.7.3
-pkgdown: 2.0.2
+pkgdown: 2.0.3
 pkgdown_sha: ~
 articles:
-  prepare_data: prepare_data.html
+  optimise-parameters: optimise-parameters.html
+  prepare-data: prepare-data.html
   register-data: register-data.html
   visualise-results: visualise-results.html
-last_built: 2022-02-04T11:04Z
+last_built: 2022-06-08T08:57Z
 urls:
   reference: https://ruthkr.github.io/greatR/reference
   article: https://ruthkr.github.io/greatR/articles

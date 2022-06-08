@@ -39,7 +39,7 @@ all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", packa
   utils::read.csv()
 ```
 
-Note that the data has all of six columns required by the package as documented on the [preparing data](https://ruthkr.github.io/greatR/articles/prepare_data.html) article.
+Note that the data has all of six columns required by the package as documented on the [preparing data](https://ruthkr.github.io/greatR/articles/prepare-data.html) article.
 
 ```{r all-data-kable}
 all_data_df %>%

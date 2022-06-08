@@ -38,9 +38,10 @@ knitr::include_graphics("man/figures/greatR_workflow.png")
 
 More details on how to use this package are available on function documentations and vignettes:
 
-1. [Input requirements](https://ruthkr.github.io/greatR/articles/prepare_data.html)
+1. [Input requirements](https://ruthkr.github.io/greatR/articles/prepare-data.html)
 2. [Register data](https://ruthkr.github.io/greatR/articles/register-data.html)
 3. [Visualise registration results](https://ruthkr.github.io/greatR/articles/visualise-results.html)
+4. [Register data with parameter optimisation](https://ruthkr.github.io/greatR/articles/optimise-parameters.html)
 
 ## Installation
 

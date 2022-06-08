@@ -128,17 +128,16 @@
 
 <span class="co"># Running the registration</span>
 <span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/scale_and_register_data.html">scale_and_register_data</a></span><span class="op">(</span>
-    input_df <span class="op">=</span> <span class="va">all_data_df</span>,
-    stretches <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2.5</span>, <span class="fl">2</span>, <span class="fl">1.5</span>, <span class="fl">1</span><span class="op">)</span>,
-    shift_extreme <span class="op">=</span> <span class="fl">4</span>,
-    num_shifts <span class="op">=</span> <span class="fl">27</span>,
-    min_num_overlapping_points <span class="op">=</span> <span class="fl">4</span>,
-    initial_rescale <span class="op">=</span> <span class="cn">FALSE</span>,
-    do_rescale <span class="op">=</span> <span class="cn">TRUE</span>,
-    accession_data_to_transform <span class="op">=</span> <span class="st">"Col0"</span>,
-    accession_data_ref <span class="op">=</span> <span class="st">"Ro18"</span>,
-    start_timepoint <span class="op">=</span> <span class="st">"reference"</span>
-  <span class="op">)</span>
+  input_df <span class="op">=</span> <span class="va">all_data_df</span>,
+  stretches <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2.5</span>, <span class="fl">2</span>, <span class="fl">1.5</span>, <span class="fl">1</span><span class="op">)</span>,
+  shifts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>, <span class="fl">4</span>, length.out <span class="op">=</span> <span class="fl">33</span><span class="op">)</span>,
+  min_num_overlapping_points <span class="op">=</span> <span class="fl">4</span>,
+  initial_rescale <span class="op">=</span> <span class="cn">FALSE</span>,
+  do_rescale <span class="op">=</span> <span class="cn">TRUE</span>,
+  accession_data_to_transform <span class="op">=</span> <span class="st">"Col0"</span>,
+  accession_data_ref <span class="op">=</span> <span class="st">"Ro18"</span>,
+  start_timepoint <span class="op">=</span> <span class="st">"reference"</span>
+<span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── Information before registration ─────────────────────────────────────────────</span>
 <span class="co">#&gt; ℹ Max value of expression_value of all_data_df: 262.28</span>
@@ -146,48 +145,49 @@
 <span class="co">#&gt; ── Analysing models for all stretch and shift factor ───────────────────────────</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── Analysing models for stretch factor = 3 ──</span>
-<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2s]</span>
-<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [55ms]</span>
-<span class="co">#&gt; ✓ Applying best shift (10/10) [50ms]</span>
-<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [134ms]</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2.6s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [85ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [91ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison BIC (10/10) [140ms]</span>
 <span class="co">#&gt; ✓ Finished analysing models for stretch factor = 3</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── Analysing models for stretch factor = 2.5 ──</span>
-<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2.2s]</span>
-<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [55ms]</span>
-<span class="co">#&gt; ✓ Applying best shift (10/10) [52ms]</span>
-<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [113ms]</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2.8s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [81ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [103ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison BIC (10/10) [160ms]</span>
 <span class="co">#&gt; ✓ Finished analysing models for stretch factor = 2.5</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── Analysing models for stretch factor = 2 ──</span>
-<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2.2s]</span>
-<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [47ms]</span>
-<span class="co">#&gt; ✓ Applying best shift (10/10) [50ms]</span>
-<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [99ms]</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2.9s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [95ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [82ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison BIC (10/10) [164ms]</span>
 <span class="co">#&gt; ✓ Finished analysing models for stretch factor = 2</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── Analysing models for stretch factor = 1.5 ──</span>
-<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2s]</span>
-<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [51ms]</span>
-<span class="co">#&gt; ✓ Applying best shift (10/10) [52ms]</span>
-<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [102ms]</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [3s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [107ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [84ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison BIC (10/10) [171ms]</span>
 <span class="co">#&gt; ✓ Finished analysing models for stretch factor = 1.5</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── Analysing models for stretch factor = 1 ──</span>
-<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [1.9s]</span>
-<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [49ms]</span>
-<span class="co">#&gt; ✓ Applying best shift (10/10) [49ms]</span>
-<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison AIC &amp; BIC (10/10) [108ms]</span>
+<span class="co">#&gt; ✓ Calculating score for all shifts (10/10) [2.7s]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [85ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [90ms]</span>
+<span class="co">#&gt; ✓ Calculating registration vs non-registration comparison BIC (10/10) [154ms]</span>
 <span class="co">#&gt; ✓ Finished analysing models for stretch factor = 1</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── Model comparison results ────────────────────────────────────────────────────</span>
 <span class="co">#&gt; ℹ BIC finds registration better than non-registration for: 10/10</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── Applying the best-shifts and stretches to gene expression ───────────────────</span>
-<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [48ms]</span>
-<span class="co">#&gt; ✓ Applying best shift (10/10) [52ms]</span>
+<span class="co">#&gt; ✓ Normalising expression by mean and sd of compared values (10/10) [85ms]</span>
+<span class="co">#&gt; ✓ Applying best shift (10/10) [98ms]</span>
 <span class="co">#&gt; ℹ Max value of expression_value: 9.05</span>
-<span class="co">#&gt; ✓ Imputing transformed expression values (10/10) [144ms]</span></code></pre></div>
+<span class="co">#&gt; ✓ Imputing transformed expression values (10/10) [209ms]</span>
+<span class="co">#&gt; </span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>

@@ -181,8 +181,11 @@ apply_stretch <- function(data,
   data$shifted_time <- data$delta_time
 
   # After stretching, add the time to the first datapoint back on
-  data$shifted_time[data$accession == accession_data_to_transform] <- data$shifted_time[data$accession == accession_data_to_transform] + time_to_add
-  data$shifted_time[data$accession == accession_data_ref] <- data$shifted_time[data$accession == accession_data_ref] + time_to_add
+  time_to_add_to_transform <- min(data[accession == accession_data_to_transform, timepoint])
+  time_to_add_ref <- min(data[accession == accession_data_ref, timepoint])
+
+  data$shifted_time[data$accession == accession_data_to_transform] <- data$shifted_time[data$accession == accession_data_to_transform] + time_to_add_to_transform
+  data$shifted_time[data$accession == accession_data_ref] <- data$shifted_time[data$accession == accession_data_ref] + time_to_add_ref
   data$delta_time <- NULL
 
   return(data)

@@ -540,13 +540,14 @@ preprocess_data <- function(input_df,
   )
 
   # Parse start_timepoint
-  if (start_timepoint == "reference") {
-    time_to_add <- min(all_data_df[accession == accession_data_ref, timepoint])
-  } else if (start_timepoint == "transform") {
-    time_to_add <- min(all_data_df[accession == accession_data_to_transform, timepoint])
-  } else {
-    time_to_add <- 0
-  }
+  time_to_add <- 0
+  # if (start_timepoint == "reference") {
+  #   time_to_add <- min(all_data_df[accession == accession_data_ref, timepoint])
+  # } else if (start_timepoint == "transform") {
+  #   time_to_add <- min(all_data_df[accession == accession_data_to_transform, timepoint])
+  # } else {
+  #   time_to_add <- 0
+  # }
 
   # Filter genes of original input data as in mean_df
   all_data_df <- all_data_df[all_data_df$locus_name %in% unique(mean_df$locus_name)]

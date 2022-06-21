@@ -169,10 +169,11 @@ apply_stretch <- function(data,
     by.y = "gene"
   )
 
+  # Apply stretch transformation delta_time
   data_to_transform$delta_time <- data_to_transform$delta_time * data_to_transform$stretch
-  data_to_transform$stretch <- NULL
 
   # Bind by rows reference data and data to transform which have been stretched
+  data_ref$stretch <- 1
   data <- rbind(data_ref, data_to_transform)
 
   # Record the stretched times (before individual shifting applied)
@@ -181,12 +182,15 @@ apply_stretch <- function(data,
   data$shifted_time <- data$delta_time
 
   # After stretching, add the time to the first datapoint back on
-  time_to_add_to_transform <- min(data[accession == accession_data_to_transform, timepoint])
+  time_to_add_to_transform <- min(data[accession == accession_data_to_transform, timepoint]) * unique(data[accession == accession_data_to_transform, stretch])
   time_to_add_ref <- min(data[accession == accession_data_ref, timepoint])
 
   data$shifted_time[data$accession == accession_data_to_transform] <- data$shifted_time[data$accession == accession_data_to_transform] + time_to_add_to_transform
   data$shifted_time[data$accession == accession_data_ref] <- data$shifted_time[data$accession == accession_data_ref] + time_to_add_ref
+
+  # Remove unneeded columns
   data$delta_time <- NULL
+  data$stretch <- NULL
 
   return(data)
 }

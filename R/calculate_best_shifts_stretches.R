@@ -189,13 +189,8 @@ get_best_shift <- function(shifts,
     )
 
     if (is.na(score)) {
-      stop(
-        "\n  Got a score of NA for gene: ", curr_sym,
-        "\n  expression_value: ", data_transform_compared$expression_value,
-        "\n  pred_data_ref_expression: ", data_transform_compared$pred_data_ref_expression,
-        "\n  with stretch_factor: ", stretch_factor,
-        "\n  with curr_shift: ", curr_shift
-      )
+      cli::cli_alert_warning("There are no overlapping time points for gene {.val {curr_sym}}, with stretch {.val {stretch_factor}} and shift {.val {curr_shift}}.")
+      score <- 999
     }
 
     # TODO: should this be in attr() instead?

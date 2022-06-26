@@ -376,7 +376,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
 
   # If there is a tie for best registration for a gene, keep the first one as the best
   if (any(duplicated(best_model_comparison.dt$gene))) {
-    message("found ", sum(duplicated(best_model_comparison.dt$gene)), " tied optimal registrations. Removing duplicates")
+    cli::cli_alert_info("Found {.val {sum(duplicated(best_model_comparison.dt$gene))}} tied optimal registrations. Removing duplicates.")
     best_model_comparison.dt <- best_model_comparison.dt[!(duplicated(best_model_comparison.dt$gene)), ]
   }
 

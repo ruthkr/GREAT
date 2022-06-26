@@ -24,6 +24,13 @@ get_extreme_shifts_for_all <- function(mean_df,
   # Apply stretch_factor to the data to transform, leave the reference data as it is
   mean_df$delta_time[mean_df$accession == accession_data_to_transform] <- mean_df$delta_time[mean_df$accession == accession_data_to_transform] * stretch_factor
 
+  # Return back data as it is after stretching
+  time_to_add_to_transform <- min(mean_df[accession == accession_data_to_transform, timepoint])
+  time_to_add_ref <- min(mean_df[accession == accession_data_ref, timepoint])
+
+  mean_df$delta_time[mean_df$accession == accession_data_to_transform] <- mean_df$delta_time[mean_df$accession == accession_data_to_transform] + time_to_add_to_transform
+  mean_df$delta_time[mean_df$accession == accession_data_ref] <- mean_df$delta_time[mean_df$accession == accession_data_ref] + time_to_add_ref
+
   # Calculate max and min shifts
   max_min_shifts <- calc_extreme_shifts(
     mean_df,

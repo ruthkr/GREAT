@@ -120,6 +120,13 @@ get_best_shift <- function(shifts,
   #   shifts <- c(shifts, 0)
   # }
 
+  # Return back data as it is after stretching
+  time_to_add_to_transform <- min(data[accession == accession_data_to_transform, timepoint])
+  time_to_add_ref <- min(data[accession == accession_data_ref, timepoint])
+
+  data$delta_time[data$accession == accession_data_to_transform] <- data$delta_time[data$accession == accession_data_to_transform] + time_to_add_to_transform
+  data$delta_time[data$accession == accession_data_ref] <- data$delta_time[data$accession == accession_data_ref] + time_to_add_ref
+
   # Start the iteration to calculate score for each shift for all shifts in the list
   i <- 1
   for (i in seq_along(shifts)) {

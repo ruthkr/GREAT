@@ -490,7 +490,6 @@ impute_transformed_exp_values <- function(shifted_mean_df,
       "is_registered" = unique(transformed_df$is_registered)[1]
     )
 
-
     # For each reference data timepoint, interpolate the comparable transformed expression data by linear interpolation between the neighbouring two transformed expression values.
     # If not between two transformed expression values because shifted outside comparable range, set to NA.
     interp_transformed_df$expression_value <- sapply(
@@ -510,7 +509,6 @@ impute_transformed_exp_values <- function(shifted_mean_df,
 
   return(out_df)
 }
-
 
 #' Preprocess data before registration
 #'

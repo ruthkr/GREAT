@@ -55,7 +55,6 @@ get_mean_data <- function(exp,
   return(mean_df)
 }
 
-
 #' Get expression of interest
 #'
 #' @param data_ref Data frame of reference data.
@@ -153,7 +152,6 @@ get_expression_of_interest <- function(data_ref,
 
   return(exp)
 }
-
 
 #' Get all data
 #' @noRd

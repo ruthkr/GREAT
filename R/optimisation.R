@@ -50,7 +50,6 @@ get_best_stretch_and_shift_simplified <- function(to_shift_df,
   return(results_list)
 }
 
-
 #' Get BIC score from registering data
 #'
 #' Simplified version of \code{\link{scale_and_register_data}} for \code{\link{optimise_registration_params}}.

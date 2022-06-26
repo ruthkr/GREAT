@@ -11,7 +11,6 @@ calculate_all_best_shifts <- function(mean_df,
                                       accession_data_ref) {
   # Initialize vectors
   symbols <- c()
-  num_points <- c()
   all_scores_list <- rep(list(0), length(unique(mean_df$locus_name)))
 
   # Get the extreme shifts which can be applied to the genes
@@ -31,8 +30,6 @@ calculate_all_best_shifts <- function(mean_df,
     max_shift <- extreme_shift[[2]]
 
     # Update shifts list
-    # shift_step <- shifts[2] - shifts[1]
-    # shifts <- seq(min_shift, max_shift, by = shift_step)
     shift_length <- length(shifts)
     shifts <- seq(min_shift, max_shift, length.out = shift_length)
   }
@@ -97,8 +94,6 @@ get_best_shift <- function(shifts,
 
   # Parse shifts parameters
   num_shifts <- length(shifts)
-  min_shift <- min(shifts)
-  max_shift <- max(shifts)
 
   # Filter locus_name
   data <- data[data$locus_name == curr_sym, ]
@@ -115,8 +110,8 @@ get_best_shift <- function(shifts,
   all_data_transform_sd <- numeric(length = num_shifts)
   all_data_ref_sd <- numeric(length = num_shifts)
 
+  # Include 0 shift in candidates
   # if (!(0 %in% shifts)) {
-  #   # Include 0 shift in candidates
   #   shifts <- c(shifts, 0)
   # }
 

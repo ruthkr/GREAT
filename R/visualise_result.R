@@ -112,7 +112,9 @@ plot_registration_results <- function(reg_result_df, model_comparison_df = NULL,
 #' Visualise distances between samples from different time points
 #'
 #' @description
-#' Function `plot_heatmap()` allows users to plot distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration.
+#' Function `plot_heatmap()` allows users to plot distances between samples from
+#' different time points to investigate the similarity of progression of gene
+#' expression states between species before or after registration.
 #'
 #' @param sample_dist_df Input data frame containing sample distance between two different species.
 #' @param title Optional plot title.

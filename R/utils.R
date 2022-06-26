@@ -29,7 +29,8 @@ get_compared_timepoints <- function(data,
     )
   }
 
-  # Get the extreme reference data times which used - bigger or equal than max of data to transform, and smaller or equal than  min data to transform, because have to project data to transform onto reference data
+  # Get the extreme reference data times which used - bigger or equal than max of data to transform,
+  # and smaller or equal than  min data to transform, because have to project data to transform onto reference data
   max_data_to_transform <- max(data$shifted_time[data$accession == accession_data_to_transform & data$is_compared == TRUE])
   min_data_to_transform <- min(data$shifted_time[data$accession == accession_data_to_transform & data$is_compared == TRUE])
   max_data_ref <- max_is_compared_to_data_to_transform(
@@ -65,16 +66,16 @@ interpolate_data_ref_comparison_expression <- function(data_to_transform_time, d
   # Otherwise, cut down data_ref observations to the two nearest timepoints to the data_to_transform time
   data_ref_dt$diff <- abs(data_ref_dt$shifted_time - data_to_transform_time)
   data.table::setorder(data_ref_dt, diff)
-  nearest.points <- data_ref_dt[1:2, ]
+  nearest_points <- data_ref_dt[1:2, ]
 
   # Linearly interpolate between these points to estimate the comparison expression value
-  data.table::setorder(nearest.points, shifted_time) # so [1] is earlier time
-  time.diff <- nearest.points$shifted_time[2] - nearest.points$shifted_time[1]
-  expression.diff <- nearest.points$expression_value[2] - nearest.points$expression_value[1]
-  grad <- expression.diff / time.diff
-  pred.expression <- nearest.points$expression_value[1] + (nearest.points$diff[1]) * grad
+  data.table::setorder(nearest_points, shifted_time) # so [1] is earlier time
+  time_diff <- nearest_points$shifted_time[2] - nearest_points$shifted_time[1]
+  expression_diff <- nearest_points$expression_value[2] - nearest_points$expression_value[1]
+  grad <- expression_diff / time_diff
+  pred_expression <- nearest_points$expression_value[1] + (nearest_points$diff[1]) * grad
 
-  return(pred.expression)
+  return(pred_expression)
 }
 
 #' Validate names
@@ -90,7 +91,9 @@ match_names <- function(x, lookup) {
 #' Get approximate stretch factor
 #'
 #' @description
-#' `get_approximate_stretch()` is a function to get a stretch factor estimation given input data. This function will take the time point ranges of both reference and query data and compare them to estimate the stretch factor.
+#' `get_approximate_stretch()` is a function to get a stretch factor estimation
+#' given input data. This function will take the time point ranges of both
+#' reference and query data and compare them to estimate the stretch factor.
 #'
 #' @param input_df Input data frame containing all replicates of gene expression in each genotype at each time point.
 #' @param accession_data_to_transform Accession name of data which will be transformed.

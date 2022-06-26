@@ -9,10 +9,10 @@ calc_BIC <- function(logL, num_params, num_obs) {
 #'
 #' @noRd
 calc_score <- function(data_to_transform_expression, data_ref_expression) {
-  # if don't regularise / penalise for shift applied, then like uniform prior on it.
-  # maybe should penalise for comparing fewer timepoints?
-  # divide by the data_to_transform_expression as filtered already to make sure expressed
-  score <- (data_to_transform_expression - data_ref_expression)**2 # / abs(data_to_transform_expression)
+  # If don't regularise / penalise for shift applied, then like uniform prior on it
+  # Maybe should penalise for comparing fewer timepoints?
+  # Divide by the data_to_transform_expression as filtered already to make sure expressed
+  score <- (data_to_transform_expression - data_ref_expression) ** 2 # / abs(data_to_transform_expression)
 
   return(mean(score))
 }
@@ -24,7 +24,7 @@ max_is_compared_to_data_to_transform <- function(data_to_transform_time, data_re
   # If using for rep data, then repeats of the same points screws it up
   data_ref <- unique(subset(data_ref, select = c("timepoint", "shifted_time")))
 
-  # Return the reference data dt shifted timepoint which is greater than, or equal to the data to transform time.
+  # Return the reference data dt shifted timepoint which is >= the data to transform time
   data_ref$diff <- data_ref$shifted_time - data_to_transform_time
   candidates <- data_ref[data_ref$diff >= 0, ]
   data_ref_max_time <- candidates$shifted_time[candidates$diff == min(candidates$diff)]
@@ -50,7 +50,7 @@ min_is_compared_to_data_to_transform <- function(data_to_transform_time, data_re
 #' @noRd
 calc_num_overlapping_points <- function(shift, data, accession_data_to_transform, accession_data_ref) {
   # Suppress "no visible binding for global variable" note
-  num.compared <- NULL
+  num_compared <- NULL
   is_compared <- NULL
   accession <- NULL
 
@@ -61,7 +61,7 @@ calc_num_overlapping_points <- function(shift, data, accession_data_to_transform
     accession_data_to_transform,
     accession_data_ref
   )
-  data[, num.compared := sum(is_compared), by = .(accession)]
+  data[, num_compared := sum(is_compared), by = .(accession)]
 
-  return(min(data$num.compared))
+  return(min(data$num_compared))
 }

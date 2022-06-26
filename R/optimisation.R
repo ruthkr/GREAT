@@ -515,7 +515,7 @@ get_best_stretch_and_shift_after_optimisation <- function(to_shift_df,
   all_best_shifts <- rep(list(0), length(gene_list))
   all_model_comparison_dt <- rep(list(0), length(gene_list))
 
-  for (i in 1:length(gene_list)) {
+  for (i in seq_along(gene_list)) {
     gene <- gene_list[i]
     gene_data_df <- all_data_df[locus_name == gene]
     cli::cli_h2("Analysing models for gene = {gene}")

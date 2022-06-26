@@ -41,13 +41,11 @@ get_mean_data <- function(exp,
   }
 
   keep_data_ref_genes <- unique(data_ref_df$locus_name[data_ref_df$keep == TRUE])
-  discard_data_ref_genes <- unique(data_ref_df$locus_name[data_ref_df$keep == FALSE])
 
   # Filter mean_df to remove all data to transform genes with all zeros values
   data_to_transform_df <- mean_df[mean_df$locus_name %in% keep_data_ref_genes & mean_df$accession == accession_data_to_transform]
   data_to_transform_df[, keep_final := (mean(mean_expression_value) != 0 & stats::sd(mean_expression_value) != 0), by = .(locus_name)]
   keep_final_genes <- unique(data_to_transform_df$locus_name[data_to_transform_df$keep_final == TRUE])
-  discard_final_genes <- unique(data_to_transform_df$locus_name[data_to_transform_df$keep_final == FALSE])
 
   mean_df <- mean_df[mean_df$locus_name %in% keep_final_genes, ]
   names(mean_df)[names(mean_df) == "mean_expression_value"] <- "expression_value"

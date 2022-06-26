@@ -55,8 +55,8 @@ calculate_all_model_comparison_stats <- function(all_data_df,
 
   genes <- unique(shifted_all_data_df$locus_name)
 
-  out.sepBIC <- numeric(length = length(genes))
-  out.combBIC <- numeric(length = length(genes))
+  out_sep_BIC <- numeric(length = length(genes))
+  out_comb_BIC <- numeric(length = length(genes))
 
   i <- 0
   cli::cli_progress_step("Calculating registration vs non-registration comparison BIC ({i}/{length(genes)})", spinner = TRUE)
@@ -71,15 +71,15 @@ calculate_all_model_comparison_stats <- function(all_data_df,
       accession_data_ref
     )
 
-    out.sepBIC[i] <- BIC_comparison_list$separate.BIC
-    out.combBIC[i] <- BIC_comparison_list$combined.BIC
+    out_sep_BIC[i] <- BIC_comparison_list$separate.BIC
+    out_comb_BIC[i] <- BIC_comparison_list$combined.BIC
     cli::cli_progress_update(force = TRUE)
   }
 
   model_comparison_dt <- data.table::data.table(
     "gene" = genes,
-    "separate.BIC" = out.sepBIC,
-    "registered.BIC" = out.combBIC
+    "separate.BIC" = out_sep_BIC,
+    "registered.BIC" = out_comb_BIC
   )
 
   return(model_comparison_dt)
@@ -109,7 +109,9 @@ apply_best_shift <- function(data,
     time_to_add
   )
 
-  # Normalise the expression data (If was normalised when calculating the expression data, is recorded in the _compared_mean, and _compared_sd columns. If no normalisation was carried out, then these should have values of 0 and 1. This was done using get_best_shift()).
+  # Normalise the expression data
+  # If was normalised when calculating the expression data, is recorded in the _compared_mean, and _compared_sd columns.
+  # If no normalisation was carried out, then these should have values of 0 and 1. This was done using get_best_shift().
   transform_was_not_normalised <- all(unique(best_shifts$data_transform_compared_mean) == 0)
   ref_was_not_normalised <- all(unique(best_shifts$data_ref_compared_mean) == 0)
   if (!transform_was_not_normalised | !ref_was_not_normalised) {
@@ -264,60 +266,25 @@ compare_registered_to_unregistered_model <- function(curr_sym,
   data_ref_spline <- curr_data_df[curr_data_df$is_compared == TRUE & curr_data_df$accession == accession_data_ref, ]
   combined_spline_data <- curr_data_df[curr_data_df$is_compared == TRUE, ]
 
-
   # Fit the models - fit regression splines.
   # http://www.utstat.utoronto.ca/reid/sta450/feb23.pdf
   # For cubic spline, K+3 params where K=num.knots as can omit constant term
-  num.spline.params <- 6 # number of parameters for each spline fitting (degree and this used to calculate num knots).
-  num.registration.params <- 2 # stretch, shift
-  num.obs <- nrow(combined_spline_data)
+  num_spline_params <- 6 # number of parameters for each spline fitting (degree and this used to calculate num knots).
+  num_registration_params <- 2 # stretch, shift
+  num_obs <- nrow(combined_spline_data)
 
   data_to_transform_fit <- stats::lm(
-    expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3),
+    expression_value ~ splines::bs(shifted_time, df = num_spline_params, degree = 3),
     data = data_to_transform_spline
   )
   data_ref_fit <- stats::lm(
-    expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3),
+    expression_value ~ splines::bs(shifted_time, df = num_spline_params, degree = 3),
     data = data_ref_spline
   )
   combined_fit <- stats::lm(
-    expression_value ~ splines::bs(shifted_time, df = num.spline.params, degree = 3),
+    expression_value ~ splines::bs(shifted_time, df = num_spline_params, degree = 3),
     data = combined_spline_data
   )
-
-  # Additional fit before transformation - using timepoint before registration
-  # Get compared timepoint first:
-  # ref_time <- curr_data_df %>%
-  #   dplyr::filter(is_compared == TRUE, accession == accession_data_ref) %>%
-  #   dplyr::pull(timepoint)
-  #
-  # trans_time <- curr_data_df %>%
-  #   dplyr::filter(is_compared == TRUE, accession == accession_data_to_transform) %>%
-  #   dplyr::pull(timepoint)
-
-  # data_ref_spline_original <- original_data %>%
-  #   dplyr::filter(timepoint %in% ref_time,
-  #                 accession == accession_data_ref)
-  #
-  # data_to_transform_spline_original <- original_data %>%
-  #   dplyr::filter(timepoint %in% trans_time,
-  #                 accession == accession_data_to_transform)
-
-  # data_ref_spline_original <- original_data %>%
-  #   dplyr::filter(accession == accession_data_ref)
-  #
-  # data_to_transform_spline_original <- original_data %>%
-  #   dplyr::filter(accession == accession_data_to_transform)
-  #
-  # data_ref_fit_before_reg <- stats::lm(
-  #   expression_value ~ splines::bs(timepoint, df = num.spline.params, degree = 3),
-  #   data = data_ref_spline_original
-  # )
-  #
-  # data_to_transform_before_reg <- stats::lm(
-  #   expression_value ~ splines::bs(timepoint, df = num.spline.params, degree = 3),
-  #   data = data_to_transform_spline_original
-  # )
 
   # Calculate the log likelihoods
   data_to_transform_logLik <- stats::logLik(data_to_transform_fit)
@@ -325,22 +292,15 @@ compare_registered_to_unregistered_model <- function(curr_sym,
   separate_logLik <- data_to_transform_logLik + data_ref_logLik # logLikelihoods, so sum
   combined_logLik <- stats::logLik(combined_fit)
 
-  # Additional fit before transformation
-  # data_to_transform_logLik_before_reg <- stats::logLik(data_to_transform_before_reg)
-  # data_ref_logLik_before_reg <- stats::logLik(data_ref_fit_before_reg)
-  # separate_logLik_before_reg <- data_to_transform_logLik_before_reg + data_ref_logLik_before_reg
-
-
   # Calculate the comparison.stats BIC: smaller is better!
-  # 2*num.spline.params as fitting separate models for Ara * Col
-  separate.BIC <- calc_BIC(separate_logLik, 2 * num.spline.params, num.obs)
-  combined.BIC <- calc_BIC(combined_logLik, num.spline.params + num.registration.params, num.obs)
-  # separate.BIC.before <- calc_BIC(separate_logLik_before_reg, 2 * num.spline.params, nrow(original_data))
+  # 2*num_spline_params as fitting separate models for Ara * Col
+  separate_BIC <- calc_BIC(separate_logLik, 2 * num_spline_params, num_obs)
+  combined_BIC <- calc_BIC(combined_logLik, num_spline_params + num_registration_params, num_obs)
 
   # Results object
   results_list <- list(
-    separate.BIC = separate.BIC,
-    combined.BIC = combined.BIC
+    separate.BIC = separate_BIC,
+    combined.BIC = combined_BIC
   )
 
   return(results_list)

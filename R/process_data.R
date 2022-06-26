@@ -1,7 +1,10 @@
 #' Register or synchronize different expression profiles
 #'
 #' @description
-#' `scale_and_register_data()` is a function to register expression profiles a user wish to compare. This includes an option to scale data before registration, find and calculate score of optimal shifts and stretches, as well as apply the best shifts and stretches.
+#' `scale_and_register_data()` is a function to register expression profiles a
+#' user wish to compare. This includes an option to scale data before
+#' registration, find and calculate score of optimal shifts and stretches,
+#' as well as apply the best shifts and stretches.
 #'
 #' @param input_df Input data frame containing all replicates of gene expression in each genotype at each time point.
 #' @param stretches Candidate registration stretch factors to apply to data to transform.
@@ -97,7 +100,9 @@ scale_and_register_data <- function(input_df,
     cli::cli_h1("Information before registration")
     cli::cli_alert_info("Max value of expression_value of all_data_df: {cli::col_cyan(round(max(all_data_df$expression_value), 2))}")
 
-    # Calculate the best registration. Returns all tried registrations, best stretch and shift combo, and BIC stats for comparison of best registration model to separate models for expression of each gene in reference data and data to transform
+    # Calculate the best registration. Returns all tried registrations, best stretch and shift combo,
+    # and BIC stats for comparison of best registration model to separate models for expression
+    # of each gene in reference data and data to transform
     cli::cli_h1("Analysing models for all stretch and shift factor")
     best_registration_list <- get_best_stretch_and_shift(
       to_shift_df,
@@ -286,7 +291,7 @@ get_best_stretch_and_shift <- function(to_shift_df,
   all_best_shifts <- rep(list(0), length(stretches))
   all_model_comparison_dt <- rep(list(0), length(stretches))
 
-  for (i in 1:length(stretches)) {
+  for (i in seq_along(stretches)) {
     stretch <- stretches[i]
     cli::cli_h2("Analysing models for stretch factor = {stretch}")
 

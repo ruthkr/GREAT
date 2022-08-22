@@ -27,5 +27,7 @@ plot_heatmap(
 Distance heatmap of gene expression profiles over time between two different species.
 }
 \description{
-Function \code{plot_heatmap()} allows users to plot distances between samples from different time points to investigate the similarity of progression of gene expression states between species before or after registration.
+Function \code{plot_heatmap()} allows users to plot distances between samples from
+different time points to investigate the similarity of progression of gene
+expression states between species before or after registration.
 }

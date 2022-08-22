@@ -63,7 +63,10 @@ This function returns a list of data frames, containing:
 \item{model_comparison_df}{a table comparing the optimal registration function for each gene (based on \code{all_shifts_df} scores) to model with no registration applied.}
 }
 \description{
-\code{scale_and_register_data()} is a function to register expression profiles a user wish to compare. This includes an option to scale data before registration, find and calculate score of optimal shifts and stretches, as well as apply the best shifts and stretches.
+\code{scale_and_register_data()} is a function to register expression profiles a
+user wish to compare. This includes an option to scale data before
+registration, find and calculate score of optimal shifts and stretches,
+as well as apply the best shifts and stretches.
 }
 \examples{
 \dontrun{

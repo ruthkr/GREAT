@@ -21,5 +21,7 @@ get_approximate_stretch(
 This function returns an estimation of a stretch factor for registering the data.
 }
 \description{
-\code{get_approximate_stretch()} is a function to get a stretch factor estimation given input data. This function will take the time point ranges of both reference and query data and compare them to estimate the stretch factor.
+\code{get_approximate_stretch()} is a function to get a stretch factor estimation
+given input data. This function will take the time point ranges of both
+reference and query data and compare them to estimate the stretch factor.
 }

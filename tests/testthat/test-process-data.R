@@ -21,8 +21,8 @@ test_that("scale_and_register_data works", {
   # Check scale_and_register_data()
   registration_results <- scale_and_register_data(
     input_df = all_data_df,
-    stretches = c(2, 1.5, 1),
-    shifts = seq(-4, 4, length.out = 27),
+    stretches = c(3, 2.5, 2, 1.5, 1),
+    shifts = seq(-4, 4, length.out = 33),
     min_num_overlapping_points = 4,
     maintain_min_num_overlapping_points = TRUE,
     initial_rescale = FALSE,
@@ -40,10 +40,10 @@ test_that("scale_and_register_data works", {
   expect_equal(class(registration_results$model_comparison_df)[[1]], "data.table")
 
   expected_model_comparison_df <- data.table::data.table(
-    gene = c("BRAA02G043220.3C", "BRAA03G023790.3C", "BRAA03G051930.3C", "BRAA05G005370.3C", "BRAA07G034100.3C", "BRAA09G045310.3C", "BRAA02G018970.3C", "BRAA04G005470.3C", "BRAA06G025360.3C", "BRAA07G030470.3C"),
-    separate.BIC = c(127.91726, 140.71107, 175.19107, 136.12161, 70.77961, 82.38534, 75.75246, 75.92666, 129.71473, 76.36370),
-    stretch = c(2, 2, 2, 2, 2, 2, 1.5, 1.5, 1.5, 1.5),
-    shift = c(-3.69230, 0.61538, 3.07692, 0.61538, -4, 0, -0.30769, 4, 1.84615, -0.30769)
+    gene = c("BRAA09G045310.3C", "BRAA03G051930.3C", "BRAA04G005470.3C", "BRAA02G043220.3C", "BRAA06G025360.3C", "BRAA02G018970.3C", "BRAA07G030470.3C", "BRAA07G034100.3C", "BRAA03G023790.3C", "BRAA05G005370.3C"),
+    separate.BIC = c(77.211, 175.879, 66.122, 127.9173, 123.7816, 75.7525, 76.3637, 73.1999, 113.7726, 111.9291),
+    stretch = c(3, 2.5, 2.5, 2, 2, 1.5, 1.5, 1.5, 1, 1),
+    shift = c(1, 4, 0.5, 0.5, 1, 3.75, 3.75, 3.75, 4, 4)
   )
 
   expect_equal(

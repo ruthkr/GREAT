@@ -4,8 +4,8 @@ all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", packa
 
 # Pipeline parameters ----
 
-stretches_bound <- c(2.0, 2.05)
-shifts_bound <- c(0.60, 0.65)
+stretches_bound <- c(2.6, 2.65)
+shifts_bound <- c(0.70, 0.8)
 initial_rescale <- FALSE
 do_rescale <- TRUE
 min_num_overlapping_points <- 4
@@ -60,12 +60,13 @@ test_that("optimise_registration_params works", {
   # Expected output for optimise_registration_params()
   expected_optimum_params_df <- data.frame(
     stringsAsFactors = FALSE,
-    gene = c("BRAA05G005370.3C"),
-    stretch = c(2.045),
-    shift = c(0.645),
-    BIC_diff = c(-14.0280742834283),
-    is_registered = c(TRUE)
+    gene = "BRAA05G005370.3C",
+    stretch = 2.635,
+    shift = 0.73,
+    BIC_diff = -6.65702007197217,
+    is_registered = TRUE
   )
+
   expect_equal(names(optimised_parameters), c("optimum_params_df", "candidate_params_df"))
   expect_equal(optimised_parameters$optimum_params_df, expected_optimum_params_df)
   expect_true(optimised_parameters$optimum_params_df$is_registered)
@@ -100,6 +101,6 @@ test_that("get_boundary_box works", {
   )
 
   # Expected output for get_boundary_box()
-  expect_equal(round(unname(unlist(boundary_box_manual)), 2), c(2.02, 2, 2.05, 0.62, 0.6, 0.65))
-  expect_equal(round(unname(unlist(boundary_box_auto)), 2), c(2.67, 1.3, 4.5, 0, -27, 19.8))
+  expect_equal(round(unname(unlist(boundary_box_manual)), 2), c(2.62, 2.6, 2.65, 0.75, 0.7, 0.8))
+  expect_equal(round(unname(unlist(boundary_box_auto)), 2), c(2.67, 1.3, 4.5, 0, -23, 23.8))
 })

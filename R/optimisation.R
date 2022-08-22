@@ -385,7 +385,8 @@ optimise_registration_params_single_gene <- function(input_df,
       BIC_diff = .data$loss,
       .data$is_registered
     ) %>%
-    dplyr::distinct()
+    dplyr::distinct() %>%
+    dplyr::bind_rows(result_df)
 
   # Results object
   results_list <- list(

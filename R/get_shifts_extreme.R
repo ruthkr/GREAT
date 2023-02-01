@@ -61,13 +61,22 @@ calc_extreme_shifts <- function(mean_df,
   pos_extreme_candidates <- max(original$delta_time[original$accession == accession_data_ref]) - original$delta_time[original$accession == accession_data_to_transform]
 
   # Among of these candidates, find the most extreme values which maintaining the required number of overlapping time-points to be considered.
-  num_overlapping_points <- sapply(
+  # num_overlapping_points <- sapply(
+  #   neg_extreme_candidate,
+  #   FUN = calc_num_overlapping_points,
+  #   data = original,
+  #   accession_data_to_transform = accession_data_to_transform,
+  #   accession_data_ref = accession_data_ref
+  # )
+
+  num_overlapping_points <- purrr::map(
     neg_extreme_candidate,
-    FUN = calc_num_overlapping_points,
+    .f = purrr::possibly(calc_num_overlapping_points, 0),
     data = original,
     accession_data_to_transform = accession_data_to_transform,
     accession_data_ref = accession_data_ref
-  )
+  ) |>
+    unlist()
 
   if (all(num_overlapping_points < min_num_overlapping_points)) {
     stop(paste0(
@@ -81,13 +90,22 @@ calc_extreme_shifts <- function(mean_df,
   }
   neg_extreme <- min(neg_extreme_candidate[num_overlapping_points >= min_num_overlapping_points])
 
-  num_overlapping_points <- sapply(
+  # num_overlapping_points <- sapply(
+  #   pos_extreme_candidates,
+  #   FUN = calc_num_overlapping_points,
+  #   data = original,
+  #   accession_data_to_transform = accession_data_to_transform,
+  #   accession_data_ref = accession_data_ref
+  # )
+
+  num_overlapping_points <- purrr::map(
     pos_extreme_candidates,
-    FUN = calc_num_overlapping_points,
+    .f = purrr::possibly(calc_num_overlapping_points, 0),
     data = original,
     accession_data_to_transform = accession_data_to_transform,
     accession_data_ref = accession_data_ref
-  )
+  ) |>
+    unlist()
 
   pos_extreme <- max(pos_extreme_candidates[num_overlapping_points >= min_num_overlapping_points])
 

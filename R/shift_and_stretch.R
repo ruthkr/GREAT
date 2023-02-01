@@ -269,6 +269,7 @@ compare_registered_to_unregistered_model <- function(curr_sym,
   num_registration_params <- 2 # stretch, shift
   num_obs <- nrow(combined_spline_data)
 
+  # Fit model for H2
   data_to_transform_fit <- stats::lm(
     expression_value ~ splines::bs(shifted_time, df = num_spline_params, degree = 3),
     data = data_to_transform_spline
@@ -277,19 +278,27 @@ compare_registered_to_unregistered_model <- function(curr_sym,
     expression_value ~ splines::bs(shifted_time, df = num_spline_params, degree = 3),
     data = data_ref_spline
   )
+
+  # Fit model for H1
   combined_fit <- stats::lm(
     expression_value ~ splines::bs(shifted_time, df = num_spline_params, degree = 3),
     data = combined_spline_data
   )
 
   # Calculate the log likelihoods
-  data_to_transform_logLik <- stats::logLik(data_to_transform_fit)
-  data_ref_logLik <- stats::logLik(data_ref_fit)
-  separate_logLik <- data_to_transform_logLik + data_ref_logLik # logLikelihoods, so sum
-  combined_logLik <- stats::logLik(combined_fit)
+  # data_to_transform_logLik <- stats::logLik(data_to_transform_fit)
+  # data_ref_logLik <- stats::logLik(data_ref_fit)
+  # separate_logLik <- data_to_transform_logLik + data_ref_logLik # logLikelihoods, so sum
+  # combined_logLik <- stats::logLik(combined_fit)
+
+  # Calculate the log likelihoods using our defined functions
+  separate_logLik <- calc_loglik(data_to_transform_fit, data_to_transform_spline) +
+    calc_loglik(data_ref_fit, data_ref_spline)
+  combined_logLik <- calc_loglik(combined_fit, data_to_transform_spline) +
+    calc_loglik(combined_fit, data_ref_spline)
 
   # Calculate the comparison.stats BIC: smaller is better!
-  # 2*num_spline_params as fitting separate models for Ara * Col
+  # 2 * num_spline_params as fitting separate models for Ara * Col
   separate_BIC <- calc_BIC(separate_logLik, 2 * num_spline_params, num_obs)
   combined_BIC <- calc_BIC(combined_logLik, num_spline_params + num_registration_params, num_obs)
 

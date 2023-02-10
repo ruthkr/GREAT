@@ -250,6 +250,8 @@ compare_registered_to_unregistered_model <- function(curr_sym,
                                                      accession_data_ref) {
   curr_data_df <- data_df[data_df$locus_name == curr_sym]
 
+  # browser()
+
   # Flag the time points to be used in the modelling, only the ones which overlap!
   curr_data_df <- get_compared_timepoints(
     curr_data_df,
@@ -258,9 +260,14 @@ compare_registered_to_unregistered_model <- function(curr_sym,
   )
 
   # Cut down to the data for each model
-  data_to_transform_spline <- curr_data_df[curr_data_df$is_compared == TRUE & curr_data_df$accession == accession_data_to_transform, ]
+  data_query_spline <- curr_data_df[curr_data_df$is_compared == TRUE & curr_data_df$accession == accession_data_to_transform, ]
   data_ref_spline <- curr_data_df[curr_data_df$is_compared == TRUE & curr_data_df$accession == accession_data_ref, ]
   combined_spline_data <- curr_data_df[curr_data_df$is_compared == TRUE, ]
+
+  # NOT CONSIDERING NUMBER OVERLAPPING TIMEPOINTS
+  # data_query_spline <- curr_data_df[curr_data_df$accession == accession_data_to_transform, ]
+  # data_ref_spline <- curr_data_df[curr_data_df$accession == accession_data_ref, ]
+  # combined_spline_data <- curr_data_df
 
   # Fit the models - fit regression splines.
   # http://www.utstat.utoronto.ca/reid/sta450/feb23.pdf
@@ -269,33 +276,25 @@ compare_registered_to_unregistered_model <- function(curr_sym,
   num_registration_params <- 2 # stretch, shift
   num_obs <- nrow(combined_spline_data)
 
-  # Fit model for H2
-  data_to_transform_fit <- stats::lm(
-    expression_value ~ splines::bs(shifted_time, df = num_spline_params, degree = 3),
-    data = data_to_transform_spline
-  )
-  data_ref_fit <- stats::lm(
+  # Fit model for reference (H1 and H2)
+  fit_ref <- stats::lm(
     expression_value ~ splines::bs(shifted_time, df = num_spline_params, degree = 3),
     data = data_ref_spline
   )
 
-  # Fit model for H1
-  combined_fit <- stats::lm(
+  # Fit model for query (H2)
+  fit_query <- stats::lm(
     expression_value ~ splines::bs(shifted_time, df = num_spline_params, degree = 3),
-    data = combined_spline_data
+    data = data_query_spline
   )
 
-  # Calculate the log likelihoods
-  # data_to_transform_logLik <- stats::logLik(data_to_transform_fit)
-  # data_ref_logLik <- stats::logLik(data_ref_fit)
-  # separate_logLik <- data_to_transform_logLik + data_ref_logLik # logLikelihoods, so sum
-  # combined_logLik <- stats::logLik(combined_fit)
-
   # Calculate the log likelihoods using our defined functions
-  separate_logLik <- calc_loglik(data_to_transform_fit, data_to_transform_spline) +
-    calc_loglik(data_ref_fit, data_ref_spline)
-  combined_logLik <- calc_loglik(combined_fit, data_to_transform_spline) +
-    calc_loglik(combined_fit, data_ref_spline)
+  loglik_query_H2 <- calc_loglik(fit_query, data_query_spline)
+  loglik_ref_H1H2 <- calc_loglik(fit_ref,   data_ref_spline)
+  loglik_query_H1 <- calc_loglik(fit_ref,   data_query_spline)
+
+  separate_logLik <- loglik_query_H2 + loglik_ref_H1H2
+  combined_logLik <- loglik_query_H1 + loglik_ref_H1H2
 
   # Calculate the comparison.stats BIC: smaller is better!
   # 2 * num_spline_params as fitting separate models for Ara * Col

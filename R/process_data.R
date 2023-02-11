@@ -4,6 +4,7 @@ preprocess_data <- function(input, reference, query) {
   accession <- NULL
   timepoint <- NULL
   expression_value <- NULL
+  time_delta <- NULL
 
   # Make sure the data are data.tables
   all_data <- data.table::as.data.table(input)
@@ -11,9 +12,12 @@ preprocess_data <- function(input, reference, query) {
   # Factor query and reference
   all_data[, accession := factor(accession, levels = c(reference, query), labels = c("ref", "query"))]
 
+  # Calculate time delta for each accession
+  all_data[, time_delta := timepoint - min(timepoint), by = .(accession)]
+
   # Get mean data
   mean_data <- data.table::copy(all_data)
-  mean_data <- unique(mean_data[, .(expression_value = mean(expression_value)), by = .(gene_id, accession, timepoint)])
+  mean_data <- unique(mean_data[, .(expression_value = mean(expression_value)), by = .(gene_id, accession, timepoint, time_delta)])
 
   # Scale data
   scaled_data <- scale_data(mean_data, all_data)
@@ -32,6 +36,7 @@ scale_data <- function(mean_data, all_data) {
   gene_id <- NULL
   accession <- NULL
   expression_value <- NULL
+  scaled_expression_value <- NULL
 
   # Scale mean data
   mean_data[, scaled_expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(gene_id, accession)]

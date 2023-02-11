@@ -28,9 +28,6 @@ register <- function(input,
   all_data <- processed_data$all_data
   mean_data <- processed_data$mean_data
 
-  # TODO: match_starting_timepoints()
-  # @return data.table shifted data, delta_timepoint_ref, delta_timepoint_query
-
   # TODO: apply_registration() for a single gene
 
   # Final data processing
@@ -38,8 +35,8 @@ register <- function(input,
   # TODO: (?) accession counts summary with {cli}
 
   results_list <- list(
-    all_data = all_data,
-    mean_data = mean_data
+    all_data = data.table::data.table(all_data),
+    mean_data = data.table::data.table(mean_data)
   )
 
   return(results_list)

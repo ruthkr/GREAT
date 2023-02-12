@@ -59,7 +59,7 @@ calc_loglik_H1 <- function(data) {
 #' Compare H1 and H2 hypotheses for registration
 #'
 #' @noRd
-compare_H1_and_H2 <- function(data, loglik_H1, loglik_H2) {
+compare_H1_and_H2 <- function(data, stretch, shift, loglik_H1, loglik_H2) {
   # Specify parameters used to compute BIC
   num_spline_params <- 6
   num_registration_params <- 2
@@ -73,8 +73,8 @@ compare_H1_and_H2 <- function(data, loglik_H1, loglik_H2) {
     gene_id = unique(data$gene_id),
     BIC_separate = BIC_H2,
     BIC_combined = BIC_H1,
-    stretch = attr(data, "stretch"),
-    shift = attr(data, "shift"),
+    stretch = stretch,
+    shift = shift,
     registered = BIC_H2 > BIC_H1
   )
 

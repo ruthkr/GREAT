@@ -18,7 +18,11 @@ apply_registration <- function(data, stretch, shift) {
 
   # Apply shift
   data[, timepoint := as.numeric(timepoint)]
-  data[, timepoint := if (accession == "query") time_delta + shift + min(timepoint) else timepoint, by = .(accession)]
+  data[, timepoint := if (accession == "query") time_delta + shift + min(timepoint) else timepoint, by = .(accession)][]
 
-  return(data.table::data.table(data))
+  # Add stretch and shift as attributes
+  data.table::setattr(data, "stretch", stretch)
+  data.table::setattr(data, "shift", shift)
+
+  return(data)
 }

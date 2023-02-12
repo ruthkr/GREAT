@@ -12,8 +12,8 @@ match_names <- function(x, lookup, error = NULL, name_string = "names", lookup_v
     stop(
       cli::format_error(c(
         error,
-      "i" = "Valid {name_string} are {.val {cli::cli_vec(lookup, style = list(vec_sep = ', ', vec_last = {lookup_vec_last}))}}.",
-      "x" = "You supplied {.val {x}}."
+        "i" = "Valid {name_string} are {.val {cli::cli_vec(lookup, style = list(vec_sep = ', ', vec_last = {lookup_vec_last}))}}.",
+        "x" = "You supplied {.val {x}}."
       )),
       call. = FALSE
     )

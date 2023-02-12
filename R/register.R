@@ -76,8 +76,10 @@ register <- function(input,
     all_data_reg <- apply_registration(all_data, stretches, shifts)
 
     BIC_combined <- compare_dynamics_H1(all_data_reg)
-    message("Registered: ", BIC_separate > BIC_combined)
   }
+
+  model_comparison <- compare_H1_and_H2(mean_data_reg, BIC_combined, BIC_separate)
+  # message("Registered: ", BIC_separate > BIC_combined)
 
 
   # Final data processing
@@ -88,7 +90,8 @@ register <- function(input,
     all_data = data.table::data.table(all_data),
     mean_data = data.table::data.table(mean_data),
     all_data_reg = data.table::data.table(all_data_reg),
-    mean_data_reg = data.table::data.table(mean_data_reg)
+    mean_data_reg = data.table::data.table(mean_data_reg),
+    model_comparison = data.table::data.table(model_comparison)
   )
 
   return(results_list)

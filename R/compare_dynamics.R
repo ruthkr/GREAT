@@ -62,3 +62,19 @@ compare_dynamics_H1 <- function(data) {
 
   return(BIC)
 }
+
+#' Compare H1 and H2 hypotheses for registration
+#'
+#' @noRd
+compare_H1_and_H2 <- function(data, BIC_H1, BIC_H2) {
+  model_comparison <- data.table::data.table(
+    gene_id = unique(data$gene_id),
+    BIC_separate = BIC_H2,
+    BIC_combined = BIC_H1,
+    stretch = attr(data, "stretch"),
+    shift = attr(data, "shift"),
+    registered = BIC_H2 > BIC_H1
+  )
+
+  return(model_comparison)
+}

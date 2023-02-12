@@ -64,7 +64,17 @@ register <- function(input,
   loglik_separate <- calc_loglik_H2(all_data)
 
   # Begin registration logic
-  if (!optimise_registration_parameters) {
+  if (optimise_registration_parameters) {
+    # Registration with optimisation
+    cli::cli_h1("Starting registation with optimisation")
+    cli::cli_alert_info("Using computed stretches and shifts search space limits. User-defined parameters will be ignored.")
+
+    # Run optimisation
+    results <- register_with_optimisation(all_data, loglik_separate, overlapping_percent, optimisation_config)
+    all_data_reg <- results$data_reg
+    model_comparison <- results$model_comparison
+  } else {
+    cli::cli_h1("Starting manual registration")
     # Check that stretches and shifts are numeric
     if (any(is.na(stretches), is.na(shifts))) {
       stop(cli::format_error(c(
@@ -73,29 +83,11 @@ register <- function(input,
       )))
     }
 
-    # Apply registration
-    all_data_reg <- apply_registration(all_data, stretches, shifts)
-
-    # Calculate model comparison
-    loglik_combined <- calc_loglik_H1(all_data_reg)
-  } else {
-    # Registration with optimisation
-    cli::cli_alert_info("Using computed stretches and shifts search space limits. User-defined parameters will be ignored.")
-
-    # Run optimisation
-    optimised_params <- optimise(all_data, overlapping_percent, optimisation_config)
-
-    # Apply registration
-    stretches <- optimised_params$par[1]
-    shifts <- optimised_params$par[2]
-    all_data_reg <- apply_registration(all_data, stretches, shifts)
-
-    # Calculate model comparison
-    loglik_combined <- optimised_params$function_value
+    # Apply manual registration
+    results <- register_manually(all_data, stretches, shifts, loglik_separate)
+    all_data_reg <- results$data_reg
+    model_comparison <- results$model_comparison
   }
-
-  # Model comparison
-  model_comparison <- compare_H1_and_H2(all_data_reg, stretches, shifts, loglik_combined, loglik_separate)
 
   # Restore original query and reference accession names
   all_data[, c("time_delta") := NULL]
@@ -106,6 +98,51 @@ register <- function(input,
   results_list <- list(
     data = all_data,
     registered_data = all_data_reg,
+    model_comparison = model_comparison
+  )
+
+  return(results_list)
+}
+
+#' @noRd
+register_with_optimisation <- function(data, loglik_separate, overlapping_percent, optimisation_config) {
+  # Run optimisation
+  optimised_params <- optimise(data, overlapping_percent, optimisation_config)
+
+  # Apply registration
+  stretches <- optimised_params$par[1]
+  shifts <- optimised_params$par[2]
+  data_reg <- apply_registration(data, stretches, shifts)
+
+  # Calculate model comparison
+  loglik_combined <- optimised_params$function_value
+
+  # Model comparison
+  model_comparison <- compare_H1_and_H2(data_reg, stretches, shifts, loglik_combined, loglik_separate)
+
+  # Results object
+  results_list <- list(
+    data_reg = data_reg,
+    model_comparison = model_comparison
+  )
+
+  return(results_list)
+}
+
+#' @noRd
+register_manually <- function(data, stretch, shift, loglik_separate) {
+  # Apply registration
+  data_reg <- apply_registration(data, stretch, shift)
+
+  # Calculate model comparison
+  loglik_combined <- calc_loglik_H1(data_reg)
+
+  # Model comparison
+  model_comparison <- compare_H1_and_H2(data_reg, stretch, shift, loglik_combined, loglik_separate)
+
+  # Results object
+  results_list <- list(
+    data_reg = data_reg,
     model_comparison = model_comparison
   )
 

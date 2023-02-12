@@ -29,6 +29,7 @@ optimise <- function(data,
   # Perform SA using {optimization}
   optimised_params <- optimization::optim_sa(
     fun = function(x) objective_fun(data, x[1], x[2]),
+    maximization = TRUE,
     start = c(stretch_init, shift_init),
     trace = TRUE,
     lower = c(stretch_lower, shift_lower),
@@ -53,12 +54,12 @@ objective_fun <- function(data, stretch, shift) {
   tryCatch(
     {
       all_data_reg <- apply_registration(data, stretch, shift)
-      BIC_combined <- compare_dynamics_H1(all_data_reg)
-      return(BIC_combined)
+      loglik_combined <- calc_loglik_H1(all_data_reg)
+      return(loglik_combined)
     },
     error = function(error_message) {
-      BIC_combined <- 999
-      return(BIC_combined)
+      loglik_combined <- -999
+      return(loglik_combined)
     }
   )
 }

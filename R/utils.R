@@ -19,3 +19,41 @@ match_names <- function(x, lookup, error = NULL, name_string = "names", lookup_v
     )
   }
 }
+
+#' Get approximate stretch factor
+#'
+#' @description
+#' `get_approximate_stretch()` is a function to get a stretch factor estimation
+#' given input data. This function will take the time point ranges of both
+#' reference and query data and compare them to estimate the stretch factor.
+#'
+#' @param data Input data frame, either containing all replicates of gene expression or not.
+#' @param reference Accession name of reference data.
+#' @param query Accession name of query data.
+#'
+#' @return This function returns an estimation of a stretch factor for registering the data.
+#' @export
+get_approximate_stretch <- function(data, reference = "ref", query = "query") {
+  # Suppress "no visible binding for global variable" note
+  accession <- NULL
+  timepoint <- NULL
+  time_range <- NULL
+
+  # Make sure the data are data.tables
+  data <- data.table::as.data.table(data)
+
+  # Validate accession names
+  match_names(
+    x = c(reference, query),
+    lookup = unique(data$accession),
+    error = "Must review the supplied {.var reference} and {.var query} values:",
+    name_string = "accession values"
+  )
+
+  # Calculate approximate stretch factor
+  deltas <- data[, .(time_range = max(timepoint) - min(timepoint)), by = .(accession)]
+
+  stretch_factor <- deltas[accession == reference, time_range] / deltas[accession == query, time_range]
+
+  return(stretch_factor)
+}

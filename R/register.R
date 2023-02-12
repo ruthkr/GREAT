@@ -47,8 +47,8 @@ register <- function(input,
 
   # Validate accession names
   match_names(
-    x = unique(input$accession),
-    lookup = c(reference, query),
+    x = c(reference, query),
+    lookup = unique(input$accession),
     error = "Must review the supplied {.var reference} and {.var query} values:",
     name_string = "accession values"
   )

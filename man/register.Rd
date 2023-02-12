@@ -39,12 +39,12 @@ wishes to compare.
 \examples{
 \dontrun{
 # Load a data frame from the sample data
-all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") \%>\%
+all_data <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") \%>\%
   utils::read.csv()
 
 # Running the registration
 registration_results <- register(
-  input = all_data_df,
+  input = all_data,
   reference = "Ro18",
   query = "Col0",
   stretches = 2.3,

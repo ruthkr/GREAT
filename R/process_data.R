@@ -32,8 +32,8 @@ preprocess_data <- function(input, reference, query) {
 
   # Results object
   results_list <- list(
-    all_data = data.table::data.table(scaled_data$all_data),
-    mean_data = data.table::data.table(scaled_data$mean_data)
+    all_data = scaled_data$all_data
+    # mean_data = scaled_data$mean_data
   )
 
   return(results_list)
@@ -82,8 +82,8 @@ scale_data <- function(mean_data, all_data) {
 
   # Results object
   results_list <- list(
-    all_data = data.table::data.table(all_data),
-    mean_data = data.table::data.table(mean_data)
+    all_data = all_data,
+    mean_data = mean_data
   )
 
   return(results_list)

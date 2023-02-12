@@ -37,6 +37,9 @@ register <- function(input,
                      overlapping_percent = 0.5,
                      optimise_registration_parameters = FALSE,
                      optimisation_config = list(num_iterations = 60)) {
+  # Suppress "no visible binding for global variable" note
+  accession <- NULL
+
   # Validate column names
   match_names(
     x = colnames(input),
@@ -56,15 +59,14 @@ register <- function(input,
   # Preprocess data
   processed_data <- preprocess_data(input, reference, query)
   all_data <- processed_data$all_data
-  mean_data <- processed_data$mean_data
 
   # Calculate BIC for Hypothesis 2
-  BIC_separate <- compare_dynamics_H2(all_data)
+  loglik_separate <- calc_loglik_H2(all_data)
 
-  # Apply registration
+  # Begin registration logic
   if (!optimise_registration_parameters) {
     # Check that stretches and shifts are numeric
-    if (any(is.na(stretches)) | any(is.na(shifts))) {
+    if (any(is.na(stretches), is.na(shifts))) {
       stop(cli::format_error(c(
         "{.var stretches} and {.var shifts} must be numeric vectors",
         "x" = "You supplied vectors with {.cls NA} values."
@@ -72,26 +74,39 @@ register <- function(input,
     }
 
     # Apply registration
-    mean_data_reg <- apply_registration(mean_data, stretches, shifts)
     all_data_reg <- apply_registration(all_data, stretches, shifts)
 
-    BIC_combined <- compare_dynamics_H1(all_data_reg)
+    # Calculate model comparison
+    loglik_combined <- calc_loglik_H1(all_data_reg)
+  } else {
+    # Registration with optimisation
+    cli::cli_alert_info("Using computed stretches and shifts search space limits. User-defined parameters will be ignored.")
+
+    # Run optimisation
+    optimised_params <- optimise(all_data, overlapping_percent, optimisation_config)
+
+    # Apply registration
+    stretches <- optimised_params$par[1]
+    shifts <- optimised_params$par[2]
+    all_data_reg <- apply_registration(all_data, stretches, shifts)
+
+    # Calculate model comparison
+    loglik_combined <- optimised_params$function_value
   }
 
-  model_comparison <- compare_H1_and_H2(mean_data_reg, BIC_combined, BIC_separate)
-  # message("Registered: ", BIC_separate > BIC_combined)
+  # Model comparison
+  model_comparison <- compare_H1_and_H2(all_data_reg, stretches, shifts, loglik_combined, loglik_separate)
 
+  # Restore original query and reference accession names
+  all_data[, c("time_delta") := NULL]
+  all_data[, accession := factor(accession, levels = c("ref", "query"), labels = c(reference, query))][]
+  all_data_reg[, accession := factor(accession, levels = c("ref", "query"), labels = c(reference, query))][]
 
-  # Final data processing
-  # TODO: undo factor() of the reference and query for interpretability
-  # TODO: (?) accession counts summary with {cli}
-
+  # Results object
   results_list <- list(
-    all_data = data.table::data.table(all_data),
-    mean_data = data.table::data.table(mean_data),
-    all_data_reg = data.table::data.table(all_data_reg),
-    mean_data_reg = data.table::data.table(mean_data_reg),
-    model_comparison = data.table::data.table(model_comparison)
+    data = all_data,
+    registered_data = all_data_reg,
+    model_comparison = model_comparison
   )
 
   return(results_list)

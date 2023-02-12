@@ -1,3 +1,10 @@
+#' Preprocess data before registration
+#'
+#' `preprocess_data` is a function that:
+#'   - Calculates \code{time_delta}.
+#'   - Gets \code{mean_data}.
+#'   - Scales data via `scale_data`.
+#' @noRd
 preprocess_data <- function(input, reference, query) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
@@ -31,6 +38,13 @@ preprocess_data <- function(input, reference, query) {
   return(results_list)
 }
 
+#' Scale data
+#'
+#' `scale_all_rep_data` is a function to scale both the mean expression data and original data including all replicates.
+#'
+#' @param mean_data Input data containing mean of each time point.
+#' @param all_data Input data including all replicates.
+#' @noRd
 scale_data <- function(mean_data, all_data) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL

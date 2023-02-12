@@ -1,3 +1,34 @@
+#' Register or synchronize different expression profiles
+#'
+#' `register()` is a function to register expression profiles a user
+#' wishes to compare.
+#'
+#' @param input Input data frame containing all replicates of gene expression in each genotype at each time point.
+#' @param stretches Candidate registration stretch factors to apply to query data.
+#' @param shifts Candidate registration shift values to apply to query data.
+#' @param reference Accession name of reference data.
+#' @param query Accession name of query data.
+#' @param overlapping_percent Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
+#' @param optimise_registration_parameters Whether to optimise registration parameters with Simulated Annealing. By default, \code{FALSE}.
+#' @param optimisation_config List with optional arguments to modify the Simulated Annealing optimisation.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Load a data frame from the sample data
+#' all_data_df <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") %>%
+#'   utils::read.csv()
+#'
+#' # Running the registration
+#' registration_results <- register(
+#'   input = all_data_df,
+#'   reference = "Ro18",
+#'   query = "Col0",
+#'   stretches = 2.3,
+#'   shifts = 1.6
+#' )
+#' }
 register <- function(input,
                      stretches = NA,
                      shifts = NA,

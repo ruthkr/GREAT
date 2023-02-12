@@ -1,3 +1,8 @@
+#' Compare curve dynamics for Hypothesis H2
+#'
+#' H2: the dasets are best explained by two different models.
+#'
+#' @noRd
 compare_dynamics_H2 <- function(data) {
   # Cut down to the data for each model
   data_query <- data[data$accession == "query"]
@@ -27,6 +32,11 @@ compare_dynamics_H2 <- function(data) {
   return(BIC)
 }
 
+#' Compare curve dynamics for Hypothesis H1
+#'
+#' H1: the dasets are best explained by one common model.
+#'
+#' @noRd
 compare_dynamics_H1 <- function(data) {
   # Cut down to the data for each model
   data_query <- data[data$accession == "query"]

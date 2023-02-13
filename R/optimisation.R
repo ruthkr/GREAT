@@ -74,8 +74,8 @@ get_search_space_limits <- function(data, overlapping_percent = 0.5) {
 
   # Initial stretch limits
   stretch_init <- get_approximate_stretch(data)
-  stretch_lower <- 0.75 * stretch_init
-  stretch_upper <- 1.25 * stretch_init
+  stretch_lower <- 0.5 * stretch_init
+  stretch_upper <- 1.5 * stretch_init
 
   # Extract timepoint ranges
   timepoints_ref <- unique(data[accession == "ref", timepoint])

@@ -59,9 +59,8 @@ register <- function(input,
   # Preprocess data
   processed_data <- preprocess_data(input, reference, query)
   all_data <- processed_data$all_data
-
-  # Calculate BIC for Hypothesis 2
-  loglik_separate <- calc_loglik_H2(all_data)
+  gene_id_list <- unique(all_data$gene_id)
+  cli::cli_alert_info("Will process {length(gene_id_list)} genes.")
 
   # Begin registration logic
   if (optimise_registration_parameters) {
@@ -70,9 +69,26 @@ register <- function(input,
     cli::cli_alert_info("Using computed stretches and shifts search space limits. User-defined parameters will be ignored.")
 
     # Run optimisation
-    results <- register_with_optimisation(all_data, loglik_separate, overlapping_percent, optimisation_config)
-    all_data_reg <- results$data_reg
-    model_comparison <- results$model_comparison
+    results <- lapply(
+      cli::cli_progress_along(
+        x = gene_id_list,
+        format = "{cli::pb_spin} Optimising registration parameters for genes ({cli::pb_current}/{cli::pb_total})",
+        format_done = "{cli::col_green(cli::symbol$tick)} Optimising registration parameters for genes ({cli::pb_total}/{cli::pb_total}) {cli::col_white(paste0('[', cli::pb_elapsed, ']'))}",
+        clear = FALSE
+      ),
+      function(gene_index) {
+        # Filter single gene data
+        gene_data <- all_data[all_data$gene_id == gene_id_list[gene_index]]
+
+        # Calculate BIC for Hypothesis 2
+        loglik_separate <- calc_loglik_H2(gene_data)
+
+        # Register for Hypothesis 1
+        results <- register_with_optimisation(gene_data, loglik_separate, overlapping_percent, optimisation_config)
+
+        return(results)
+      }
+    )
   } else {
     cli::cli_h1("Starting manual registration")
     # Check that stretches and shifts are numeric
@@ -84,10 +100,33 @@ register <- function(input,
     }
 
     # Apply manual registration
-    results <- register_manually(all_data, stretches, shifts, loglik_separate)
-    all_data_reg <- results$data_reg
-    model_comparison <- results$model_comparison
+    results <- lapply(
+      cli::cli_progress_along(
+        x = gene_id_list,
+        format = "{cli::pb_spin} Applying registration for genes ({cli::pb_current}/{cli::pb_total})",
+        format_done = "{cli::col_green(cli::symbol$tick)} Applying registration for genes ({cli::pb_total}/{cli::pb_total}) {cli::col_white(paste0('[', cli::pb_elapsed, ']'))}",
+        clear = FALSE
+      ),
+      function(gene_index) {
+        # Filter single gene data
+        gene_data <- all_data[all_data$gene_id == gene_id_list[gene_index]]
+
+        # Calculate BIC for Hypothesis 2
+        loglik_separate <- calc_loglik_H2(gene_data)
+
+        # Register for Hypothesis 1
+        results <- register_manually(gene_data, stretches, shifts, loglik_separate)
+        # TODO: generalise for multiple stretches and shifts
+        # results <- get_best_parameters()
+
+        return(results)
+      }
+    )
   }
+
+  # Aggregate results
+  all_data_reg <- Reduce(rbind, lapply(results, function(x) x$data_reg))
+  model_comparison <- Reduce(rbind, lapply(results, function(x) x$model_comparison))
 
   # Restore original query and reference accession names
   all_data[, c("time_delta") := NULL]

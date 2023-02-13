@@ -23,15 +23,10 @@ Depends:
 Imports: 
     cli,
     data.table,
-    dplyr,
     ggplot2,
     optimization,
-    magrittr,
-    rlang,
     scales,
     stats,
-    stringr,
-    purrr
 Suggests: 
     knitr,
     rmarkdown,

@@ -72,7 +72,7 @@ register <- function(input,
     results <- lapply(
       cli::cli_progress_along(
         x = gene_id_list,
-        format = "{cli::pb_spin} Optimising registration parameters for genes ({cli::pb_current}/{cli::pb_total})",
+        format = "{cli::pb_spin} Optimising registration parameters for genes ({cli::pb_current}/{cli::pb_total}) [{cli::pb_elapsed_clock}]",
         format_done = "{cli::col_green(cli::symbol$tick)} Optimising registration parameters for genes ({cli::pb_total}/{cli::pb_total}) {cli::col_white(paste0('[', cli::pb_elapsed, ']'))}",
         clear = FALSE
       ),
@@ -103,7 +103,7 @@ register <- function(input,
     results <- lapply(
       cli::cli_progress_along(
         x = gene_id_list,
-        format = "{cli::pb_spin} Applying registration for genes ({cli::pb_current}/{cli::pb_total})",
+        format = "{cli::pb_spin} Applying registration for genes ({cli::pb_current}/{cli::pb_total}) [{cli::pb_elapsed_clock}]",
         format_done = "{cli::col_green(cli::symbol$tick)} Applying registration for genes ({cli::pb_total}/{cli::pb_total}) {cli::col_white(paste0('[', cli::pb_elapsed, ']'))}",
         clear = FALSE
       ),

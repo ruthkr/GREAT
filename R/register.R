@@ -38,7 +38,12 @@ register <- function(input,
                      optimise_registration_parameters = FALSE,
                      optimisation_config = list(num_iterations = 60)) {
   # Suppress "no visible binding for global variable" note
+  gene_id <- NULL
   accession <- NULL
+  timepoint <- NULL
+  timepoint_reg <- NULL
+  expression_value <- NULL
+  replicate <- NULL
 
   # Validate column names
   match_names(
@@ -128,15 +133,21 @@ register <- function(input,
   all_data_reg <- Reduce(rbind, lapply(results, function(x) x$data_reg))
   model_comparison <- Reduce(rbind, lapply(results, function(x) x$model_comparison))
 
+  # Left join registered time points
+  setnames(all_data_reg, "timepoint", "timepoint_reg")
+  all_data <- merge(
+    all_data,
+    all_data_reg,
+    by = c("gene_id", "accession", "expression_value", "replicate")
+  )
+
   # Restore original query and reference accession names
   all_data[, c("time_delta") := NULL]
   all_data[, accession := factor(accession, levels = c("ref", "query"), labels = c(reference, query))][]
-  all_data_reg[, accession := factor(accession, levels = c("ref", "query"), labels = c(reference, query))][]
 
   # Results object
   results_list <- list(
-    data = all_data,
-    registered_data = all_data_reg,
+    data = all_data[, .(gene_id, accession, timepoint, timepoint_reg, expression_value, replicate)],
     model_comparison = model_comparison
   )
 

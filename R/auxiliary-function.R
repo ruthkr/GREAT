@@ -41,3 +41,34 @@ summary_registration <- function(results) {
 
   return(results_list)
 }
+
+
+#' Calculate prediction of reference data expression value
+#'
+#' @noRd
+interpolate_data_ref_comparison_expression <- function(data_to_transform_time, data_ref_dt) {
+  # Suppress "no visible binding for global variable" note
+  shifted_time <- NULL
+
+  # Calculate diff
+  data_ref_dt$diff <- data_ref_dt$shifted_time - data_to_transform_time
+
+  # If outside of comparable range (time is smaller than all data_ref_dt time or bigger than all)
+  if (all(data_ref_dt$diff > 0) | all(data_ref_dt$diff < 0)) {
+    return(NA)
+  }
+
+  # Otherwise, cut down data_ref observations to the two nearest timepoints to the data_to_transform time
+  data_ref_dt$diff <- abs(data_ref_dt$shifted_time - data_to_transform_time)
+  data.table::setorder(data_ref_dt, diff)
+  nearest_points <- data_ref_dt[1:2, ]
+
+  # Linearly interpolate between these points to estimate the comparison expression value
+  data.table::setorder(nearest_points, shifted_time) # so [1] is earlier time
+  time_diff <- nearest_points$shifted_time[2] - nearest_points$shifted_time[1]
+  expression_diff <- nearest_points$expression_value[2] - nearest_points$expression_value[1]
+  grad <- expression_diff / time_diff
+  pred_expression <- nearest_points$expression_value[1] + (nearest_points$diff[1]) * grad
+
+  return(pred_expression)
+}

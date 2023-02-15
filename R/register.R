@@ -65,7 +65,7 @@ register <- function(input,
   processed_data <- preprocess_data(input, reference, query)
   all_data <- processed_data$all_data
   gene_id_list <- unique(all_data$gene_id)
-  cli::cli_alert_info("Will process {length(gene_id_list)} genes.")
+  cli::cli_alert_info("Will process {length(gene_id_list)} gene{?s}.")
 
   # Begin registration logic
   if (optimise_registration_parameters) {

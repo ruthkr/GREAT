@@ -9,6 +9,14 @@
 #'
 #' @export
 plot_registration_results <- function(results, type = c("registered", "original"), title = NULL, ncol = NULL) {
+  # Suppress "no visible binding for global variable" note
+  gene_id <- NULL
+  accession <- NULL
+  expression_value <- NULL
+  registered <- NULL
+  stretch <- NULL
+  shift <- NULL
+
   # Validate parameters
   type <- match.arg(type)
 
@@ -38,11 +46,11 @@ plot_registration_results <- function(results, type = c("registered", "original"
   }
 
   gg_registered <- ggplot2::ggplot(data) +
-    ggplot2::aes_string(
-      x = timepoint_var,
-      y = "expression_value",
-      color = "accession",
-      fill = "accession"
+    ggplot2::aes(
+      x = !!ggplot2::sym(timepoint_var),
+      y = expression_value,
+      color = accession,
+      fill = accession
     ) +
     ggplot2::geom_point() +
     ggplot2::stat_summary(fun = mean, geom = "line") +

@@ -13,20 +13,20 @@ plot_registration_results <- function(results, type = c("registered", "original"
   type <- match.arg(type)
 
   # Parse model_comparison object
-  # reg_result_df <- reg_result_df %>%
-  #   dplyr::left_join(
-  #     model_comparison_df %>%
-  #       dplyr::select(locus_name = .data$gene, .data$stretch, .data$shift),
-  #     by = "locus_name"
-  #   ) %>%
-  #   dplyr::mutate(
-  #     is_registered = ifelse(.data$is_registered, "REG", "NO_REG"),
-  #     locus_name = paste0(
-  #       .data$locus_name, " - ", .data$is_registered, "\n",
-  #       "stretch: ", round(.data$stretch, 2),
-  #       ", shift: ", round(.data$shift, 2)
-  #     )
-  #   )
+  gene_facets <- results$model_comparison[, .(
+    gene_id,
+    gene_facet = paste0(
+      gene_id, " - ", ifelse(registered, "REG", "NO_REG"),
+      ifelse(
+        registered,
+        paste0("\n", "stretch: ", round(stretch, 2), ", shift: ", round(shift, 2)),
+        ""
+      )
+    )
+  )]
+
+  # Left join gene_facets to data
+  data <- results$data[gene_facets, on = "gene_id"]
 
   # Construct plot
   if (type == "registered") {
@@ -37,7 +37,7 @@ plot_registration_results <- function(results, type = c("registered", "original"
     x_lab <- "Time point"
   }
 
-  gg_registered <- ggplot2::ggplot(results$data) +
+  gg_registered <- ggplot2::ggplot(data) +
     ggplot2::aes_string(
       x = timepoint_var,
       y = "expression_value",
@@ -46,7 +46,7 @@ plot_registration_results <- function(results, type = c("registered", "original"
     ) +
     ggplot2::geom_point() +
     ggplot2::stat_summary(fun = mean, geom = "line") +
-    ggplot2::facet_wrap(~gene_id, scales = "free", ncol = ncol) +
+    ggplot2::facet_wrap(~ gene_facet, scales = "free", ncol = ncol) +
     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
     ggplot2::theme_bw() +
     ggplot2::labs(

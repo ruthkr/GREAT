@@ -121,6 +121,10 @@ get_search_space_limits <- function(data, overlapping_percent = 0.5) {
 
 #' @noRd
 calc_overlapping_percent <- function(data) {
+  # Suppress "no visible binding for global variable" note
+  accession <- NULL
+  timepoint <- NULL
+
   # Extract time point ranges
   range_ref <- range(unique(data[accession == "ref", timepoint]))
   range_query <- range(unique(data[accession == "query", timepoint]))

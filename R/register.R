@@ -143,11 +143,15 @@ register <- function(input,
 
   # Restore original query and reference accession names
   all_data[, c("time_delta") := NULL]
-  all_data[, accession := factor(accession, levels = c("ref", "query"), labels = c(reference, query))][]
+  all_data[, accession := factor(accession, levels = c("ref", "query"), labels = c(reference, query))][, .(gene_id, accession, timepoint, timepoint_reg, expression_value, replicate)]
+
+  # Add accession values as data attributes
+  data.table::setattr(all_data, "ref", reference)
+  data.table::setattr(all_data, "query", query)
 
   # Results object
   results_list <- list(
-    data = all_data[, .(gene_id, accession, timepoint, timepoint_reg, expression_value, replicate)],
+    data = all_data,
     model_comparison = model_comparison
   )
 

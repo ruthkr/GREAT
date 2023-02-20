@@ -4,8 +4,8 @@
 #'
 #' @return This function returns a list of data frames which includes:
 #'
-#' \item{registered}{distance between scaled reference and query expressions using registered timepoints.}
-#' \item{original}{distance between scaled reference and query expressions using original timepoints.}
+#' \item{registered}{distance between scaled reference and query expressions using registered time points.}
+#' \item{original}{distance between scaled reference and query expressions using original time points.}
 #'
 #' @export
 calculate_distance <- function(results) {
@@ -29,7 +29,7 @@ calculate_distance <- function(results) {
   data_query <- data[data$accession == query]
   data_ref <- data[data$accession == reference]
 
-  # Cross join all reference and query timepoints
+  # Cross join all reference and query time points
   timepoint_cj_registered <- get_timepoint_comb_registered_data(data_ref, data_query)
   timepoint_cj_original <- get_timepoint_comb_original_data(data_ref, data_query)
 
@@ -52,7 +52,7 @@ calculate_distance <- function(results) {
   return(results_list)
 }
 
-#' Cross join all original reference and query timepoints and expression values
+#' Cross join all original reference and query time points and expression values
 #'
 #' @noRd
 get_timepoint_comb_original_data <- function(data_ref, data_query) {
@@ -79,7 +79,7 @@ get_timepoint_comb_original_data <- function(data_ref, data_query) {
   return(comb)
 }
 
-#' Cross join all reference and registered query timepoints and expression values
+#' Cross join all reference and registered query time points and expression values
 #'
 #' @noRd
 get_timepoint_comb_registered_data <- function(data_ref, data_query) {

@@ -12,8 +12,8 @@ calculate_distance(results)
 \value{
 This function returns a list of data frames which includes:
 
-\item{registered}{distance between scaled reference and query expressions using registered timepoints.}
-\item{original}{distance between scaled reference and query expressions using original timepoints.}
+\item{registered}{distance between scaled reference and query expressions using registered time points.}
+\item{original}{distance between scaled reference and query expressions using original time points.}
 }
 \description{
 Calculate distance between sample data before and after registration

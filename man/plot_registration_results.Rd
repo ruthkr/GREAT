@@ -21,7 +21,7 @@ plot_registration_results(
 \item{ncol}{Number of columns in the plot grid. By default this is calculated automatically.}
 }
 \value{
-Plot of genes of interest after registration process (\code{type = "registered"}) or showing orignal timepoints (\code{type = "original"}).
+Plot of genes of interest after registration process (\code{type = "registered"}) or showing original time points (\code{type = "original"}).
 }
 \description{
 Plot gene of interest after registration

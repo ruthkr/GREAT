@@ -5,7 +5,7 @@
 #' @param title Optional plot title.
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
 #'
-#' @return Plot of genes of interest after registration process (\code{type = "registered"}) or showing orignal timepoints (\code{type = "original"}).
+#' @return Plot of genes of interest after registration process (\code{type = "registered"}) or showing original time points (\code{type = "original"}).
 #'
 #' @export
 plot_registration_results <- function(results,

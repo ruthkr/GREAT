@@ -73,7 +73,7 @@ register <- function(input,
   # Begin registration logic
   if (optimise_registration_parameters) {
     # Registration with optimisation
-    cli::cli_h1("Starting registation with optimisation")
+    cli::cli_h1("Starting registration with optimisation")
     cli::cli_alert_info("Using computed stretches and shifts search space limits. User-defined parameters will be ignored.")
 
     # Run optimisation

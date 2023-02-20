@@ -1,6 +1,6 @@
 #' Summarise registration results
 #'
-#' @param results Registration results, output of the `register` registration process.
+#' @param results Registration results, output of the \code{\link{register}} registration process.
 #'
 #' @return List containing summary table, registered gene accessions, and non-registered gene accessions.
 #'

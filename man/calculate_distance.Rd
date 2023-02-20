@@ -4,21 +4,16 @@
 \alias{calculate_distance}
 \title{Calculate distance between sample data before and after registration}
 \usage{
-calculate_distance(results, type = c("registered", "original"))
+calculate_distance(results)
 }
 \arguments{
 \item{results}{Result of registration process using \code{\link{register}}.}
-
-\item{type}{Type of comparison, determines whether to use "registered" or "original" time points. By default, "registered".}
 }
 \value{
 This function returns a list of data frames which includes:
-\item{distance_mean_df}{distance of mean expression values.}
-\item{distance_scaled_mean_df}{distance of scaled mean expression (all genes).}
-\item{distance_scaled_mean_df_only_nonreg}{distance of scaled mean expression (only non-registered genes).}
-\item{distance_scaled_mean_df_only_reg}{distance of scaled mean expression (only registered genes).}
-\item{distance_registered_df}{distance of registered & scaled mean expression (all genes).}
-\item{distance_registered_df_only_reg}{distance of registered & scaled mean expression (only registered genes).}
+
+\item{registered}{distance between scaled reference and query expressions using registered timepoints.}
+\item{original}{distance between scaled reference and query expressions using original timepoints.}
 }
 \description{
 Calculate distance between sample data before and after registration

@@ -1,9 +1,9 @@
 #' Preprocess data before registration
 #'
-#' `preprocess_data` is a function that:
-#'   - Calculates \code{time_delta}.
-#'   - Gets \code{mean_data}.
-#'   - Scales data via `scale_data`.
+#' \code{preprocess_data()} is a function that:
+#' \item{Calculates \code{time_delta}.}
+#' \item{Gets \code{mean_data}.}
+#' \item{Scales data via \code{\link{scale_data}}.}
 #'
 #' @noRd
 preprocess_data <- function(input, reference, query) {
@@ -33,7 +33,6 @@ preprocess_data <- function(input, reference, query) {
   # Results object
   results_list <- list(
     all_data = scaled_data$all_data
-    # mean_data = scaled_data$mean_data
   )
 
   return(results_list)
@@ -41,7 +40,7 @@ preprocess_data <- function(input, reference, query) {
 
 #' Scale data
 #'
-#' `scale_all_rep_data` is a function to scale both the mean expression data and original data including all replicates.
+#' \code{scale_all_rep_data()} is a function to scale both the mean expression data and original data including all replicates.
 #'
 #' @param mean_data Input data containing mean of each time point.
 #' @param all_data Input data including all replicates.

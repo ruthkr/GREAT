@@ -7,7 +7,7 @@
 summary_registration(results)
 }
 \arguments{
-\item{results}{Registration results, output of the \code{register} registration process.}
+\item{results}{Registration results, output of the \code{\link{register}} registration process.}
 }
 \value{
 List containing summary table, registered gene accessions, and non-registered gene accessions.

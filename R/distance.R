@@ -1,19 +1,14 @@
 #' Calculate distance between sample data before and after registration
 #'
 #' @param results Result of registration process using \code{\link{register}}.
-#' @param type Type of comparison, determines whether to use "registered" or "original" time points. By default, "registered".
 #'
 #' @return This function returns a list of data frames which includes:
-#' \item{distance_mean_df}{distance of mean expression values.}
-#' \item{distance_scaled_mean_df}{distance of scaled mean expression (all genes).}
-#' \item{distance_scaled_mean_df_only_nonreg}{distance of scaled mean expression (only non-registered genes).}
-#' \item{distance_scaled_mean_df_only_reg}{distance of scaled mean expression (only registered genes).}
-#' \item{distance_registered_df}{distance of registered & scaled mean expression (all genes).}
-#' \item{distance_registered_df_only_reg}{distance of registered & scaled mean expression (only registered genes).}
+#'
+#' \item{registered}{distance between scaled reference and query expressions using registered timepoints.}
+#' \item{original}{distance between scaled reference and query expressions using original timepoints.}
 #'
 #' @export
-calculate_distance <- function(results,
-                               type = c("registered", "original")) {
+calculate_distance <- function(results) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
@@ -25,9 +20,6 @@ calculate_distance <- function(results,
   exp_ref <- NULL
   exp_query <- NULL
 
-  # Validate parameters
-  type <- match.arg(type)
-
   # Retrieve data from results
   data <- results$data
   reference <- attr(data, "ref")
@@ -37,21 +29,27 @@ calculate_distance <- function(results,
   data_query <- data[data$accession == query]
   data_ref <- data[data$accession == reference]
 
-  if (type == "registered") {
-    timepoint_cross_join <- get_timepoint_comb_registered_data(data_ref, data_query)
-  } else {
-    timepoint_cross_join <- get_timepoint_comb_original_data(data_ref, data_query)
-  }
+  # Cross join all reference and query timepoints
+  timepoint_cj_registered <- get_timepoint_comb_registered_data(data_ref, data_query)
+  timepoint_cj_original <- get_timepoint_comb_original_data(data_ref, data_query)
 
   # Calculate mean square distances
-  distances <- timepoint_cross_join[, .(distance = mean((exp_ref - exp_query)^2)), by = .(timepoint_ref, timepoint_query)]
-  distances <- distances[timepoint_query >= 0]
+  dist_registered <- timepoint_cj_registered[, .(distance = mean((exp_ref - exp_query)^2)), by = .(timepoint_ref, timepoint_query)][timepoint_query >= 0]
+  dist_original <- timepoint_cj_original[, .(distance = mean((exp_ref - exp_query)^2)), by = .(timepoint_ref, timepoint_query)][timepoint_query >= 0]
 
   # Add accession values as data attributes
-  data.table::setattr(distances, "ref", reference)
-  data.table::setattr(distances, "query", query)
+  data.table::setattr(dist_registered, "ref", reference)
+  data.table::setattr(dist_registered, "query", query)
+  data.table::setattr(dist_original, "ref", reference)
+  data.table::setattr(dist_original, "query", query)
 
-  return(distances)
+  # Results object
+  results_list <- list(
+    registered = dist_registered,
+    original = dist_original
+  )
+
+  return(results_list)
 }
 
 #' Cross join all original reference and query timepoints and expression values

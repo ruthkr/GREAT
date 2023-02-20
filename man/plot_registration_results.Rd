@@ -12,7 +12,7 @@ plot_registration_results(
 )
 }
 \arguments{
-\item{results}{Registration results, output of the \code{register} registration process.}
+\item{results}{Registration results, output of the \code{\link{register}} registration process.}
 
 \item{type}{Type of plot, determines whether to use "registered" or "original" time points. By default, "registered".}
 
@@ -21,7 +21,7 @@ plot_registration_results(
 \item{ncol}{Number of columns in the plot grid. By default this is calculated automatically.}
 }
 \value{
-Plot of genes of interest after registration process.
+Plot of genes of interest after registration process (\code{type = "registered"}) or showing orignal timepoints (\code{type = "original"}).
 }
 \description{
 Plot gene of interest after registration

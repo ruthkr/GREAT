@@ -22,16 +22,17 @@ match_names <- function(x, lookup, error = NULL, name_string = "names", lookup_v
 
 #' Get approximate stretch factor
 #'
-#' @description
-#' `get_approximate_stretch()` is a function to get a stretch factor estimation
-#' given input data. This function will take the time point ranges of both
-#' reference and query data and compare them to estimate the stretch factor.
+#' \code{get_approximate_stretch()} is a function to get a stretch factor
+#' estimation given input data. This function will take the time point ranges
+#' of both reference and query data and compare them to estimate the stretch
+#' factor.
 #'
 #' @param data Input data frame, either containing all replicates of gene expression or not.
 #' @param reference Accession name of reference data.
 #' @param query Accession name of query data.
 #'
 #' @return This function returns an estimation of a stretch factor for registering the data.
+#'
 #' @export
 get_approximate_stretch <- function(data, reference = "ref", query = "query") {
   # Suppress "no visible binding for global variable" note

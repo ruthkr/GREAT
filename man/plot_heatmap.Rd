@@ -5,14 +5,17 @@
 \title{Visualise distances between samples from different time points}
 \usage{
 plot_heatmap(
-  data,
+  results,
+  type = c("registered", "original"),
   match_timepoints = FALSE,
   title = NULL,
   axis_fontsize = NULL
 )
 }
 \arguments{
-\item{data}{Input data frame containing sample distance between two different species.}
+\item{results}{Results containing distances between two different reference and query data, output of \code{\link{calculate_distance}}.}
+
+\item{type}{Type of plot, determines whether to use "registered" or "original" time points. By default, "registered".}
 
 \item{match_timepoints}{If \code{TRUE}, will match query time points to reference time points.}
 
@@ -24,7 +27,8 @@ plot_heatmap(
 Distance heatmap of gene expression profiles over time between two different species.
 }
 \description{
-Function \code{plot_heatmap()} allows users to plot distances between samples from
-different time points to investigate the similarity of progression of gene
-expression states between species before or after registration.
+\code{plot_heatmap()} is a function that allows users to plot distances
+between samples from different time points to investigate the similarity of
+progression of gene expression states between species before or after
+registration.
 }

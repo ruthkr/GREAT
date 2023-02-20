@@ -18,9 +18,9 @@ register(
 \arguments{
 \item{input}{Input data frame containing all replicates of gene expression in each genotype at each time point.}
 
-\item{stretches}{Candidate registration stretch factors to apply to query data.}
+\item{stretches}{Candidate registration stretch factors to apply to query data, only required if \code{optimise_registration_parameters = FALSE}.}
 
-\item{shifts}{Candidate registration shift values to apply to query data.}
+\item{shifts}{Candidate registration shift values to apply to query data, only required if \code{optimise_registration_parameters = FALSE}.}
 
 \item{reference}{Accession name of reference data.}
 
@@ -32,6 +32,12 @@ register(
 
 \item{optimisation_config}{List with optional arguments to modify the Simulated Annealing optimisation.}
 }
+\value{
+This function returns a list of data frames, containing:
+
+\item{data}{a table containing the scaled input data and an additional \code{timepoint_reg} column after applying registration parameters to the query data.}
+\item{model_comparison}{a table comparing the optimal registration function for each gene (based on \code{all_shifts_df} scores) to model with no registration applied.}
+}
 \description{
 \code{register()} is a function to register expression profiles a user
 wishes to compare.
@@ -39,16 +45,14 @@ wishes to compare.
 \examples{
 \dontrun{
 # Load a data frame from the sample data
-all_data <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") \%>\%
-  utils::read.csv()
+data_path <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR")
+all_data <- utils::read.csv(data_path)
 
 # Running the registration
 registration_results <- register(
   input = all_data,
   reference = "Ro18",
-  query = "Col0",
-  stretches = 2.3,
-  shifts = 1.6
+  query = "Col0"
 )
 }
 }

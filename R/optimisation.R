@@ -119,6 +119,8 @@ get_search_space_limits <- function(data, overlapping_percent = 0.5) {
   return(results_list)
 }
 
+#' Calculate overlapping percentage between reference and query data time point ranges
+#'
 #' @noRd
 calc_overlapping_percent <- function(data) {
   # Suppress "no visible binding for global variable" note

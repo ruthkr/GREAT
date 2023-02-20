@@ -1,14 +1,17 @@
 #' Plot gene of interest after registration
 #'
-#' @param results Registration results, output of the `register` registration process.
+#' @param results Registration results, output of the \code{\link{register}} registration process.
 #' @param type Type of plot, determines whether to use "registered" or "original" time points. By default, "registered".
 #' @param title Optional plot title.
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
 #'
-#' @return Plot of genes of interest after registration process.
+#' @return Plot of genes of interest after registration process (\code{type = "registered"}) or showing orignal timepoints (\code{type = "original"}).
 #'
 #' @export
-plot_registration_results <- function(results, type = c("registered", "original"), title = NULL, ncol = NULL) {
+plot_registration_results <- function(results,
+                                      type = c("registered", "original"),
+                                      title = NULL,
+                                      ncol = NULL) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
@@ -68,12 +71,13 @@ plot_registration_results <- function(results, type = c("registered", "original"
 
 #' Visualise distances between samples from different time points
 #'
-#' @description
-#' Function `plot_heatmap()` allows users to plot distances between samples from
-#' different time points to investigate the similarity of progression of gene
-#' expression states between species before or after registration.
+#' \code{plot_heatmap()} is a function that allows users to plot distances
+#' between samples from different time points to investigate the similarity of
+#' progression of gene expression states between species before or after
+#' registration.
 #'
-#' @param data Input data frame containing sample distance between two different species.
+#' @param results Results containing distances between two different reference and query data, output of \code{\link{calculate_distance}}.
+#' @param type Type of plot, determines whether to use "registered" or "original" time points. By default, "registered".
 #' @param match_timepoints If \code{TRUE}, will match query time points to reference time points.
 #' @param title Optional plot title.
 #' @param axis_fontsize Font size of X and Y axes labels.
@@ -81,11 +85,23 @@ plot_registration_results <- function(results, type = c("registered", "original"
 #' @return Distance heatmap of gene expression profiles over time between two different species.
 #'
 #' @export
-plot_heatmap <- function(data, match_timepoints = FALSE, title = NULL, axis_fontsize = NULL) {
+plot_heatmap <- function(results,
+                         type = c("registered", "original"),
+                         match_timepoints = FALSE,
+                         title = NULL,
+                         axis_fontsize = NULL) {
   # Suppress "no visible binding for global variable" note
   timepoint_ref <- NULL
   timepoint_query <- NULL
   distance <- NULL
+
+  # Validate parameters
+  type <- match.arg(type)
+  if (type == "registered") {
+    data <- results$registered
+  } else {
+    data <- results$original
+  }
 
   # Retrieve accession values from results
   reference <- attr(data, "ref")

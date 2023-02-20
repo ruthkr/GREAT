@@ -62,6 +62,9 @@ get_approximate_stretch <- function(data, reference = "ref", query = "query") {
 #'
 #' @noRd
 cross_join <- function(a, b) {
-  cj <- data.table::CJ(1:nrow(a), 1:nrow(b))
+  cj <- data.table::CJ(
+    seq_len(nrow(a)),
+    seq_len(nrow(b))
+  )
   cbind(a[cj[[1]], ], b[cj[[2]], ])
 }

@@ -54,7 +54,7 @@ plot_registration_results <- function(results, type = c("registered", "original"
     ) +
     ggplot2::geom_point() +
     ggplot2::stat_summary(fun = mean, geom = "line") +
-    ggplot2::facet_wrap(~ gene_facet, scales = "free", ncol = ncol) +
+    ggplot2::facet_wrap(~gene_facet, scales = "free", ncol = ncol) +
     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
     ggplot2::theme_bw() +
     ggplot2::labs(

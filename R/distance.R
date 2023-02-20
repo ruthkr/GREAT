@@ -13,7 +13,7 @@
 #'
 #' @export
 calculate_distance <- function(results,
-                                              type = c("registered", "original")) {
+                               type = c("registered", "original")) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL

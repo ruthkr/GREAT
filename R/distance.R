@@ -45,6 +45,7 @@ calculate_distance <- function(results,
 
   # Calculate mean square distances
   distances <- timepoint_cross_join[, .(distance = mean((exp_ref - exp_query)^2)), by = .(timepoint_ref, timepoint_query)]
+  distances <- distances[timepoint_query >= 0]
 
   # Add accession values as data attributes
   data.table::setattr(distances, "ref", reference)

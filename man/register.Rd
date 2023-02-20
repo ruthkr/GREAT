@@ -11,7 +11,7 @@ register(
   reference,
   query,
   overlapping_percent = 0.5,
-  optimise_registration_parameters = FALSE,
+  optimise_registration_parameters = TRUE,
   optimisation_config = list(num_iterations = 60)
 )
 }

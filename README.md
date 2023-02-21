@@ -7,7 +7,7 @@
 
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/greatR)](https://cran.r-project.org/package=greatR)
 [![lifecycle](https://lifecycle.r-lib.org/articles/figures/lifecycle-stable.svg)](https://lifecycle.r-lib.org/articles/stages.html)
-[![R-CMD-check](https://github.com/ruthkr/greatR/workflows/R-CMD-check/badge.svg)](https://github.com/ruthkr/greatR/actions)
+[![R-CMD-check](https://github.com/ruthkr/greatR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ruthkr/greatR/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/ruthkr/greatR/branch/master/graph/badge.svg?token=L6TNLEPLLO)](https://app.codecov.io/gh/ruthkr/greatR)
 [![pkgdown](https://github.com/ruthkr/greatR/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/ruthkr/greatR/actions/workflows/pkgdown.yaml)
 [![GitHub last
@@ -81,7 +81,7 @@ registration_results <- register(
 )
 
 #> ℹ Will process 10 genes.
-#> 
+#>
 #> ── Starting registration with optimisation ──────────────────────────────────────
 #> ℹ Using computed stretches and shifts search space limits. User-defined parameters will be ignored.
 #> ✔ Optimising registration parameters for genes (10/10) [5m 14.8s]

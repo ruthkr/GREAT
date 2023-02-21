@@ -14,21 +14,15 @@ template:
     code_font: {google: "Fira Code"}
 
 reference:
-- title: Prepare data
-  contents:
-  - get_expression_of_interest
-  - get_mean_data
-
 - title: Process data
   contents:
   - get_approximate_stretch
-  - scale_and_register_data
-  - optimise_registration_params
+  - register
 
 - title: Summarise and visualise registration results
   contents:
-  - summary_model_comparison
-  - calculate_between_sample_distance
+  - summary_registration
+  - calculate_distance
   - plot_registration_results
   - plot_heatmap
 

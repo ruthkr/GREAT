@@ -43,7 +43,7 @@ gene_BRAA03G023790.3C_data <- b_rapa_data[gene_id == "BRAA03G023790.3C"]
 Before registering, we can use the helper function `get_approximate_stretch` to approximate the stretch factor between our sample data as shown in figure below. 
 
 ```{r reg-data-manual, echo=FALSE, fig.align='center', out.width='60%'}
-knitr::include_graphics("figures/registration_process.png")
+knitr::include_graphics("figures/02_registration_without_opt.png")
 ```
 
 

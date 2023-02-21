@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 This article will show users on how to register data using the sample data provided within the package. Given an input data, users can directly register the data as illustrated below.
 
 ```{r reg-data, echo=FALSE, fig.align='center', out.width='50%'}
-knitr::include_graphics("figures/registration_process.png")
+knitr::include_graphics("figures/01_registration_opt_default.png")
 ```
 
 <br>

@@ -36,11 +36,5 @@ articles:
 - title: Articles
   navbar: Overview
   contents:
-  - prepare-data
   - register-data
   - visualise-results
-
-- title: Articles
-  navbar: Optimisation
-  contents:
-  - optimise-parameters

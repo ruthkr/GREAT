@@ -70,7 +70,7 @@ library(greatR)
 
 ``` r
 # Load a data frame from the sample data
-b_rapa_data <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") %>%
+b_rapa_data <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") |>
   utils::read.csv()
 
 # Running the registration
@@ -82,17 +82,8 @@ registration_results <- register(
 
 #> ℹ Will process 10 genes.
 #> 
-#> ── Starting registation with optimisation ──────────────────────────────────────
+#> ── Starting registration with optimisation ──────────────────────────────────────
 #> ℹ Using computed stretches and shifts search space limits. User-defined parameters will be ignored.
-#> ⠙ Optimising registration parameters for genes (0/10) [00:00:00]
-#> ⠸ Optimising registration parameters for genes (2/10) [00:00:58.9]
-#> ⠼ Optimising registration parameters for genes (3/10) [00:01:32.7]
-#> ⠴ Optimising registration parameters for genes (4/10) [00:02:7.4]
-#> ⠦ Optimising registration parameters for genes (5/10) [00:02:39]
-#> ⠧ Optimising registration parameters for genes (6/10) [00:03:12.2]
-#> ⠇ Optimising registration parameters for genes (7/10) [00:03:43.3]
-#> ⠏ Optimising registration parameters for genes (8/10) [00:04:16]
-#> ⠋ Optimising registration parameters for genes (9/10) [00:04:44.7]
 #> ✔ Optimising registration parameters for genes (10/10) [5m 14.8s]
 ```
 

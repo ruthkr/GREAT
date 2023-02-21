@@ -4,24 +4,21 @@
 \alias{get_approximate_stretch}
 \title{Get approximate stretch factor}
 \usage{
-get_approximate_stretch(
-  input_df,
-  accession_data_to_transform,
-  accession_data_ref
-)
+get_approximate_stretch(data, reference = "ref", query = "query")
 }
 \arguments{
-\item{input_df}{Input data frame containing all replicates of gene expression in each genotype at each time point.}
+\item{data}{Input data frame, either containing all replicates of gene expression or not.}
 
-\item{accession_data_to_transform}{Accession name of data which will be transformed.}
+\item{reference}{Accession name of reference data.}
 
-\item{accession_data_ref}{Accession name of reference data.}
+\item{query}{Accession name of query data.}
 }
 \value{
 This function returns an estimation of a stretch factor for registering the data.
 }
 \description{
-\code{get_approximate_stretch()} is a function to get a stretch factor estimation
-given input data. This function will take the time point ranges of both
-reference and query data and compare them to estimate the stretch factor.
+\code{get_approximate_stretch()} is a function to get a stretch factor
+estimation given input data. This function will take the time point ranges
+of both reference and query data and compare them to estimate the stretch
+factor.
 }

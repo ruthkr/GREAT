@@ -10,7 +10,11 @@ summary_registration(results)
 \item{results}{Registration results, output of the \code{\link{register}} registration process.}
 }
 \value{
-List containing summary table, registered gene accessions, and non-registered gene accessions.
+This function returns a list containing:
+
+\item{summary}{contains result summaries of the registration results.}
+\item{registered_genes}{vector of gene accessions which were successfully registered.}
+\item{non_registered_genes}{vector of non-registered gene accessions.}
 }
 \description{
 Summarise registration results

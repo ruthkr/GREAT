@@ -2,7 +2,11 @@
 #'
 #' @param results Registration results, output of the \code{\link{register}} registration process.
 #'
-#' @return List containing summary table, registered gene accessions, and non-registered gene accessions.
+#' @return This function returns a list containing:
+#'
+#' \item{summary}{contains result summaries of the registration results.}
+#' \item{registered_genes}{vector of gene accessions which were successfully registered.}
+#' \item{non_registered_genes}{vector of non-registered gene accessions.}
 #'
 #' @export
 summary_registration <- function(results) {
@@ -33,7 +37,7 @@ summary_registration <- function(results) {
 
   # Results object
   results_list <- list(
-    df_summary = df_summary,
+    summary = df_summary,
     registered_genes = registered_genes,
     non_registered_genes = non_registered_genes
   )

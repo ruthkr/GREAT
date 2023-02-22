@@ -96,18 +96,19 @@
 
     
     
-<p>After running registration function
-<code>scale_and_register_data()</code> as shown in the <a href="https://ruthkr.github.io/greatR/articles/register-data.html">registering
+<p>After running registration function <code><a href="../reference/register.html">register()</a></code> as shown
+in the <a href="https://ruthkr.github.io/greatR/articles/register-data.html">Registering
 data</a> article, users can summarise and visualise the results as
 illustrated in the figure below.</p>
+<p><br></p>
 <p><img src="figures/visualisation_process.png" width="80%" style="display: block; margin: auto;"></p>
 <p><br></p>
 <div class="section level2">
-<h2 id="get-summary-from-registration-results">Get summary from registration results<a class="anchor" aria-label="anchor" href="#get-summary-from-registration-results"></a>
+<h2 id="getting-a-summary-from-registration-results">Getting a summary from registration results<a class="anchor" aria-label="anchor" href="#getting-a-summary-from-registration-results"></a>
 </h2>
 <p>The total number of registered and non-registered genes can be
 obtained by running function <code><a href="../reference/summary_registration.html">summary_registration()</a></code> with
-<code>registration_results</code> as an input.</p>
+<code>registration_results</code> object as an input.</p>
 <p>Function <code><a href="../reference/summary_registration.html">summary_registration()</a></code> returns a list which
 contains three different objects:</p>
 <ul>
@@ -115,11 +116,11 @@ contains three different objects:</p>
 <code>summary</code> contains result summaries of the registration
 results,</li>
 <li>
-<code>registered_genes</code> is vector of gene accessions which
-were successfully registered, and</li>
+<code>registered_genes</code> is vector of gene accessions or IDs
+which were successfully registered, and</li>
 <li>
 <code>non_registered_genes</code> is a vector of non-registered gene
-accessions.</li>
+accessions or IDs.</li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get registration summary</span></span>
@@ -155,20 +156,23 @@ accessions.</li>
 </tr>
 </tbody>
 </table>
-<p>The list of gene accessions which were registered can be viewed by
-calling:</p>
+<p>The list of gene accessions which were registered or not registered
+can be viewed by calling:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">reg_summary</span><span class="op">$</span><span class="va">registered_genes</span></span>
 <span><span class="co">#&gt;  [1] "BRAA02G018970.3C" "BRAA02G043220.3C" "BRAA03G023790.3C" "BRAA03G051930.3C"</span></span>
 <span><span class="co">#&gt;  [5] "BRAA04G005470.3C" "BRAA05G005370.3C" "BRAA06G025360.3C" "BRAA07G030470.3C"</span></span>
 <span><span class="co">#&gt;  [9] "BRAA07G034100.3C" "BRAA09G045310.3C"</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">reg_summary</span><span class="op">$</span><span class="va">non_registered_genes</span></span>
+<span><span class="co">#&gt; character(0)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="plot-registration-results">Plot registration results<a class="anchor" aria-label="anchor" href="#plot-registration-results"></a>
+<h2 id="plotting-registration-results">Plotting registration results<a class="anchor" aria-label="anchor" href="#plotting-registration-results"></a>
 </h2>
 <p>Function <code><a href="../reference/plot_registration_results.html">plot_registration_results()</a></code> allows users to
 plot registration results of the genes of interest.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot registration result</span></span>
 <span><span class="fu"><a href="../reference/plot_registration_results.html">plot_registration_results</a></span><span class="op">(</span></span>
 <span>  <span class="va">registration_results</span>,</span>
@@ -176,12 +180,12 @@ plot registration results of the genes of interest.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="visualise-results_files/figure-html/plot-results-1.png" width="672" style="display: block; margin: auto;"></p>
 <p>Notice that the plot includes a label indicating if the particular
-genes are registered or not, as well as the registration parameters in
-case the registration was successful.</p>
+genes are registered or not registered, as well as the registration
+parameters in case the registration was successful.</p>
 </div>
 <div class="section level2">
-<h2 id="analyse-similarity-of-expression-profiles-overtime-before-and-after-registering">Analyse similarity of expression profiles overtime before and after
-registering<a class="anchor" aria-label="anchor" href="#analyse-similarity-of-expression-profiles-overtime-before-and-after-registering"></a>
+<h2 id="analysing-similarity-of-expression-profiles-overtime-before-and-after-registering">Analysing similarity of expression profiles overtime before and
+after registering<a class="anchor" aria-label="anchor" href="#analysing-similarity-of-expression-profiles-overtime-before-and-after-registering"></a>
 </h2>
 <div class="section level3">
 <h3 id="calculate-sample-distance">Calculate sample distance<a class="anchor" aria-label="anchor" href="#calculate-sample-distance"></a>
@@ -189,7 +193,7 @@ registering<a class="anchor" aria-label="anchor" href="#analyse-similarity-of-ex
 <p>After registering the sample data, users can compare the overall
 similarity before and after registering using the function
 <code><a href="../reference/calculate_distance.html">calculate_distance()</a></code>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sample_distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_distance.html">calculate_distance</a></span><span class="op">(</span><span class="va">registration_results</span><span class="op">)</span></span></code></pre></div>
 <p>Function <code><a href="../reference/calculate_distance.html">calculate_distance()</a></code> returns a list of two data
 frames:</p>
@@ -207,14 +211,14 @@ expressions using original time points.</li>
 </h3>
 <p>Each of these data frames above can be visualised using the
 <code><a href="../reference/plot_heatmap.html">plot_heatmap()</a></code> function.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot heatmap of mean expression profiles distance before registration process</span></span>
 <span><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span></span>
 <span>  <span class="va">sample_distance</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"original"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="visualise-results_files/figure-html/plot-dist-original-1.png" width="480" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot heatmap of mean expression profiles distance after registration process</span></span>
 <span><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span></span>
 <span>  <span class="va">sample_distance</span>,</span>

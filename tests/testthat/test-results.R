@@ -23,3 +23,28 @@ test_that("plot_registration_results works", {
   expect_equal(gg_original$labels$x, "Time point")
   expect_equal(gg_original$labels$y, "Scaled expression")
 })
+
+# Distance and visualisation ----
+
+test_that("calculate_distance works", {
+  sample_distance <- calculate_distance(registration_results)
+
+  # Expected outputs
+  expect_equal(names(sample_distance), c("registered", "original"))
+  expect_equal(unique(sample_distance$registered$timepoint_ref), unique(sample_distance$original$timepoint_ref))
+  expect_equal(colnames(sample_distance$registered), colnames(sample_distance$original))
+})
+
+test_that("plot_heatmap works", {
+  sample_distance <- calculate_distance(registration_results)
+  gg <- plot_heatmap(sample_distance)
+  gg_original <- plot_heatmap(sample_distance, "original")
+
+  # Expected outputs
+  expect_equal(colnames(gg$data), colnames(sample_distance$registered))
+  expect_equal(colnames(gg_original$data), colnames(sample_distance$original))
+  expect_equal(gg$labels$x, "Col0")
+  expect_equal(gg$labels$y, "Ro18")
+  expect_equal(gg_original$labels$x, "Col0")
+  expect_equal(gg_original$labels$y, "Ro18")
+})

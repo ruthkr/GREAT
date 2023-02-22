@@ -42,7 +42,7 @@ gene_BRAA03G023790.3C_data <- b_rapa_data[gene_id == "BRAA03G023790.3C"]
 
 Before registering, we can use the helper function `get_approximate_stretch()` to approximate the stretch factor between our sample data as shown in figure below.
 
-```{r reg-data-manual, echo=FALSE, fig.align='center', out.width='60%'}
+```{r reg-data-manual, echo=FALSE, fig.align='center', out.width='75%'}
 knitr::include_graphics("figures/02_registration_without_opt.png")
 ```
 
@@ -80,11 +80,9 @@ registration_results$model_comparison |>
 
 Using given above stretch and shift parameter, one of the *B. rapa* gene *BRAA03G023790.3C*  can be registered.
 
-<br>
-
 ## Registering multiple gene with different pre-defined registration parameters
 
-Users can also register multiple different genes using their pre-defined parameters. Similar to registration process above, users need to set `optimise_registration_parameters = FALSE` to disable the automated optimisation process. 
+Users can also register multiple different genes using their pre-defined parameters. Similar to registration process above, users need to set `optimise_registration_parameters = FALSE` to disable the automated optimisation process.
 
 ```{r register-multiple-gene-manual, message=FALSE, warning=FALSE, eval=FALSE}
 registration_results <- register(
@@ -95,14 +93,10 @@ registration_results <- register(
   shifts = seq(0, 4, 0.1),
   optimise_registration_parameters = FALSE
 )
- #> ℹ Will process 10 genes.
-#> 
+#> ℹ Will process 10 genes.
+#>
 #> ── Starting manual registration ────────────────────────────────────────────────
 #> ✔ Applying registration for genes (10/10) [42.9s]
 ```
 
 The same as previous registration process, users can analyse further the registration result by following [visualising results](https://ruthkr.github.io/greatR/articles/visualise-results.html) vignette.
-
-
-
-

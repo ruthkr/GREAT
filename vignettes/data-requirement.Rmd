@@ -14,11 +14,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-
-Input data required for `greatR` is a data frame that contains gene expression time-course data with all replicates. The illustrated diagram below shows the required `input`. 
+Input data required for `greatR` is a data frame that contains gene expression time-course data with all replicates. The illustrated diagram below shows the required `input`.
 
 <br>
-
 
 ```{r fig-all-data-illustration, echo=FALSE, fig.align='center', out.width='75%'}
 knitr::include_graphics("figures/all_data_illustration_new.png")
@@ -26,14 +24,21 @@ knitr::include_graphics("figures/all_data_illustration_new.png")
 
 <br>
 
-This data frame must contain:
+This data frame must contain **reference** and **query** expression data which users wish to compare, and the following five columns:
 
-- reference and query expression data which users wish to compare, and
-- six data columns: 
+- `gene_id`: locus name or unique IDs of each gene.
+- `accession`: accession or name of the reference and query data to compare.
+- `timepoint`: time points of the gene expression data.
+- `expression_value`: desired expression values or measure of the abundance of gene or transcripts which users wish to compare. This value can be RPM, RPKM, FPKM, TPM, TMM, DESeq, SCnorm, GeTMM, ComBat-Seq and raw reads counts.
+- `replicate`: biological replicate IDs for an expression value at a particular time point.
 
-  - `gene_id`: accession or unique IDs of each gene. 
-  - `accession`: accession or name of the reference and query data to compare.
-  - `timepoint`: time points of the gene expression data.
-  - `expression_value`: desired expression values or measure of the abundance of gene or transcripts which users wish to compare. This value can be RPM, RPKM, FPKM, TPM, TMM, DESeq, SCnorm, GeTMM, ComBat-Seq and raw reads counts.
-  - `replicate`: biological replicate IDs for an expression value at a particular time point.
+Below we can see an example of how this `input` data should look like:
 
+```{r brapa-data-kable, echo=FALSE}
+# Load a data frame from the sample data
+b_rapa_data <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") |>
+  data.table::fread()
+
+b_rapa_data[, .SD[1:2], by = accession][, .(gene_id, accession, timepoint, expression_value, replicate)] |>
+  knitr::kable()
+```

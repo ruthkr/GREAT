@@ -22,8 +22,6 @@ This article will show users on how to register data using the sample data provi
 knitr::include_graphics("figures/01_registration_opt_default.png")
 ```
 
-<br>
-
 ## Loading sample data
 
 `greatR` package provides an example of data frame containing two different species *Arabidopsis* and *B. rapa* with two and three different replicates, respectively. This data frame can be read as follows:
@@ -51,7 +49,6 @@ b_rapa_data[, .SD[1:6], by = accession] |>
 b_rapa_data[, .SD[1:6], by = accession][, .(gene_id, accession, timepoint, expression_value, replicate)] |>
   knitr::kable()
 ```
-<br>
 
 ## Registering the data
 
@@ -69,8 +66,6 @@ registration_results <- register(
 #> ℹ Using computed stretches and shifts search space limits.
 #> ✔ Optimising registration parameters for genes (10/10) [5m 14.8s]
 ```
-
-<br>
 
 ## Getting the registration results
 

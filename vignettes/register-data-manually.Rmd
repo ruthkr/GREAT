@@ -56,13 +56,13 @@ get_approximate_stretch(
 We can now use the estimated stretch calculated above to the registration process as follows:
 
 ```{r register-subset-data, message=FALSE, warning=FALSE}
-registration_results <-  register(
-    gene_BRAA03G023790.3C_data,
-    reference = "Ro18",
-    query = "Col0",
-    stretches = 2.6,
-    shifts = 4,
-    optimise_registration_parameters = FALSE
+registration_results <- register(
+  gene_BRAA03G023790.3C_data,
+  reference = "Ro18",
+  query = "Col0",
+  stretches = 2.6,
+  shifts = 4,
+  optimise_registration_parameters = FALSE
 )
 #> ℹ Will process 1 gene.
 #>

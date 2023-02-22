@@ -38,3 +38,8 @@ articles:
   contents:
   - register-data
   - visualise-results
+
+- title: Articles
+  navbar: Others
+  contents:
+  - register-data-manually

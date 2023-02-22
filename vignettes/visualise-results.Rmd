@@ -76,13 +76,13 @@ Notice that the plot includes a label indicating if the particular genes are reg
 
 ### Calculate sample distance
 
-After registering the sample data, users can compare the overall similarity before and after registering using the function `calculate_between_sample_distance()`.
+After registering the sample data, users can compare the overall similarity before and after registering using the function `calculate_distance()`.
 
 ```{r get-sample-distance}
 sample_distance <- calculate_distance(registration_results)
 ```
 
-Function `calculate_between_sample_distance()` returns a list of seven data frames:
+Function `calculate_distance()` returns a list of two data frames:
 
 - `registered` distance between scaled reference and query expressions using registered time points.
 - `original` distance between scaled reference and query expressions using original time points.

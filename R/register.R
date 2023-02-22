@@ -122,10 +122,11 @@ register <- function(input,
         # Calculate BIC for Hypothesis 2
         loglik_separate <- calc_loglik_H2(gene_data)
 
+        # Explore search space
+        best_params <- explore_manual_search_space(gene_data, stretches, shifts, loglik_separate)
+
         # Register for Hypothesis 1
-        results <- register_manually(gene_data, stretches, shifts, loglik_separate)
-        # TODO: generalise for multiple stretches and shifts
-        # results <- get_best_parameters()
+        results <- register_manually(gene_data, best_params$stretch, best_params$shift, loglik_separate)
 
         return(results)
       }
@@ -214,4 +215,32 @@ register_manually <- function(data, stretch, shift, loglik_separate, return_data
   }
 
   return(results_list)
+}
+
+#' Explore manual search space for a single gene
+#'
+#' @noRd
+explore_manual_search_space <- function(data, stretches, shifts, loglik_separate) {
+  # Suppress "no visible binding for global variable" note
+  BIC_combined <- NULL
+
+  # Explore search space
+  params_results <- lapply(
+    stretches,
+    function(stretch) {
+      lapply(
+        shifts,
+        function(shift) {
+          results <- register_manually(data, stretch, shift, loglik_separate, return_data_reg = FALSE)
+          results$model_comparison
+        }
+      )
+    }
+  )
+
+  # Find best registration parameters
+  model_comparison <- Reduce(rbind, do.call(Map, c(f = rbind, params_results)))
+  best_params <- model_comparison[BIC_combined == min(model_comparison$BIC_combined), ][, .SD[1]]
+
+  return(best_params)
 }

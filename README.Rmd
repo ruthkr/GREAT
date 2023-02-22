@@ -29,7 +29,7 @@ The goal of `greatR` (**G**ene **R**egistration from **E**xpression **a**nd **T*
 
 ## Package workflow
 
-Flowchart below illustrates the workflow of the package given an input data: 
+Flowchart below illustrates the workflow of the package given an input data:
 
 ```{r all-data-illustration, echo=FALSE, out.width='85%'}
 knitr::include_graphics("man/figures/greatR_workflow.png")
@@ -78,17 +78,13 @@ registration_results <- register(
   reference = "Ro18",
   query = "Col0"
 )
-
 #> ℹ Will process 10 genes.
-#> 
+#>
 #> ── Starting registration with optimisation ──────────────────────────────────────
-#> ℹ Using computed stretches and shifts search space limits. User-defined parameters will be ignored.
+#> ℹ Using computed stretches and shifts search space limits.
 #> ✔ Optimising registration parameters for genes (10/10) [5m 14.8s]
 ```
 
 ## Reference
 
 Calderwood, A., Hepworth, J., Woodhouse, ... Morris, R. (2021). Comparative transcriptomics reveals desynchronisation of gene expression during the floral transition between Arabidopsis and Brassica rapa cultivars. *Quantitative Plant Biology, 2*, E4. [doi:10.1017/qpb.2021.6](https://www.cambridge.org/core/journals/quantitative-plant-biology/article/comparative-transcriptomics-reveals-desynchronisation-of-gene-expression-during-the-floral-transition-between-arabidopsis-and-brassica-rapa-cultivars/811BFDFA14F4BCC9C7F0ECC7CE103BB6)
-
-
-

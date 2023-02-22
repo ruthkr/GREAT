@@ -79,11 +79,10 @@ registration_results <- register(
   reference = "Ro18",
   query = "Col0"
 )
-
 #> ℹ Will process 10 genes.
-#> 
+#>
 #> ── Starting registration with optimisation ──────────────────────────────────────
-#> ℹ Using computed stretches and shifts search space limits. User-defined parameters will be ignored.
+#> ℹ Using computed stretches and shifts search space limits.
 #> ✔ Optimising registration parameters for genes (10/10) [5m 14.8s]
 ```
 

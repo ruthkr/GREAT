@@ -64,6 +64,8 @@ reg_summary$registered_genes
 reg_summary$non_registered_genes
 ```
 
+<br>
+
 ## Plotting registration results
 
 Function `plot_registration_results()` allows users to plot registration results of the genes of interest.
@@ -77,6 +79,8 @@ plot_registration_results(
 ```
 
 Notice that the plot includes a label indicating if the particular genes are registered or not registered, as well as the registration parameters in case the registration was successful.
+
+<br>
 
 ## Analysing similarity of expression profiles overtime before and after registering
 

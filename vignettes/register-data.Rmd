@@ -51,6 +51,7 @@ b_rapa_data[, .SD[1:6], by = accession] |>
 b_rapa_data[, .SD[1:6], by = accession][, .(gene_id, accession, timepoint, expression_value, replicate)] |>
   knitr::kable()
 ```
+<br>
 
 ## Registering the data
 
@@ -68,6 +69,8 @@ registration_results <- register(
 #> ℹ Using computed stretches and shifts search space limits.
 #> ✔ Optimising registration parameters for genes (10/10) [5m 14.8s]
 ```
+
+<br>
 
 ## Getting the registration results
 

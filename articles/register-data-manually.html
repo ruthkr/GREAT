@@ -190,6 +190,26 @@ rapa</em> gene <em>BRAA03G023790.3C</em> can be registered.</p>
 <h2 id="registering-multiple-gene-with-different-pre-defined-registration-parameters">Registering multiple gene with different pre-defined registration
 parameters<a class="anchor" aria-label="anchor" href="#registering-multiple-gene-with-different-pre-defined-registration-parameters"></a>
 </h2>
+<p>Users can also register multiple different genes using their
+pre-defined parameters. Similar to registration process above, users
+need to set <code>optimise_registration_parameters = FALSE</code> to
+disable the automated optimisation process.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/register.html">register</a></span><span class="op">(</span></span>
+<span>  <span class="va">b_rapa_data</span>,</span>
+<span>  reference <span class="op">=</span> <span class="st">"Ro18"</span>,</span>
+<span>  query <span class="op">=</span> <span class="st">"Col0"</span>,</span>
+<span>  stretches <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  shifts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  optimise_registration_parameters <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span> <span class="co">#&gt; ℹ Will process 10 genes.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ── Starting manual registration ────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; ✔ Applying registration for genes (10/10) [42.9s]</span></span></code></pre></div>
+<p>The same as previous registration process, users can analyse further
+the registration result by following <a href="https://ruthkr.github.io/greatR/articles/visualise-results.html">visualising
+results</a> vignette.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

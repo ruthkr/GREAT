@@ -54,6 +54,9 @@
     <h6 class="dropdown-header" data-toc-skip>Overview</h6>
     <a class="dropdown-item" href="../articles/register-data.html">Registering data</a>
     <a class="dropdown-item" href="../articles/visualise-results.html">Visualising results</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Others</h6>
+    <a class="dropdown-item" href="../articles/register-data-manually.html">Register data with provided paramaters</a>
   </div>
 </li>
 <li class="nav-item">
@@ -184,11 +187,11 @@ registering<a class="anchor" aria-label="anchor" href="#analyse-similarity-of-ex
 </h3>
 <p>After registering the sample data, users can compare the overall
 similarity before and after registering using the function
-<code>calculate_between_sample_distance()</code>.</p>
+<code><a href="../reference/calculate_distance.html">calculate_distance()</a></code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sample_distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_distance.html">calculate_distance</a></span><span class="op">(</span><span class="va">registration_results</span><span class="op">)</span></span></code></pre></div>
-<p>Function <code>calculate_between_sample_distance()</code> returns a
-list of seven data frames:</p>
+<p>Function <code><a href="../reference/calculate_distance.html">calculate_distance()</a></code> returns a list of two data
+frames:</p>
 <ul>
 <li>
 <code>registered</code> distance between scaled reference and query

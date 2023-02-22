@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="greatR">
-<title>Registering data • greatR</title>
+<title>Register data with provided paramaters • greatR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -20,7 +20,7 @@
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Registering data">
+<meta property="og:title" content="Register data with provided paramaters">
 <meta property="og:description" content="greatR">
 <meta property="og:image" content="https://ruthkr.github.io/greatR/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -86,27 +86,27 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Registering data</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Register data with provided paramaters</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ruthkr/greatR/blob/HEAD/vignettes/register-data.Rmd" class="external-link"><code>vignettes/register-data.Rmd</code></a></small>
-      <div class="d-none name"><code>register-data.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/ruthkr/greatR/blob/HEAD/vignettes/register-data-manually.Rmd" class="external-link"><code>vignettes/register-data-manually.Rmd</code></a></small>
+      <div class="d-none name"><code>register-data-manually.Rmd</code></div>
     </div>
 
     
     
-<p>This article will show users on how to register data using the sample
-data provided within the package. Given an input data, users can
-directly register the data as illustrated below.</p>
-<p><img src="figures/01_registration_opt_default.png" width="50%" style="display: block; margin: auto;"></p>
-<p><br></p>
+<p>This article will show users on how to register data using some
+pre-defined shift and stretch parameters. This demo will use one of the
+gene from provided sample in the package. Users can check whether using
+shift and stretch values they provided, their sample data can be
+registered.</p>
 <div class="section level2">
 <h2 id="load-sample-data">Load sample data<a class="anchor" aria-label="anchor" href="#load-sample-data"></a>
 </h2>
 <p><code>greatR</code> package provides an example of data frame
 containing two different species <em>Arabidopsis</em> and <em>B.
 rapa</em> with two and three different replicates, respectively. This
-data frame can be read as follow:</p>
+data frame can be read as follows:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ruthkr.github.io/greatR/">greatR</a></span><span class="op">)</span></span>
@@ -115,152 +115,54 @@ data frame can be read as follow:</p>
 <code class="sourceCode R"><span><span class="co"># Load a data frame from the sample data</span></span>
 <span><span class="va">b_rapa_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_all_replicates.csv"</span>, package <span class="op">=</span> <span class="st">"greatR"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>Note that the data has all of six columns required by the
-package:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">b_rapa_data</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span>, by <span class="op">=</span> <span class="va">accession</span><span class="op">]</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">gene_id</th>
-<th align="left">accession</th>
-<th align="right">timepoint</th>
-<th align="left">replicate</th>
-<th align="right">expression_value</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">BRAA02G018970.3C</td>
-<td align="left">Ro18</td>
-<td align="right">11</td>
-<td align="left">Ro18-11-a</td>
-<td align="right">0.3968734</td>
-</tr>
-<tr class="even">
-<td align="left">BRAA02G018970.3C</td>
-<td align="left">Ro18</td>
-<td align="right">11</td>
-<td align="left">Ro18-11-b</td>
-<td align="right">1.4147711</td>
-</tr>
-<tr class="odd">
-<td align="left">BRAA02G018970.3C</td>
-<td align="left">Ro18</td>
-<td align="right">11</td>
-<td align="left">Ro18-11-c</td>
-<td align="right">0.7423984</td>
-</tr>
-<tr class="even">
-<td align="left">BRAA02G018970.3C</td>
-<td align="left">Ro18</td>
-<td align="right">29</td>
-<td align="left">Ro18-29-a</td>
-<td align="right">11.3007002</td>
-</tr>
-<tr class="odd">
-<td align="left">BRAA02G018970.3C</td>
-<td align="left">Ro18</td>
-<td align="right">29</td>
-<td align="left">Ro18-29-b</td>
-<td align="right">23.2055664</td>
-</tr>
-<tr class="even">
-<td align="left">BRAA02G018970.3C</td>
-<td align="left">Ro18</td>
-<td align="right">29</td>
-<td align="left">Ro18-29-c</td>
-<td align="right">22.0307747</td>
-</tr>
-<tr class="odd">
-<td align="left">BRAA02G018970.3C</td>
-<td align="left">Col0</td>
-<td align="right">7</td>
-<td align="left">Col0-07-a</td>
-<td align="right">0.4667855</td>
-</tr>
-<tr class="even">
-<td align="left">BRAA02G018970.3C</td>
-<td align="left">Col0</td>
-<td align="right">7</td>
-<td align="left">Col0-07-b</td>
-<td align="right">0.0741901</td>
-</tr>
-<tr class="odd">
-<td align="left">BRAA02G018970.3C</td>
-<td align="left">Col0</td>
-<td align="right">8</td>
-<td align="left">Col0-08-a</td>
-<td align="right">0.0000000</td>
-</tr>
-<tr class="even">
-<td align="left">BRAA02G018970.3C</td>
-<td align="left">Col0</td>
-<td align="right">8</td>
-<td align="left">Col0-08-b</td>
-<td align="right">0.0000000</td>
-</tr>
-<tr class="odd">
-<td align="left">BRAA02G018970.3C</td>
-<td align="left">Col0</td>
-<td align="right">9</td>
-<td align="left">Col0-09-a</td>
-<td align="right">0.3722542</td>
-</tr>
-<tr class="even">
-<td align="left">BRAA02G018970.3C</td>
-<td align="left">Col0</td>
-<td align="right">9</td>
-<td align="left">Col0-09-b</td>
-<td align="right">0.0000000</td>
-</tr>
-</tbody>
-</table>
 </div>
 <div class="section level2">
-<h2 id="register-the-data">Register the data<a class="anchor" aria-label="anchor" href="#register-the-data"></a>
+<h2 id="registering-single-gene">Registering single gene<a class="anchor" aria-label="anchor" href="#registering-single-gene"></a>
 </h2>
-<p>To align gene expression time-course between <em>Arabidopsis</em>
-Col-0 and <em>B. rapa</em> Ro18, we can use function
-<code><a href="../reference/register.html">register()</a></code>. By default, the best registration parameters
-are optimised with Simulated Annealing. When using
-<code>optimise_registration_parameters = TRUE</code>, the stretch and
-shift search space is automatically estimated.</p>
+<p>Here, we will only use a single gene <em>BRAA03G023790.3C</em> from
+sample data.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gene_BRAA03G023790.3C_data</span> <span class="op">&lt;-</span> <span class="va">b_rapa_data</span><span class="op">[</span><span class="va">gene_id</span> <span class="op">==</span> <span class="st">"BRAA03G023790.3C"</span><span class="op">]</span></span></code></pre></div>
+<p>Before registering, we can use the helper function
+<code><a href="../reference/get_approximate_stretch.html">get_approximate_stretch()</a></code> to approximate the stretch factor
+between our sample data as shown in figure below.</p>
+<p><img src="figures/02_registration_without_opt.png" width="60%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/register.html">register</a></span><span class="op">(</span></span>
-<span>  <span class="va">b_rapa_data</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_approximate_stretch.html">get_approximate_stretch</a></span><span class="op">(</span></span>
+<span>  <span class="va">gene_BRAA03G023790.3C_data</span>,</span>
 <span>  reference <span class="op">=</span> <span class="st">"Ro18"</span>,</span>
 <span>  query <span class="op">=</span> <span class="st">"Col0"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; ℹ Will process 10 genes.</span></span>
+<span><span class="co">#&gt; [1] 2.666667</span></span></code></pre></div>
+<p>We can now use the estimated stretch calculated above to the
+registration process as follows:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">registration_results</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/register.html">register</a></span><span class="op">(</span></span>
+<span>    <span class="va">gene_BRAA03G023790.3C_data</span>,</span>
+<span>    reference <span class="op">=</span> <span class="st">"Ro18"</span>,</span>
+<span>    query <span class="op">=</span> <span class="st">"Col0"</span>,</span>
+<span>    stretches <span class="op">=</span> <span class="fl">2.6</span>,</span>
+<span>    shifts <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>    optimise_registration_parameters <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; ℹ Will process 1 gene.</span></span>
 <span><span class="co">#&gt;</span></span>
-<span><span class="co">#&gt; ── Starting registration with optimisation ──────────────────────────────────────</span></span>
-<span><span class="co">#&gt; ℹ Using computed stretches and shifts search space limits.</span></span>
-<span><span class="co">#&gt; ✔ Optimising registration parameters for genes (10/10) [5m 14.8s]</span></span></code></pre></div>
-<p>Function <code><a href="../reference/register.html">register()</a></code> returns a list of two frames:</p>
-<ul>
-<li>
-<code>data</code> is a table containing the scaled input data and an
-additional column after applying registration parameters to the query
-data.}</li>
-<li>
-<code>model_comparison</code> is a table comparing the optimal
-registration function for each gene (based on <code>all_shifts_df</code>
-scores) to model with no registration applied.}</li>
-</ul>
+<span><span class="co">#&gt; ── Starting manual registration ────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; ✔ Applying registration for genes (1/1) [58ms]</span></span></code></pre></div>
 <p>To check whether the gene is registered or not, we can get the
 summary results by accessing the <code>model_comparison</code> table
 from the registration result.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">registration_results</span><span class="op">$</span><span class="va">model_comparison</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="24%">
-<col width="18%">
-<col width="18%">
-<col width="12%">
-<col width="10%">
-<col width="15%">
+<col width="25%">
+<col width="19%">
+<col width="19%">
+<col width="11%">
+<col width="8%">
+<col width="16%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">gene_id</th>
@@ -270,92 +172,23 @@ from the registration result.</p>
 <th align="right">shift</th>
 <th align="left">registered</th>
 </tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">BRAA02G018970.3C</td>
-<td align="right">63.32350</td>
-<td align="right">51.13880</td>
-<td align="right">3.976667</td>
-<td align="right">-10.43</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td align="left">BRAA02G043220.3C</td>
-<td align="right">75.26585</td>
-<td align="right">60.18643</td>
-<td align="right">2.586667</td>
-<td align="right">-2.35</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="odd">
+<tbody><tr class="odd">
 <td align="left">BRAA03G023790.3C</td>
 <td align="right">67.93601</td>
-<td align="right">52.34351</td>
-<td align="right">2.246667</td>
-<td align="right">4.10</td>
+<td align="right">54.294</td>
+<td align="right">2.6</td>
+<td align="right">4</td>
 <td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td align="left">BRAA03G051930.3C</td>
-<td align="right">71.61795</td>
-<td align="right">54.99435</td>
-<td align="right">2.766667</td>
-<td align="right">3.62</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="odd">
-<td align="left">BRAA04G005470.3C</td>
-<td align="right">56.39401</td>
-<td align="right">38.74852</td>
-<td align="right">3.996667</td>
-<td align="right">-6.07</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td align="left">BRAA05G005370.3C</td>
-<td align="right">67.02293</td>
-<td align="right">51.40222</td>
-<td align="right">2.276667</td>
-<td align="right">3.72</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="odd">
-<td align="left">BRAA06G025360.3C</td>
-<td align="right">73.04597</td>
-<td align="right">56.89470</td>
-<td align="right">1.696667</td>
-<td align="right">5.57</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td align="left">BRAA07G030470.3C</td>
-<td align="right">57.90358</td>
-<td align="right">42.55243</td>
-<td align="right">3.996667</td>
-<td align="right">-8.10</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="odd">
-<td align="left">BRAA07G034100.3C</td>
-<td align="right">57.33534</td>
-<td align="right">42.89697</td>
-<td align="right">3.996667</td>
-<td align="right">-8.38</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td align="left">BRAA09G045310.3C</td>
-<td align="right">58.20512</td>
-<td align="right">40.05112</td>
-<td align="right">3.986667</td>
-<td align="right">-5.92</td>
-<td align="left">TRUE</td>
-</tr>
-</tbody>
+</tr></tbody>
 </table>
-<p>These data frame outputs can further be summarised and visualised;
-see the documentation on the <a href="https://ruthkr.github.io/greatR/articles/visualise-results.html">visualising
-results</a> article.</p>
+<p>Using given above stretch and shift parameter, one of the <em>B.
+rapa</em> gene <em>BRAA03G023790.3C</em> can be registered.</p>
+<p><br></p>
+</div>
+<div class="section level2">
+<h2 id="registering-multiple-gene-with-different-pre-defined-registration-parameters">Registering multiple gene with different pre-defined registration
+parameters<a class="anchor" aria-label="anchor" href="#registering-multiple-gene-with-different-pre-defined-registration-parameters"></a>
+</h2>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

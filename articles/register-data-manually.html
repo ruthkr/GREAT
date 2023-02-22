@@ -127,7 +127,7 @@ sample data.</p>
 <p>Before registering, we can use the helper function
 <code><a href="../reference/get_approximate_stretch.html">get_approximate_stretch()</a></code> to approximate the stretch factor
 between our sample data as shown in figure below.</p>
-<p><img src="figures/02_registration_without_opt.png" width="60%" style="display: block; margin: auto;"></p>
+<p><img src="figures/02_registration_without_opt.png" width="75%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_approximate_stretch.html">get_approximate_stretch</a></span><span class="op">(</span></span>
 <span>  <span class="va">gene_BRAA03G023790.3C_data</span>,</span>
@@ -184,7 +184,6 @@ from the registration result.</p>
 </table>
 <p>Using given above stretch and shift parameter, one of the <em>B.
 rapa</em> gene <em>BRAA03G023790.3C</em> can be registered.</p>
-<p><br></p>
 </div>
 <div class="section level2">
 <h2 id="registering-multiple-gene-with-different-pre-defined-registration-parameters">Registering multiple gene with different pre-defined registration
@@ -203,8 +202,8 @@ disable the automated optimisation process.</p>
 <span>  shifts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  optimise_registration_parameters <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span> <span class="co">#&gt; ℹ Will process 10 genes.</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ℹ Will process 10 genes.</span></span>
+<span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; ── Starting manual registration ────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ✔ Applying registration for genes (10/10) [42.9s]</span></span></code></pre></div>
 <p>The same as previous registration process, users can analyse further

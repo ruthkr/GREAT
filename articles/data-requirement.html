@@ -102,15 +102,12 @@ illustrated diagram below shows the required <code>input</code>.</p>
 <p><br></p>
 <p><img src="figures/all_data_illustration_new.png" width="75%" style="display: block; margin: auto;"></p>
 <p><br></p>
-<p>This data frame must contain:</p>
-<ul>
-<li><p>reference and query expression data which users wish to compare,
-and</p></li>
-<li>
-<p>six data columns:</p>
+<p>This data frame must contain <strong>reference</strong> and
+<strong>query</strong> expression data which users wish to compare, and
+the following five columns:</p>
 <ul>
 <li>
-<code>gene_id</code>: accession or unique IDs of each gene.</li>
+<code>gene_id</code>: locus name or unique IDs of each gene.</li>
 <li>
 <code>accession</code>: accession or name of the reference and query
 data to compare.</li>
@@ -126,8 +123,47 @@ ComBat-Seq and raw reads counts.</li>
 <code>replicate</code>: biological replicate IDs for an expression
 value at a particular time point.</li>
 </ul>
-</li>
-</ul></main>
+<p>Below we can see an example of how this <code>input</code> data
+should look like:</p>
+<table class="table">
+<thead><tr class="header">
+<th align="left">gene_id</th>
+<th align="left">accession</th>
+<th align="right">timepoint</th>
+<th align="right">expression_value</th>
+<th align="left">replicate</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Ro18</td>
+<td align="right">11</td>
+<td align="right">0.3968734</td>
+<td align="left">Ro18-11-a</td>
+</tr>
+<tr class="even">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Ro18</td>
+<td align="right">11</td>
+<td align="right">1.4147711</td>
+<td align="left">Ro18-11-b</td>
+</tr>
+<tr class="odd">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Col0</td>
+<td align="right">7</td>
+<td align="right">0.4667855</td>
+<td align="left">Col0-07-a</td>
+</tr>
+<tr class="even">
+<td align="left">BRAA02G018970.3C</td>
+<td align="left">Col0</td>
+<td align="right">7</td>
+<td align="right">0.0741901</td>
+<td align="left">Col0-07-b</td>
+</tr>
+</tbody>
+</table></main>
 </div>
 
 

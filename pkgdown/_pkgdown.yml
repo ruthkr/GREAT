@@ -30,6 +30,7 @@ articles:
 - title: Articles
   navbar: Overview
   contents:
+  - data-requirement
   - register-data
   - visualise-results
 

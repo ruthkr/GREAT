@@ -191,7 +191,7 @@ register_with_optimisation <- function(data, loglik_separate, overlapping_percen
 #' Auxiliary function to apply registration manually
 #'
 #' @noRd
-register_manually <- function(data, stretch, shift, loglik_separate) {
+register_manually <- function(data, stretch, shift, loglik_separate, return_data_reg = TRUE) {
   # Apply registration
   data_reg <- apply_registration(data, stretch, shift)
 
@@ -202,10 +202,16 @@ register_manually <- function(data, stretch, shift, loglik_separate) {
   model_comparison <- compare_H1_and_H2(data_reg, stretch, shift, loglik_combined, loglik_separate)
 
   # Results object
-  results_list <- list(
-    data_reg = data_reg,
-    model_comparison = model_comparison
-  )
+  if (return_data_reg) {
+    results_list <- list(
+      data_reg = data_reg,
+      model_comparison = model_comparison
+    )
+  } else {
+    results_list <- list(
+      model_comparison = model_comparison
+    )
+  }
 
   return(results_list)
 }

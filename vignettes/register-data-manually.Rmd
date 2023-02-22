@@ -53,6 +53,7 @@ get_approximate_stretch(
   query = "Col0"
 )
 ```
+
 We can now use the estimated stretch calculated above to the registration process as follows:
 
 ```{r register-subset-data, message=FALSE, warning=FALSE}
@@ -82,3 +83,26 @@ Using given above stretch and shift parameter, one of the *B. rapa* gene *BRAA03
 <br>
 
 ## Registering multiple gene with different pre-defined registration parameters
+
+Users can also register multiple different genes using their pre-defined parameters. Similar to registration process above, users need to set `optimise_registration_parameters = FALSE` to disable the automated optimisation process. 
+
+```{r register-subset-data, message=FALSE, warning=FALSE, eval=FALSE}
+registration_results <- register(
+  b_rapa_data,
+  reference = "Ro18",
+  query = "Col0",
+  stretches = seq(1, 3, 0.1),
+  shifts = seq(0, 4, 0.1),
+  optimise_registration_parameters = FALSE
+)
+ #> ℹ Will process 10 genes.
+#> 
+#> ── Starting manual registration ────────────────────────────────────────────────
+#> ✔ Applying registration for genes (10/10) [42.9s]
+```
+
+The same as previous registration process, users can analyse further the registration result by following [visualising results](https://ruthkr.github.io/greatR/articles/visualise-results.html) vignette.
+
+
+
+

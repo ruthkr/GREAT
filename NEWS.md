@@ -35,7 +35,6 @@
 * `optimise_registration_params()` as wrapper of `optimise_registration_params_single_gene()` for multiple genes.
 * `get_best_stretch_and_shift_after_optimisation()`.
 
-
 # greatR 0.1.0
 
 * Initial release.

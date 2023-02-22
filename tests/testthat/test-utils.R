@@ -21,3 +21,14 @@ test_that("match_names works", {
   expect_error(match_names(x = a, lookup = b))
   expect_no_error(match_names(x = a, lookup = a))
 })
+
+test_that("cross_join works", {
+  dt_a <- data.table(x = 1:2, y = 4:5)
+  dt_b <- data.table(z = 1:3)
+  dt_cj <- cross_join(dt_a, dt_b)
+
+  # Expected outputs
+  expect_equal(dim(dt_cj)[1], nrow(dt_a) * nrow(dt_b))
+  expect_equal(dim(dt_cj)[2], ncol(dt_a) + ncol(dt_b))
+  expect_equal(colnames(dt_cj), c(colnames(dt_a), colnames(dt_b)))
+})

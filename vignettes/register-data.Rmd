@@ -22,7 +22,6 @@ knitr::include_graphics("figures/01_registration_opt_default.png")
 
 <br>
 
-
 ## Load sample data
 
 `greatR` package provides an example of data frame containing two different species *Arabidopsis* and *B. rapa* with two and three different replicates, respectively. This data frame can be read as follow:
@@ -55,17 +54,16 @@ b_rapa_data[, .SD[1:6], by = accession][, .(gene_id, accession, timepoint, repli
 
 To align gene expression time-course between *Arabidopsis* Col-0 and *B. rapa* Ro18, we can use function `register()`. By default, the best registration parameters are optimised with Simulated Annealing. When using `optimise_registration_parameters = TRUE`, the stretch and shift search space is automatically estimated.
 
-```{r register-data, message=FALSE, warning=FALSE, eval=FALSE}
+```{r register-data-raw, message=FALSE, warning=FALSE, eval=FALSE}
 registration_results <- register(
   b_rapa_data,
   reference = "Ro18",
   query = "Col0"
 )
-
 #> ℹ Will process 10 genes.
 #>
 #> ── Starting registration with optimisation ──────────────────────────────────────
-#> ℹ Using computed stretches and shifts search space limits. User-defined parameters will be ignored.
+#> ℹ Using computed stretches and shifts search space limits.
 #> ✔ Optimising registration parameters for genes (10/10) [5m 14.8s]
 ```
 
@@ -73,5 +71,18 @@ Function `register()` returns a list of two frames:
 
 - `data` is a table containing the scaled input data and an additional \code{timepoint_reg} column after applying registration parameters to the query data.}
 - `model_comparison` is a table comparing the optimal registration function for each gene (based on `all_shifts_df` scores) to model with no registration applied.}
+
+To check whether the gene is registered or not, we can get the summary results by accessing the `model_comparison` table from the registration result.
+
+```{r register-data, message=FALSE, warning=FALSE, include=FALSE}
+# Load a data frame from the sample data
+registration_results <- system.file("extdata/brapa_arabidopsis_registration.rds", package = "greatR") |>
+  readRDS()
+```
+
+```{r get-model-summary-data, warning=FALSE}
+registration_results$model_comparison |>
+  knitr::kable()
+```
 
 These data frame outputs can further be summarised and visualised; see the documentation on the [visualising results](https://ruthkr.github.io/greatR/articles/visualise-results.html) article.

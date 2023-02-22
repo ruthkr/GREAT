@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This article will show users on how to register data using the sample data provided within the package. Given an input data, users can directly register the data as illustrated below.
 
-```{r reg-data, echo=FALSE, fig.align='center', out.width='30%'}
+```{r reg-data, echo=FALSE, fig.align='center', out.width='20%'}
 knitr::include_graphics("figures/01_registration_opt_default.png")
 ```
 
@@ -36,10 +36,6 @@ library(data.table)
 # Load a data frame from the sample data
 b_rapa_data <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") |>
   data.table::fread()
-```
-
-```{r fig-all-data-illustration, echo=FALSE, fig.align='center', out.width='50%'}
-knitr::include_graphics("figures/all_data_illustration_new.png")
 ```
 
 Note that the data has all of six columns required by the package:

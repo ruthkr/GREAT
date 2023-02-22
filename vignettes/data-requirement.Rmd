@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 Input data required for `greatR` is a data frame that contains gene expression time-course data with all replicates. The illustrated diagram below shows the required `input`. 
 
 
-```{r fig-all-data-illustration, echo=FALSE, fig.align='center', out.width='50%'}
+```{r fig-all-data-illustration, echo=FALSE, fig.align='center', out.width='75%'}
 knitr::include_graphics("figures/all_data_illustration_new.png")
 ```
 

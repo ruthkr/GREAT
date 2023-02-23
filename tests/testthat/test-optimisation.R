@@ -30,3 +30,18 @@ test_that("calc_overlapping_percent works", {
   expect_equal(overlapping_reg, 1, tolerance = 1e-1)
 })
 
+test_that("objective_fun works", {
+  # Expected outputs
+  expect_equal(objective_fun(all_data, 2.75, 3.6, 0.5), -10.56, tolerance = 1e-2)
+  expect_equal(objective_fun(all_data), -999)
+})
+
+test_that("optimise works", {
+  num_iterations <- 1
+  results <- optimise(all_data, optimisation_config = list(num_iterations = num_iterations))
+
+  # Expected outputs
+  expect_equal(names(results), c("par", "function_value", "trace", "fun", "start", "lower", "upper", "control"))
+  expect_equal(class(results), "optim_nmsa")
+  expect_equal(nrow(results$trace), num_iterations)
+})

@@ -37,7 +37,7 @@ test_that("calculate_distance works", {
 
 test_that("plot_heatmap works", {
   sample_distance <- calculate_distance(registration_results)
-  gg <- plot_heatmap(sample_distance)
+  gg <- plot_heatmap(sample_distance, match_timepoints = TRUE)
   gg_original <- plot_heatmap(sample_distance, "original")
 
   # Expected outputs

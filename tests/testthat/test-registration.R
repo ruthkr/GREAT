@@ -10,6 +10,7 @@ test_that("preprocess_data works", {
   all_data <- processed_data$all_data
 
   # Expected outputs
+  expect_equal(class(processed_data$all_data)[1], "data.table")
   expect_equal(names(processed_data), "all_data")
   expect_equal(colnames(all_data), c(colnames(brapa_sample_data), "time_delta"))
   expect_equal(levels(unique(all_data$accession)), c("ref", "query"))

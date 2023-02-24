@@ -24,19 +24,23 @@ knitr::opts_chunk$set(
 [![GitHub last commit](https://img.shields.io/github/last-commit/ruthkr/greatR)](https://github.com/ruthkr/greatR/commits/master)
 <!-- badges: end -->
 
-The goal of `greatR` (**G**ene **R**egistration from **E**xpression **a**nd **T**ime-courses in **R**) to register (align) gene expression profiles between two species (reference data and data to transform). Non-reference gene expression profiles will be stretched and shifted. The optimality of registration parameters (shifts and stretches) will be estimated using least-squares criterion. This package is also designed to compare a registration model versus a non-registration model, as well as determine whether registration model performed better than non-registration transformation.
+`greatR` (**G**ene **R**egistration from **E**xpression **a**nd **T**ime-courses in **R**) is a tool to register (align) two sets of gene expression profiles that users wish to compare. These gene profiles data will be referred as the query and the reference data. To match the ranges over time between those profiles, the timepoints of query gene expression profiles will be transformed through stretching and shifting process. This tool uses a Bayesian approach based on statistical model comparison to evaluate the optimality of gene expression profiles alignment.
 
 ## Package workflow
 
 Flowchart below illustrates the workflow of the package given an input data:
 
+<br>
+
 ```{r all-data-illustration, echo=FALSE, out.width='85%'}
 knitr::include_graphics("man/figures/greatR_workflow.png")
 ```
 
+<br>
+
 More details on how to use this package are available on function documentations and vignettes:
 
-1. [Input requirements](https://ruthkr.github.io/greatR/articles/prepare-data.html)
+1. [Input data requirements](https://ruthkr.github.io/greatR/articles/data-requirement.html)
 2. [Register data](https://ruthkr.github.io/greatR/articles/register-data.html)
 3. [Visualise registration results](https://ruthkr.github.io/greatR/articles/visualise-results.html)
 

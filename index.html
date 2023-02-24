@@ -91,15 +91,17 @@
 </div>
 <!-- badges: start -->
 
-<p>The goal of <code>greatR</code> (<strong>G</strong>ene <strong>R</strong>egistration from <strong>E</strong>xpression <strong>a</strong>nd <strong>T</strong>ime-courses in <strong>R</strong>) to register (align) gene expression profiles between two species (reference data and data to transform). Non-reference gene expression profiles will be stretched and shifted. The optimality of registration parameters (shifts and stretches) will be estimated using least-squares criterion. This package is also designed to compare a registration model versus a non-registration model, as well as determine whether registration model performed better than non-registration transformation.</p>
+<p><code>greatR</code> (<strong>G</strong>ene <strong>R</strong>egistration from <strong>E</strong>xpression <strong>a</strong>nd <strong>T</strong>ime-courses in <strong>R</strong>) is a tool to register (align) two sets of gene expression profiles that users wish to compare. These gene profiles data will be referred as the query and the reference data. To match the ranges over time between those profiles, the timepoints of query gene expression profiles will be transformed through stretching and shifting process. This tool uses a Bayesian approach based on statistical model comparison to evaluate the optimality of gene expression profiles alignment.</p>
 <div class="section level2">
 <h2 id="package-workflow">Package workflow<a class="anchor" aria-label="anchor" href="#package-workflow"></a>
 </h2>
 <p>Flowchart below illustrates the workflow of the package given an input data:</p>
+<p><br></p>
 <p><img src="reference/figures/greatR_workflow.png" width="85%"></p>
+<p><br></p>
 <p>More details on how to use this package are available on function documentations and vignettes:</p>
 <ol style="list-style-type: decimal">
-<li><a href="https://ruthkr.github.io/greatR/articles/prepare-data.html">Input requirements</a></li>
+<li><a href="https://ruthkr.github.io/greatR/articles/data-requirement.html">Input data requirements</a></li>
 <li><a href="https://ruthkr.github.io/greatR/articles/register-data.html">Register data</a></li>
 <li><a href="https://ruthkr.github.io/greatR/articles/visualise-results.html">Visualise registration results</a></li>
 </ol>

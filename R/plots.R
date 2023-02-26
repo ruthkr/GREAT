@@ -2,6 +2,7 @@
 #'
 #' @param results Registration results, output of the \code{\link{register}} registration process.
 #' @param type Type of plot, determines whether to use "registered" or "original" time points. By default, "registered".
+#' @param genes_list Optional numeric vector indicating the selection of genes to be plotted.
 #' @param title Optional plot title.
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
 #'
@@ -10,6 +11,7 @@
 #' @export
 plot_registration_results <- function(results,
                                       type = c("registered", "original"),
+                                      genes_list = NA,
                                       title = NULL,
                                       ncol = NULL) {
   # Suppress "no visible binding for global variable" note
@@ -23,8 +25,22 @@ plot_registration_results <- function(results,
   # Validate parameters
   type <- match.arg(type)
 
+  # Parse results
+  data <- results$data
+  model_comparison <- results$model_comparison
+
+  # Select genes to be plotted
+  genes <- unique(data[, gene_id])
+  if (any(!is.na(genes_list))) {
+    data <- data[data$gene_id %in% genes[genes_list]]
+    model_comparison <- model_comparison[model_comparison$gene_id %in% genes[genes_list]]
+  } else if (length(genes) > 50) {
+    cli::cli_alert_info("The first 25 genes will be shown. To override this, use the {.var genes_list} parameter.")
+    model_comparison <- model_comparison[model_comparison$gene_id %in% genes[1:25]]
+  }
+
   # Parse model_comparison object
-  gene_facets <- results$model_comparison[, .(
+  gene_facets <- model_comparison[, .(
     gene_id,
     gene_facet = paste0(
       gene_id, " - ", ifelse(registered, "REG", "NO_REG"),
@@ -37,7 +53,7 @@ plot_registration_results <- function(results,
   )]
 
   # Left join gene_facets to data
-  data <- results$data[gene_facets, on = "gene_id"]
+  data <- data[gene_facets, on = "gene_id"]
 
   # Construct plot
   if (type == "registered") {

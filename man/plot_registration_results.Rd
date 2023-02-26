@@ -7,6 +7,7 @@
 plot_registration_results(
   results,
   type = c("registered", "original"),
+  genes_list = NA,
   title = NULL,
   ncol = NULL
 )
@@ -15,6 +16,8 @@ plot_registration_results(
 \item{results}{Registration results, output of the \code{\link{register}} registration process.}
 
 \item{type}{Type of plot, determines whether to use "registered" or "original" time points. By default, "registered".}
+
+\item{genes_list}{Optional numeric vector indicating the selection of genes to be plotted.}
 
 \item{title}{Optional plot title.}
 

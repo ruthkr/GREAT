@@ -1,8 +1,8 @@
 ---
-title: "Register data with provided paramaters"
+title: "Register data with provided parameters"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Register data with provided paramaters}
+  %\VignetteIndexEntry{Register data with provided parameters}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

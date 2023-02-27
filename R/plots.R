@@ -100,18 +100,19 @@ plot_registration_results <- function(results,
     names(fits) <- genes
 
     # Predict query expression values
-    preds <- lapply(
-      genes,
-      function(gene) {
-        data <- unique(data[data$gene_id == gene][, .(gene_id, timepoint_reg)])
-        data <- data.table::data.table(
-          gene_id = gene,
-          timepoint_reg =  seq(min(data$timepoint_reg), max(data$timepoint_reg), 1)
-        )
-        data[, .(gene_id, timepoint_reg, expression_value = stats::predict(fits[gene][[1]], newdata = data))]
-      }
+    preds <- data.table::rbindlist(
+      lapply(
+        genes,
+        function(gene) {
+          data <- unique(data[data$gene_id == gene][, .(gene_id, timepoint_reg)])
+          data <- data.table::data.table(
+            gene_id = gene,
+            timepoint_reg = seq(min(data$timepoint_reg), max(data$timepoint_reg), 1)
+          )
+          data[, .(gene_id, timepoint_reg, expression_value = stats::predict(fits[gene][[1]], newdata = data))]
+        }
+      )
     )
-    preds <- Reduce(rbind, preds)
 
     # Left join facet for correct plotting
     preds <- preds[gene_facets, on = "gene_id"]

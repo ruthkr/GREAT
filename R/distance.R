@@ -132,7 +132,7 @@ get_timepoint_comb_registered_data <- function(data_ref, data_query) {
   )
 
   # Left join to cross join
-  comb <- merge(comb, Reduce(rbind, preds_query), by = c("gene_query", "timepoint_query"))
+  comb <- merge(comb, data.table::rbindlist(preds_query), by = c("gene_query", "timepoint_query"))
 
   # Select relevant columns
   comb <- comb[, .(gene_id = gene_ref, timepoint_ref, timepoint_query, exp_ref, exp_query)]

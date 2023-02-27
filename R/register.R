@@ -134,8 +134,8 @@ register <- function(input,
   }
 
   # Aggregate results
-  all_data_reg <- Reduce(rbind, lapply(results, function(x) x$data_reg))
-  model_comparison <- Reduce(rbind, lapply(results, function(x) x$model_comparison))
+  all_data_reg <- data.table::rbindlist(lapply(results, function(x) x$data_reg))
+  model_comparison <- data.table::rbindlist(lapply(results, function(x) x$model_comparison))
 
   # Left join registered time points
   setnames(all_data_reg, "timepoint", "timepoint_reg")
@@ -239,7 +239,7 @@ explore_manual_search_space <- function(data, stretches, shifts, loglik_separate
   )
 
   # Find best registration parameters
-  model_comparison <- Reduce(rbind, do.call(Map, c(f = rbind, params_results)))
+  model_comparison <- data.table::rbindlist(do.call(Map, c(f = rbind, params_results)))
   best_params <- model_comparison[BIC_combined == min(model_comparison$BIC_combined), ][, .SD[1]]
 
   return(best_params)

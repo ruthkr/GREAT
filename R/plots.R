@@ -2,6 +2,7 @@
 #'
 #' @param results Registration results, output of the \code{\link{register}} registration process.
 #' @param type Type of plot, determines whether to use "registered" or "original" time points. By default, "registered".
+#' @param show_model_fit Optionally show model fit used to evaluate \eqn{BIC} during registration. Only works for \code{type = "registered"}.
 #' @param genes_list Optional numeric vector indicating the selection of genes to be plotted.
 #' @param title Optional plot title.
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
@@ -11,12 +12,14 @@
 #' @export
 plot_registration_results <- function(results,
                                       type = c("registered", "original"),
+                                      show_model_fit = FALSE,
                                       genes_list = NA,
                                       title = NULL,
                                       ncol = NULL) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
+  timepoint_reg <- NULL
   expression_value <- NULL
   registered <- NULL
   stretch <- NULL
@@ -28,6 +31,7 @@ plot_registration_results <- function(results,
   # Parse results
   data <- results$data
   model_comparison <- results$model_comparison
+  reference <- attr(data, "ref")
 
   # Select genes to be plotted
   genes <- unique(data[, gene_id])
@@ -81,6 +85,49 @@ plot_registration_results <- function(results,
       x = x_lab,
       y = "Scaled expression"
     )
+
+  if (type == "registered" & show_model_fit) {
+    # Get registered genes only
+    genes <- unique(model_comparison[model_comparison$registered, gene_id])
+
+    # Fit using cubic splines with K+3 params for each gene
+    fits <- lapply(
+      genes,
+      function(gene) {
+        fit_spline_model(data[data$gene_id == gene], x = "timepoint_reg")
+      }
+    )
+    names(fits) <- genes
+
+    # Predict query expression values
+    preds <- lapply(
+      genes,
+      function(gene) {
+        data <- unique(data[data$gene_id == gene][, .(gene_id, timepoint_reg)])
+        data <- data.table::data.table(
+          gene_id = gene,
+          timepoint_reg =  seq(min(data$timepoint_reg), max(data$timepoint_reg), 1)
+        )
+        data[, .(gene_id, timepoint_reg, expression_value = stats::predict(fits[gene][[1]], newdata = data))]
+      }
+    )
+    preds <- Reduce(rbind, preds)
+
+    # Left join facet for correct plotting
+    preds <- preds[gene_facets, on = "gene_id"]
+
+    # Add plot layer
+    gg_registered <- gg_registered +
+      ggplot2::geom_line(
+        mapping = ggplot2::aes(
+          x = timepoint_reg,
+          y = expression_value,
+          group = gene_id
+        ),
+        data = preds,
+        linetype = "dashed"
+      )
+  }
 
   return(gg_registered)
 }

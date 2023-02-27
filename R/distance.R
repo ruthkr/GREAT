@@ -117,10 +117,7 @@ get_timepoint_comb_registered_data <- function(data_ref, data_query) {
   fits <- lapply(
     genes,
     function(gene) {
-      stats::lm(
-        expression_value ~ splines::bs(timepoint_reg, df = 6, degree = 3),
-        data = data_query[data_query$gene_id == gene]
-      )
+      fit_spline_model(data_query[data_query$gene_id == gene], x = "timepoint_reg")
     }
   )
   names(fits) <- genes

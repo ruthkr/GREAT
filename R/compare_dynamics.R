@@ -8,18 +8,9 @@ calc_loglik_H2 <- function(data) {
   data_query <- data[data$accession == "query"]
   data_ref <- data[data$accession == "ref"]
 
-  # Fit using cubic spline with K+3 params
-  num_spline_params <- 6
-
   # Fit models for reference and query
-  fit_ref <- stats::lm(
-    expression_value ~ splines::bs(timepoint, df = num_spline_params, degree = 3),
-    data = data_ref
-  )
-  fit_query <- stats::lm(
-    expression_value ~ splines::bs(timepoint, df = num_spline_params, degree = 3),
-    data = data_query
-  )
+  fit_ref <- fit_spline_model(data_ref)
+  fit_query <- fit_spline_model(data_query)
 
   # Calculate the log likelihoods and BIC
   loglik_query <- calc_loglik(fit_query, data_query)
@@ -39,14 +30,8 @@ calc_loglik_H1 <- function(data) {
   data_query <- data[data$accession == "query"]
   data_ref <- data[data$accession == "ref"]
 
-  # Fit using cubic spline with K+3 params
-  num_spline_params <- 6
-
   # Fit model for combined data together
-  fit_all <- stats::lm(
-    expression_value ~ splines::bs(timepoint, df = num_spline_params, degree = 3),
-    data = data
-  )
+  fit_all <- fit_spline_model(data)
 
   # Calculate the log likelihoods and BIC
   loglik_ref <- calc_loglik(fit_all, data_ref)

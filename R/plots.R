@@ -115,7 +115,7 @@ plot_registration_results <- function(results,
     )
 
     # Left join facet for correct plotting
-    preds <- preds[gene_facets, on = "gene_id"]
+    preds <- merge(preds, gene_facets, by = "gene_id")
 
     # Add plot layer
     gg_registered <- gg_registered +

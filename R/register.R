@@ -101,10 +101,13 @@ register <- function(input,
     cli::cli_h1("Starting manual registration")
     # Check that stretches and shifts are numeric
     if (any(is.na(stretches), is.na(shifts))) {
-      stop(cli::format_error(c(
-        "{.var stretches} and {.var shifts} must be numeric vectors",
-        "x" = "You supplied vectors with {.cls NA} values."
-      )))
+      stop(
+        cli::format_error(c(
+          "{.var stretches} and {.var shifts} must be {.cls numeric} vectors.",
+          "x" = "You supplied vectors with {.cls NA} values."
+        )),
+        call. = FALSE
+      )
     }
 
     # Apply manual registration

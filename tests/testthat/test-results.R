@@ -22,6 +22,8 @@ test_that("plot_registration_results works", {
   expect_equal(gg$labels$y, "Scaled expression")
   expect_equal(gg_original$labels$x, "Time point")
   expect_equal(gg_original$labels$y, "Scaled expression")
+  expect_no_error(plot_registration_results(registration_results, genes_list = c("BRAA02G018970.3C", "BRAA02G043220.3C")))
+  expect_error(plot_registration_results(registration_results, genes_list = 1:2))
 })
 
 # Distance and visualisation ----

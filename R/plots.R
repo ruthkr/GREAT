@@ -2,7 +2,6 @@
 #'
 #' @param results Registration results, output of the \code{\link{register}} registration process.
 #' @param type Type of plot, determines whether to use "registered" or "original" time points. By default, "registered".
-#' @param show_model_fit Optionally show model fit used to evaluate \eqn{BIC} during registration. Only works for \code{type = "registered"}.
 #' @param genes_list Optional numeric vector indicating the selection of genes to be plotted.
 #' @param title Optional plot title.
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
@@ -12,7 +11,6 @@
 #' @export
 plot_registration_results <- function(results,
                                       type = c("registered", "original"),
-                                      show_model_fit = FALSE,
                                       genes_list = NA,
                                       title = NULL,
                                       ncol = NULL) {
@@ -76,7 +74,6 @@ plot_registration_results <- function(results,
       fill = accession
     ) +
     ggplot2::geom_point() +
-    ggplot2::stat_summary(fun = mean, geom = "line") +
     ggplot2::facet_wrap(~gene_facet, scales = "free", ncol = ncol) +
     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
     ggplot2::theme_bw() +
@@ -86,7 +83,7 @@ plot_registration_results <- function(results,
       y = "Scaled expression"
     )
 
-  if (type == "registered" & show_model_fit) {
+  if (type == "registered") {
     # Get registered genes only
     genes <- unique(model_comparison[model_comparison$registered, gene_id])
 

@@ -74,19 +74,9 @@ register <- function(input,
   if (optimise_registration_parameters) {
     # Registration with optimisation
     cli::cli_h1("Starting registration with optimisation")
-    if (all(is.na(stretches), is.na(shifts))) {
-      cli::cli_alert_info("Using computed stretches and shifts search space limits.")
-    } else if (all(!is.na(stretches), !is.na(shifts))) {
-      cli::cli_alert_info("Using provided stretches and shifts to define search space limits.")
-    } else {
-      stop(
-        cli::format_error(c(
-          "{.var stretches} and {.var shifts} must be {.cls numeric} vectors.",
-          "x" = "You supplied vectors with {.cls NA} values."
-        )),
-        call. = FALSE
-      )
-    }
+
+    # Validate stretch and shift values
+    validate_params(stretches, shifts, "optimisation")
 
     # Run optimisation
     results <- lapply(
@@ -111,16 +101,9 @@ register <- function(input,
     )
   } else {
     cli::cli_h1("Starting manual registration")
-    # Check that stretches and shifts are numeric
-    if (any(is.na(stretches), is.na(shifts))) {
-      stop(
-        cli::format_error(c(
-          "{.var stretches} and {.var shifts} must be {.cls numeric} vectors.",
-          "x" = "You supplied vectors with {.cls NA} values."
-        )),
-        call. = FALSE
-      )
-    }
+
+    # Validate stretch and shift values
+    validate_params(stretches, shifts, "manual")
 
     # Apply manual registration
     results <- lapply(

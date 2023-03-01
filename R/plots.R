@@ -30,6 +30,7 @@ plot_registration_results <- function(results,
   data <- results$data
   model_comparison <- results$model_comparison
   reference <- attr(data, "ref")
+  query <- attr(data, "query")
 
   # Select genes to be plotted
   genes <- unique(data[, gene_id])
@@ -68,7 +69,7 @@ plot_registration_results <- function(results,
   # Left join gene_facets to data
   data <- data[gene_facets, on = "gene_id"]
 
-  # Construct plot
+  # Plot labels
   if (type == "registered") {
     timepoint_var <- "timepoint_reg"
     x_lab <- "Registered time"
@@ -77,6 +78,7 @@ plot_registration_results <- function(results,
     x_lab <- "Time point"
   }
 
+  # Construct plot
   gg_registered <- ggplot2::ggplot(data) +
     ggplot2::aes(
       x = !!ggplot2::sym(timepoint_var),
@@ -85,6 +87,7 @@ plot_registration_results <- function(results,
       fill = accession
     ) +
     ggplot2::geom_point() +
+    # ggplot2::stat_summary(fun = mean, geom = "line") +
     ggplot2::facet_wrap(~gene_facet, scales = "free", ncol = ncol) +
     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
     ggplot2::theme_bw() +
@@ -94,51 +97,155 @@ plot_registration_results <- function(results,
       y = "Scaled expression"
     )
 
+  # Add model curve layers
   if (type == "registered") {
-    # Get registered genes only
-    genes <- unique(model_comparison[model_comparison$registered, gene_id])
+    # Get curves for H1
+    preds_H1 <- get_H1_model_curves(data, model_comparison)
+    preds_H1 <- merge(preds_H1, gene_facets, by = "gene_id")
 
-    # Fit using cubic splines with K+3 params for each gene
-    fits <- lapply(
-      genes,
-      function(gene) {
-        fit_spline_model(data[data$gene_id == gene], x = "timepoint_reg")
-      }
-    )
-    names(fits) <- genes
+    # Get curves for H2
+    if (length(model_comparison[!model_comparison$registered, gene_id]) > 0) {
+      preds_H2 <- get_H2_model_curves(data, model_comparison, reference, query)
+      preds_H2 <- merge(preds_H2, gene_facets, by = "gene_id")
+      preds <- rbind(preds_H1, preds_H2)
+    } else {
+      preds <- preds_H1
+    }
 
-    # Predict query expression values
-    preds <- data.table::rbindlist(
-      lapply(
-        genes,
-        function(gene) {
-          data <- unique(data[data$gene_id == gene][, .(gene_id, timepoint_reg)])
-          data <- data.table::data.table(
-            gene_id = gene,
-            timepoint_reg = seq(min(data$timepoint_reg), max(data$timepoint_reg), 1)
-          )
-          data[, .(gene_id, timepoint_reg, expression_value = stats::predict(fits[gene][[1]], newdata = data))]
-        }
-      )
-    )
-
-    # Left join facet for correct plotting
-    preds <- merge(preds, gene_facets, by = "gene_id")
-
-    # Add plot layer
     gg_registered <- gg_registered +
       ggplot2::geom_line(
         mapping = ggplot2::aes(
           x = timepoint_reg,
           y = expression_value,
-          group = gene_id
+          group = interaction(gene_id, accession)
         ),
         data = preds,
-        linetype = "dashed"
+        linetype = "dashed",
+        linewidth = 0.5
       )
   }
 
   return(gg_registered)
+}
+
+#' Get curves for Hypothesis H1
+#'
+#' @noRd
+get_H1_model_curves <- function(data, model_comparison) {
+  # Suppress "no visible binding for global variable" note
+  gene_id <- NULL
+  accession <- NULL
+  timepoint_reg <- NULL
+
+  # Get registered genes only
+  genes <- unique(model_comparison[model_comparison$registered, gene_id])
+
+  # Fit using cubic splines with K+3 params for each gene
+  fits <- lapply(
+    genes,
+    function(gene) {
+      fit_spline_model(
+        data[data$gene_id == gene],
+        x = "timepoint_reg"
+      )
+    }
+  )
+  names(fits) <- genes
+
+  # Predict query expression values
+  preds <- data.table::rbindlist(
+    lapply(
+      genes,
+      function(gene) {
+        data <- unique(data[data$gene_id == gene][, .(gene_id, timepoint_reg)])
+        data <- data.table::data.table(
+          gene_id = gene,
+          timepoint_reg = seq(min(data$timepoint_reg), max(data$timepoint_reg), 1)
+        )
+        data[, .(gene_id, timepoint_reg, expression_value = stats::predict(fits[gene][[1]], newdata = data))]
+      }
+    )
+  )
+
+  preds[, accession := character()][]
+
+  return(preds)
+}
+
+#' Get curves for Hypothesis H2
+#'
+#' @noRd
+get_H2_model_curves <- function(data, model_comparison, reference, query) {
+  # Suppress "no visible binding for global variable" note
+  gene_id <- NULL
+  accession <- NULL
+  timepoint_reg <- NULL
+
+  # Get unregistered genes only
+  genes <- unique(model_comparison[!model_comparison$registered, gene_id])
+
+  # Get reference and query data
+  data_ref <- data[data$accession == reference]
+  data_query <- data[data$accession == query]
+
+  # Fit using cubic splines with K+3 params for each gene
+  fits_ref <- lapply(
+    genes,
+    function(gene) {
+      fit_spline_model(
+        data_ref[data_ref$gene_id == gene],
+        x = "timepoint_reg"
+      )
+    }
+  )
+  fits_query <- lapply(
+    genes,
+    function(gene) {
+      fit_spline_model(
+        data_query[data_query$gene_id == gene],
+        x = "timepoint_reg"
+      )
+    }
+  )
+  names(fits_ref) <- genes
+  names(fits_query) <- genes
+
+  # Predict query expression values
+  preds_ref <- data.table::rbindlist(
+    lapply(
+      genes,
+      function(gene) {
+        data <- unique(data_ref[data_ref$gene_id == gene][, .(gene_id, timepoint_reg)])
+        data <- data.table::data.table(
+          gene_id = gene,
+          timepoint_reg = seq(min(data$timepoint_reg), max(data$timepoint_reg), 1)
+        )
+        data[, .(gene_id, timepoint_reg, expression_value = stats::predict(fits_ref[gene][[1]], newdata = data))]
+      }
+    )
+  )
+
+  preds_query <- data.table::rbindlist(
+    lapply(
+      genes,
+      function(gene) {
+        data <- unique(data_query[data_query$gene_id == gene][, .(gene_id, timepoint_reg)])
+        data <- data.table::data.table(
+          gene_id = gene,
+          timepoint_reg = seq(min(data$timepoint_reg), max(data$timepoint_reg), 1)
+        )
+        data[, .(gene_id, timepoint_reg, expression_value = stats::predict(fits_query[gene][[1]], newdata = data))]
+      }
+    )
+  )
+
+  # Combine reference and query curves
+  preds <- rbind(
+    preds_ref[, accession := reference],
+    preds_query[, accession := query]
+  )[]
+
+  return(preds)
 }
 
 #' Visualise distances between samples from different time points

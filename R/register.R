@@ -74,7 +74,19 @@ register <- function(input,
   if (optimise_registration_parameters) {
     # Registration with optimisation
     cli::cli_h1("Starting registration with optimisation")
-    cli::cli_alert_info("Using computed stretches and shifts search space limits.{if(any(!is.na(stretches), !is.na(shifts))) ' User-defined parameters will be ignored.'}")
+    if (all(is.na(stretches), is.na(shifts))) {
+      cli::cli_alert_info("Using computed stretches and shifts search space limits.")
+    } else if (all(!is.na(stretches), !is.na(shifts))) {
+      cli::cli_alert_info("Using provided stretches and shifts to define search space limits.")
+    } else {
+      stop(
+        cli::format_error(c(
+          "{.var stretches} and {.var shifts} must be {.cls numeric} vectors.",
+          "x" = "You supplied vectors with {.cls NA} values."
+        )),
+        call. = FALSE
+      )
+    }
 
     # Run optimisation
     results <- lapply(
@@ -92,7 +104,7 @@ register <- function(input,
         loglik_separate <- calc_loglik_H2(gene_data)
 
         # Register for Hypothesis 1
-        results <- register_with_optimisation(gene_data, loglik_separate, overlapping_percent, optimisation_config)
+        results <- register_with_optimisation(gene_data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_config)
 
         return(results)
       }
@@ -168,9 +180,9 @@ register <- function(input,
 #' Auxiliary function to apply registration with optimisation
 #'
 #' @noRd
-register_with_optimisation <- function(data, loglik_separate, overlapping_percent, optimisation_config) {
+register_with_optimisation <- function(data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_config) {
   # Run optimisation
-  optimised_params <- optimise(data, overlapping_percent, optimisation_config)
+  optimised_params <- optimise(data, stretches, shifts, overlapping_percent, optimisation_config)
 
   # Apply registration
   stretches <- optimised_params$par[1]

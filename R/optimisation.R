@@ -6,10 +6,16 @@
 #'
 #' @noRd
 optimise <- function(data,
+                     stretches,
+                     shifts,
                      overlapping_percent = 0.5,
                      optimisation_config) {
   # Calculate boundary box and initial guess
-  space_lims <- get_search_space_limits(data, overlapping_percent)
+  if (all(is.na(stretches), is.na(shifts))) {
+    space_lims <- get_search_space_limits(data, overlapping_percent)
+  } else {
+    space_lims <- get_search_space_limits_from_params(stretches, shifts)
+  }
 
   # Parse initial and limit parameters
   stretch_init <- space_lims$stretch_init
@@ -99,6 +105,38 @@ get_search_space_limits <- function(data, overlapping_percent = 0.5) {
   # Calculate shift limits
   shift_lower <- min_timepoint - min(timepoints_query)
   shift_upper <- (max_timepoint - range_query_max_stretch) - min(timepoints_query)
+
+  # Calculate initial shift value (zero if possible)
+  shift_init <- 0
+  if (shift_init < shift_lower | shift_init > shift_upper) {
+    shift_init <- mean(c(shift_lower, shift_upper))
+  }
+
+  # Results object
+  results_list <- list(
+    stretch_init = stretch_init,
+    stretch_lower = stretch_lower,
+    stretch_upper = stretch_upper,
+    shift_init = shift_init,
+    shift_lower = shift_lower,
+    shift_upper = shift_upper
+  )
+
+  return(results_list)
+}
+
+#' Calculate limits of the search space for Simulated Annealing from provided registration parameters
+#'
+#' @noRd
+get_search_space_limits_from_params <- function(stretches, shifts) {
+  # Initial stretch limits
+  stretch_lower <- min(stretches)
+  stretch_upper <- max(stretches)
+  stretch_init <- mean(stretches)
+
+  # Calculate shift limits
+  shift_lower <- min(shifts)
+  shift_upper <- max(shifts)
 
   # Calculate initial shift value (zero if possible)
   shift_init <- 0

@@ -163,7 +163,7 @@ register <- function(input,
 #' Auxiliary function to apply registration with optimisation
 #'
 #' @noRd
-register_with_optimisation <- function(data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_config) {
+register_with_optimisation <- function(data, stretches = NA, shifts = NA, loglik_separate, overlapping_percent, optimisation_config) {
   # Run optimisation
   optimised_params <- optimise(data, stretches, shifts, overlapping_percent, optimisation_config)
 

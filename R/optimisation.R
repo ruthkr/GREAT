@@ -6,8 +6,8 @@
 #'
 #' @noRd
 optimise <- function(data,
-                     stretches,
-                     shifts,
+                     stretches = NA,
+                     shifts = NA,
                      overlapping_percent = 0.5,
                      optimisation_config) {
   # Calculate boundary box and initial guess

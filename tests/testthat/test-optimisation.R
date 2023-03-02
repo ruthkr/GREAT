@@ -20,6 +20,21 @@ test_that("get_search_space_limits works", {
   expect_error(get_search_space_limits(gene_data))
 })
 
+test_that("get_search_space_limits_from_params works", {
+  stretches <- c(1, 2, 3)
+  shifts <- c(-4, 4)
+  space_lims <- get_search_space_limits_from_params(stretches = stretches, shifts = shifts)
+
+  # Expected outputs
+  expect_equal(names(space_lims), c("stretch_init", "stretch_lower", "stretch_upper", "shift_init", "shift_lower", "shift_upper"))
+  expect_equal(space_lims$stretch_init, mean(stretches), tolerance = 1e-2)
+  expect_equal(space_lims$stretch_lower, min(stretches), tolerance = 1e-2)
+  expect_equal(space_lims$stretch_upper, max(stretches), tolerance = 1e-2)
+  expect_equal(space_lims$shift_init, 0, tolerance = 1e-2)
+  expect_equal(space_lims$shift_lower, min(shifts), tolerance = 1e-2)
+  expect_equal(space_lims$shift_upper, max(shifts), tolerance = 1e-2)
+})
+
 test_that("calc_overlapping_percent works", {
   all_data_reg <- apply_registration(all_data, 2.75, 3.6)
   overlapping_raw <- calc_overlapping_percent(all_data)

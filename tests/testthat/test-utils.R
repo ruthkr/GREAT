@@ -22,6 +22,15 @@ test_that("match_names works", {
   expect_no_error(match_names(x = a, lookup = a))
 })
 
+test_that("validate_params works", {
+  # Expected outputs
+  expect_no_error(suppressMessages(validate_params(stretches = 1, shifts = 0, registration_type = "optimisation")))
+  expect_no_error(suppressMessages(validate_params(stretches = NA, shifts = NA, registration_type = "optimisation")))
+  expect_error(suppressMessages(validate_params(stretches = 1, shifts = NA, registration_type = "optimisation")))
+  expect_no_error(suppressMessages(validate_params(stretches = 1, shifts = 0, registration_type = "manual")))
+  expect_error(suppressMessages(validate_params(stretches = NA, shifts = NA, registration_type = "manual")))
+})
+
 test_that("cross_join works", {
   dt_a <- data.table(x = 1:2, y = 4:5)
   dt_b <- data.table(z = 1:3)

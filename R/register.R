@@ -168,12 +168,12 @@ register_with_optimisation <- function(data, stretches = NA, shifts = NA, loglik
   optimised_params <- optimise(data, stretches, shifts, overlapping_percent, optimisation_config)
 
   # Apply registration
-  stretches <- optimised_params$par[1]
-  shifts <- optimised_params$par[2]
+  stretches <- optimised_params$stretch
+  shifts <- optimised_params$shift
   data_reg <- apply_registration(data, stretches, shifts)
 
   # Calculate model comparison
-  loglik_combined <- optimised_params$function_value
+  loglik_combined <- optimised_params$loglik_score
 
   # Model comparison
   model_comparison <- compare_H1_and_H2(data_reg, stretches, shifts, loglik_combined, loglik_separate)

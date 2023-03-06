@@ -212,3 +212,85 @@ optimise_using_sa <- function(data,
 
   return(params_list)
 }
+
+
+#' Optimise stretch and shift using Nelder-Mead
+#'
+#' @noRd
+optimise_using_nm <- function(data,
+                              optimisation_config,
+                              overlapping_percent,
+                              space_lims) {
+  # Parse initial and limit parameters
+  stretch_init <- space_lims$stretch_init
+  shift_init <- space_lims$shift_init
+  stretch_lower <- space_lims$stretch_lower
+  stretch_upper <- space_lims$stretch_upper
+  shift_lower <- space_lims$shift_lower
+  shift_upper <- space_lims$shift_upper
+
+  # Define data as it object required by optim::sa()
+  fmsfundata <- structure(
+    list(data = data),
+    class = "optimbase.functionargs"
+  )
+
+  loglik_score <- function(x = NULL, index = NULL, fmsfundata = NULL) {
+    stretch <- x[1]
+    shift <- x[2]
+
+    f <- objective_fun(
+      fmsfundata$data,
+      stretch,
+      shift,
+      maximize = FALSE,
+      overlapping_percent
+    )
+
+    varargout <- list(
+      f = f,
+      index = index,
+      this = list(costfargument = fmsfundata)
+    )
+
+    return(varargout)
+  }
+
+  # Optimisation parameters
+  # TODO: Explore best default
+  num_iterations <- optimisation_config$num_iterations
+  max_fun_evals <- 100
+
+  # Start process optimisation
+  x0 <- matrix(c(stretch_init, shift_init), ncol = 1)
+  nm <- neldermead::neldermead()
+  nm <- neldermead::neldermead.set(nm, "numberofvariables", 2)
+  nm <- neldermead::neldermead.set(nm, "function", loglik_score)
+  nm <- neldermead::neldermead.set(nm, "x0", x0)
+  nm <- neldermead::neldermead.set(nm, "costfargument", fmsfundata)
+  nm <- neldermead::neldermead.set(nm, "maxiter", num_iterations)
+  nm <- neldermead::neldermead.set(nm, "maxfunevals", max_fun_evals)
+  nm <- neldermead::neldermead.set(nm, "method", "box")
+  nm <- neldermead::neldermead.set(nm, "storehistory", TRUE)
+  nm <- neldermead::neldermead.set(nm, "boundsmin", c(stretch_lower, shift_lower))
+  nm <- neldermead::neldermead.set(nm, "boundsmax", c(stretch_upper, shift_upper))
+  nm <- neldermead::neldermead.search(this = nm)
+
+  # Parse simplex at optimal point
+  simplex_obj <- unlist(nm$simplexopt)
+  vertices <- nm$simplexopt$nbve
+  simplex_vars <- grep("^x|^fv", names(simplex_obj), value = TRUE)
+
+  optimised_params <- data.table::as.data.table(
+    matrix(simplex_obj[simplex_vars], nrow = vertices)
+  )[vertices, ]
+
+  # Results object
+  params_list <- list(
+    stretch = optimised_params$V1,
+    shift = optimised_params$V2,
+    loglik_score = - optimised_params$V3
+  )
+
+  return(params_list)
+}

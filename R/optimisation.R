@@ -21,8 +21,14 @@ optimise <- function(data,
   # Select optimisation method
   if (optimisation_method == "nm") {
     optimise_fun <- optimise_using_nm
+    if (is.null(optimisation_config)) {
+      optimisation_config <- list(num_iterations = 100)
+    }
   } else if (optimisation_method == "sa") {
     optimise_fun <- optimise_using_sa
+    if (is.null(optimisation_config)) {
+      optimisation_config <- list(num_iterations = 60)
+    }
   }
 
   # Run optimisation
@@ -197,7 +203,7 @@ optimise_using_sa <- function(data,
     fun = function(x) objective_fun(data, x[1], x[2], overlapping_percent),
     maximization = TRUE,
     start = c(stretch_init, shift_init),
-    trace = TRUE,
+    trace = FALSE,
     lower = c(stretch_lower, shift_lower),
     upper = c(stretch_upper, shift_upper),
     control = list(
@@ -278,7 +284,7 @@ optimise_using_nm <- function(data,
   nm <- neldermead::neldermead.set(nm, "maxiter", num_iterations)
   nm <- neldermead::neldermead.set(nm, "maxfunevals", max_fun_evals)
   nm <- neldermead::neldermead.set(nm, "method", "box")
-  nm <- neldermead::neldermead.set(nm, "storehistory", TRUE)
+  nm <- neldermead::neldermead.set(nm, "storehistory", FALSE)
   nm <- neldermead::neldermead.set(nm, "boundsmin", c(stretch_lower, shift_lower))
   nm <- neldermead::neldermead.set(nm, "boundsmax", c(stretch_upper, shift_upper))
   nm <- neldermead::neldermead.search(this = nm)

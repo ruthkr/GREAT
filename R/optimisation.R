@@ -17,37 +17,19 @@ optimise <- function(data,
     space_lims <- get_search_space_limits_from_params(stretches, shifts)
   }
 
-  # Parse initial and limit parameters
-  stretch_init <- space_lims$stretch_init
-  shift_init <- space_lims$shift_init
-  stretch_lower <- space_lims$stretch_lower
-  stretch_upper <- space_lims$stretch_upper
-  shift_lower <- space_lims$shift_lower
-  shift_upper <- space_lims$shift_upper
+  # # Parse initial and limit parameters
+  # stretch_init <- space_lims$stretch_init
+  # shift_init <- space_lims$shift_init
+  # stretch_lower <- space_lims$stretch_lower
+  # stretch_upper <- space_lims$stretch_upper
+  # shift_lower <- space_lims$shift_lower
+  # shift_upper <- space_lims$shift_upper
 
-  # Calculate cooling schedule
-  t0 <- 1000
-  t_min <- 0.1
-  r_cooling <- (t_min / t0)^(1 / optimisation_config$num_iterations)
-  # TODO: Explore best default
-  num_inner_loop_iter <- 100
-
-  # Perform SA using {optimization}
-  optimised_params <- optimization::optim_sa(
-    fun = function(x) objective_fun(data, x[1], x[2], overlapping_percent),
-    maximization = TRUE,
-    start = c(stretch_init, shift_init),
-    trace = TRUE,
-    lower = c(stretch_lower, shift_lower),
-    upper = c(stretch_upper, shift_upper),
-    control = list(
-      t0 = t0,
-      t_min = t_min,
-      nlimit = num_inner_loop_iter,
-      r = r_cooling,
-      rf = 3,
-      dyn_rf = FALSE
-    )
+  optimised_params <- optimise_using_sa(
+    data,
+    optimisation_config,
+    overlapping_percent,
+    space_lims
   )
 
   return(optimised_params)
@@ -61,6 +43,7 @@ objective_fun <- function(data, stretch, shift, overlapping_percent) {
     {
       # Apply registration
       all_data_reg <- apply_registration(data, stretch, shift)
+
 
       # Check if overlapping condition is upheld
       if (calc_overlapping_percent(all_data_reg) < overlapping_percent) stop()
@@ -179,4 +162,53 @@ calc_overlapping_percent <- function(data) {
   }
 
   return(overlapping_percent)
+}
+
+#' Optimise stretch and shift using Simulated Annealing
+#'
+#' @noRd
+optimise_using_sa <- function(data,
+                              optimisation_config,
+                              overlapping_percent,
+                              space_lims) {
+  # Parse initial and limit parameters
+  stretch_init <- space_lims$stretch_init
+  shift_init <- space_lims$shift_init
+  stretch_lower <- space_lims$stretch_lower
+  stretch_upper <- space_lims$stretch_upper
+  shift_lower <- space_lims$shift_lower
+  shift_upper <- space_lims$shift_upper
+
+  # Calculate cooling schedule
+  t0 <- 1000
+  t_min <- 0.1
+  r_cooling <- (t_min / t0)^(1 / optimisation_config$num_iterations)
+  # TODO: Explore best default
+  num_inner_loop_iter <- 100
+
+  # Perform SA using {optimization}
+  optimised_params <- optimization::optim_sa(
+    fun = function(x) objective_fun(data, x[1], x[2], overlapping_percent),
+    maximization = TRUE,
+    start = c(stretch_init, shift_init),
+    trace = TRUE,
+    lower = c(stretch_lower, shift_lower),
+    upper = c(stretch_upper, shift_upper),
+    control = list(
+      t0 = t0,
+      t_min = t_min,
+      nlimit = num_inner_loop_iter,
+      r = r_cooling,
+      rf = 3,
+      dyn_rf = FALSE
+    )
+  )
+
+  params_list <- list(
+    stretch = optimised_params$par[1],
+    shift = optimised_params$par[2],
+    loglik_score = optimised_params$function_value
+  )
+
+  return(params_list)
 }

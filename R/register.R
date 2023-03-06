@@ -10,7 +10,8 @@
 #' @param query Accession name of query data.
 #' @param overlapping_percent Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
 #' @param optimise_registration_parameters Whether to optimise registration parameters with Simulated Annealing. By default, \code{FALSE}.
-#' @param optimisation_config List with optional arguments to modify the Simulated Annealing optimisation.
+#' @param optimisation_method Optimisation method to use. Either \code{"sa"} for Simulated Annealing or \code{"nm"} for Nelder-Mead.
+#' @param optimisation_config List with optional arguments to modify the optimisation.
 #'
 #' @return This function returns a list of data frames, containing:
 #'
@@ -39,6 +40,7 @@ register <- function(input,
                      query,
                      overlapping_percent = 0.5,
                      optimise_registration_parameters = TRUE,
+                     optimisation_method = c("sa", "nm"),
                      optimisation_config = list(num_iterations = 60)) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
@@ -72,6 +74,8 @@ register <- function(input,
 
   # Begin registration logic
   if (optimise_registration_parameters) {
+    optimisation_method <- match.arg(optimisation_method)
+
     # Registration with optimisation
     cli::cli_h1("Starting registration with optimisation")
 
@@ -94,7 +98,7 @@ register <- function(input,
         loglik_separate <- calc_loglik_H2(gene_data)
 
         # Register for Hypothesis 1
-        results <- register_with_optimisation(gene_data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_config)
+        results <- register_with_optimisation(gene_data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_method, optimisation_config)
 
         return(results)
       }
@@ -163,9 +167,15 @@ register <- function(input,
 #' Auxiliary function to apply registration with optimisation
 #'
 #' @noRd
-register_with_optimisation <- function(data, stretches = NA, shifts = NA, loglik_separate, overlapping_percent, optimisation_config) {
+register_with_optimisation <- function(data,
+                                       stretches = NA,
+                                       shifts = NA,
+                                       loglik_separate,
+                                       overlapping_percent,
+                                       optimisation_method,
+                                       optimisation_config) {
   # Run optimisation
-  optimised_params <- optimise(data, stretches, shifts, overlapping_percent, optimisation_config)
+  optimised_params <- optimise(data, stretches, shifts, overlapping_percent, optimisation_method, optimisation_config)
 
   # Apply registration
   stretches <- optimised_params$stretch
@@ -190,7 +200,11 @@ register_with_optimisation <- function(data, stretches = NA, shifts = NA, loglik
 #' Auxiliary function to apply registration manually
 #'
 #' @noRd
-register_manually <- function(data, stretch, shift, loglik_separate, return_data_reg = TRUE) {
+register_manually <- function(data,
+                              stretch,
+                              shift,
+                              loglik_separate,
+                              return_data_reg = TRUE) {
   # Apply registration
   data_reg <- apply_registration(data, stretch, shift)
 

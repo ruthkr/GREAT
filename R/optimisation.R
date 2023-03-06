@@ -9,6 +9,7 @@ optimise <- function(data,
                      stretches = NA,
                      shifts = NA,
                      overlapping_percent = 0.5,
+                     optimisation_method,
                      optimisation_config) {
   # Calculate boundary box and initial guess
   if (all(is.na(stretches), is.na(shifts))) {
@@ -17,15 +18,13 @@ optimise <- function(data,
     space_lims <- get_search_space_limits_from_params(stretches, shifts)
   }
 
-  # # Parse initial and limit parameters
-  # stretch_init <- space_lims$stretch_init
-  # shift_init <- space_lims$shift_init
-  # stretch_lower <- space_lims$stretch_lower
-  # stretch_upper <- space_lims$stretch_upper
-  # shift_lower <- space_lims$shift_lower
-  # shift_upper <- space_lims$shift_upper
+  if (optimisation_method == "nm") {
+    optimise_fun <- optimise_using_nm
+  } else if (optimisation_method == "sa") {
+    optimise_fun <- optimise_using_sa
+  }
 
-  optimised_params <- optimise_using_sa(
+  optimised_params <- optimise_fun(
     data,
     optimisation_config,
     overlapping_percent,

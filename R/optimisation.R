@@ -18,12 +18,14 @@ optimise <- function(data,
     space_lims <- get_search_space_limits_from_params(stretches, shifts)
   }
 
+  # Select optimisation method
   if (optimisation_method == "nm") {
     optimise_fun <- optimise_using_nm
   } else if (optimisation_method == "sa") {
     optimise_fun <- optimise_using_sa
   }
 
+  # Run optimisation
   optimised_params <- optimise_fun(
     data,
     optimisation_config,
@@ -180,12 +182,15 @@ optimise_using_sa <- function(data,
   shift_lower <- space_lims$shift_lower
   shift_upper <- space_lims$shift_upper
 
+  # Optimisation parameters
+  # TODO: Explore best default
+  num_iterations <- optimisation_config$num_iterations
+  num_inner_loop_iter <- 100
+
   # Calculate cooling schedule
   t0 <- 1000
   t_min <- 0.1
-  r_cooling <- (t_min / t0)^(1 / optimisation_config$num_iterations)
-  # TODO: Explore best default
-  num_inner_loop_iter <- 100
+  r_cooling <- (t_min / t0)^(1 / num_iterations)
 
   # Perform SA using {optimization}
   optimised_params <- optimization::optim_sa(
@@ -205,6 +210,7 @@ optimise_using_sa <- function(data,
     )
   )
 
+  # Results object
   params_list <- list(
     stretch = optimised_params$par[1],
     shift = optimised_params$par[2],

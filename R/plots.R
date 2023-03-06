@@ -19,9 +19,6 @@ plot_registration_results <- function(results,
   accession <- NULL
   timepoint_reg <- NULL
   expression_value <- NULL
-  registered <- NULL
-  stretch <- NULL
-  shift <- NULL
 
   # Validate parameters
   type <- match.arg(type)
@@ -54,19 +51,7 @@ plot_registration_results <- function(results,
   }
 
   # Parse model_comparison object
-  gene_facets <- model_comparison[, .(
-    gene_id,
-    gene_facet = paste0(
-      gene_id, " - ", ifelse(registered, "REG", "NO_REG"),
-      ifelse(
-        registered,
-        paste0("\n", "stretch: ", round(stretch, 2), ", shift: ", round(shift, 2)),
-        ""
-      )
-    )
-  )]
-
-  # Left join gene_facets to data
+  gene_facets <- parse_gene_facets(model_comparison, type)
   data <- data[gene_facets, on = "gene_id"]
 
   # Plot labels
@@ -83,8 +68,8 @@ plot_registration_results <- function(results,
     ggplot2::aes(
       x = !!ggplot2::sym(timepoint_var),
       y = expression_value,
-      color = accession,
-      fill = accession
+      color = accession
+      # fill = accession
     ) +
     ggplot2::geom_point() +
     # ggplot2::stat_summary(fun = mean, geom = "line") +
@@ -128,7 +113,7 @@ plot_registration_results <- function(results,
         mapping = ggplot2::aes(
           x = timepoint_reg,
           y = expression_value,
-          group = interaction(gene_id, accession)
+          group = interaction(accession, gene_id)
         ),
         data = preds,
         linetype = "dashed",
@@ -137,6 +122,37 @@ plot_registration_results <- function(results,
   }
 
   return(gg_registered)
+}
+
+#' Parse \code{gene_facet} faceting variable for plotting
+#'
+#' @noRd
+parse_gene_facets <- function(model_comparison, type) {
+  # Suppress "no visible binding for global variable" note
+  registered <- NULL
+  stretch <- NULL
+  shift <- NULL
+
+  if (type == "registered") {
+    gene_facets <- model_comparison[, .(
+      gene_id,
+      gene_facet = paste0(
+        gene_id, " - ", ifelse(registered, "REG", "NO_REG"),
+        ifelse(
+          registered,
+          paste0("\n", "stretch: ", round(stretch, 2), ", shift: ", round(shift, 2)),
+          ""
+        )
+      )
+    )]
+  } else {
+    gene_facets <- model_comparison[, .(
+      gene_id,
+      gene_facet = gene_id
+    )]
+  }
+
+  return(gene_facets)
 }
 
 #' Get curves for Hypothesis H1

@@ -53,10 +53,10 @@ test_that("objective_fun works", {
 
 test_that("optimise works", {
   num_iterations <- 1
-  results <- optimise(all_data, optimisation_config = list(num_iterations = num_iterations))
+  results_sa <- optimise(all_data, optimisation_method = "sa", optimisation_config = list(num_iterations = num_iterations))
+  results_nm <- optimise(all_data, optimisation_method = "nm", optimisation_config = list(num_iterations = num_iterations))
 
   # Expected outputs
-  expect_equal(names(results), c("par", "function_value", "trace", "fun", "start", "lower", "upper", "control"))
-  expect_equal(class(results), "optim_nmsa")
-  expect_equal(nrow(results$trace), num_iterations)
+  expect_equal(names(results_sa), c("stretch", "shift", "loglik_score"))
+  expect_equal(names(results_nm), c("stretch", "shift", "loglik_score"))
 })

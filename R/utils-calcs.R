@@ -29,7 +29,7 @@ calc_loglik <- function(model, data) {
 #' @param degree Degree of the piecewise polynomial, default is 3 for cubic splines.
 #'
 #' @noRd
-fit_spline_model <- function(data, x = "timepoint", num_spline_params = 6, degree = 3) {
+fit_spline_model <- function(data, x = "timepoint", num_spline_params = 4, degree = 3) {
   fit_object <- stats::lm(
     stats::as.formula(
       paste("expression_value ~ splines::bs(", x, ", df = num_spline_params, degree = degree)")

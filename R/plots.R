@@ -99,17 +99,28 @@ plot_registration_results <- function(results,
 
   # Add model curve layers
   if (type == "registered") {
-    # Get curves for H1
-    preds_H1 <- get_H1_model_curves(data, model_comparison)
-    preds_H1 <- merge(preds_H1, gene_facets, by = "gene_id")
+    # Count registered and unregistered genes
+    registered_count <- length(model_comparison[model_comparison$registered, gene_id])
+    unregistered_count <- length(model_comparison[!model_comparison$registered, gene_id])
 
+    # Get curves for H1
+    if (registered_count > 0) {
+      preds_H1 <- get_H1_model_curves(data, model_comparison)
+      preds_H1 <- merge(preds_H1, gene_facets, by = "gene_id")
+    }
     # Get curves for H2
-    if (length(model_comparison[!model_comparison$registered, gene_id]) > 0) {
+    if (unregistered_count > 0) {
       preds_H2 <- get_H2_model_curves(data, model_comparison, reference, query)
       preds_H2 <- merge(preds_H2, gene_facets, by = "gene_id")
-      preds <- rbind(preds_H1, preds_H2)
-    } else {
+    }
+
+    # Bind predictions
+    if (unregistered_count == 0) {
       preds <- preds_H1
+    } else if (registered_count == 0) {
+      preds <- preds_H2
+    } else {
+      preds <- rbind(preds_H1, preds_H2)
     }
 
     gg_registered <- gg_registered +

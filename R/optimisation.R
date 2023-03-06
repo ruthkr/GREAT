@@ -37,22 +37,24 @@ optimise <- function(data,
 #' Objective loss function for Simulated Annealing
 #'
 #' @noRd
-objective_fun <- function(data, stretch, shift, overlapping_percent) {
+objective_fun <- function(data, stretch, shift, overlapping_percent, maximize = TRUE) {
+  # Define objective function factor
+  factor <- ifelse(maximize, 1, -1)
+
   tryCatch(
     {
       # Apply registration
       all_data_reg <- apply_registration(data, stretch, shift)
 
-
       # Check if overlapping condition is upheld
       if (calc_overlapping_percent(all_data_reg) < overlapping_percent) stop()
 
       # Calculate loglik
-      loglik_combined <- calc_loglik_H1(all_data_reg)
+      loglik_combined <- factor * calc_loglik_H1(all_data_reg)
       return(loglik_combined)
     },
     error = function(error_message) {
-      loglik_combined <- -999
+      loglik_combined <- - factor * 999
       return(loglik_combined)
     }
   )
@@ -242,8 +244,8 @@ optimise_using_nm <- function(data,
       fmsfundata$data,
       stretch,
       shift,
-      maximize = FALSE,
-      overlapping_percent
+      overlapping_percent,
+      maximize = FALSE
     )
 
     varargout <- list(

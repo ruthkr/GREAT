@@ -2,33 +2,21 @@
 #'
 #' @param data Input data frame containing all replicates of gene expression for a single genotype at each time point.
 #' @param overlapping_percent Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
-#' @param optimisation_config List with optional arguments to modify the Simulated Annealing optimisation.
+#' @param optimisation_config List with arguments to modify the optimisation configuration.
+#' @param optimise_fun Optimisation function to use. Can be \code{optimise_using_nm} or \code{optimise_using_nm}.
 #'
 #' @noRd
 optimise <- function(data,
                      stretches = NA,
                      shifts = NA,
                      overlapping_percent = 0.5,
-                     optimisation_method,
-                     optimisation_config) {
+                     optimisation_config,
+                     optimise_fun) {
   # Calculate boundary box and initial guess
   if (all(is.na(stretches), is.na(shifts))) {
     space_lims <- get_search_space_limits(data, overlapping_percent)
   } else {
     space_lims <- get_search_space_limits_from_params(stretches, shifts)
-  }
-
-  # Select optimisation method
-  if (optimisation_method == "nm") {
-    optimise_fun <- optimise_using_nm
-    if (is.null(optimisation_config)) {
-      optimisation_config <- list(num_iterations = 100)
-    }
-  } else if (optimisation_method == "sa") {
-    optimise_fun <- optimise_using_sa
-    if (is.null(optimisation_config)) {
-      optimisation_config <- list(num_iterations = 60)
-    }
   }
 
   # Run optimisation

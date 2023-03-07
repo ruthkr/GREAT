@@ -82,6 +82,19 @@ register <- function(input,
     # Validate stretch and shift values
     validate_params(stretches, shifts, "optimisation")
 
+    # Select optimisation method
+    if (optimisation_method == "nm") {
+      optimise_fun <- optimise_using_nm
+      if (is.null(optimisation_config)) {
+        optimisation_config <- list(num_iterations = 100)
+      }
+    } else if (optimisation_method == "sa") {
+      optimise_fun <- optimise_using_sa
+      if (is.null(optimisation_config)) {
+        optimisation_config <- list(num_iterations = 60)
+      }
+    }
+
     # Run optimisation
     results <- lapply(
       cli::cli_progress_along(
@@ -98,7 +111,7 @@ register <- function(input,
         loglik_separate <- calc_loglik_H2(gene_data)
 
         # Register for Hypothesis 1
-        results <- register_with_optimisation(gene_data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_method, optimisation_config)
+        results <- register_with_optimisation(gene_data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_config, optimise_fun)
 
         return(results)
       }
@@ -172,10 +185,10 @@ register_with_optimisation <- function(data,
                                        shifts = NA,
                                        loglik_separate,
                                        overlapping_percent,
-                                       optimisation_method,
-                                       optimisation_config) {
+                                       optimisation_config,
+                                       optimise_fun) {
   # Run optimisation
-  optimised_params <- optimise(data, stretches, shifts, overlapping_percent, optimisation_method, optimisation_config)
+  optimised_params <- optimise(data, stretches, shifts, overlapping_percent, optimisation_config, optimise_fun)
 
   # Apply registration
   stretches <- optimised_params$stretch

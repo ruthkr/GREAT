@@ -12,7 +12,8 @@ register(
   query,
   overlapping_percent = 0.5,
   optimise_registration_parameters = TRUE,
-  optimisation_config = list(num_iterations = 60)
+  optimisation_method = c("sa", "nm"),
+  optimisation_config = NULL
 )
 }
 \arguments{
@@ -30,7 +31,9 @@ register(
 
 \item{optimise_registration_parameters}{Whether to optimise registration parameters with Simulated Annealing. By default, \code{FALSE}.}
 
-\item{optimisation_config}{List with optional arguments to modify the Simulated Annealing optimisation.}
+\item{optimisation_method}{Optimisation method to use. Either \code{"sa"} for Simulated Annealing or \code{"nm"} for Nelder-Mead.}
+
+\item{optimisation_config}{Optional list with arguments to override the default optimisation configuration.}
 }
 \value{
 This function returns a list of data frames, containing:

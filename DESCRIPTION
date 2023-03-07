@@ -24,6 +24,7 @@ Imports:
     cli,
     data.table,
     ggplot2,
+    neldermead,
     optimization,
     scales,
     stats

@@ -11,7 +11,7 @@
 #' @param overlapping_percent Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
 #' @param optimise_registration_parameters Whether to optimise registration parameters with Simulated Annealing. By default, \code{FALSE}.
 #' @param optimisation_method Optimisation method to use. Either \code{"sa"} for Simulated Annealing or \code{"nm"} for Nelder-Mead.
-#' @param optimisation_config List with optional arguments to modify the optimisation.
+#' @param optimisation_config Optional list with arguments to override the default optimisation configuration.
 #'
 #' @return This function returns a list of data frames, containing:
 #'
@@ -41,7 +41,7 @@ register <- function(input,
                      overlapping_percent = 0.5,
                      optimise_registration_parameters = TRUE,
                      optimisation_method = c("sa", "nm"),
-                     optimisation_config = list(num_iterations = 60)) {
+                     optimisation_config = NULL) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL

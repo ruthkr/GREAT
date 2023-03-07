@@ -52,9 +52,9 @@ test_that("objective_fun works", {
 })
 
 test_that("optimise works", {
-  num_iterations <- 1
-  results_sa <- optimise(all_data, optimisation_config = list(num_iterations = num_iterations), optimise_fun = optimise_using_sa)
-  results_nm <- optimise(all_data, optimisation_config = list(num_iterations = num_iterations), optimise_fun = optimise_using_nm)
+  optimisation_config = list(num_iterations = 1, num_fun_evals = 1)
+  results_sa <- optimise(all_data, optimisation_config = optimisation_config, optimise_fun = optimise_using_sa)
+  results_nm <- optimise(all_data, optimisation_config = optimisation_config, optimise_fun = optimise_using_nm)
 
   # Expected outputs
   expect_equal(names(results_sa), c("stretch", "shift", "loglik_score"))

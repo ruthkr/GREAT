@@ -85,13 +85,13 @@ register <- function(input,
       cli::cli_alert_info("Using Nelder-Mead method.")
       optimise_fun <- optimise_using_nm
       if (is.null(optimisation_config)) {
-        optimisation_config <- list(num_iterations = 100)
+        optimisation_config <- list(num_iterations = 100, num_fun_evals = 100)
       }
     } else if (optimisation_method == "sa") {
       cli::cli_alert_info("Using Simulated Annealing method.")
       optimise_fun <- optimise_using_sa
       if (is.null(optimisation_config)) {
-        optimisation_config <- list(num_iterations = 60)
+        optimisation_config <- list(num_iterations = 60, num_fun_evals = 100)
       }
     }
 

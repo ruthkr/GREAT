@@ -179,7 +179,7 @@ optimise_using_sa <- function(data,
   # Optimisation parameters
   # TODO: Explore best default
   num_iterations <- optimisation_config$num_iterations
-  num_inner_loop_iter <- 100
+  num_inner_loop_iter <- optimisation_config$num_fun_evals
 
   # Calculate cooling schedule
   t0 <- 1000
@@ -260,7 +260,7 @@ optimise_using_nm <- function(data,
   # Optimisation parameters
   # TODO: Explore best default
   num_iterations <- optimisation_config$num_iterations
-  max_fun_evals <- 100
+  max_fun_evals <- optimisation_config$num_fun_evals
 
   # Start process optimisation
   x0 <- matrix(c(stretch_init, shift_init), ncol = 1)

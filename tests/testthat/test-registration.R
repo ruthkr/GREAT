@@ -63,14 +63,12 @@ test_that("register (with no optimisation) works", {
 })
 
 test_that("register (with optimisation) works", {
-  stretch <- 2.75
-  shift <- 3.6
-  set.seed(1)
   registration_results <- register(
     gene_data,
     reference = "Ro18",
     query = "Col0",
-    optimisation_config = list(num_iterations = 1)
+    optimisation_method = "nm",
+    optimisation_config = list(num_iterations = 10, num_fun_evals = 10)
   ) |>
     suppressMessages()
 
@@ -82,7 +80,7 @@ test_that("register (with optimisation) works", {
   expect_equal(colnames(data_reg), c("gene_id", "accession", "expression_value", "replicate", "timepoint", "timepoint_reg"))
   expect_equal(colnames(model_comparison), c("gene_id", "BIC_separate", "BIC_combined", "stretch", "shift", "registered"))
   expect_equal(model_comparison$registered, TRUE)
-  expect_equal(model_comparison$stretch, 2.82, tolerance = 1e-2)
-  expect_equal(model_comparison$shift, 3.31, tolerance = 1e-2)
+  expect_equal(model_comparison$stretch, 2.955, tolerance = 1e-2)
+  expect_equal(model_comparison$shift, 0.289, tolerance = 1e-2)
   expect_error(register(gene_data, reference = "Ro19", query = "Col0"))
 })

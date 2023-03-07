@@ -33,7 +33,7 @@ plot_registration_results <- function(results,
   genes <- unique(data[, gene_id])
 
   if (any(!is.null(genes_list))) {
-    if (class(genes_list) != "character") {
+    if (!inherits(genes_list, "character")) {
       stop(
         cli::format_error(c(
           "{.var genes_list} must be a {.cls character} vector.",
@@ -129,6 +129,7 @@ plot_registration_results <- function(results,
 #' @noRd
 parse_gene_facets <- function(model_comparison, type) {
   # Suppress "no visible binding for global variable" note
+  gene_id <- NULL
   registered <- NULL
   stretch <- NULL
   shift <- NULL

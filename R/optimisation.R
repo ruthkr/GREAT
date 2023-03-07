@@ -50,7 +50,7 @@ objective_fun <- function(data, stretch, shift, overlapping_percent, maximize = 
       return(loglik_combined)
     },
     error = function(error_message) {
-      loglik_combined <- - factor * 999
+      loglik_combined <- -factor * 999
       return(loglik_combined)
     }
   )
@@ -290,7 +290,7 @@ optimise_using_nm <- function(data,
   params_list <- list(
     stretch = optimised_params$V1,
     shift = optimised_params$V2,
-    loglik_score = - optimised_params$V3
+    loglik_score = -optimised_params$V3
   )
 
   return(params_list)

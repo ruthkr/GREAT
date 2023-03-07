@@ -50,7 +50,9 @@ register <- function(input,
   expression_value <- NULL
   replicate <- NULL
 
-  # Validate column names
+  # Validate input data
+  cli::cli_h1("Validating input data")
+
   match_names(
     x = colnames(input),
     lookup = c("gene_id", "accession", "timepoint", "expression_value", "replicate"),
@@ -58,7 +60,6 @@ register <- function(input,
     name_string = "column names"
   )
 
-  # Validate accession names
   match_names(
     x = c(reference, query),
     lookup = unique(input$accession),
@@ -79,21 +80,23 @@ register <- function(input,
     # Registration with optimisation
     cli::cli_h1("Starting registration with optimisation")
 
-    # Validate stretch and shift values
-    validate_params(stretches, shifts, "optimisation")
-
     # Select optimisation method
     if (optimisation_method == "nm") {
+      cli::cli_alert_info("Using Nelder-Mead method.")
       optimise_fun <- optimise_using_nm
       if (is.null(optimisation_config)) {
         optimisation_config <- list(num_iterations = 100)
       }
     } else if (optimisation_method == "sa") {
+      cli::cli_alert_info("Using Simulated Annealing method.")
       optimise_fun <- optimise_using_sa
       if (is.null(optimisation_config)) {
         optimisation_config <- list(num_iterations = 60)
       }
     }
+
+    # Validate stretch and shift values
+    validate_params(stretches, shifts, "optimisation")
 
     # Run optimisation
     results <- lapply(

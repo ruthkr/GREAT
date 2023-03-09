@@ -236,7 +236,7 @@ optimise_using_nm <- function(data,
     class = "optimbase.functionargs"
   )
 
-  loglik_score <- function(x = NULL, index = NULL, fmsfundata = NULL) {
+  loglik_score_nm <- function(x = NULL, index = NULL, fmsfundata = NULL) {
     stretch <- x[1]
     shift <- x[2]
 
@@ -266,7 +266,7 @@ optimise_using_nm <- function(data,
   x0 <- matrix(c(stretch_init, shift_init), ncol = 1)
   nm <- neldermead::neldermead()
   nm <- neldermead::neldermead.set(nm, "numberofvariables", 2)
-  nm <- neldermead::neldermead.set(nm, "function", loglik_score)
+  nm <- neldermead::neldermead.set(nm, "function", loglik_score_nm)
   nm <- neldermead::neldermead.set(nm, "x0", x0)
   nm <- neldermead::neldermead.set(nm, "costfargument", fmsfundata)
   nm <- neldermead::neldermead.set(nm, "maxiter", num_iterations)
@@ -295,3 +295,56 @@ optimise_using_nm <- function(data,
 
   return(params_list)
 }
+
+#' Optimise stretch and shift using L-BFGS-B
+#'
+#' @noRd
+optimise_using_lbfgsb <- function(data,
+                                  optimisation_config = NULL,
+                                  overlapping_percent,
+                                  space_lims) {
+
+  # Parse initial and limit parameters
+  stretch_init <- space_lims$stretch_init
+  shift_init <- space_lims$shift_init
+  stretch_lower <- space_lims$stretch_lower
+  stretch_upper <- space_lims$stretch_upper
+  shift_lower <- space_lims$shift_lower
+  shift_upper <- space_lims$shift_upper
+
+  loglik_score_lbfgsb <- function(theta, data_input, overlapping_percent) {
+    stretch <- theta[1]
+    shift <- theta[2]
+
+    loglik_score <- objective_fun(
+      data_input,
+      stretch,
+      shift,
+      overlapping_percent,
+      maximize = FALSE
+    )
+
+    return(loglik_score)
+  }
+
+  results <- stats::optim(
+    par = c(stretch_init, shift_init),
+    fn = loglik_score_lbfgsb,
+    data_input = data,
+    overlapping_percent = overlapping_percent,
+    method = "L-BFGS-B",
+    lower = c(stretch_lower, shift_lower),
+    upper = c(stretch_upper, shift_upper)
+  )
+
+  # Results object
+  params_list <- list(
+    stretch = results$par[1],
+    shift = results$par[2],
+    loglik_score = -results$value
+  )
+
+  return(params_list)
+}
+
+

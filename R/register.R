@@ -40,7 +40,7 @@ register <- function(input,
                      query,
                      overlapping_percent = 0.5,
                      optimise_registration_parameters = TRUE,
-                     optimisation_method = c("sa", "nm"),
+                     optimisation_method = c("sa", "nm", "lbfgsb"),
                      optimisation_config = NULL) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
@@ -93,6 +93,9 @@ register <- function(input,
       if (is.null(optimisation_config)) {
         optimisation_config <- list(num_iterations = 60, num_fun_evals = 100)
       }
+    } else if (optimisation_method == "lbfgsb") {
+      cli::cli_alert_info("Using L-BFGS-B optimization method.")
+      optimise_fun <- optimise_using_lbfgsb
     }
 
     # Validate stretch and shift values

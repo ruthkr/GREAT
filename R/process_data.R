@@ -54,7 +54,8 @@ scale_data <- function(mean_data, all_data) {
   scaled_expression_value <- NULL
 
   # Scale mean data
-  mean_data[, scaled_expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(gene_id, accession)]
+  # mean_data[, scaled_expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(gene_id, accession)]
+  mean_data[, scaled_expression_value := scale(expression_value, scale = TRUE, center = FALSE), by = .(gene_id, accession)]
 
   # Summary statistics to use for the rescaling replicates data
   gene_expression_stats <- unique(
@@ -72,7 +73,8 @@ scale_data <- function(mean_data, all_data) {
   )
 
   # Scale replicates data
-  all_data$expression_value <- (all_data$expression_value - all_data$mean_val) / all_data$sd_val
+  # all_data$expression_value <- (all_data$expression_value - all_data$mean_val) / all_data$sd_val
+  all_data$expression_value <- (all_data$expression_value) / all_data$sd_val
   all_data[, c("mean_val", "sd_val") := NULL]
 
   # Rename expression_value for mean data

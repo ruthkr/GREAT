@@ -121,6 +121,13 @@ plot_registration_results <- function(results,
       )
   }
 
+  # Fix legend order
+  gg_registered <- gg_registered +
+    ggplot2::scale_color_manual(
+      breaks = c(reference, query),
+      values = scales::hue_pal()(2)
+    )
+
   return(gg_registered)
 }
 

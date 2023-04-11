@@ -160,14 +160,16 @@ register <- function(input,
 
   # Left join registered time points
   setnames(all_data_reg, "timepoint", "timepoint_reg")
+  all_data[, timepoint_id := order(timepoint, expression_value), by = .(gene_id, accession, replicate)]
+  all_data_reg[, timepoint_id := order(timepoint_reg, expression_value), by = .(gene_id, accession, replicate)]
   all_data <- merge(
     all_data,
     all_data_reg,
-    by = c("gene_id", "accession", "expression_value", "replicate")
+    by = c("gene_id", "accession", "expression_value", "timepoint_id", "replicate")
   )
 
   # Restore original query and reference accession names
-  all_data[, c("time_delta") := NULL]
+  all_data[, c("time_delta", "timepoint_id") := NULL]
   all_data[, accession := factor(accession, levels = c("ref", "query"), labels = c(reference, query))][, .(gene_id, accession, timepoint, timepoint_reg, expression_value, replicate)]
 
   # Add accession values as data attributes

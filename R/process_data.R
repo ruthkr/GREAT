@@ -20,6 +20,9 @@ preprocess_data <- function(input, reference, query) {
   # Factor query and reference
   all_data[, accession := factor(accession, levels = c(reference, query), labels = c("ref", "query"))]
 
+  # Filter out not differentially expressed genes (sd == 0)
+  all_data <- get_diff_expressed_data(all_data)
+
   # Calculate time delta for each accession
   all_data[, time_delta := timepoint - min(timepoint), by = .(accession)]
 
@@ -36,6 +39,24 @@ preprocess_data <- function(input, reference, query) {
   )
 
   return(results_list)
+}
+
+#' Get differentially expressed data
+#'
+#' \code{get_diff_expressed_data()} is a function to filter out not differentially expressed genes.
+#'
+#' @param all_data Input data including all replicates.
+#'
+#' @noRd
+get_diff_expressed_data <- function(all_data) {
+  gene_sds <- all_data[, .(exp_sd = sd(expression_value)), by = .(gene_id, accession)]
+  discarded_genes <- unique(gene_sds[exp_sd <= 1e-16]$gene_id)
+  n_genes <- length(discarded_genes)
+  if (n_genes > 0) {
+    cli::cli_alert_warning("{n_genes} gene{?s} {?is/are} not differentially expressed, therefore discarded.")
+  }
+
+  return(all_data[!gene_id %in% discarded_genes])
 }
 
 #' Scale data

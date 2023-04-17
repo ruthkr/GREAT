@@ -74,38 +74,106 @@ scale_data <- function(mean_data, all_data) {
   expression_value <- NULL
   scaled_expression_value <- NULL
 
-  # Scale mean data
-  # mean_data[, scaled_expression_value := scale(expression_value, scale = TRUE, center = TRUE), by = .(gene_id, accession)]
-  mean_data[, scaled_expression_value := scale(expression_value, scale = TRUE, center = FALSE), by = .(gene_id, accession)]
+  scaling_method <- "original"
+  # scaling_method <- "ratio_gene"
+  # scaling_method <- "ratio_gene_accession"
+  # scaling_method <- "normalise"
 
-  # Summary statistics to use for the rescaling replicates data
-  gene_expression_stats <- unique(
-    mean_data[, .(
-      mean_val = mean(expression_value),
-      sd_val = stats::sd(expression_value)
-    ), by = .(gene_id, accession)]
-  )
 
-  # Left join gene_expression_stats to all_data
-  all_data <- merge(
-    all_data,
-    gene_expression_stats,
-    by = c("gene_id", "accession")
-  )
+  if (scaling_method == "original") {
+    # Scale mean data
+    mean_data[, scaled_expression_value := scale(expression_value, scale = TRUE, center = FALSE), by = .(gene_id, accession)]
 
-  # Scale replicates data
-  # all_data$expression_value <- (all_data$expression_value - all_data$mean_val) / all_data$sd_val
-  all_data$expression_value <- (all_data$expression_value) / all_data$sd_val
-  all_data[, c("mean_val", "sd_val") := NULL]
+    # Summary statistics to use for the rescaling replicates data
+    gene_expression_stats <- unique(
+      mean_data[, .(
+        mean_val = mean(expression_value),
+        sd_val = stats::sd(expression_value)
+      ), by = .(gene_id, accession)]
+    )
+
+    # Left join gene_expression_stats to all_data
+    all_data <- merge(
+      all_data,
+      gene_expression_stats,
+      by = c("gene_id", "accession")
+    )
+
+    # Scale replicates data
+    # all_data$expression_value <- (all_data$expression_value - all_data$mean_val) / all_data$sd_val
+    all_data$expression_value <- all_data$expression_value / all_data$sd_val
+    all_data[, c("mean_val", "sd_val") := NULL]
+  } else if (scaling_method == "ratio_gene") {
+    # Scale mean data
+    mean_data[, scaled_expression_value := scale(expression_value, scale = TRUE, center = FALSE), by = .(gene_id)]
+
+    # Summary statistics to use for the rescaling replicates data
+    gene_expression_stats <- mean_data[, .(
+      scaling = mean(scaled_expression_value / expression_value, na.rm = TRUE)
+    ),
+    by = .(gene_id)
+    ]
+
+    # Left join gene_expression_stats to all_data
+    all_data <- merge(
+      all_data,
+      gene_expression_stats,
+      by = c("gene_id")
+    )
+
+    # Scale replicates data
+    all_data$expression_value <- (all_data$expression_value) * all_data$scaling
+    all_data[, "scaling" := NULL]
+  } else if (scaling_method == "ratio_gene_accession") {
+    # Scale mean data
+    mean_data[, scaled_expression_value := scale(expression_value, scale = TRUE, center = FALSE), by = .(gene_id, accession)]
+
+    # Summary statistics to use for the rescaling replicates data
+    gene_expression_stats <- mean_data[, .(
+      scaling = mean(scaled_expression_value / expression_value, na.rm = TRUE)
+    ),
+    by = .(gene_id, accession)
+    ]
+
+    # Left join gene_expression_stats to all_data
+    all_data <- merge(
+      all_data,
+      gene_expression_stats,
+      by = c("gene_id", "accession")
+    )
+
+    # Scale replicates data
+    all_data$expression_value <- (all_data$expression_value) * all_data$scaling
+    all_data[, "scaling" := NULL]
+  } else if (scaling_method == "normalise") {
+    # Summary statistics to use for the rescaling replicates data
+    gene_expression_stats <- mean_data[, .(
+       min_expression_value = min(expression_value),
+       max_expression_value = max(expression_value)
+     ),
+     by = .(gene_id, accession)
+    ]
+
+    # Left join gene_expression_stats to all_data
+    all_data <- merge(
+      all_data,
+      gene_expression_stats,
+      by = c("gene_id", "accession")
+    )
+
+    # Scale replicates data
+    all_data$expression_value <- (all_data$expression_value - all_data$min_expression_value) / (all_data$max_expression_value - all_data$min_expression_value)
+    all_data[, c("min_expression_value", "max_expression_value") := NULL]
+  }
 
   # Rename expression_value for mean data
-  mean_data[, c("expression_value") := NULL]
-  data.table::setnames(mean_data, "scaled_expression_value", "expression_value")
+  # mean_data[, c("expression_value") := NULL]
+  # data.table::setnames(mean_data, "scaled_expression_value", "expression_value")
 
   # Results object
   results_list <- list(
-    all_data = all_data,
-    mean_data = mean_data
+    all_data = all_data
+    # mean_data = mean_data
   )
 
   return(results_list)

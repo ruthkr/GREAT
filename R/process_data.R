@@ -24,7 +24,7 @@ preprocess_data <- function(input, reference, query) {
   all_data <- get_diff_expressed_data(all_data)
 
   # Calculate time delta for each accession
-  all_data[, time_delta := timepoint - min(timepoint), by = .(accession)]
+  all_data[, time_delta := timepoint - min(timepoint), by = .(gene_id, accession)]
 
   # Get mean data
   mean_data <- data.table::copy(all_data)

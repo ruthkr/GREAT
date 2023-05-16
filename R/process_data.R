@@ -49,6 +49,13 @@ preprocess_data <- function(input, reference, query, scaling_method) {
 #'
 #' @noRd
 filter_unchanged_expressions <- function(all_data) {
+  # Suppress "no visible binding for global variable" note
+  gene_id <- NULL
+  accession <- NULL
+  expression_value <- NULL
+  sd <- NULL
+  exp_sd <- NULL
+
   # Calculate standard deviations
   gene_sds <- all_data[, .(exp_sd = sd(expression_value)), by = .(gene_id, accession)]
   discarded_genes <- unique(gene_sds[exp_sd <= 1e-16]$gene_id)

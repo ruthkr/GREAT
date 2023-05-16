@@ -49,6 +49,7 @@ register <- function(input,
   accession <- NULL
   timepoint <- NULL
   timepoint_reg <- NULL
+  timepoint_id <- NULL
   expression_value <- NULL
   replicate <- NULL
 

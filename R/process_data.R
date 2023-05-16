@@ -20,8 +20,8 @@ preprocess_data <- function(input, reference, query, scaling_method) {
   # Factor query and reference
   all_data[, accession := factor(accession, levels = c(reference, query), labels = c("ref", "query"))]
 
-  # Filter out not differentially expressed genes (sd == 0)
-  all_data <- get_diff_expressed_data(all_data)
+  # Filter genes that do not change expression over time (sd == 0)
+  all_data <- filter_unchanged_expressions(all_data)
 
   # Calculate time delta for each accession
   all_data[, time_delta := timepoint - min(timepoint), by = .(gene_id, accession)]
@@ -41,19 +41,20 @@ preprocess_data <- function(input, reference, query, scaling_method) {
   return(results_list)
 }
 
-#' Get differentially expressed data
+#' Filter genes that do not change over time
 #'
-#' \code{get_diff_expressed_data()} is a function to filter out not differentially expressed genes.
+#' \code{filter_unchanged_expressions()} is a function to filter out genes that do not change expression over time.
 #'
 #' @param all_data Input data including all replicates.
 #'
 #' @noRd
-get_diff_expressed_data <- function(all_data) {
+filter_unchanged_expressions <- function(all_data) {
+  # Calculate standard deviations
   gene_sds <- all_data[, .(exp_sd = sd(expression_value)), by = .(gene_id, accession)]
   discarded_genes <- unique(gene_sds[exp_sd <= 1e-16]$gene_id)
   n_genes <- length(discarded_genes)
   if (n_genes > 0) {
-    cli::cli_alert_warning("{n_genes} gene{?s} {?is/are} not differentially expressed, therefore discarded.")
+    cli::cli_alert_warning("{n_genes} gene{?s} {?does/do} not change over time, therefore {?it/they} will be discarded.")
   }
 
   return(all_data[!gene_id %in% discarded_genes])

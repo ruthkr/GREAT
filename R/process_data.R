@@ -6,7 +6,7 @@
 #' \item{Scales data via \code{\link{scale_data}}.}
 #'
 #' @noRd
-preprocess_data <- function(input, reference, query) {
+preprocess_data <- function(input, reference, query, scaling_method) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
@@ -31,7 +31,7 @@ preprocess_data <- function(input, reference, query) {
   mean_data <- unique(mean_data[, .(expression_value = mean(expression_value)), by = .(gene_id, accession, timepoint, time_delta)])
 
   # Scale data
-  scaled_data <- scale_data(mean_data, all_data)
+  scaled_data <- scale_data(mean_data, all_data, scaling_method)
 
   # Results object
   results_list <- list(
@@ -65,22 +65,20 @@ get_diff_expressed_data <- function(all_data) {
 #'
 #' @param mean_data Input data containing mean of each time point.
 #' @param all_data Input data including all replicates.
+#' @param scaling_method Scaling method applied to data prior to registration process. Either \code{scale} (default), or \code{normalise}.
 #'
 #' @noRd
-scale_data <- function(mean_data, all_data) {
+scale_data <- function(mean_data, all_data, scaling_method = c("scale", "normalise")) {
+  # Validate parameters
+  scaling_method <- match.arg(scaling_method)
+
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
   expression_value <- NULL
   scaled_expression_value <- NULL
 
-  scaling_method <- "original"
-  # scaling_method <- "ratio_gene"
-  # scaling_method <- "ratio_gene_accession"
-  # scaling_method <- "normalise"
-
-
-  if (scaling_method == "original") {
+  if (scaling_method == "scale") {
     # Scale mean data
     mean_data[, scaled_expression_value := scale(expression_value, scale = TRUE, center = FALSE), by = .(gene_id, accession)]
 
@@ -100,51 +98,8 @@ scale_data <- function(mean_data, all_data) {
     )
 
     # Scale replicates data
-    # all_data$expression_value <- (all_data$expression_value - all_data$mean_val) / all_data$sd_val
     all_data$expression_value <- all_data$expression_value / all_data$sd_val
     all_data[, c("mean_val", "sd_val") := NULL]
-  } else if (scaling_method == "ratio_gene") {
-    # Scale mean data
-    mean_data[, scaled_expression_value := scale(expression_value, scale = TRUE, center = FALSE), by = .(gene_id)]
-
-    # Summary statistics to use for the rescaling replicates data
-    gene_expression_stats <- mean_data[, .(
-      scaling = mean(scaled_expression_value / expression_value, na.rm = TRUE)
-    ),
-    by = .(gene_id)
-    ]
-
-    # Left join gene_expression_stats to all_data
-    all_data <- merge(
-      all_data,
-      gene_expression_stats,
-      by = c("gene_id")
-    )
-
-    # Scale replicates data
-    all_data$expression_value <- (all_data$expression_value) * all_data$scaling
-    all_data[, "scaling" := NULL]
-  } else if (scaling_method == "ratio_gene_accession") {
-    # Scale mean data
-    mean_data[, scaled_expression_value := scale(expression_value, scale = TRUE, center = FALSE), by = .(gene_id, accession)]
-
-    # Summary statistics to use for the rescaling replicates data
-    gene_expression_stats <- mean_data[, .(
-      scaling = mean(scaled_expression_value / expression_value, na.rm = TRUE)
-    ),
-    by = .(gene_id, accession)
-    ]
-
-    # Left join gene_expression_stats to all_data
-    all_data <- merge(
-      all_data,
-      gene_expression_stats,
-      by = c("gene_id", "accession")
-    )
-
-    # Scale replicates data
-    all_data$expression_value <- (all_data$expression_value) * all_data$scaling
-    all_data[, "scaling" := NULL]
   } else if (scaling_method == "normalise") {
     # Summary statistics to use for the rescaling replicates data
     gene_expression_stats <- mean_data[, .(
@@ -166,14 +121,9 @@ scale_data <- function(mean_data, all_data) {
     all_data[, c("min_expression_value", "max_expression_value") := NULL]
   }
 
-  # Rename expression_value for mean data
-  # mean_data[, c("expression_value") := NULL]
-  # data.table::setnames(mean_data, "scaled_expression_value", "expression_value")
-
   # Results object
   results_list <- list(
     all_data = all_data
-    # mean_data = mean_data
   )
 
   return(results_list)

@@ -10,9 +10,10 @@ register(
   shifts = NA,
   reference,
   query,
+  scaling_method = c("scale", "normalise"),
   overlapping_percent = 0.5,
   optimise_registration_parameters = TRUE,
-  optimisation_method = c("sa", "nm"),
+  optimisation_method = c("nm", "lbfgsb", "sa"),
   optimisation_config = NULL
 )
 }
@@ -27,11 +28,13 @@ register(
 
 \item{query}{Accession name of query data.}
 
+\item{scaling_method}{Scaling method applied to data prior to registration process. Either \code{scale} (default), or \code{normalise}.}
+
 \item{overlapping_percent}{Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.}
 
 \item{optimise_registration_parameters}{Whether to optimise registration parameters with Simulated Annealing. By default, \code{FALSE}.}
 
-\item{optimisation_method}{Optimisation method to use. Either \code{"sa"} for Simulated Annealing or \code{"nm"} for Nelder-Mead.}
+\item{optimisation_method}{Optimisation method to use. Either \code{"nm"} for Nelder-Mead (default), \code{"lbfgsb"} for L-BFGS-B, or \code{"sa"} for Simulated Annealing.}
 
 \item{optimisation_config}{Optional list with arguments to override the default optimisation configuration.}
 }

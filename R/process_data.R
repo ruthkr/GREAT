@@ -6,13 +6,16 @@
 #' \item{Scales data via \code{\link{scale_data}}.}
 #'
 #' @noRd
-preprocess_data <- function(input, reference, query, scaling_method) {
+preprocess_data <- function(input, reference, query, scaling_method = c("scale", "normalise")) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
   timepoint <- NULL
   expression_value <- NULL
   time_delta <- NULL
+
+  # Validate parameters
+  scaling_method <- match.arg(scaling_method)
 
   # Make sure the data are data.tables
   all_data <- data.table::as.data.table(input)

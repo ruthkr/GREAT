@@ -79,11 +79,13 @@ registration_results <- register(
   reference = "Ro18",
   query = "Col0"
 )
+#> ── Validating input data ────────────────────────────────────────────────────────
 #> ℹ Will process 10 genes.
-#>
+#> 
 #> ── Starting registration with optimisation ──────────────────────────────────────
+#> ℹ Using Nelder-Mead method.
 #> ℹ Using computed stretches and shifts search space limits.
-#> ✔ Optimising registration parameters for genes (10/10) [5m 14.8s]
+#> ✔ Optimising registration parameters for genes (10/10) [2.3s]
 ```
 
 ## Reference

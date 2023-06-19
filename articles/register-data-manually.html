@@ -146,10 +146,11 @@ registration process as follows:</p>
 <span>  shifts <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  optimise_registration_parameters <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; ── Validating input data ───────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ℹ Will process 1 gene.</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; ── Starting manual registration ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; ✔ Applying registration for genes (1/1) [58ms]</span></span></code></pre></div>
+<span><span class="co">#&gt; ✔ Applying registration for genes (1/1) [29ms]</span></span></code></pre></div>
 <p>To check whether the gene is registered or not, we can get the
 summary results by accessing the <code>model_comparison</code> table
 from the registration result.</p>
@@ -202,10 +203,11 @@ disable the automated optimisation process.</p>
 <span>  shifts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  optimise_registration_parameters <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; ── Validating input data ───────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ℹ Will process 10 genes.</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; ── Starting manual registration ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; ✔ Applying registration for genes (10/10) [42.9s]</span></span></code></pre></div>
+<span><span class="co">#&gt; ✔ Applying registration for genes (10/10) [15.8s]</span></span></code></pre></div>
 <p>The same as previous registration process, users can analyse further
 the registration result by following <a href="https://ruthkr.github.io/greatR/articles/visualise-results.html">visualising
 results</a> vignette.</p>

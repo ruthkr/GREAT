@@ -232,11 +232,13 @@ shift search space is automatically estimated.</p>
 <span>  reference <span class="op">=</span> <span class="st">"Ro18"</span>,</span>
 <span>  query <span class="op">=</span> <span class="st">"Col0"</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; ── Validating input data ────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ℹ Will process 10 genes.</span></span>
-<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── Starting registration with optimisation ──────────────────────────────────────</span></span>
+<span><span class="co">#&gt; ℹ Using Nelder-Mead method.</span></span>
 <span><span class="co">#&gt; ℹ Using computed stretches and shifts search space limits.</span></span>
-<span><span class="co">#&gt; ✔ Optimising registration parameters for genes (10/10) [5m 14.8s]</span></span></code></pre></div>
+<span><span class="co">#&gt; ✔ Optimising registration parameters for genes (10/10) [2.3s]</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="getting-the-registration-results">Getting the registration results<a class="anchor" aria-label="anchor" href="#getting-the-registration-results"></a>
@@ -264,12 +266,12 @@ from the registration result.</p>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="24%">
-<col width="18%">
-<col width="18%">
+<col width="22%">
+<col width="17%">
+<col width="17%">
 <col width="12%">
-<col width="10%">
-<col width="15%">
+<col width="14%">
+<col width="14%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">gene_id</th>
@@ -282,82 +284,82 @@ from the registration result.</p>
 <tbody>
 <tr class="odd">
 <td align="left">BRAA02G018970.3C</td>
-<td align="right">63.32350</td>
-<td align="right">51.13880</td>
-<td align="right">3.976667</td>
-<td align="right">-10.43</td>
+<td align="right">48.03687</td>
+<td align="right">40.36121</td>
+<td align="right">3.973246</td>
+<td align="right">-15.047106</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA02G043220.3C</td>
-<td align="right">75.26585</td>
-<td align="right">60.18643</td>
-<td align="right">2.586667</td>
-<td align="right">-2.35</td>
+<td align="right">59.00165</td>
+<td align="right">50.88363</td>
+<td align="right">3.826033</td>
+<td align="right">-11.495610</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA03G023790.3C</td>
-<td align="right">67.93601</td>
-<td align="right">52.34351</td>
-<td align="right">2.246667</td>
-<td align="right">4.10</td>
+<td align="right">52.95771</td>
+<td align="right">45.92210</td>
+<td align="right">1.664500</td>
+<td align="right">8.463653</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA03G051930.3C</td>
-<td align="right">71.61795</td>
-<td align="right">54.99435</td>
-<td align="right">2.766667</td>
-<td align="right">3.62</td>
+<td align="right">54.83773</td>
+<td align="right">47.03630</td>
+<td align="right">2.349747</td>
+<td align="right">5.664320</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA04G005470.3C</td>
-<td align="right">56.39401</td>
-<td align="right">38.74852</td>
-<td align="right">3.996667</td>
-<td align="right">-6.07</td>
+<td align="right">41.20168</td>
+<td align="right">32.84564</td>
+<td align="right">3.298411</td>
+<td align="right">-2.561531</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA05G005370.3C</td>
-<td align="right">67.02293</td>
-<td align="right">51.40222</td>
-<td align="right">2.276667</td>
-<td align="right">3.72</td>
+<td align="right">52.01824</td>
+<td align="right">44.35298</td>
+<td align="right">1.876649</td>
+<td align="right">6.580776</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA06G025360.3C</td>
-<td align="right">73.04597</td>
-<td align="right">56.89470</td>
-<td align="right">1.696667</td>
-<td align="right">5.57</td>
+<td align="right">57.69557</td>
+<td align="right">48.83989</td>
+<td align="right">3.170889</td>
+<td align="right">-5.140066</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA07G030470.3C</td>
-<td align="right">57.90358</td>
-<td align="right">42.55243</td>
-<td align="right">3.996667</td>
-<td align="right">-8.10</td>
+<td align="right">42.17333</td>
+<td align="right">34.12138</td>
+<td align="right">3.999999</td>
+<td align="right">-9.495934</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA07G034100.3C</td>
-<td align="right">57.33534</td>
-<td align="right">42.89697</td>
-<td align="right">3.996667</td>
-<td align="right">-8.38</td>
+<td align="right">41.83850</td>
+<td align="right">33.84178</td>
+<td align="right">3.999999</td>
+<td align="right">-10.460581</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA09G045310.3C</td>
-<td align="right">58.20512</td>
-<td align="right">40.05112</td>
-<td align="right">3.986667</td>
-<td align="right">-5.92</td>
+<td align="right">43.44362</td>
+<td align="right">35.07316</td>
+<td align="right">3.159727</td>
+<td align="right">-1.205799</td>
 <td align="left">TRUE</td>
 </tr>
 </tbody>

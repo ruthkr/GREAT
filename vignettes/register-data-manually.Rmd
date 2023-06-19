@@ -65,10 +65,11 @@ registration_results <- register(
   shifts = 4,
   optimise_registration_parameters = FALSE
 )
+#> ── Validating input data ───────────────────────────────────────────────────────
 #> ℹ Will process 1 gene.
 #>
 #> ── Starting manual registration ────────────────────────────────────────────────
-#> ✔ Applying registration for genes (1/1) [58ms]
+#> ✔ Applying registration for genes (1/1) [29ms]
 ```
 
 To check whether the gene is registered or not, we can get the summary results by accessing the `model_comparison` table from the registration result.
@@ -93,10 +94,11 @@ registration_results <- register(
   shifts = seq(0, 4, 0.1),
   optimise_registration_parameters = FALSE
 )
+#> ── Validating input data ───────────────────────────────────────────────────────
 #> ℹ Will process 10 genes.
 #>
 #> ── Starting manual registration ────────────────────────────────────────────────
-#> ✔ Applying registration for genes (10/10) [42.9s]
+#> ✔ Applying registration for genes (10/10) [15.8s]
 ```
 
 The same as previous registration process, users can analyse further the registration result by following [visualising results](https://ruthkr.github.io/greatR/articles/visualise-results.html) vignette.

@@ -6,12 +6,17 @@ gene_data <- brapa_sample_data[gene_id == "BRAA03G051930.3C"]
 # Preprocessing and intermediate functions ----
 
 test_that("preprocess_data works", {
-  processed_data <- preprocess_data(brapa_sample_data, reference, query)
+  processed_data <- preprocess_data(brapa_sample_data, reference, query, scaling_method = "scale")
+  processed_data_norm <- preprocess_data(brapa_sample_data, reference, query, scaling_method = "normalise")
   all_data <- processed_data$all_data
+  all_data_norm <- processed_data_norm$all_data
 
   # Expected outputs
-  expect_equal(class(processed_data$all_data)[1], "data.table")
   expect_equal(names(processed_data), "all_data")
+  expect_equal(names(processed_data_norm), "all_data")
+  expect_equal(class(all_data)[1], "data.table")
+  expect_equal(class(all_data_norm)[1], "data.table")
+  expect_gte(mean(all_data$expression_value), mean(all_data_norm$expression_value))
   expect_equal(colnames(all_data), c(colnames(brapa_sample_data), "time_delta"))
   expect_equal(levels(unique(all_data$accession)), c("ref", "query"))
   expect_equal(nrow(all_data), nrow(brapa_sample_data))

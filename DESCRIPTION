@@ -1,6 +1,6 @@
 Package: greatR
 Title: Gene Registration from Expression and Time-Courses in R
-Version: 0.2.0.9000
+Version: 1.0.0
 Authors@R:
     c(person(given = "Ruth",
            family = "Kristianingsih",

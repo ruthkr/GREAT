@@ -56,10 +56,10 @@ compare_H1_and_H2 <- function(data, stretch, shift, loglik_H1, loglik_H2) {
 
   model_comparison <- data.table::data.table(
     gene_id = unique(data$gene_id),
-    BIC_separate = BIC_H2,
-    BIC_combined = BIC_H1,
     stretch = stretch,
     shift = shift,
+    BIC_separate = BIC_H2,
+    BIC_combined = BIC_H1,
     registered = BIC_H2 > BIC_H1
   )
 

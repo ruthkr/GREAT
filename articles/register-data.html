@@ -15,8 +15,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="../deps/Lato-0.4.6/font.css" rel="stylesheet">
-<link href="../deps/Fira_Code-0.4.6/font.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="../deps/Lato-0.4.7/font.css" rel="stylesheet">
+<link href="../deps/Fira_Code-0.4.7/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
@@ -36,7 +36,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">greatR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,16 +96,16 @@
 
     
     
-<p>This article will show users on how to register data using the sample
-data provided within the package. Given an input data, users can
-directly register the data as illustrated below.</p>
+<p>This article will show users how to register data using the sample
+data provided by the package. Given an input data, users can directly
+register the data as illustrated below.</p>
 <p><br></p>
 <p><img src="figures/01_registration_opt_default.png" width="20%" style="display: block; margin: auto;"></p>
 <div class="section level2">
 <h2 id="loading-sample-data">Loading sample data<a class="anchor" aria-label="anchor" href="#loading-sample-data"></a>
 </h2>
 <p><code>greatR</code> package provides an example of data frame
-containing two different species <em>Arabidopsis</em> and <em>B.
+containing two different species <em>A. thaliana</em> and <em>B.
 rapa</em> with two and three different replicates, respectively. This
 data frame can be read as follows:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -223,9 +223,11 @@ package:</p>
 <p>To align gene expression time-course between <em>Arabidopsis</em>
 Col-0 and <em>B. rapa</em> Ro18, we can use function
 <code><a href="../reference/register.html">register()</a></code>. By default, the best registration parameters
-are optimised via Simulated Annealing. When using the default
+are optimised via Nelder-Mead (<code>optimisation_method = "nm"</code>).
+When using the default
 <code>optimise_registration_parameters = TRUE</code>, the stretch and
-shift search space is automatically estimated.</p>
+shift search space is automatically estimated. For more details on the
+other function paramaters, go to <code><a href="../reference/register.html">register()</a></code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/register.html">register</a></span><span class="op">(</span></span>
 <span>  <span class="va">b_rapa_data</span>,</span>
@@ -234,132 +236,135 @@ shift search space is automatically estimated.</p>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── Validating input data ────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ℹ Will process 10 genes.</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; ── Starting registration with optimisation ──────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ℹ Using Nelder-Mead method.</span></span>
 <span><span class="co">#&gt; ℹ Using computed stretches and shifts search space limits.</span></span>
 <span><span class="co">#&gt; ✔ Optimising registration parameters for genes (10/10) [2.3s]</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="getting-the-registration-results">Getting the registration results<a class="anchor" aria-label="anchor" href="#getting-the-registration-results"></a>
+<h2 id="registration-results">Registration results<a class="anchor" aria-label="anchor" href="#registration-results"></a>
 </h2>
-<p>Function <code><a href="../reference/register.html">register()</a></code> returns a list of two frames:</p>
+<p>The function <code><a href="../reference/register.html">register()</a></code> returns a list of two
+frames:</p>
 <ul>
 <li>
 <code>data</code> is a data frame containing the scaled expression
-data and an additional column which is a result of registered time
-points by applying registration parameters to the query data.</li>
+data and an additional <code>timepoint_reg</code> column which is a
+result of registered time points by applying the registration parameters
+to the query data.</li>
 <li>
-<code>model_comparison</code> is a data frame containing both the
+<code>model_comparison</code> is a data frame containing (a) the
+optimal stretch and shift for each <code>gene_id</code> and (b) the
 Bayesian Information Criterion (BIC) for the separate model
 (<code>BIC_separate</code>) and for the combined model
 (<code>BIC_combined</code>) after applying optimal registration
-parameters for each gene. If the value of <code>BIC_separate</code> &gt;
-<code>BIC_combined</code>, then expression dynamics between reference
+parameters for each gene. If the value of <code>BIC_combined</code> &lt;
+<code>BIC_separate</code>, then expression dynamics between reference
 and query data can be registered (<code>registered = TRUE</code>).</li>
 </ul>
-<p>To check whether the gene is registered or not, we can get the
-summary results by accessing the <code>model_comparison</code> table
-from the registration result.</p>
+<p>To check whether a gene is registered or not, we can get the summary
+results by accessing the <code>model_comparison</code> table from the
+registration result.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">registration_results</span><span class="op">$</span><span class="va">model_comparison</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="22%">
-<col width="17%">
-<col width="17%">
 <col width="12%">
 <col width="14%">
+<col width="17%">
+<col width="17%">
 <col width="14%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">gene_id</th>
-<th align="right">BIC_separate</th>
-<th align="right">BIC_combined</th>
 <th align="right">stretch</th>
 <th align="right">shift</th>
+<th align="right">BIC_separate</th>
+<th align="right">BIC_combined</th>
 <th align="left">registered</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">BRAA02G018970.3C</td>
-<td align="right">48.03687</td>
-<td align="right">40.36121</td>
 <td align="right">3.973246</td>
 <td align="right">-15.047106</td>
+<td align="right">48.03687</td>
+<td align="right">40.36121</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA02G043220.3C</td>
-<td align="right">59.00165</td>
-<td align="right">50.88363</td>
 <td align="right">3.826033</td>
 <td align="right">-11.495610</td>
+<td align="right">59.00165</td>
+<td align="right">50.88363</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA03G023790.3C</td>
-<td align="right">52.95771</td>
-<td align="right">45.92210</td>
 <td align="right">1.664500</td>
 <td align="right">8.463653</td>
+<td align="right">52.95771</td>
+<td align="right">45.92210</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA03G051930.3C</td>
-<td align="right">54.83773</td>
-<td align="right">47.03630</td>
 <td align="right">2.349747</td>
 <td align="right">5.664320</td>
+<td align="right">54.83773</td>
+<td align="right">47.03630</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA04G005470.3C</td>
-<td align="right">41.20168</td>
-<td align="right">32.84564</td>
 <td align="right">3.298411</td>
 <td align="right">-2.561531</td>
+<td align="right">41.20168</td>
+<td align="right">32.84564</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA05G005370.3C</td>
-<td align="right">52.01824</td>
-<td align="right">44.35298</td>
 <td align="right">1.876649</td>
 <td align="right">6.580776</td>
+<td align="right">52.01824</td>
+<td align="right">44.35298</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA06G025360.3C</td>
-<td align="right">57.69557</td>
-<td align="right">48.83989</td>
 <td align="right">3.170889</td>
 <td align="right">-5.140066</td>
+<td align="right">57.69557</td>
+<td align="right">48.83989</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA07G030470.3C</td>
-<td align="right">42.17333</td>
-<td align="right">34.12138</td>
 <td align="right">3.999999</td>
 <td align="right">-9.495934</td>
+<td align="right">42.17333</td>
+<td align="right">34.12138</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA07G034100.3C</td>
-<td align="right">41.83850</td>
-<td align="right">33.84178</td>
 <td align="right">3.999999</td>
 <td align="right">-10.460581</td>
+<td align="right">41.83850</td>
+<td align="right">33.84178</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA09G045310.3C</td>
-<td align="right">43.44362</td>
-<td align="right">35.07316</td>
 <td align="right">3.159727</td>
 <td align="right">-1.205799</td>
+<td align="right">43.44362</td>
+<td align="right">35.07316</td>
 <td align="left">TRUE</td>
 </tr>
 </tbody>

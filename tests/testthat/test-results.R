@@ -2,8 +2,8 @@ registration_results <- system.file("extdata/brapa_arabidopsis_registration.rds"
   readRDS()
 
 # Summary and visualisation ----
-test_that("summary_registration works", {
-  reg_summary <- summary_registration(registration_results)
+test_that("summarise_registration works", {
+  reg_summary <- summarise_registration(registration_results)
 
   # Expected outputs
   expect_equal(names(reg_summary), c("summary", "registered_genes", "non_registered_genes"))

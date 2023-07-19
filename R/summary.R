@@ -9,7 +9,7 @@
 #' \item{non_registered_genes}{vector of non-registered gene accessions.}
 #'
 #' @export
-summary_registration <- function(results) {
+summarise_registration <- function(results) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
 

@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-After running registration function `register()` as shown in the [Registering data](https://ruthkr.github.io/greatR/articles/register-data.html) article, users can summarise and visualise the results as illustrated in the figure below.
+After running the registration function `register()` as shown in the [Registering data](https://ruthkr.github.io/greatR/articles/register-data.html) article, users can summarise and visualise the results as illustrated in the figure below.
 
 <br>
 
@@ -24,7 +24,7 @@ knitr::include_graphics("figures/visualisation_process.png")
 
 ## Getting a summary from registration results
 
-The total number of registered and non-registered genes can be obtained by running function `summarise_registration()` with `registration_results` object as an input.
+The total number of registered and non-registered genes can be obtained by running the function `summarise_registration()` with `registration_results` object as an input.
 
 ```{r load-greatR, message=FALSE, include=FALSE}
 # Load the package
@@ -38,10 +38,10 @@ registration_results <- system.file("extdata/brapa_arabidopsis_registration.rds"
   readRDS()
 ```
 
-Function `summarise_registration()` returns a list which contains three different objects:
+The function `summarise_registration()` returns a list containing three different objects:
 
-- `summary` contains result summaries of the registration results,
-- `registered_genes` is vector of gene accessions or IDs which were successfully registered, and
+- `summary` is a data frame containing the summary of the registration results,
+- `registered_genes` is a vector of gene accessions or IDs which were successfully registered, and
 - `non_registered_genes` is a vector of non-registered gene accessions or IDs.
 
 ```{r get-summary-results}
@@ -64,7 +64,7 @@ reg_summary$non_registered_genes
 
 ## Plotting registration results
 
-Function `plot_registration_results()` allows users to plot registration results of the genes of interest.
+The function `plot_registration_results()` allows users to plot the registration results of the genes of interest.
 
 ```{r plot-results, fig.align='center', fig.height=8, fig.width=7, warning=FALSE}
 # Plot registration result
@@ -76,24 +76,26 @@ plot_registration_results(
 
 Notice that the plot includes a label indicating if the particular genes are registered or not registered, as well as the registration parameters in case the registration was successful.
 
+For more details on the other function paramaters, go to `plot_registration_results()`.
+
 ## Analysing similarity of expression profiles overtime before and after registering
 
 ### Calculate sample distance
 
-After registering the sample data, users can compare the overall similarity before and after registering using the function `calculate_distance()`.
+After registering the data, users can compare the overall similarity between datasets before and after registering using the function `calculate_distance()`.
 
 ```{r get-sample-distance}
 sample_distance <- calculate_distance(registration_results)
 ```
 
-Function `calculate_distance()` returns a list of two data frames:
+The function `calculate_distance()` returns a list of two data frames:
 
 - `registered` distance between scaled reference and query expressions using registered time points.
 - `original` distance between scaled reference and query expressions using original time points.
 
 ### Plot heatmap of sample distances
 
-Each of these data frames above can be visualised using the `plot_heatmap()` function.
+Each of these data frames above can be visualised using the `plot_heatmap()` function, by selecting either `type = "registered"` or `type = "original"`.
 
 ```{r plot-dist-original, fig.align='center', fig.height=5, fig.width=5, warning=FALSE}
 # Plot heatmap of mean expression profiles distance before registration process
@@ -112,4 +114,4 @@ plot_heatmap(
 )
 ```
 
-Notice that we use `match_timepoints = TRUE` to match registered query time points to reference time points.
+Notice that we use `match_timepoints = TRUE` to match the registered query time points to the reference time points.

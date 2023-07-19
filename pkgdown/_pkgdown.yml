@@ -21,7 +21,7 @@ reference:
 
 - title: Summarise and visualise registration results
   contents:
-  - summary_registration
+  - summarise_registration
   - calculate_distance
   - plot_registration_results
   - plot_heatmap

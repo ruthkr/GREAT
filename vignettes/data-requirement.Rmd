@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Input data required for `greatR` is a data frame that contains gene expression time-course data with all replicates. The illustrated diagram below shows the required `input`.
+The input data required for `greatR` is a data frame that contains gene expression time-course data with all replicates. The illustrated diagram below shows the required structure of the `input`.
 
 <br>
 
@@ -26,13 +26,13 @@ knitr::include_graphics("figures/all_data_illustration_new.png")
 
 This data frame must contain **reference** and **query** expression data which users wish to compare, and the following five columns:
 
-- `gene_id`: locus name or unique IDs of each gene.
+- `gene_id`: locus name or unique ID of each gene.
 - `accession`: accession or name of the reference and query data to compare.
 - `timepoint`: time points of the gene expression data.
-- `expression_value`: desired expression values or measure of the abundance of gene or transcripts which users wish to compare. This value can be RPM, RPKM, FPKM, TPM, TMM, DESeq, SCnorm, GeTMM, ComBat-Seq and raw reads counts.
-- `replicate`: biological replicate IDs for an expression value at a particular time point.
+- `expression_value`: desired expression values or measure of the abundance of gene or transcripts which users wish to compare. This value can be RPM, RPKM, FPKM, TPM, TMM, DESeq, SCnorm, GeTMM, ComBat-Seq, and raw reads counts.
+- `replicate`: biological replicate ID for an expression value at a particular time point.
 
-Below we can see an example of how this `input` data should look like:
+Below we can see a real example of how the `input` data should look like:
 
 ```{r brapa-data-kable, echo=FALSE}
 # Load a data frame from the sample data

@@ -14,11 +14,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-This article will show users on how to register data using some pre-defined shift and stretch parameters. This demo will use one of the gene from provided sample in the package. Users can check whether using shift and stretch values they provided, their sample data can be registered.
+This article will show users how to register data using some pre-defined shift and stretch parameters. This demo will use one of the genes from the sample data provided by the package. Users can check whether their sample data can be registered using the manually specified shift and stretch values.
 
 ## Load sample data
 
-`greatR` package provides an example of data frame containing two different species *Arabidopsis* and *B. rapa* with two and three different replicates, respectively. This data frame can be read as follows:
+`greatR` package provides an example of data frame containing two different species *A. thaliana* and *B. rapa* with two and three different replicates, respectively. This data frame can be read as follows:
 
 ```{r load-greatR, message=FALSE}
 # Load the package
@@ -34,13 +34,13 @@ b_rapa_data <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", packa
 
 ## Registering single gene
 
-Here, we will only use a single gene *BRAA03G023790.3C* from sample data.
+Here, we will only use a single gene with `gene_id = "BRAA03G023790.3C"` from the sample data.
 
 ```{r get-subset-data, message=FALSE, warning=FALSE}
 gene_BRAA03G023790.3C_data <- b_rapa_data[gene_id == "BRAA03G023790.3C"]
 ```
 
-Before registering, we can use the helper function `get_approximate_stretch()` to approximate the stretch factor between our sample data as shown in figure below.
+Before registering, we can use the helper function `get_approximate_stretch()` to approximate the stretch factor between our sample datasets as shown in the figure below.
 
 ```{r reg-data-manual, echo=FALSE, fig.align='center', out.width='75%'}
 knitr::include_graphics("figures/02_registration_without_opt.png")
@@ -54,7 +54,7 @@ get_approximate_stretch(
 )
 ```
 
-We can now use the estimated stretch calculated above to the registration process as follows:
+We can now use the estimated stretch calculated above in the registration process below. Users need to set `optimise_registration_parameters = FALSE` to disable the automated optimisation process.
 
 ```{r register-subset-data, message=FALSE, warning=FALSE}
 registration_results <- register(
@@ -79,7 +79,7 @@ registration_results$model_comparison |>
   knitr::kable()
 ```
 
-Using given above stretch and shift parameter, one of the *B. rapa* gene *BRAA03G023790.3C*  can be registered.
+As we can see, using the given stretch and shift parameter above, the *B. rapa* gene *BRAA03G023790.3C* can be registered.
 
 ## Registering multiple gene with different pre-defined registration parameters
 
@@ -101,4 +101,4 @@ registration_results <- register(
 #> ✔ Applying registration for genes (10/10) [15.8s]
 ```
 
-The same as previous registration process, users can analyse further the registration result by following [visualising results](https://ruthkr.github.io/greatR/articles/visualise-results.html) vignette.
+Similar to the previous registration process, users can analyse further the registration result by following the [visualising results](https://ruthkr.github.io/greatR/articles/visualise-results.html) vignette.

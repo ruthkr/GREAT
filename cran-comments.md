@@ -1,6 +1,6 @@
 ## Test environments
 
-* Local installation (macOS BigSur 11.6.5): 4.1.3
+* Local installation (macOS Ventura 13.4.1): 4.3.1
 * GitHub actions (ubuntu-latest): oldrel-1, release, devel
 * GitHub actions (windows-latest): release
 * Github actions (macOS-latest): release

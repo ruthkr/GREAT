@@ -1,3 +1,37 @@
+# greatR 1.0.0
+
+* Rewrote registration pipeline from scratch, deprecating unnecessary, and redundant auxiliary functions.
+* Added L-BFGS-B and Nelder-Mead (now default) optimisation methods to {greatR}.
+* Switched to manual calculation of log likelihood via `calc_loglik()` instead of `stats::logLik()`.
+* Reduced computation time up to 1000 times, (x30 speed-up from package rewrite, and x35 speed-up from switching default optimisation method).
+* Removed {dplyr}, {magrittr}, {purrr}, {rlang}, and {stringr} as package dependencies.
+* Added {neldermead} as a package depedency.
+* Updated list of exported functions:
+  * `register()`
+  * `summarise_registration()`
+  * `get_approximate_stretch()`
+  * `plot_registration_results()`
+  * `plot_heatmap()`
+  * `calculate_distance()`
+
+## Improvements
+
+* Simplified parameters of main `register()` function, and added `scaling_method`.
+* Simplified structure of output object of `register()`.
+* Simplfied parameters of `summarise_registration()`, `plot_registration_results()`, `plot_heatmap()`, `calculate_distance()` to simply require `results` object from `register()`, vastly simplifing usage.
+* Improved messages, errors, and progress indicators with {cli}.
+* Added correct pluralisation in {cli} messages.
+* Rewrote unit tests to use {data.table} exclusively for data manipulation.
+* Added unit tests for `calc_loglik_H1()`, `calc_loglik_H2()`, `calc_overlapping_percent()`, `calculate_distance()`, `cross_join()`, `get_search_space_limits_from_params()`, `get_search_space_limits()`, `objective_fun()`, `optimise()`, `plot_heatmap()`, `plot_registration_results()`, `preprocess_data()`, `register_manually()`, `register()`, `summary_registration()`, `validate_params()`.
+
+## Bug fixes
+
+* Fixed `match_names()` call when validating accession names in `register()`
+* Fixed use of deprecated `aes_string()` by parsing `timepoint_var` using `!!ggplot2::sym()` call.
+* Fixed `preds` left join in `plot_registration_results()`.
+* Fixed issue in `plot_registration_results()` not working when all genes are unregistered with `type = "registered"`.
+* Fixed calculation of `time_delta` in `preprocess_data()` to ensure it's grouped by `gene_id` and `accession` (not just `accession`).
+
 # greatR 0.2.0
 
 * Added Alex Calderwood as package co-author.

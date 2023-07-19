@@ -84,13 +84,7 @@ To check whether a gene is registered or not, we can get the summary results by 
 registration_results <- system.file("extdata/brapa_arabidopsis_registration.rds", package = "greatR") |>
   readRDS()
 
-registration_results$model_comparison <- registration_results$model_comparison |>
-  dplyr::select(
-    gene_id,
-    stretch,
-    shift,
-    dplyr::everything()
-  )
+registration_results$model_comparison <- registration_results$model_comparison[, .(gene_id, stretch, shift, BIC_separate, BIC_combined, registered)]
 ```
 
 ```{r get-model-summary-data, warning=FALSE}

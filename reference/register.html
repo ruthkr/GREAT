@@ -12,7 +12,7 @@ wishes to compare."><meta property="og:image" content="https://ruthkr.github.io/
     
     <a class="navbar-brand me-2" href="../index.html">greatR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,7 @@ wishes to compare.</p>
 <span>  shifts <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  <span class="va">reference</span>,</span>
 <span>  <span class="va">query</span>,</span>
-<span>  scaling_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"scale"</span>, <span class="st">"normalise"</span><span class="op">)</span>,</span>
+<span>  scaling_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"z-score"</span>, <span class="st">"min-max"</span><span class="op">)</span>,</span>
 <span>  overlapping_percent <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  optimise_registration_parameters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  optimisation_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nm"</span>, <span class="st">"lbfgsb"</span>, <span class="st">"sa"</span><span class="op">)</span>,</span>
@@ -103,7 +103,7 @@ wishes to compare.</p>
 
 
 <dt>scaling_method</dt>
-<dd><p>Scaling method applied to data prior to registration process. Either <code>scale</code> (default), or <code>normalise</code>.</p></dd>
+<dd><p>Scaling method applied to data prior to registration process. Either <code>none</code> (default), <code>z-score</code>, or <code>min-max</code>.</p></dd>
 
 
 <dt>overlapping_percent</dt>
@@ -111,7 +111,7 @@ wishes to compare.</p>
 
 
 <dt>optimise_registration_parameters</dt>
-<dd><p>Whether to optimise registration parameters with Simulated Annealing. By default, <code>TRUE</code>.</p></dd>
+<dd><p>Whether to optimise registration parameters. By default, <code>TRUE</code>.</p></dd>
 
 
 <dt>optimisation_method</dt>

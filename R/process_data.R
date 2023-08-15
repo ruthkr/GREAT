@@ -6,7 +6,7 @@
 #' \item{Scales data via \code{\link{scale_data}}.}
 #'
 #' @noRd
-preprocess_data <- function(input, reference, query, scaling_method = c("scale", "normalise")) {
+preprocess_data <- function(input, reference, query, scaling_method = c("none", "z-score", "min-max")) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
@@ -79,7 +79,7 @@ filter_unchanged_expressions <- function(all_data) {
 #' @param scaling_method Scaling method applied to data prior to registration process. Either \code{scale} (default), or \code{normalise}.
 #'
 #' @noRd
-scale_data <- function(mean_data, all_data, scaling_method = c("scale", "normalise")) {
+scale_data <- function(mean_data, all_data, scaling_method = c("none", "z-score", "min-max")) {
   # Validate parameters
   scaling_method <- match.arg(scaling_method)
 
@@ -89,47 +89,26 @@ scale_data <- function(mean_data, all_data, scaling_method = c("scale", "normali
   expression_value <- NULL
   scaled_expression_value <- NULL
 
-  if (scaling_method == "scale") {
-    # Scale mean data
-    mean_data[, scaled_expression_value := scale(expression_value, scale = TRUE, center = FALSE), by = .(gene_id, accession)]
-
-    # Summary statistics to use for the rescaling replicates data
-    gene_expression_stats <- unique(
-      mean_data[, .(
-        mean_val = mean(expression_value),
-        sd_val = stats::sd(expression_value)
-      ), by = .(gene_id, accession)]
-    )
-
-    # Left join gene_expression_stats to all_data
-    all_data <- merge(
-      all_data,
-      gene_expression_stats,
-      by = c("gene_id", "accession")
-    )
-
-    # Scale replicates data
-    all_data$expression_value <- all_data$expression_value / all_data$sd_val
-    all_data[, c("mean_val", "sd_val") := NULL]
-  } else if (scaling_method == "normalise") {
-    # Summary statistics to use for the rescaling replicates data
-    gene_expression_stats <- mean_data[, .(
-       min_expression_value = min(expression_value),
-       max_expression_value = max(expression_value)
-     ),
-     by = .(gene_id, accession)
+  if (scaling_method == "z-score") {
+    # Calculate mean and standard deviation of expression in all_data by accession
+    all_data[,
+      c("mean_val", "sd_val") := .(mean(expression_value), stats::sd(expression_value)),
+      by = .(gene_id, accession)
     ]
 
-    # Left join gene_expression_stats to all_data
-    all_data <- merge(
-      all_data,
-      gene_expression_stats,
-      by = c("gene_id", "accession")
-    )
+    # Scale replicates data
+    all_data$expression_value <- (all_data$expression_value - all_data$mean_val) / all_data$sd_val
+    all_data[, c("mean_val", "sd_val") := NULL]
+  } else if (scaling_method == "min-max") {
+    # Calculate minimum and maximum of expression in all_data by accession
+    all_data[,
+      c("min_val", "max_val") := .(min(expression_value), max(expression_value)),
+      by = .(gene_id, accession)
+    ]
 
     # Scale replicates data
-    all_data$expression_value <- (all_data$expression_value - all_data$min_expression_value) / (all_data$max_expression_value - all_data$min_expression_value)
-    all_data[, c("min_expression_value", "max_expression_value") := NULL]
+    all_data$expression_value <- (all_data$expression_value - all_data$min_val) / (all_data$max_val - all_data$min_val)
+    all_data[, c("min_val", "max_val") := NULL]
   }
 
   # Results object

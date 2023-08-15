@@ -8,7 +8,7 @@
 #' @param shifts Candidate registration shift values to apply to query data, only required if \code{optimise_registration_parameters = FALSE}.
 #' @param reference Accession name of reference data.
 #' @param query Accession name of query data.
-#' @param scaling_method Scaling method applied to data prior to registration process. Either \code{scale} (default), or \code{normalise}.
+#' @param scaling_method Scaling method applied to data prior to registration process. Either \code{none} (default), \code{z-score}, or \code{min-max}.
 #' @param overlapping_percent Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
 #' @param optimise_registration_parameters Whether to optimise registration parameters with Simulated Annealing. By default, \code{TRUE}.
 #' @param optimisation_method Optimisation method to use. Either \code{"nm"} for Nelder-Mead (default), \code{"lbfgsb"} for L-BFGS-B, or \code{"sa"} for Simulated Annealing.
@@ -39,7 +39,7 @@ register <- function(input,
                      shifts = NA,
                      reference,
                      query,
-                     scaling_method = c("scale", "normalise"),
+                     scaling_method = c("none", "z-score", "min-max"),
                      overlapping_percent = 0.5,
                      optimise_registration_parameters = TRUE,
                      optimisation_method = c("nm", "lbfgsb", "sa"),

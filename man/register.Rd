@@ -10,7 +10,7 @@ register(
   shifts = NA,
   reference,
   query,
-  scaling_method = c("scale", "normalise"),
+  scaling_method = c("none", "z-score", "min-max"),
   overlapping_percent = 0.5,
   optimise_registration_parameters = TRUE,
   optimisation_method = c("nm", "lbfgsb", "sa"),
@@ -28,7 +28,7 @@ register(
 
 \item{query}{Accession name of query data.}
 
-\item{scaling_method}{Scaling method applied to data prior to registration process. Either \code{scale} (default), or \code{normalise}.}
+\item{scaling_method}{Scaling method applied to data prior to registration process. Either \code{none} (default), \code{z-score}, or \code{min-max}.}
 
 \item{overlapping_percent}{Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.}
 

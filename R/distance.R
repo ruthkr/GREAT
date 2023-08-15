@@ -68,10 +68,21 @@ get_timepoint_comb_original_data <- function(data_ref, data_query) {
   exp_query <- NULL
 
   # Perform cross join
-  comb <- cross_join(
-    unique(data_ref[, .(gene_ref = gene_id, timepoint_ref = timepoint, exp_ref = expression_value)]),
-    unique(data_query[, .(gene_query = gene_id, timepoint_query = timepoint, exp_query = expression_value)])
-  )[gene_ref == gene_query]
+  genes <- unique(data_query$gene_id)
+
+  comb <- lapply(
+    genes,
+    function(gene) {
+      comb_gene <- cross_join(
+        unique(data_ref[data_ref$gene_id == gene][, .(gene_ref = gene_id, timepoint_ref = timepoint, exp_ref = expression_value)]),
+        unique(data_query[data_query$gene_id == gene][, .(gene_query = gene_id, timepoint_query = timepoint, exp_query = expression_value)])
+      )
+
+      return(comb_gene)
+    }
+  )
+
+  comb <- data.table::rbindlist(comb)
 
   # Select relevant columns
   comb <- comb[, .(gene_id = gene_ref, timepoint_ref, timepoint_query, exp_ref, exp_query)]
@@ -107,13 +118,23 @@ get_timepoint_comb_registered_data <- function(data_ref, data_query) {
   )
 
   # Perform cross join
-  comb <- cross_join(
-    unique(data_ref[, .(gene_ref = gene_id, timepoint_ref = timepoint, exp_ref = expression_value)]),
-    imputed_query_timepoints
-  )[gene_ref == gene_query]
+  genes <- unique(data_query$gene_id)
+
+  comb <- lapply(
+    genes,
+    function(gene) {
+      comb_gene <- cross_join(
+        unique(data_ref[data_ref$gene_id == gene][, .(gene_ref = gene_id, timepoint_ref = timepoint, exp_ref = expression_value)]),
+        imputed_query_timepoints[imputed_query_timepoints$gene_query == gene]
+      )
+
+      return(comb_gene)
+    }
+  )
+
+  comb <- data.table::rbindlist(comb)
 
   # Fit using cubic splines with K+3 params for each gene
-  genes <- unique(data_query$gene_id)
   fits <- lapply(
     genes,
     function(gene) {

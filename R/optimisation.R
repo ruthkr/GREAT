@@ -1,4 +1,4 @@
-#' Optimise registration parameters with Simulated Annealing
+#' Optimise registration parameters
 #'
 #' @param data Input data frame containing all replicates of gene expression for a single genotype at each time point.
 #' @param overlapping_percent Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
@@ -30,7 +30,7 @@ optimise <- function(data,
   return(optimised_params)
 }
 
-#' Objective loss function for Simulated Annealing
+#' Objective loss function
 #'
 #' @noRd
 objective_fun <- function(data, stretch, shift, overlapping_percent, maximize = TRUE) {
@@ -56,7 +56,7 @@ objective_fun <- function(data, stretch, shift, overlapping_percent, maximize = 
   )
 }
 
-#' Calculate limits of the search space for Simulated Annealing
+#' Calculate limits of the search space
 #'
 #' @noRd
 get_search_space_limits <- function(data, overlapping_percent = 0.5) {
@@ -105,7 +105,7 @@ get_search_space_limits <- function(data, overlapping_percent = 0.5) {
   return(results_list)
 }
 
-#' Calculate limits of the search space for Simulated Annealing from provided registration parameters
+#' Calculate limits of the search space from provided registration parameters
 #'
 #' @noRd
 get_search_space_limits_from_params <- function(stretches, shifts) {
@@ -230,7 +230,7 @@ optimise_using_nm <- function(data,
   shift_lower <- space_lims$shift_lower
   shift_upper <- space_lims$shift_upper
 
-  # Define data as it object required by optim::sa()
+  # Define data structure required by {neldermead}
   fmsfundata <- structure(
     list(data = data),
     class = "optimbase.functionargs"

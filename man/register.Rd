@@ -32,7 +32,7 @@ register(
 
 \item{overlapping_percent}{Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.}
 
-\item{optimise_registration_parameters}{Whether to optimise registration parameters with Simulated Annealing. By default, \code{TRUE}.}
+\item{optimise_registration_parameters}{Whether to optimise registration parameters. By default, \code{TRUE}.}
 
 \item{optimisation_method}{Optimisation method to use. Either \code{"nm"} for Nelder-Mead (default), \code{"lbfgsb"} for L-BFGS-B, or \code{"sa"} for Simulated Annealing.}
 

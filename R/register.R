@@ -10,7 +10,7 @@
 #' @param query Accession name of query data.
 #' @param scaling_method Scaling method applied to data prior to registration process. Either \code{none} (default), \code{z-score}, or \code{min-max}.
 #' @param overlapping_percent Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
-#' @param optimise_registration_parameters Whether to optimise registration parameters with Simulated Annealing. By default, \code{TRUE}.
+#' @param optimise_registration_parameters Whether to optimise registration parameters. By default, \code{TRUE}.
 #' @param optimisation_method Optimisation method to use. Either \code{"nm"} for Nelder-Mead (default), \code{"lbfgsb"} for L-BFGS-B, or \code{"sa"} for Simulated Annealing.
 #' @param optimisation_config Optional list with arguments to override the default optimisation configuration.
 #'

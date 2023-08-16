@@ -57,6 +57,19 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="greatr-development-version">greatR (development version)<a class="anchor" aria-label="anchor" href="#greatr-development-version"></a></h2>
+<div class="section level3">
+<h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
+<ul><li>Updated <code>scaling_method</code> parameter in <code>scale_data()</code> to allow no scaling (“none”, default), Z-score scaling (“z-score”), and min-max scaling (“min-max”).</li>
+<li>Improved <code>get_timepoint_comb_original_data()</code> and <code>get_timepoint_comb_registered_data()</code> to perform <code>cross_join()</code> on a single <code>gene_id</code> at a time using <code><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply()</a></code>, this fixes “Error: vector memory exhausted (limit reached?)” error.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-functions-development-version">New functions<a class="anchor" aria-label="anchor" href="#new-functions-development-version"></a></h3>
+<ul><li>
+<code>filter_incomplete_accession_pairs()</code> to filter out genes that are missing one accession.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.0" id="greatr-100">greatR 1.0.0<a class="anchor" aria-label="anchor" href="#greatr-100"></a></h2><p class="text-muted">CRAN release: 2023-07-19</p>
 <ul><li>Rewrote registration pipeline from scratch, deprecating unnecessary, and redundant auxiliary functions.</li>
 <li>Added L-BFGS-B and Nelder-Mead (now default) optimisation methods to {greatR}.</li>

@@ -1,3 +1,14 @@
+# greatR (development version)
+
+## Improvements
+
+* Updated `scaling_method` parameter in `scale_data()` to allow no scaling ("none", default), Z-score scaling ("z-score"), and min-max scaling ("min-max").
+* Improved `get_timepoint_comb_original_data()` and `get_timepoint_comb_registered_data()` to perform `cross_join()` on a single `gene_id` at a time using `lapply()`, this fixes "Error: vector memory exhausted (limit reached?)" error.
+
+## New functions
+
+* `filter_incomplete_accession_pairs()` to filter out genes that are missing one accession.
+
 # greatR 1.0.0
 
 * Rewrote registration pipeline from scratch, deprecating unnecessary, and redundant auxiliary functions.

@@ -23,6 +23,9 @@ preprocess_data <- function(input, reference, query, scaling_method = c("none", 
   # Factor query and reference
   all_data[, accession := factor(accession, levels = c(reference, query), labels = c("ref", "query"))]
 
+  # Filter genes that are missing one accession
+  all_data <- filter_incomplete_accession_pairs(all_data)
+
   # Filter genes that do not change expression over time (sd == 0)
   all_data <- filter_unchanged_expressions(all_data)
 
@@ -42,6 +45,30 @@ preprocess_data <- function(input, reference, query, scaling_method = c("none", 
   )
 
   return(results_list)
+}
+
+#' Filter genes that are missing one accession
+#'
+#' \code{filter_incomplete_accession_pairs()} is a function to filter out genes that are missing one accession.
+#'
+#' @param all_data Input data including all replicates.
+#'
+#' @noRd
+filter_incomplete_accession_pairs <- function(all_data) {
+  # Suppress "no visible binding for global variable" note
+  gene_id <- NULL
+  count <- NULL
+
+  # Detect genes with only one accession
+  accession_counts <- unique(all_data, by = c("gene_id", "accession"))[, .(count = .N), by = .(gene_id)]
+  discarded_genes <- accession_counts[accession_counts$count == 1]$gene_id
+
+  n_genes <- length(discarded_genes)
+  if (n_genes > 0) {
+    cli::cli_alert_warning("{n_genes} gene{?s} only {?has/have} data with one accession, therefore {?it/they} will be discarded.")
+  }
+
+  return(all_data[!gene_id %in% discarded_genes])
 }
 
 #' Filter genes that do not change over time

@@ -7,7 +7,7 @@
 #'
 #' @noRd
 match_names <- function(x, lookup, error = NULL, name_string = "names", lookup_vec_last = " and ") {
-  unmatched <- setdiff(x, lookup)
+  unmatched <- c(setdiff(x, lookup), setdiff(lookup, x))
   if (length(unmatched) > 0) {
     stop(
       cli::format_error(c(

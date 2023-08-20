@@ -19,6 +19,7 @@ test_that("match_names works", {
 
   # Expected outputs
   expect_error(match_names(x = a, lookup = b))
+  expect_error(match_names(x = a[1:2], lookup = a))
   expect_no_error(match_names(x = a, lookup = a))
 })
 

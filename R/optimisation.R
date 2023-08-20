@@ -303,7 +303,6 @@ optimise_using_lbfgsb <- function(data,
                                   optimisation_config = NULL,
                                   overlapping_percent,
                                   space_lims) {
-
   # Parse initial and limit parameters
   stretch_init <- space_lims$stretch_init
   shift_init <- space_lims$shift_init
@@ -346,5 +345,3 @@ optimise_using_lbfgsb <- function(data,
 
   return(params_list)
 }
-
-

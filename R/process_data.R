@@ -39,12 +39,7 @@ preprocess_data <- function(input, reference, query, scaling_method = c("none", 
   # Scale data
   scaled_data <- scale_data(mean_data, all_data, scaling_method)
 
-  # Results object
-  results_list <- list(
-    all_data = scaled_data$all_data
-  )
-
-  return(results_list)
+  return(scaled_data)
 }
 
 #' Filter genes that are missing one accession
@@ -138,10 +133,5 @@ scale_data <- function(mean_data, all_data, scaling_method = c("none", "z-score"
     all_data[, c("min_val", "max_val") := NULL]
   }
 
-  # Results object
-  results_list <- list(
-    all_data = all_data
-  )
-
-  return(results_list)
+  return(all_data)
 }

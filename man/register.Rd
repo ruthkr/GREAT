@@ -14,7 +14,8 @@ register(
   overlapping_percent = 0.5,
   optimise_registration_parameters = TRUE,
   optimisation_method = c("nm", "lbfgsb", "sa"),
-  optimisation_config = NULL
+  optimisation_config = NULL,
+  exp_sd = NA
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ register(
 \item{optimisation_method}{Optimisation method to use. Either \code{"nm"} for Nelder-Mead (default), \code{"lbfgsb"} for L-BFGS-B, or \code{"sa"} for Simulated Annealing.}
 
 \item{optimisation_config}{Optional list with arguments to override the default optimisation configuration.}
+
+\item{exp_sd}{Optional experimental standard deviation on the expression replicates.}
 }
 \value{
 This function returns a list of data frames, containing:

@@ -6,7 +6,7 @@
 #' \item{Scales data via \code{\link{scale_data}}.}
 #'
 #' @noRd
-preprocess_data <- function(input, reference, query, scaling_method = c("none", "z-score", "min-max")) {
+preprocess_data <- function(input, reference, query, exp_sd = NA, scaling_method = c("none", "z-score", "min-max")) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
@@ -38,6 +38,9 @@ preprocess_data <- function(input, reference, query, scaling_method = c("none", 
 
   # Scale data
   scaled_data <- scale_data(mean_data, all_data, scaling_method)
+
+  # Calculate expression variance
+  scaled_data <- calc_variance(scaled_data, exp_sd)
 
   return(scaled_data)
 }

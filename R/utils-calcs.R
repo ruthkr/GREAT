@@ -9,14 +9,22 @@ calc_BIC <- function(logL, num_params, num_obs) {
 #'
 #' @noRd
 calc_loglik <- function(model, data) {
-  y <- data$expression_value
-  n <- length(y)
-  preds <- stats::predict(model, newdata = data)
-  dist_squared <- sum((preds - y)^2)
-  sigma_squared <- sum((y - mean(y))^2, na.rm = TRUE) / (n - 1)
+  # Suppress "no visible binding for global variable" note
+  expression_value <- NULL
+  pred_expression_value <- NULL
+
+  data <- data.table::copy(data)
+
+  # Predict expressions
+  data[, pred_expression_value := stats::predict(model, newdata = data)]
 
   # Calculate logLik
-  loglik <- -dist_squared / (2 * sigma_squared)
+  data[, dist_squared := (pred_expression_value - expression_value)^2]
+
+  dist_squared <- data$dist_squared
+  sigma_squared <- data$var
+
+  loglik <- -sum(dist_squared / (2 * sigma_squared))
 
   return(loglik)
 }
@@ -38,4 +46,28 @@ fit_spline_model <- function(data, x = "timepoint", num_spline_params = 4, degre
   )
 
   return(fit_object)
+}
+
+#' Calculate variance for the observed expression data
+#'
+#' @noRd
+calc_variance <- function(all_data, exp_sd = NA) {
+  # Suppress "no visible binding for global variable" note
+  gene_id <- NULL
+  accession <- NULL
+  expression_value <- NULL
+  var <- NULL
+
+  if (any(is.na(exp_sd))) {
+    # TODO: notify user
+    # Calculate expression variance for replicates
+    # all_data[, var := sd(expression_value)^2, by = .(gene_id, accession, timepoint)]
+
+    # Calculate global expression variance
+    all_data[, var := (diff(range(expression_value)) / 10)^2, by = .(gene_id, accession)]
+  } else {
+    all_data[, var := exp_sd^2]
+  }
+
+  return(all_data)
 }

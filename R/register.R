@@ -13,6 +13,7 @@
 #' @param optimise_registration_parameters Whether to optimise registration parameters. By default, \code{TRUE}.
 #' @param optimisation_method Optimisation method to use. Either \code{"nm"} for Nelder-Mead (default), \code{"lbfgsb"} for L-BFGS-B, or \code{"sa"} for Simulated Annealing.
 #' @param optimisation_config Optional list with arguments to override the default optimisation configuration.
+#' @param exp_sd Optional experimental standard deviation on the expression replicates.
 #'
 #' @return This function returns a list of data frames, containing:
 #'
@@ -43,7 +44,8 @@ register <- function(input,
                      overlapping_percent = 0.5,
                      optimise_registration_parameters = TRUE,
                      optimisation_method = c("nm", "lbfgsb", "sa"),
-                     optimisation_config = NULL) {
+                     optimisation_config = NULL,
+                     exp_sd = NA) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
@@ -71,7 +73,7 @@ register <- function(input,
   )
 
   # Preprocess data
-  all_data <- preprocess_data(input, reference, query, scaling_method)
+  all_data <- preprocess_data(input, reference, query, exp_sd, scaling_method)
   gene_id_list <- unique(all_data$gene_id)
   cli::cli_alert_info("Will process {length(gene_id_list)} gene{?s}.")
 
@@ -160,10 +162,15 @@ register <- function(input,
   all_data_reg <- data.table::rbindlist(lapply(results, function(x) x$data_reg))
   model_comparison <- data.table::rbindlist(lapply(results, function(x) x$model_comparison))
 
+  # Drop variance columns
+  all_data[, c("var") := NULL]
+  all_data_reg[, c("var") := NULL]
+
   # Left join registered time points
   setnames(all_data_reg, "timepoint", "timepoint_reg")
   all_data[, timepoint_id := order(timepoint, expression_value), by = .(gene_id, accession, replicate)]
   all_data_reg[, timepoint_id := order(timepoint_reg, expression_value), by = .(gene_id, accession, replicate)]
+
   all_data <- merge(
     all_data,
     all_data_reg,

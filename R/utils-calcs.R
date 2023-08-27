@@ -9,21 +9,15 @@ calc_BIC <- function(logL, num_params, num_obs) {
 #'
 #' @noRd
 calc_loglik <- function(model, data) {
-  # Suppress "no visible binding for global variable" note
-  expression_value <- NULL
-  pred_expression_value <- NULL
-
-  data <- data.table::copy(data)
-
-  # Predict expressions
-  data[, pred_expression_value := stats::predict(model, newdata = data)]
-
-  # Calculate logLik
-  data[, dist_squared := (pred_expression_value - expression_value)^2]
-
-  dist_squared <- data$dist_squared
+  # Read expression and variance
+  expression_value <- data$expression_value
   sigma_squared <- data$var
 
+  # Predict expressions
+  pred_expression_value <- stats::predict(model, newdata = data)
+  dist_squared <- (pred_expression_value - expression_value)^2
+
+  # Calculate logLik
   loglik <- -sum(dist_squared / (2 * sigma_squared))
 
   return(loglik)

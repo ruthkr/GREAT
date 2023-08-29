@@ -14,6 +14,7 @@
 #' @param optimisation_method Optimisation method to use. Either \code{"nm"} for Nelder-Mead (default), \code{"lbfgsb"} for L-BFGS-B, or \code{"sa"} for Simulated Annealing.
 #' @param optimisation_config Optional list with arguments to override the default optimisation configuration.
 #' @param exp_sd Optional experimental standard deviation on the expression replicates.
+#' @param num_cores Number of cores to use if the user wants to register genes asynchronously (in parallel) in the background on the same machine. By default, \code{NA}, the registration will be run without parallelisation.
 #'
 #' @return This function returns a list of data frames, containing:
 #'
@@ -45,7 +46,8 @@ register <- function(input,
                      optimise_registration_parameters = TRUE,
                      optimisation_method = c("nm", "lbfgsb", "sa"),
                      optimisation_config = NULL,
-                     exp_sd = NA) {
+                     exp_sd = NA,
+                     num_cores = NA) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
@@ -136,15 +138,25 @@ register <- function(input,
     validate_params(stretches, shifts, "optimisation")
 
     # Run optimisation
-    results <- lapply(
-      cli::cli_progress_along(
-        x = gene_id_list,
-        format = "{cli::pb_spin} Optimising registration parameters for genes ({cli::pb_current}/{cli::pb_total}) [{cli::pb_elapsed_clock}]",
-        format_done = "{cli::col_green(cli::symbol$tick)} Optimising registration parameters for genes ({cli::pb_total}/{cli::pb_total}) {cli::col_white(paste0('[', cli::pb_elapsed, ']'))}",
-        clear = FALSE
-      ),
-      register_single_gene_with_optimisation
-    )
+    if (is.na(num_cores)) {
+      results <- lapply(
+        cli::cli_progress_along(
+          x = gene_id_list,
+          format = "{cli::pb_spin} Optimising registration parameters for genes ({cli::pb_current}/{cli::pb_total}) [{cli::pb_elapsed_clock}]",
+          format_done = "{cli::col_green(cli::symbol$tick)} Optimising registration parameters for genes ({cli::pb_total}/{cli::pb_total}) {cli::col_white(paste0('[', cli::pb_elapsed, ']'))}",
+          clear = FALSE
+        ),
+        register_single_gene_with_optimisation
+      )
+    } else {
+      cli::cli_alert_info("Optimising registration parameters for {length(gene_id_list)} genes (timing not available).")
+      future::plan(future::multisession, workers = num_cores)
+      results <- furrr::future_map(
+        seq_along(gene_id_list),
+        register_single_gene_with_optimisation
+      )
+      future::plan(future::sequential)
+    }
   } else {
     cli::cli_h1("Starting manual registration")
 
@@ -152,15 +164,25 @@ register <- function(input,
     validate_params(stretches, shifts, "manual")
 
     # Apply manual registration
-    results <- lapply(
-      cli::cli_progress_along(
-        x = gene_id_list,
-        format = "{cli::pb_spin} Applying registration for genes ({cli::pb_current}/{cli::pb_total}) [{cli::pb_elapsed_clock}]",
-        format_done = "{cli::col_green(cli::symbol$tick)} Applying registration for genes ({cli::pb_total}/{cli::pb_total}) {cli::col_white(paste0('[', cli::pb_elapsed, ']'))}",
-        clear = FALSE
-      ),
-      register_single_gene_manually
-    )
+    if (is.na(num_cores)) {
+      results <- lapply(
+        cli::cli_progress_along(
+          x = gene_id_list,
+          format = "{cli::pb_spin} Applying registration for genes ({cli::pb_current}/{cli::pb_total}) [{cli::pb_elapsed_clock}]",
+          format_done = "{cli::col_green(cli::symbol$tick)} Applying registration for genes ({cli::pb_total}/{cli::pb_total}) {cli::col_white(paste0('[', cli::pb_elapsed, ']'))}",
+          clear = FALSE
+        ),
+        register_single_gene_manually
+      )
+    } else {
+      cli::cli_alert_info("Applying registration for {length(gene_id_list)} genes (timing not available).")
+      future::plan(future::multisession, workers = num_cores)
+      results <- furrr::future_map(
+        seq_along(gene_id_list),
+        register_single_gene_manually
+      )
+      future::plan(future::sequential)
+    }
   }
 
   # Aggregate results

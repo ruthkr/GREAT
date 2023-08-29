@@ -23,6 +23,8 @@ Depends:
 Imports:
     cli,
     data.table,
+    furrr,
+    future,
     ggplot2,
     neldermead,
     optimization,

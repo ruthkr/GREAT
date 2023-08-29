@@ -66,7 +66,23 @@ register <- function(input,
     loglik_separate <- calc_loglik_H2(gene_data)
 
     # Register for Hypothesis 1
-    results <- register_with_optimisation(gene_data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_config, optimise_fun)
+    if (optimisation_method == "nm") {
+      # Perform multiple optimisation rounds for Nelder-Mead
+      results_round1 <- register_with_optimisation(gene_data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_config, optimise_fun)
+
+      # Perform the second round
+      stretches <- results_round1$model_comparison$stretch
+      shifts <- results_round1$model_comparison$shift
+      results_round2 <- register_with_optimisation(gene_data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_config, optimise_fun)
+
+      # Perform the third round
+      stretches <- results_round2$model_comparison$stretch
+      shifts <- results_round2$model_comparison$shift
+      results <- register_with_optimisation(gene_data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_config, optimise_fun)
+    } else {
+      # Perform optimisation with other optimisation methods
+      results <- register_with_optimisation(gene_data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_config, optimise_fun)
+    }
 
     return(results)
   }

@@ -55,6 +55,36 @@ register <- function(input,
   expression_value <- NULL
   replicate <- NULL
 
+  # Aux iterative registration functions
+  register_single_gene_with_optimisation <- function(gene_index) {
+    # Filter single gene data
+    gene_data <- all_data[all_data$gene_id == gene_id_list[gene_index]]
+
+    # Calculate BIC for Hypothesis 2
+    loglik_separate <- calc_loglik_H2(gene_data)
+
+    # Register for Hypothesis 1
+    results <- register_with_optimisation(gene_data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_config, optimise_fun)
+
+    return(results)
+  }
+
+  register_single_gene_manually <- function(gene_index) {
+    # Filter single gene data
+    gene_data <- all_data[all_data$gene_id == gene_id_list[gene_index]]
+
+    # Calculate BIC for Hypothesis 2
+    loglik_separate <- calc_loglik_H2(gene_data)
+
+    # Explore search space
+    best_params <- explore_manual_search_space(gene_data, stretches, shifts, loglik_separate)
+
+    # Register for Hypothesis 1
+    results <- register_manually(gene_data, best_params$stretch, best_params$shift, loglik_separate)
+
+    return(results)
+  }
+
   # Validate input data
   cli::cli_h1("Validating input data")
 
@@ -113,18 +143,7 @@ register <- function(input,
         format_done = "{cli::col_green(cli::symbol$tick)} Optimising registration parameters for genes ({cli::pb_total}/{cli::pb_total}) {cli::col_white(paste0('[', cli::pb_elapsed, ']'))}",
         clear = FALSE
       ),
-      function(gene_index) {
-        # Filter single gene data
-        gene_data <- all_data[all_data$gene_id == gene_id_list[gene_index]]
-
-        # Calculate BIC for Hypothesis 2
-        loglik_separate <- calc_loglik_H2(gene_data)
-
-        # Register for Hypothesis 1
-        results <- register_with_optimisation(gene_data, stretches, shifts, loglik_separate, overlapping_percent, optimisation_config, optimise_fun)
-
-        return(results)
-      }
+      register_single_gene_with_optimisation
     )
   } else {
     cli::cli_h1("Starting manual registration")
@@ -140,21 +159,7 @@ register <- function(input,
         format_done = "{cli::col_green(cli::symbol$tick)} Applying registration for genes ({cli::pb_total}/{cli::pb_total}) {cli::col_white(paste0('[', cli::pb_elapsed, ']'))}",
         clear = FALSE
       ),
-      function(gene_index) {
-        # Filter single gene data
-        gene_data <- all_data[all_data$gene_id == gene_id_list[gene_index]]
-
-        # Calculate BIC for Hypothesis 2
-        loglik_separate <- calc_loglik_H2(gene_data)
-
-        # Explore search space
-        best_params <- explore_manual_search_space(gene_data, stretches, shifts, loglik_separate)
-
-        # Register for Hypothesis 1
-        results <- register_manually(gene_data, best_params$stretch, best_params$shift, loglik_separate)
-
-        return(results)
-      }
+      register_single_gene_manually
     )
   }
 

@@ -12,11 +12,17 @@ optimise <- function(data,
                      overlapping_percent = 0.5,
                      optimisation_config,
                      optimise_fun) {
+
   # Calculate boundary box and initial guess
   if (all(is.na(stretches), is.na(shifts))) {
-    space_lims <- get_search_space_limits(data, overlapping_percent)
-  } else {
+    # Automatic space search
+    space_lims <- get_search_space_limits(data, stretch_init = stretches, shift_init = shifts, overlapping_percent)
+  } else if (all(length(stretches) > 1, length(shifts) > 1)) {
+    # Space search given boundary box
     space_lims <- get_search_space_limits_from_params(stretches, shifts)
+  } else if (all(length(stretches) == 1, length(shifts) == 1)) {
+    # Space search given initial coordinates
+    space_lims <- get_search_space_limits(data, stretch_init = stretches, shift_init = shifts, overlapping_percent)
   }
 
   # Run optimisation
@@ -59,15 +65,19 @@ objective_fun <- function(data, stretch, shift, overlapping_percent, maximize = 
 #' Calculate limits of the search space
 #'
 #' @noRd
-get_search_space_limits <- function(data, overlapping_percent = 0.5) {
+get_search_space_limits <- function(data, stretch_init = NA, shift_init = NA, overlapping_percent = 0.5) {
   # Suppress "no visible binding for global variable" note
   accession <- NULL
   timepoint <- NULL
 
   # Initial stretch limits
-  stretch_init <- get_approximate_stretch(data)
-  stretch_lower <- 0.5 * stretch_init
-  stretch_upper <- 1.5 * stretch_init
+  stretch_approx <- get_approximate_stretch(data)
+  if (is.na(stretch_init)) {
+    stretch_init <- stretch_approx
+  }
+
+  stretch_lower <- 0.5 * stretch_approx
+  stretch_upper <- 1.5 * stretch_approx
 
   # Extract time point ranges
   timepoints_ref <- unique(data[accession == "ref", timepoint])
@@ -87,7 +97,9 @@ get_search_space_limits <- function(data, overlapping_percent = 0.5) {
   shift_upper <- (max_timepoint - range_query_max_stretch) - min(timepoints_query)
 
   # Calculate initial shift value (zero if possible)
-  shift_init <- 0
+  if (is.na(shift_init)) {
+    shift_init <- 0
+  }
   if (shift_init < shift_lower | shift_init > shift_upper) {
     shift_init <- mean(c(shift_lower, shift_upper))
   }

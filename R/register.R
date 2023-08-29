@@ -291,7 +291,7 @@ register_manually <- function(data,
 #' @noRd
 explore_manual_search_space <- function(data, stretches, shifts, loglik_separate) {
   # Suppress "no visible binding for global variable" note
-  BIC_combined <- NULL
+  BIC_diff <- NULL
 
   # Explore search space
   params_results <- lapply(
@@ -309,7 +309,7 @@ explore_manual_search_space <- function(data, stretches, shifts, loglik_separate
 
   # Find best registration parameters
   model_comparison <- data.table::rbindlist(do.call(Map, c(f = rbind, params_results)))
-  best_params <- model_comparison[BIC_combined == min(model_comparison$BIC_combined), ][, .SD[1]]
+  best_params <- model_comparison[BIC_diff == min(model_comparison$BIC_diff), ][, .SD[1]]
 
   return(best_params)
 }

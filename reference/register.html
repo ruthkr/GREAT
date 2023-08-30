@@ -77,7 +77,8 @@ wishes to compare.</p>
 <span>  optimise_registration_parameters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  optimisation_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nm"</span>, <span class="st">"lbfgsb"</span>, <span class="st">"sa"</span><span class="op">)</span>,</span>
 <span>  optimisation_config <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  exp_sd <span class="op">=</span> <span class="cn">NA</span></span>
+<span>  exp_sd <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  num_cores <span class="op">=</span> <span class="cn">NA</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -125,6 +126,10 @@ wishes to compare.</p>
 
 <dt>exp_sd</dt>
 <dd><p>Optional experimental standard deviation on the expression replicates.</p></dd>
+
+
+<dt>num_cores</dt>
+<dd><p>Number of cores to use if the user wants to register genes asynchronously (in parallel) in the background on the same machine. By default, <code>NA</code>, the registration will be run without parallelisation.</p></dd>
 
 </dl></div>
     <div class="section level2">

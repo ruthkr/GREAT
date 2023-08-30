@@ -58,15 +58,31 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="greatr-development-version">greatR (development version)<a class="anchor" aria-label="anchor" href="#greatr-development-version"></a></h2>
-<div class="section level3">
+<ul><li>Added {furrr} and {future} as dependencies.</li>
+<li>Added <code>num_cores</code> parameter to <code><a href="../reference/register.html">register()</a></code> to allow users to run registration in parallel.</li>
+<li>Added <code>exp_sd</code> parameter to <code><a href="../reference/register.html">register()</a></code> to allow users to manually set up experimental gene expression variance.</li>
+<li>Updated <code>scaling_method</code> parameter in <code><a href="../reference/register.html">register()</a></code> and <code>scale_data()</code> to allow no scaling (“none”, default), Z-score scaling (“z-score”), and min-max scaling (“min-max”).</li>
+</ul><div class="section level3">
 <h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
-<ul><li>Updated <code>scaling_method</code> parameter in <code>scale_data()</code> to allow no scaling (“none”, default), Z-score scaling (“z-score”), and min-max scaling (“min-max”).</li>
-<li>Improved <code>get_timepoint_comb_original_data()</code> and <code>get_timepoint_comb_registered_data()</code> to perform <code>cross_join()</code> on a single <code>gene_id</code> at a time using <code><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply()</a></code>, this fixes “Error: vector memory exhausted (limit reached?)” error.</li>
+<ul><li>Updated <code>calc_loglik()</code> to use <code>sigma_squared</code> in every timepoint in the sum.</li>
+<li>Updated <code>scaled_data()</code> and <code>preprocess_data()</code> to return <code>all_data</code> object only, instead of a <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> containing <code>all_data</code>.</li>
+<li>Updated <code>compare_H1_and_H2()</code> to return <code>BIC_diff</code> column (<code>BIC_combined - BIC_separate</code>), instead of <code>BIC_combined</code> and <code>BIC_separate</code> on their own.</li>
+<li>Updated <code>explore_manual_search_space()</code> to use <code>BIC_diff</code> instead of <code>BIC_combined</code> to calculate <code>best_params</code> from <code>model_comparison</code> table.</li>
+<li>Updated <code><a href="../reference/register.html">register()</a></code> to perform 3 sequential registrations when using Nelder-Mead, this improves the results of optimal stretch and shift parameters. This may be reverted by tweaking <code>neldermead()</code> parameters to ensure correct convergence.</li>
+<li>Added optional <code>stretch_init</code> and <code>shift_init</code> to <code>get_search_space_limits()</code>, and updated <code><a href="https://rdrr.io/r/stats/optimize.html" class="external-link">optimise()</a></code> to allow for different <code>space_lims</code> calculation settings: automatic, given boundary box, and given initial coords (new).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<ul><li>Improved <code>get_timepoint_comb_original_data()</code> and <code>get_timepoint_comb_registered_data()</code> to perform <code>cross_join()</code> on a single <code>gene_id</code> at a time using <code><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply()</a></code>, this fixes “Error: vector memory exhausted (limit reached?)” error.</li>
+<li>Updated <code>match_names()</code> to do double <code><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff()</a></code> to ensure name matching is done two ways, and updated corresponding unit test.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-functions-development-version">New functions<a class="anchor" aria-label="anchor" href="#new-functions-development-version"></a></h3>
 <ul><li>
 <code>filter_incomplete_accession_pairs()</code> to filter out genes that are missing one accession.</li>
+<li>
+<code>calc_variance()</code> to preprocess data variance inside <code>preprocess_data()</code> instead of <code>calc_loglik()</code>.</li>
+<li>Aux <code>register_single_gene_*()</code> functions inside <code><a href="../reference/register.html">register()</a></code> to simplify and generalise the pipeline for parallel registration.</li>
 </ul></div>
 </div>
     <div class="section level2">

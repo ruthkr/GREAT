@@ -2,7 +2,7 @@ brapa_sample_data <- data.table::fread(system.file("extdata/brapa_arabidopsis_al
 reference <- "Ro18"
 query <- "Col0"
 gene_data <- brapa_sample_data[gene_id == "BRAA03G051930.3C"]
-all_data <- preprocess_data(gene_data, reference, query)
+all_data <- preprocess_data(gene_data, reference, query, scaling_method = "z-score")
 
 test_that("get_search_space_limits works", {
   space_lims <- get_search_space_limits(all_data)
@@ -35,7 +35,7 @@ test_that("get_search_space_limits_from_params works", {
 })
 
 test_that("calc_overlapping_percent works", {
-  all_data_reg <- apply_registration(all_data, 2.75, 3.6)
+  all_data_reg <- apply_registration(all_data, 3.10, 2.13)
   overlapping_raw <- calc_overlapping_percent(all_data)
   overlapping_reg <- calc_overlapping_percent(all_data_reg)
 
@@ -46,7 +46,7 @@ test_that("calc_overlapping_percent works", {
 
 test_that("objective_fun works", {
   # Expected outputs
-  expect_equal(objective_fun(all_data, 2.75, 3.6, 0.5), -11.19, tolerance = 1e-2)
+  expect_equal(objective_fun(all_data, 3.10, 2.13, 0.5), -11.19, tolerance = 1e-2)
   expect_equal(objective_fun(all_data), -999)
 })
 

@@ -8,10 +8,12 @@ gene_data <- brapa_sample_data[gene_id == "BRAA03G051930.3C"]
 test_that("preprocess_data works", {
   all_data <- preprocess_data(brapa_sample_data, reference, query)
   all_data_norm <- preprocess_data(brapa_sample_data, reference, query, scaling_method = "z-score")
+  all_data_minmax <- preprocess_data(brapa_sample_data, reference, query, scaling_method = "min-max")
 
   # Expected outputs
   expect_equal(class(all_data)[1], "data.table")
   expect_equal(class(all_data_norm)[1], "data.table")
+  expect_equal(class(all_data_minmax)[1], "data.table")
   expect_gte(mean(all_data$expression_value), mean(all_data_norm$expression_value))
   expect_equal(colnames(all_data), c(colnames(brapa_sample_data), "time_delta", "var"))
   expect_equal(levels(unique(all_data$accession)), c("ref", "query"))
@@ -19,9 +21,9 @@ test_that("preprocess_data works", {
 })
 
 test_that("register_manually works", {
-  gene_data <- preprocess_data(gene_data, reference, query)
-  stretch <- 2.75
-  shift <- 3.6
+  gene_data <- preprocess_data(gene_data, reference, query, scaling_method = "z-score")
+  stretch <- 3.10
+  shift <- 2.13
   loglik_separate <- -10.404
   results <- register_manually(gene_data, stretch, shift, loglik_separate)
   results_simple <- register_manually(gene_data, stretch, shift, loglik_separate, return_data_reg = FALSE)
@@ -40,15 +42,16 @@ test_that("register_manually works", {
 # Full pipeline ----
 
 test_that("register (with no optimisation) works", {
-  stretch <- 2.75
-  shift <- 3.6
+  stretch <- 3.10
+  shift <- 2.13
   registration_results <- register(
     gene_data,
     reference = "Ro18",
     query = "Col0",
     stretches = stretch,
     shifts = shift,
-    optimise_registration_parameters = FALSE
+    optimise_registration_parameters = FALSE,
+    scaling_method = "z-score"
   ) |>
     suppressMessages()
 
@@ -68,7 +71,8 @@ test_that("register (with optimisation) works", {
     gene_data,
     reference = "Ro18",
     query = "Col0",
-    optimisation_method = "nm",
+    optimisation_method = "lbfgsb",
+    scaling_method = "z-score",
     optimisation_config = list(num_iterations = 10, num_fun_evals = 10)
   ) |>
     suppressMessages()
@@ -81,7 +85,7 @@ test_that("register (with optimisation) works", {
   expect_equal(colnames(data_reg), c("gene_id", "accession", "expression_value", "replicate", "timepoint", "timepoint_reg"))
   expect_equal(colnames(model_comparison), c("gene_id", "stretch", "shift", "BIC_diff", "registered"))
   expect_equal(model_comparison$registered, TRUE)
-  expect_equal(model_comparison$stretch, 2.809, tolerance = 1e-2)
-  expect_equal(model_comparison$shift, 0.143, tolerance = 1e-2)
+  expect_equal(model_comparison$stretch, 3.10, tolerance = 1e-2)
+  expect_equal(model_comparison$shift, 2.13, tolerance = 1e-2)
   expect_error(register(gene_data, reference = "Ro19", query = "Col0"))
 })

@@ -30,7 +30,7 @@ test_that("register_manually works", {
   expect_equal(names(results), c("data_reg", "model_comparison"))
   expect_equal(names(results_simple), "model_comparison")
   expect_equal(colnames(results$data_reg), c("gene_id", "accession", "timepoint", "replicate", "expression_value"))
-  expect_equal(colnames(results$model_comparison), c("gene_id", "stretch", "shift", "BIC_separate", "BIC_combined", "registered"))
+  expect_equal(colnames(results$model_comparison), c("gene_id", "stretch", "shift", "BIC_diff", "registered"))
   expect_equal(results$model_comparison$stretch, stretch)
   expect_equal(results$model_comparison$shift, shift)
   expect_equal(results$model_comparison$registered, TRUE)
@@ -58,7 +58,7 @@ test_that("register (with no optimisation) works", {
   # Expected outputs
   expect_equal(names(registration_results), c("data", "model_comparison"))
   expect_equal(colnames(data_reg), c("gene_id", "accession", "expression_value", "replicate", "timepoint", "timepoint_reg"))
-  expect_equal(colnames(model_comparison), c("gene_id", "stretch", "shift", "BIC_separate", "BIC_combined", "registered"))
+  expect_equal(colnames(model_comparison), c("gene_id", "stretch", "shift", "BIC_diff", "registered"))
   expect_equal(model_comparison$registered, TRUE)
   expect_error(suppressMessages(register(gene_data, reference = "Ro18", query = "Col0", stretches = stretch, shifts = NA, optimise_registration_parameters = FALSE)))
 })
@@ -79,7 +79,7 @@ test_that("register (with optimisation) works", {
   # Expected outputs
   expect_equal(names(registration_results), c("data", "model_comparison"))
   expect_equal(colnames(data_reg), c("gene_id", "accession", "expression_value", "replicate", "timepoint", "timepoint_reg"))
-  expect_equal(colnames(model_comparison), c("gene_id", "stretch", "shift", "BIC_separate", "BIC_combined", "registered"))
+  expect_equal(colnames(model_comparison), c("gene_id", "stretch", "shift", "BIC_diff", "registered"))
   expect_equal(model_comparison$registered, TRUE)
   expect_equal(model_comparison$stretch, 2.809, tolerance = 1e-2)
   expect_equal(model_comparison$shift, 0.143, tolerance = 1e-2)

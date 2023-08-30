@@ -169,7 +169,8 @@ register <- function(input,
       future::plan(future::multisession, workers = num_cores)
       results <- furrr::future_map(
         seq_along(gene_id_list),
-        register_single_gene_with_optimisation
+        register_single_gene_with_optimisation,
+        .progress = TRUE
       )
       future::plan(future::sequential)
     }
@@ -195,7 +196,8 @@ register <- function(input,
       future::plan(future::multisession, workers = num_cores)
       results <- furrr::future_map(
         seq_along(gene_id_list),
-        register_single_gene_manually
+        register_single_gene_manually,
+        .progress = TRUE
       )
       future::plan(future::sequential)
     }

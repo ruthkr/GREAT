@@ -15,7 +15,8 @@ register(
   optimise_registration_parameters = TRUE,
   optimisation_method = c("nm", "lbfgsb", "sa"),
   optimisation_config = NULL,
-  exp_sd = NA
+  exp_sd = NA,
+  num_cores = NA
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ register(
 \item{optimisation_config}{Optional list with arguments to override the default optimisation configuration.}
 
 \item{exp_sd}{Optional experimental standard deviation on the expression replicates.}
+
+\item{num_cores}{Number of cores to use if the user wants to register genes asynchronously (in parallel) in the background on the same machine. By default, \code{NA}, the registration will be run without parallelisation.}
 }
 \value{
 This function returns a list of data frames, containing:

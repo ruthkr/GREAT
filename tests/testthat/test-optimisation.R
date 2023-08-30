@@ -2,8 +2,7 @@ brapa_sample_data <- data.table::fread(system.file("extdata/brapa_arabidopsis_al
 reference <- "Ro18"
 query <- "Col0"
 gene_data <- brapa_sample_data[gene_id == "BRAA03G051930.3C"]
-processed_data <- preprocess_data(gene_data, reference, query)
-all_data <- processed_data$all_data
+all_data <- preprocess_data(gene_data, reference, query)
 
 test_that("get_search_space_limits works", {
   space_lims <- get_search_space_limits(all_data)

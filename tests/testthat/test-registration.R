@@ -6,14 +6,10 @@ gene_data <- brapa_sample_data[gene_id == "BRAA03G051930.3C"]
 # Preprocessing and intermediate functions ----
 
 test_that("preprocess_data works", {
-  processed_data <- preprocess_data(brapa_sample_data, reference, query, scaling_method = "scale")
-  processed_data_norm <- preprocess_data(brapa_sample_data, reference, query, scaling_method = "normalise")
-  all_data <- processed_data$all_data
-  all_data_norm <- processed_data_norm$all_data
+  all_data <- preprocess_data(brapa_sample_data, reference, query)
+  all_data_norm <- preprocess_data(brapa_sample_data, reference, query, scaling_method = "z-score")
 
   # Expected outputs
-  expect_equal(names(processed_data), "all_data")
-  expect_equal(names(processed_data_norm), "all_data")
   expect_equal(class(all_data)[1], "data.table")
   expect_equal(class(all_data_norm)[1], "data.table")
   expect_gte(mean(all_data$expression_value), mean(all_data_norm$expression_value))
@@ -23,7 +19,7 @@ test_that("preprocess_data works", {
 })
 
 test_that("register_manually works", {
-  gene_data <- preprocess_data(gene_data, reference, query)$all_data
+  gene_data <- preprocess_data(gene_data, reference, query)
   stretch <- 2.75
   shift <- 3.6
   loglik_separate <- -10.404

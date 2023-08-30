@@ -12,7 +12,6 @@ optimise <- function(data,
                      overlapping_percent = 0.5,
                      optimisation_config,
                      optimise_fun) {
-
   # Calculate boundary box and initial guess
   if (all(is.na(stretches), is.na(shifts))) {
     # Automatic space search

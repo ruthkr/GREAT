@@ -13,7 +13,7 @@ test_that("preprocess_data works", {
   expect_equal(class(all_data)[1], "data.table")
   expect_equal(class(all_data_norm)[1], "data.table")
   expect_gte(mean(all_data$expression_value), mean(all_data_norm$expression_value))
-  expect_equal(colnames(all_data), c(colnames(brapa_sample_data), "time_delta"))
+  expect_equal(colnames(all_data), c(colnames(brapa_sample_data), "time_delta", "var"))
   expect_equal(levels(unique(all_data$accession)), c("ref", "query"))
   expect_equal(nrow(all_data), nrow(brapa_sample_data))
 })
@@ -29,7 +29,7 @@ test_that("register_manually works", {
   # Expected outputs
   expect_equal(names(results), c("data_reg", "model_comparison"))
   expect_equal(names(results_simple), "model_comparison")
-  expect_equal(colnames(results$data_reg), c("gene_id", "accession", "timepoint", "replicate", "expression_value"))
+  expect_equal(colnames(results$data_reg), c("gene_id", "accession", "timepoint", "replicate", "expression_value", "var"))
   expect_equal(colnames(results$model_comparison), c("gene_id", "stretch", "shift", "BIC_diff", "registered"))
   expect_equal(results$model_comparison$stretch, stretch)
   expect_equal(results$model_comparison$shift, shift)

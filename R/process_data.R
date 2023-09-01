@@ -2,7 +2,7 @@
 #'
 #' \code{preprocess_data()} is a function that:
 #' \item{Calculates \code{time_delta}.}
-#' \item{Gets \code{mean_data}.}
+#' \item{Calculates expression \code{var} values for each timepoint.}
 #' \item{Scales data via \code{\link{scale_data}}.}
 #'
 #' @noRd
@@ -32,12 +32,8 @@ preprocess_data <- function(input, reference, query, exp_sd = NA, scaling_method
   # Calculate time delta for each accession
   all_data[, time_delta := timepoint - min(timepoint), by = .(gene_id, accession)]
 
-  # Get mean data
-  mean_data <- data.table::copy(all_data)
-  mean_data <- unique(mean_data[, .(expression_value = mean(expression_value)), by = .(gene_id, accession, timepoint, time_delta)])
-
   # Scale data
-  scaled_data <- scale_data(mean_data, all_data, scaling_method)
+  scaled_data <- scale_data(all_data, scaling_method)
 
   # Calculate expression variance
   scaled_data <- calc_variance(scaled_data, exp_sd)
@@ -99,12 +95,11 @@ filter_unchanged_expressions <- function(all_data) {
 #'
 #' \code{scale_all_rep_data()} is a function to scale both the mean expression data and original data including all replicates.
 #'
-#' @param mean_data Input data containing mean of each time point.
 #' @param all_data Input data including all replicates.
-#' @param scaling_method Scaling method applied to data prior to registration process. Either \code{scale} (default), or \code{normalise}.
+#' @param scaling_method Scaling method applied to data prior to registration process. Either \code{none} (default), \code{z-score}, or \code{min-max}.
 #'
 #' @noRd
-scale_data <- function(mean_data, all_data, scaling_method = c("none", "z-score", "min-max")) {
+scale_data <- function(all_data, scaling_method = c("none", "z-score", "min-max")) {
   # Validate parameters
   scaling_method <- match.arg(scaling_method)
 

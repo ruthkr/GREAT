@@ -29,6 +29,8 @@ preprocess_data <- function(input, reference, query, exp_sd = NA, scaling_method
   # Filter genes that do not change expression over time (sd == 0)
   all_data <- filter_unchanged_expressions(all_data)
 
+  cli::cli_alert_info("Will process {length(unique(all_data$gene_id))} gene{?s}.")
+
   # Calculate time delta for each accession
   all_data[, time_delta := timepoint - min(timepoint), by = .(gene_id, accession)]
 

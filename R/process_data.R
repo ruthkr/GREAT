@@ -120,7 +120,7 @@ scale_data <- function(all_data, scaling_method = c("none", "z-score", "min-max"
 
     # Scale replicates data
     all_data$expression_value <- (all_data$expression_value - all_data$mean_val) / all_data$sd_val
-    all_data$var <- all_data$var / (all_data$sd_val)^2
+    all_data$var <- pmax(all_data$var / (all_data$sd_val)^2, 0.75^2)
     all_data[, c("mean_val", "sd_val") := NULL]
   } else if (scaling_method == "min-max") {
     # Calculate minimum and maximum of expression in all_data by accession

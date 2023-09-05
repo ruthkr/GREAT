@@ -26,7 +26,7 @@ calc_loglik <- function(model, data) {
 #' Fit using cubic spline with K+3 parameters
 #'
 #' @param data Input data
-#' @param x Predictor variable, by default "timepoint".
+#' @param x Predictor variable, by default \code{timepoint}.
 #' @param num_spline_params Number of parameters, or degrees of freedom, for each spline fitting. This is used to calculate the number of \code{knots}.
 #' @param degree Degree of the piecewise polynomial, default is 3 for cubic splines.
 #'
@@ -49,17 +49,25 @@ calc_variance <- function(all_data, exp_sd = NA) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
+  timepoint <- NULL
   expression_value <- NULL
+  var_poisson <- NULL
+  var_range <- NULL
   var <- NULL
 
   if (any(is.na(exp_sd))) {
-    # TODO: notify user
-    # Calculate expression variance for replicates
-    # all_data[, var := sd(expression_value)^2, by = .(gene_id, accession, timepoint)]
+    cli::cli_alert_info("Using estimated standard deviation.")
+    # Calculate Poisson estimate for expression variance
+    all_data[, var_poisson := max(expression_value), by = .(gene_id, accession, timepoint)]
 
     # Calculate global expression variance
-    all_data[, var := (diff(range(expression_value)) / 10)^2, by = .(gene_id, accession)]
+    all_data[, var_range := (diff(range(expression_value)) / 10)^2, by = .(gene_id, accession)]
+
+    # Select maximum expression variance for each time point
+    all_data[, var := pmax(var_poisson, var_range)]
+    all_data[, c("var_poisson", "var_range") := NULL]
   } else {
+    cli::cli_alert_info("Using provided standard deviation {.var exp_sd} = {.val {exp_sd}}.")
     all_data[, var := exp_sd^2]
   }
 

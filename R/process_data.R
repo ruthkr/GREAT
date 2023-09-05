@@ -34,11 +34,11 @@ preprocess_data <- function(input, reference, query, exp_sd = NA, scaling_method
   # Calculate time delta for each accession
   all_data[, time_delta := timepoint - min(timepoint), by = .(gene_id, accession)]
 
+  # Calculate expression variance
+  all_data <- calc_variance(all_data, exp_sd)
+
   # Scale data
   scaled_data <- scale_data(all_data, scaling_method)
-
-  # Calculate expression variance
-  scaled_data <- calc_variance(scaled_data, exp_sd)
 
   return(scaled_data)
 }
@@ -120,6 +120,7 @@ scale_data <- function(all_data, scaling_method = c("none", "z-score", "min-max"
 
     # Scale replicates data
     all_data$expression_value <- (all_data$expression_value - all_data$mean_val) / all_data$sd_val
+    all_data$var <- all_data$var / (all_data$sd_val)^2
     all_data[, c("mean_val", "sd_val") := NULL]
   } else if (scaling_method == "min-max") {
     # Calculate minimum and maximum of expression in all_data by accession
@@ -130,6 +131,7 @@ scale_data <- function(all_data, scaling_method = c("none", "z-score", "min-max"
 
     # Scale replicates data
     all_data$expression_value <- (all_data$expression_value - all_data$min_val) / (all_data$max_val - all_data$min_val)
+    all_data$var <- all_data$var / (all_data$max_val - all_data$min_val)^2
     all_data[, c("min_val", "max_val") := NULL]
   }
 

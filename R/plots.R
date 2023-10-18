@@ -140,6 +140,7 @@ parse_gene_facets <- function(model_comparison, type) {
   registered <- NULL
   stretch <- NULL
   shift <- NULL
+  BIC_diff <- NULL
 
   if (type == "registered") {
     gene_facets <- model_comparison[, .(
@@ -148,7 +149,7 @@ parse_gene_facets <- function(model_comparison, type) {
         gene_id, " - ", ifelse(registered, "REG", "NO_REG"),
         ifelse(
           registered,
-          paste0("\n", "stretch: ", round(stretch, 2), ", shift: ", round(shift, 2)),
+          paste0("\n", "BIC score: ", round(BIC_diff, 2), ", stretch: ", round(stretch, 2), ", shift: ", round(shift, 2)),
           ""
         )
       )

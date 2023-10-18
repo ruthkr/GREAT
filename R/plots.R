@@ -195,7 +195,7 @@ get_H1_model_curves <- function(data, model_comparison) {
         data <- unique(data[data$gene_id == gene][, .(gene_id, timepoint_reg)])
         data <- data.table::data.table(
           gene_id = gene,
-          timepoint_reg = seq(min(data$timepoint_reg), max(data$timepoint_reg), 1)
+          timepoint_reg = seq(min(data$timepoint_reg), max(data$timepoint_reg), length.out = 25)
         )
         data[, .(gene_id, timepoint_reg, expression_value = stats::predict(fits[gene][[1]], newdata = data))]
       }
@@ -253,7 +253,7 @@ get_H2_model_curves <- function(data, model_comparison, reference, query) {
         data <- unique(data_ref[data_ref$gene_id == gene][, .(gene_id, timepoint_reg)])
         data <- data.table::data.table(
           gene_id = gene,
-          timepoint_reg = seq(min(data$timepoint_reg), max(data$timepoint_reg), 1)
+          timepoint_reg = seq(min(data$timepoint_reg), max(data$timepoint_reg), length.out = 25)
         )
         data[, .(gene_id, timepoint_reg, expression_value = stats::predict(fits_ref[gene][[1]], newdata = data))]
       }
@@ -267,7 +267,7 @@ get_H2_model_curves <- function(data, model_comparison, reference, query) {
         data <- unique(data_query[data_query$gene_id == gene][, .(gene_id, timepoint_reg)])
         data <- data.table::data.table(
           gene_id = gene,
-          timepoint_reg = seq(min(data$timepoint_reg), max(data$timepoint_reg), 1)
+          timepoint_reg = seq(min(data$timepoint_reg), max(data$timepoint_reg), length.out = 25)
         )
         data[, .(gene_id, timepoint_reg, expression_value = stats::predict(fits_query[gene][[1]], newdata = data))]
       }

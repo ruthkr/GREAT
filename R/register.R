@@ -233,6 +233,9 @@ register <- function(input,
   data.table::setattr(all_data, "ref", reference)
   data.table::setattr(all_data, "query", query)
 
+  # Add scaling as a data attribute
+  data.table::setattr(all_data, "scaling_method", scaling_method)
+
   # Results object
   results_list <- list(
     data = all_data,

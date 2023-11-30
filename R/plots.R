@@ -29,6 +29,7 @@ plot_registration_results <- function(results,
   model_comparison <- results$model_comparison
   reference <- attr(data, "ref")
   query <- attr(data, "query")
+  scaling_method <- attr(data, "scaling_method")
 
   # Select genes to be plotted
   genes <- unique(data[, gene_id])
@@ -82,7 +83,7 @@ plot_registration_results <- function(results,
     ggplot2::labs(
       title = title,
       x = x_lab,
-      y = "Scaled expression"
+      y = ifelse(scaling_method == "none", "Expression", "Scaled expression")
     )
 
   # Add model curve layers

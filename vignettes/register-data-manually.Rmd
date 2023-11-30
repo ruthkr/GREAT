@@ -61,15 +61,17 @@ registration_results <- register(
   gene_BRAA03G023790.3C_data,
   reference = "Ro18",
   query = "Col0",
+  scaling_method = "z-score",
   stretches = 2.6,
   shifts = 4,
   optimise_registration_parameters = FALSE
 )
 #> ── Validating input data ───────────────────────────────────────────────────────
 #> ℹ Will process 1 gene.
+#> ℹ Using estimated standard deviation, as no `exp_sd` was provided.
 #>
 #> ── Starting manual registration ────────────────────────────────────────────────
-#> ✔ Applying registration for genes (1/1) [29ms]
+#> ✔ Applying registration for genes (1/1) [34ms]
 ```
 
 To check whether the gene is registered or not, we can get the summary results by accessing the `model_comparison` table from the registration result.
@@ -90,15 +92,17 @@ registration_results <- register(
   b_rapa_data,
   reference = "Ro18",
   query = "Col0",
+  scaling_method = "z-score",
   stretches = seq(1, 3, 0.1),
   shifts = seq(0, 4, 0.1),
   optimise_registration_parameters = FALSE
 )
 #> ── Validating input data ───────────────────────────────────────────────────────
 #> ℹ Will process 10 genes.
+#> ℹ Using estimated standard deviation, as no `exp_sd` was provided.
 #>
 #> ── Starting manual registration ────────────────────────────────────────────────
-#> ✔ Applying registration for genes (10/10) [15.8s]
+#> ✔ Applying registration for genes (10/10) [15.5s]
 ```
 
 Similar to the previous registration process, users can analyse further the registration result by following the [visualising results](https://ruthkr.github.io/greatR/articles/visualise-results.html) vignette.

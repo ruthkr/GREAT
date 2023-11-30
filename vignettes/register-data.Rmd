@@ -58,7 +58,8 @@ To align gene expression time-course between *Arabidopsis* Col-0 and *B. rapa* R
 registration_results <- register(
   b_rapa_data,
   reference = "Ro18",
-  query = "Col0"
+  query = "Col0",
+  scaling_method = "z-score"
 )
 #> ── Validating input data ────────────────────────────────────────────────────────
 #> ℹ Will process 10 genes.
@@ -66,7 +67,7 @@ registration_results <- register(
 #> ── Starting registration with optimisation ──────────────────────────────────────
 #> ℹ Using Nelder-Mead method.
 #> ℹ Using computed stretches and shifts search space limits.
-#> ✔ Optimising registration parameters for genes (10/10) [2.3s]
+#> ✔ Optimising registration parameters for genes (10/10) [6.7s]
 ```
 
 
@@ -75,7 +76,7 @@ registration_results <- register(
 The function `register()` returns a list of two frames:
 
 - `data` is a data frame containing the scaled expression data and an additional `timepoint_reg` column which is a result of registered time points by applying the registration parameters to the query data.
-- `model_comparison` is a data frame containing (a) the optimal stretch and shift for each `gene_id` and (b) the Bayesian Information Criterion (BIC) for the separate model (`BIC_separate`) and for the combined model (`BIC_combined`) after applying optimal registration parameters for each gene. If the value of `BIC_combined` < `BIC_separate`, then expression dynamics between reference and query data can be registered (`registered = TRUE`).
+- `model_comparison` is a data frame containing (a) the optimal stretch and shift for each `gene_id` and (b) the difference between Bayesian Information Criterion for the separate model and for the combined model (`BIC_diff`) after applying optimal registration parameters for each gene. If the value of `BIC_diff < 0`, then expression dynamics between reference and query data can be registered (`registered = TRUE`).
 
 To check whether a gene is registered or not, we can get the summary results by accessing the `model_comparison` table from the registration result.
 
@@ -83,8 +84,6 @@ To check whether a gene is registered or not, we can get the summary results by 
 # Load a data frame from the sample data
 registration_results <- system.file("extdata/brapa_arabidopsis_registration.rds", package = "greatR") |>
   readRDS()
-
-registration_results$model_comparison <- registration_results$model_comparison[, .(gene_id, stretch, shift, BIC_separate, BIC_combined, registered)]
 ```
 
 ```{r get-model-summary-data, warning=FALSE}

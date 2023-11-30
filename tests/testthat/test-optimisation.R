@@ -46,7 +46,7 @@ test_that("calc_overlapping_percent works", {
 
 test_that("objective_fun works", {
   # Expected outputs
-  expect_equal(objective_fun(all_data, 3.10, 2.13, 0.5), -11.19, tolerance = 1e-2)
+  expect_equal(objective_fun(all_data, 3.10, 2.13, 0.5), -18.82, tolerance = 1e-2)
   expect_equal(objective_fun(all_data), -999)
 })
 

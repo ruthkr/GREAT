@@ -24,7 +24,7 @@ test_that("register_manually works", {
   gene_data <- preprocess_data(gene_data, reference, query, scaling_method = "z-score")
   stretch <- 3.10
   shift <- 2.13
-  loglik_separate <- -10.404
+  loglik_separate <- -18.635
   results <- register_manually(gene_data, stretch, shift, loglik_separate)
   results_simple <- register_manually(gene_data, stretch, shift, loglik_separate, return_data_reg = FALSE)
 

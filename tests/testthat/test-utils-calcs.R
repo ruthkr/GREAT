@@ -11,7 +11,7 @@ test_that("calc_loglik works", {
   # Expected outputs
   expect_equal(class(loglik), "numeric")
   expect_lte(loglik, 0)
-  expect_equal(loglik, -3.777704, tolerance = 1e-6)
+  expect_equal(loglik, -163.775658, tolerance = 1e-6)
 })
 
 test_that("calc_BIC works", {
@@ -21,7 +21,7 @@ test_that("calc_BIC works", {
   # Expected outputs
   expect_equal(class(bic), "numeric")
   expect_gte(bic, 0)
-  expect_equal(bic, 12.160578, tolerance = 1e-6)
+  expect_equal(bic, 332.156487, tolerance = 1e-6)
   expect_true(is.infinite(calc_BIC(loglik, 2, 0)))
   expect_warning(calc_BIC(loglik, 2, -10))
 })

@@ -81,15 +81,16 @@ b_rapa_data <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", packa
 registration_results <- register(
   b_rapa_data,
   reference = "Ro18",
-  query = "Col0"
+  query = "Col0",
+  scaling_method = "z-score"
 )
 #> ── Validating input data ────────────────────────────────────────────────────────
 #> ℹ Will process 10 genes.
-#> 
+#>
 #> ── Starting registration with optimisation ──────────────────────────────────────
 #> ℹ Using Nelder-Mead method.
 #> ℹ Using computed stretches and shifts search space limits.
-#> ✔ Optimising registration parameters for genes (10/10) [2.3s]
+#> ✔ Optimising registration parameters for genes (10/10) [6.7s]
 ```
 
 ## Reference

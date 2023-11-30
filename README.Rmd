@@ -86,7 +86,7 @@ registration_results <- register(
 #> ── Starting registration with optimisation ──────────────────────────────────────
 #> ℹ Using Nelder-Mead method.
 #> ℹ Using computed stretches and shifts search space limits.
-#> ✔ Optimising registration parameters for genes (10/10) [2.3s]
+#> ✔ Optimising registration parameters for genes (10/10) [6.7s]
 ```
 
 ## Reference

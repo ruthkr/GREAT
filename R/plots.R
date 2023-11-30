@@ -5,7 +5,7 @@
 #' @param genes_list Optional vector indicating the \code{gene_id} values to be plotted.
 #' @param title Optional plot title.
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
-#'
+#' @param plot_mean_data Whether mean data is displayed or not.
 #' @return Plot of genes of interest after registration process (\code{type = "registered"}) or showing original time points (\code{type = "original"}).
 #'
 #' @export
@@ -13,7 +13,8 @@ plot_registration_results <- function(results,
                                       type = c("registered", "original"),
                                       genes_list = NULL,
                                       title = NULL,
-                                      ncol = NULL) {
+                                      ncol = NULL,
+                                      plot_mean_data = FALSE) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
@@ -72,7 +73,9 @@ plot_registration_results <- function(results,
       # fill = accession
     ) +
     ggplot2::geom_point() +
-    # ggplot2::stat_summary(fun = mean, geom = "line") +
+    {
+      if (plot_mean_data) ggplot2::stat_summary(fun = mean, geom = "line")
+    } +
     ggplot2::facet_wrap(~gene_facet, scales = "free", ncol = ncol) +
     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
     ggplot2::theme_bw() +

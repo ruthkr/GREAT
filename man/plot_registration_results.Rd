@@ -9,7 +9,8 @@ plot_registration_results(
   type = c("registered", "original"),
   genes_list = NULL,
   title = NULL,
-  ncol = NULL
+  ncol = NULL,
+  plot_mean_data = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ plot_registration_results(
 \item{title}{Optional plot title.}
 
 \item{ncol}{Number of columns in the plot grid. By default this is calculated automatically.}
+
+\item{plot_mean_data}{Whether mean data is displayed or not.}
 }
 \value{
 Plot of genes of interest after registration process (\code{type = "registered"}) or showing original time points (\code{type = "original"}).

@@ -3,16 +3,24 @@
 * Added {furrr} and {future} as dependencies.
 * Added `num_cores` parameter to `register()` to allow users to run registration in parallel.
 * Added `exp_sd` parameter to `register()` to allow users to manually set up experimental gene expression variance.
-* Updated `scaling_method` parameter in `register()` and `scale_data()` to allow no scaling ("none", default), Z-score scaling ("z-score"), and min-max scaling ("min-max").
+* Updated `scaling_method` parameter in `register()` and `scale_data()` to allow no scaling ("none", default), Z-score scaling ("z-score"), and min-max scaling ("min-max"), and updated unit tests accordingly.
 
 ## Improvements
 
+* Updated `register()` to perform 3 sequential registrations when using Nelder-Mead, this improves the results of optimal stretch and shift parameters.
 * Updated `calc_loglik()` to use `sigma_squared` in every timepoint in the sum.
 * Updated `scaled_data()` and `preprocess_data()` to return `all_data` object only, instead of a `list()` containing `all_data`.
 * Updated `compare_H1_and_H2()` to return `BIC_diff` column (`BIC_combined - BIC_separate`), instead of `BIC_combined` and `BIC_separate` on their own.
 * Updated `explore_manual_search_space()` to use `BIC_diff` instead of `BIC_combined` to calculate `best_params` from `model_comparison` table.
 * Updated `register()` to perform 3 sequential registrations when using Nelder-Mead, this improves the results of optimal stretch and shift parameters. This may be reverted by tweaking `neldermead()` parameters to ensure correct convergence.
 * Added optional `stretch_init` and `shift_init` to `get_search_space_limits()`, and updated `optimise()` to allow for different `space_lims` calculation settings: automatic, given boundary box, and given initial coords (new).
+* Removed unused `mean_data` calculation from `preprocess_data()` and argument from `scale_data()`.
+* Moved "Will process N genes" message from `register()` to `preprocess_data()` after running `filter_*()` functions.
+* Ensure `results_list$data` is arranged/ordered correctly in `register()`.
+* Updated `get_H*_model_curves()` functions to ensure model curves are smooth.
+* Updated `parse_gene_facets()` to display `BIC_diff` in facet strips.
+* Added `plot_mean_data` parameter to `plot_registration_results()`.
+* Updated `brapa_arabidopsis_registration.rds` file with new pipeline results.
 
 ## Bug fixes
 

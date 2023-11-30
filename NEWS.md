@@ -1,4 +1,4 @@
-# greatR (development version)
+# greatR 1.1.0
 
 * Added {furrr} and {future} as dependencies.
 * Added `num_cores` parameter to `register()` to allow users to run registration in parallel.
@@ -20,6 +20,8 @@
 * Updated `get_H*_model_curves()` functions to ensure model curves are smooth.
 * Updated `parse_gene_facets()` to display `BIC_diff` in facet strips.
 * Added `plot_mean_data` parameter to `plot_registration_results()`.
+* Updated `overlapping_percent` parameter in `register()` so it goes from 0 to 100 (it's later normalised in the function to avoid breakages down the line).
+* Added `scaling_method` as an attribute in `data` results from `register()`, this is used in `plot_registration_results()` to build the y-axis label according the the scaling method used.
 * Updated `brapa_arabidopsis_registration.rds` file with new pipeline results.
 
 ## Bug fixes

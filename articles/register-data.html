@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="../deps/Lato-0.4.7/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Lato-0.4.7/font.css" rel="stylesheet">
 <link href="../deps/Fira_Code-0.4.7/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -36,7 +36,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">greatR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -232,7 +232,8 @@ other function paramaters, go to <code><a href="../reference/register.html">regi
 <code class="sourceCode R"><span><span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/register.html">register</a></span><span class="op">(</span></span>
 <span>  <span class="va">b_rapa_data</span>,</span>
 <span>  reference <span class="op">=</span> <span class="st">"Ro18"</span>,</span>
-<span>  query <span class="op">=</span> <span class="st">"Col0"</span></span>
+<span>  query <span class="op">=</span> <span class="st">"Col0"</span>,</span>
+<span>  scaling_method <span class="op">=</span> <span class="st">"z-score"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── Validating input data ────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ℹ Will process 10 genes.</span></span>
@@ -240,7 +241,7 @@ other function paramaters, go to <code><a href="../reference/register.html">regi
 <span><span class="co">#&gt; ── Starting registration with optimisation ──────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ℹ Using Nelder-Mead method.</span></span>
 <span><span class="co">#&gt; ℹ Using computed stretches and shifts search space limits.</span></span>
-<span><span class="co">#&gt; ✔ Optimising registration parameters for genes (10/10) [2.3s]</span></span></code></pre></div>
+<span><span class="co">#&gt; ✔ Optimising registration parameters for genes (10/10) [6.7s]</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="registration-results">Registration results<a class="anchor" aria-label="anchor" href="#registration-results"></a>
@@ -256,11 +257,10 @@ to the query data.</li>
 <li>
 <code>model_comparison</code> is a data frame containing (a) the
 optimal stretch and shift for each <code>gene_id</code> and (b) the
-Bayesian Information Criterion (BIC) for the separate model
-(<code>BIC_separate</code>) and for the combined model
-(<code>BIC_combined</code>) after applying optimal registration
-parameters for each gene. If the value of <code>BIC_combined</code> &lt;
-<code>BIC_separate</code>, then expression dynamics between reference
+difference between Bayesian Information Criterion for the separate model
+and for the combined model (<code>BIC_diff</code>) after applying
+optimal registration parameters for each gene. If the value of
+<code>BIC_diff &lt; 0</code>, then expression dynamics between reference
 and query data can be registered (<code>registered = TRUE</code>).</li>
 </ul>
 <p>To check whether a gene is registered or not, we can get the summary
@@ -270,101 +270,82 @@ registration result.</p>
 <code class="sourceCode R"><span><span class="va">registration_results</span><span class="op">$</span><span class="va">model_comparison</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
-<colgroup>
-<col width="22%">
-<col width="12%">
-<col width="14%">
-<col width="17%">
-<col width="17%">
-<col width="14%">
-</colgroup>
 <thead><tr class="header">
 <th align="left">gene_id</th>
 <th align="right">stretch</th>
 <th align="right">shift</th>
-<th align="right">BIC_separate</th>
-<th align="right">BIC_combined</th>
+<th align="right">BIC_diff</th>
 <th align="left">registered</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">BRAA02G018970.3C</td>
-<td align="right">3.973246</td>
-<td align="right">-15.047106</td>
-<td align="right">48.03687</td>
-<td align="right">40.36121</td>
-<td align="left">TRUE</td>
+<td align="right">3.999999</td>
+<td align="right">-9.9803319</td>
+<td align="right">2.830104</td>
+<td align="left">FALSE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA02G043220.3C</td>
-<td align="right">3.826033</td>
-<td align="right">-11.495610</td>
-<td align="right">59.00165</td>
-<td align="right">50.88363</td>
+<td align="right">2.451715</td>
+<td align="right">-0.4364747</td>
+<td align="right">-3.571541</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA03G023790.3C</td>
-<td align="right">1.664500</td>
-<td align="right">8.463653</td>
-<td align="right">52.95771</td>
-<td align="right">45.92210</td>
+<td align="right">2.250661</td>
+<td align="right">4.4018159</td>
+<td align="right">-7.849086</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA03G051930.3C</td>
-<td align="right">2.349747</td>
-<td align="right">5.664320</td>
-<td align="right">54.83773</td>
-<td align="right">47.03630</td>
+<td align="right">3.100202</td>
+<td align="right">2.1364425</td>
+<td align="right">-8.096674</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA04G005470.3C</td>
-<td align="right">3.298411</td>
-<td align="right">-2.561531</td>
-<td align="right">41.20168</td>
-<td align="right">32.84564</td>
+<td align="right">3.527039</td>
+<td align="right">-2.5483276</td>
+<td align="right">-7.540002</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA05G005370.3C</td>
-<td align="right">1.876649</td>
-<td align="right">6.580776</td>
-<td align="right">52.01824</td>
-<td align="right">44.35298</td>
+<td align="right">2.276239</td>
+<td align="right">3.8947552</td>
+<td align="right">-7.726484</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA06G025360.3C</td>
-<td align="right">3.170889</td>
-<td align="right">-5.140066</td>
-<td align="right">57.69557</td>
-<td align="right">48.83989</td>
+<td align="right">2.383838</td>
+<td align="right">1.6557012</td>
+<td align="right">-6.502890</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA07G030470.3C</td>
 <td align="right">3.999999</td>
-<td align="right">-9.495934</td>
-<td align="right">42.17333</td>
-<td align="right">34.12138</td>
+<td align="right">-6.0350479</td>
+<td align="right">-5.450806</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA07G034100.3C</td>
 <td align="right">3.999999</td>
-<td align="right">-10.460581</td>
-<td align="right">41.83850</td>
-<td align="right">33.84178</td>
+<td align="right">-6.2376261</td>
+<td align="right">-3.927753</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA09G045310.3C</td>
-<td align="right">3.159727</td>
-<td align="right">-1.205799</td>
-<td align="right">43.44362</td>
-<td align="right">35.07316</td>
+<td align="right">3.379824</td>
+<td align="right">-1.2284081</td>
+<td align="right">-7.690014</td>
 <td align="left">TRUE</td>
 </tr>
 </tbody>

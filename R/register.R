@@ -9,7 +9,7 @@
 #' @param reference Accession name of reference data.
 #' @param query Accession name of query data.
 #' @param scaling_method Scaling method applied to data prior to registration process. Either \code{none} (default), \code{z-score}, or \code{min-max}.
-#' @param overlapping_percent Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
+#' @param overlapping_percent Minimum percentage of overlapping time points on the reference data. Shifts will be only considered if it leaves at least this percentage of overlapping time points after applying the registration function.
 #' @param optimise_registration_parameters Whether to optimise registration parameters. By default, \code{TRUE}.
 #' @param optimisation_method Optimisation method to use. Either \code{"nm"} for Nelder-Mead (default), \code{"lbfgsb"} for L-BFGS-B, or \code{"sa"} for Simulated Annealing.
 #' @param optimisation_config Optional list with arguments to override the default optimisation configuration.
@@ -42,7 +42,7 @@ register <- function(input,
                      reference,
                      query,
                      scaling_method = c("none", "z-score", "min-max"),
-                     overlapping_percent = 0.5,
+                     overlapping_percent = 50,
                      optimise_registration_parameters = TRUE,
                      optimisation_method = c("nm", "lbfgsb", "sa"),
                      optimisation_config = NULL,
@@ -121,6 +121,7 @@ register <- function(input,
   )
 
   # Preprocess data
+  overlapping_percent <- overlapping_percent / 100
   all_data <- preprocess_data(input, reference, query, exp_sd, scaling_method)
   gene_id_list <- unique(all_data$gene_id)
 

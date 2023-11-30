@@ -1,7 +1,7 @@
 #' Optimise registration parameters
 #'
 #' @param data Input data frame containing all replicates of gene expression for a single genotype at each time point.
-#' @param overlapping_percent Number of minimum overlapping time points. Shifts will be only considered if it leaves at least these many overlapping points after applying the registration function.
+#' @param overlapping_percent Minimum normalised percentage of overlapping time points on the reference data. Shifts will be only considered if it leaves at least this percentage of overlapping time points after applying the registration function.
 #' @param optimisation_config List with arguments to modify the optimisation configuration.
 #' @param optimise_fun Optimisation function to use. Can be \code{optimise_using_nm} or \code{optimise_using_nm}.
 #'

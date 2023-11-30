@@ -1,4 +1,4 @@
-registration_results <- system.file("extdata/brapa_arabidopsis_registration_new.rds", package = "greatR") |>
+registration_results <- system.file("extdata/brapa_arabidopsis_registration.rds", package = "greatR") |>
   readRDS()
 
 # Summary and visualisation ----

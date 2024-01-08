@@ -20,6 +20,49 @@ match_names <- function(x, lookup, error = NULL, name_string = "names", lookup_v
   }
 }
 
+#' Validate registration parameters
+#'
+#' @noRd
+validate_params <- function(stretches, shifts, registration_type = c("optimisation", "manual")) {
+  # Registration with optimisation
+  if (registration_type == "optimisation") {
+    if (all(is.na(stretches), is.na(shifts))) {
+      cli::cli_alert_info("Using computed stretches and shifts search space limits.")
+    } else if (all(!is.na(stretches), !is.na(shifts))) {
+      cli::cli_alert_info("Using provided stretches and shifts to define search space limits.")
+    } else {
+      var_na <- ifelse(is.na(stretches), "stretches", "shifts")
+      var_num <- ifelse(is.na(stretches), "shifts", "stretches")
+
+      cli::cli_alert_info("Using provided {var_num} and computed {var_na} to define search space limits.")
+    }
+  }
+
+  # Manual registration
+  if (registration_type == "manual") {
+    if (any(is.na(stretches), is.na(shifts))) {
+      stop(
+        cli::format_error(c(
+          "{.var stretches} and {.var shifts} must be {.cls numeric} vectors.",
+          "x" = "You supplied vectors with {.cls NA} values."
+        )),
+        call. = FALSE
+      )
+    }
+  }
+}
+
+#' Perform crossing in {data.table}
+#'
+#' @noRd
+cross_join <- function(a, b) {
+  cj <- data.table::CJ(
+    seq_len(nrow(a)),
+    seq_len(nrow(b))
+  )
+  cbind(a[cj[[1]], ], b[cj[[2]], ])
+}
+
 #' Get approximate stretch factor
 #'
 #' \code{get_approximate_stretch()} is a function to get a stretch factor
@@ -59,48 +102,3 @@ get_approximate_stretch <- function(data, reference = "ref", query = "query") {
   return(stretch_factor)
 }
 
-#' Validate registration parameters
-#'
-#' @noRd
-validate_params <- function(stretches, shifts, registration_type = c("optimisation", "manual")) {
-  # Registration with optimisation
-  if (registration_type == "optimisation") {
-    if (all(is.na(stretches), is.na(shifts))) {
-      cli::cli_alert_info("Using computed stretches and shifts search space limits.")
-    } else if (all(!is.na(stretches), !is.na(shifts))) {
-      cli::cli_alert_info("Using provided stretches and shifts to define search space limits.")
-    } else {
-      stop(
-        cli::format_error(c(
-          "{.var stretches} and {.var shifts} must be {.cls numeric} vectors.",
-          "x" = "You supplied vectors with {.cls NA} values."
-        )),
-        call. = FALSE
-      )
-    }
-  }
-
-  # Manual registration
-  if (registration_type == "manual") {
-    if (any(is.na(stretches), is.na(shifts))) {
-      stop(
-        cli::format_error(c(
-          "{.var stretches} and {.var shifts} must be {.cls numeric} vectors.",
-          "x" = "You supplied vectors with {.cls NA} values."
-        )),
-        call. = FALSE
-      )
-    }
-  }
-}
-
-#' Perform crossing in {data.table}
-#'
-#' @noRd
-cross_join <- function(a, b) {
-  cj <- data.table::CJ(
-    seq_len(nrow(a)),
-    seq_len(nrow(b))
-  )
-  cbind(a[cj[[1]], ], b[cj[[2]], ])
-}

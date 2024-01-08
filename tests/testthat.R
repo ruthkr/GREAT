@@ -8,5 +8,6 @@
 
 library(testthat)
 library(greatR)
+data.table::setDTthreads(2) # Only needed to avoid issues on CRAN
 
 test_check("greatR", reporter = c("progress", "list", "fail"))

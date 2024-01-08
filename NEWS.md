@@ -23,6 +23,8 @@
 * Updated `overlapping_percent` parameter in `register()` so it goes from 0 to 100 (it's later normalised in the function to avoid breakages down the line).
 * Added `scaling_method` as an attribute in `data` results from `register()`, this is used in `plot_registration_results()` to build the y-axis label according the the scaling method used.
 * Updated `brapa_arabidopsis_registration.rds` file with new pipeline results.
+* Split `get_search_space_limits()` into separate aux functions for stretch and shift, which allows more stretch and shift input combinations.
+* Updated `validate_params(..., registration_type = "optimisation")` to allow more stretch and shift input combinations.
 
 ## Bug fixes
 

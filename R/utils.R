@@ -102,3 +102,148 @@ get_approximate_stretch <- function(data, reference = "ref", query = "query") {
   return(stretch_factor)
 }
 
+#' Calculate limits of the search space
+#'
+#' @noRd
+get_search_space_limits <- function(data, stretches = NA, shifts = NA, overlapping_percent = 0.5) {
+  stretch_space_lims <- get_stretch_search_space_limits(data, stretches)
+  shift_space_lims <- get_shift_search_space_limits(data, shifts, stretch_space_lims$stretch_upper, overlapping_percent)
+  space_lims <- c(stretch_space_lims, shift_space_lims)
+
+  return(space_lims)
+}
+
+#' Calculate limits of the stretch search space
+#'
+#' @noRd
+get_stretch_search_space_limits <- function(data, stretches = NA) {
+  # Suppress "no visible binding for global variable" note
+  accession <- NULL
+  timepoint <- NULL
+
+  # Check calculation mode
+  if (all(is.na(stretches))) {
+    calc_mode <- "auto"
+  } else if (length(stretches) == 1) {
+    calc_mode <- "init"
+  } else if (length(stretches) >= 2) {
+    calc_mode <- "bound"
+  }
+
+  # Calculate boundary
+  if (calc_mode == "bound") {
+    # Calculate limits
+    stretch_init <- mean(stretches)
+    stretch_lower <- min(stretches)
+    stretch_upper <- max(stretches)
+  } else {
+    # Initial approximate value
+    stretch_approx <- get_approximate_stretch(data)
+
+    # Initial value
+    if (calc_mode == "auto") {
+      stretch_init <- stretch_approx
+    } else if (calc_mode == "init") {
+      stretch_init <- stretches
+    }
+
+    # Calculate limits
+    stretch_lower <- 0.5 * stretch_approx
+    stretch_upper <- 1.5 * stretch_approx
+  }
+
+  # Results object
+  results_list <- list(
+    stretch_init = stretch_init,
+    stretch_lower = stretch_lower,
+    stretch_upper = stretch_upper
+  )
+
+  return(results_list)
+}
+
+#' Calculate limits of the shift search space
+#'
+#' @noRd
+get_shift_search_space_limits <- function(data, shifts = NA, stretch_upper, overlapping_percent = 0.5) {
+  # Suppress "no visible binding for global variable" note
+  accession <- NULL
+  timepoint <- NULL
+
+  # Check calculation mode
+  if (all(is.na(shifts))) {
+    calc_mode <- "auto"
+  } else if (length(shifts) == 1) {
+    calc_mode <- "init"
+  } else if (length(shifts) >= 2) {
+    calc_mode <- "bound"
+  }
+
+  # Calculate boundary
+  if (calc_mode == "bound") {
+    # Calculate limits
+    shift_lower <- min(shifts)
+    shift_upper <- max(shifts)
+  } else {
+    # Extract time point ranges
+    timepoints_ref <- unique(data[accession == "ref", timepoint])
+    timepoints_query <- unique(data[accession == "query", timepoint])
+
+    # Calculate time point ranges
+    range_ref <- diff(range(timepoints_ref))
+    range_query <- diff(range(timepoints_query))
+    range_query_max_stretch <- stretch_upper * range_query
+
+    # Calculate minimum and maximum timepoints in which the curves overlap
+    min_timepoint <- min(timepoints_ref) + overlapping_percent * range_ref - range_query_max_stretch
+    max_timepoint <- max(timepoints_ref) - overlapping_percent * range_ref + range_query_max_stretch
+
+    # Calculate limits
+    shift_lower <- min_timepoint - min(timepoints_query)
+    shift_upper <- (max_timepoint - range_query_max_stretch) - min(timepoints_query)
+  }
+
+  # Calculate initial value (zero if possible)
+  if (calc_mode %in% c("auto", "bound")) {
+    shift_init <- 0
+  } else {
+    shift_init <- shifts
+  }
+
+  if (shift_init < shift_lower | shift_init > shift_upper) {
+    shift_init <- mean(c(shift_lower, shift_upper))
+  }
+
+  # Results object
+  results_list <- list(
+    shift_init = shift_init,
+    shift_lower = shift_lower,
+    shift_upper = shift_upper
+  )
+
+  return(results_list)
+}
+
+#' Calculate overlapping percentage between reference and query data time point ranges
+#'
+#' @noRd
+calc_overlapping_percent <- function(data) {
+  # Suppress "no visible binding for global variable" note
+  accession <- NULL
+  timepoint <- NULL
+
+  # Extract time point ranges
+  range_ref <- range(unique(data[accession == "ref", timepoint]))
+  range_query <- range(unique(data[accession == "query", timepoint]))
+
+  if (all(range_ref[2] >= range_query[2], range_ref[1] <= range_query[1])) {
+    # Query is fully contained on reference
+    overlapping_percent <- 1
+  } else {
+    # Calculate overlapping percent over reference
+    overlap <- min(c(range_ref[2], range_query[2])) - max(c(range_ref[1], range_query[1]))
+    overlapping_percent <- overlap / diff(range_ref)
+  }
+
+  return(overlapping_percent)
+}

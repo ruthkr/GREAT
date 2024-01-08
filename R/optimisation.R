@@ -13,17 +13,8 @@ optimise <- function(data,
                      optimisation_config,
                      optimise_fun) {
 
-  # Calculate boundary box and initial guess
-  if (all(is.na(stretches), is.na(shifts))) {
-    # Automatic space search
-    space_lims <- get_search_space_limits(data, stretch_init = stretches, shift_init = shifts, overlapping_percent)
-  } else if (all(length(stretches) > 1, length(shifts) > 1)) {
-    # Space search given boundary box
-    space_lims <- get_search_space_limits_from_params(stretches, shifts)
-  } else if (all(length(stretches) == 1, length(shifts) == 1)) {
-    # Space search given initial coordinates
-    space_lims <- get_search_space_limits(data, stretch_init = stretches, shift_init = shifts, overlapping_percent)
-  }
+  # Calculate boundary box
+  space_lims <- get_search_space_limits(data, stretches, shifts, overlapping_percent)
 
   # Run optimisation
   optimised_params <- optimise_fun(
@@ -60,117 +51,6 @@ objective_fun <- function(data, stretch, shift, overlapping_percent, maximize = 
       return(loglik_combined)
     }
   )
-}
-
-#' Calculate limits of the search space
-#'
-#' @noRd
-get_search_space_limits <- function(data, stretch_init = NA, shift_init = NA, overlapping_percent = 0.5) {
-  # Suppress "no visible binding for global variable" note
-  accession <- NULL
-  timepoint <- NULL
-
-  # Initial stretch limits
-  stretch_approx <- get_approximate_stretch(data)
-  if (is.na(stretch_init)) {
-    stretch_init <- stretch_approx
-  }
-
-  stretch_lower <- 0.5 * stretch_approx
-  stretch_upper <- 1.5 * stretch_approx
-
-  # Extract time point ranges
-  timepoints_ref <- unique(data[accession == "ref", timepoint])
-  timepoints_query <- unique(data[accession == "query", timepoint])
-
-  # Calculate time point ranges
-  range_ref <- diff(range(timepoints_ref))
-  range_query <- diff(range(timepoints_query))
-  range_query_max_stretch <- stretch_upper * range_query
-
-  # Calculate minimum and maximum timepoints in which the curves overlap
-  min_timepoint <- min(timepoints_ref) + overlapping_percent * range_ref - range_query_max_stretch
-  max_timepoint <- max(timepoints_ref) - overlapping_percent * range_ref + range_query_max_stretch
-
-  # Calculate shift limits
-  shift_lower <- min_timepoint - min(timepoints_query)
-  shift_upper <- (max_timepoint - range_query_max_stretch) - min(timepoints_query)
-
-  # Calculate initial shift value (zero if possible)
-  if (is.na(shift_init)) {
-    shift_init <- 0
-  }
-  if (shift_init < shift_lower | shift_init > shift_upper) {
-    shift_init <- mean(c(shift_lower, shift_upper))
-  }
-
-  # Results object
-  results_list <- list(
-    stretch_init = stretch_init,
-    stretch_lower = stretch_lower,
-    stretch_upper = stretch_upper,
-    shift_init = shift_init,
-    shift_lower = shift_lower,
-    shift_upper = shift_upper
-  )
-
-  return(results_list)
-}
-
-#' Calculate limits of the search space from provided registration parameters
-#'
-#' @noRd
-get_search_space_limits_from_params <- function(stretches, shifts) {
-  # Initial stretch limits
-  stretch_lower <- min(stretches)
-  stretch_upper <- max(stretches)
-  stretch_init <- mean(stretches)
-
-  # Calculate shift limits
-  shift_lower <- min(shifts)
-  shift_upper <- max(shifts)
-
-  # Calculate initial shift value (zero if possible)
-  shift_init <- 0
-  if (shift_init < shift_lower | shift_init > shift_upper) {
-    shift_init <- mean(c(shift_lower, shift_upper))
-  }
-
-  # Results object
-  results_list <- list(
-    stretch_init = stretch_init,
-    stretch_lower = stretch_lower,
-    stretch_upper = stretch_upper,
-    shift_init = shift_init,
-    shift_lower = shift_lower,
-    shift_upper = shift_upper
-  )
-
-  return(results_list)
-}
-
-#' Calculate overlapping percentage between reference and query data time point ranges
-#'
-#' @noRd
-calc_overlapping_percent <- function(data) {
-  # Suppress "no visible binding for global variable" note
-  accession <- NULL
-  timepoint <- NULL
-
-  # Extract time point ranges
-  range_ref <- range(unique(data[accession == "ref", timepoint]))
-  range_query <- range(unique(data[accession == "query", timepoint]))
-
-  if (all(range_ref[2] >= range_query[2], range_ref[1] <= range_query[1])) {
-    # Query is fully contained on reference
-    overlapping_percent <- 1
-  } else {
-    # Calculate overlapping percent over reference
-    overlap <- min(c(range_ref[2], range_query[2])) - max(c(range_ref[1], range_query[1]))
-    overlapping_percent <- overlap / diff(range_ref)
-  }
-
-  return(overlapping_percent)
 }
 
 #' Optimise stretch and shift using Simulated Annealing

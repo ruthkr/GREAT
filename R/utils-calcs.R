@@ -87,7 +87,27 @@ calc_variance <- function(all_data, exp_sd = NA) {
 
     # Calculate variance for data with no replicates
     if (nrow(all_data_no_reps) > 0) {
-      all_data_no_reps[, var := diff(range(expression_value)) / 10, by = .(gene_id, accession)]
+      # all_data_no_reps[, var := diff(range(expression_value)) / 10, by = .(gene_id, accession)]
+
+      # Change variance function from global environment (see https://stackoverflow.com/a/49167744/12824988)
+      var_method_noreps <- "diff"
+      if ("var_method_noreps" %in% ls(envir = .GlobalEnv)) {
+        var_method_noreps <- get("var_method_noreps", envir = .GlobalEnv)
+      }
+
+      if (var_method_noreps == "diff") {
+        var_fun <- function(x) {
+          diff(range(x)) / 10
+        }
+      } else if (var_method_noreps == "var") {
+        var_fun <- stats::var
+      } else if (var_method_noreps == "pmax") {
+        var_fun <- function(x) {
+          pmax(diff(range(x)) / 10, stats::var(x))
+        }
+      }
+
+      all_data_no_reps[, var := var_fun(expression_value), by = .(gene_id, accession)]
     }
 
     # Combine data

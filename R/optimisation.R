@@ -12,7 +12,6 @@ optimise <- function(data,
                      overlapping_percent = 0.5,
                      optimisation_config,
                      optimise_fun) {
-
   # Calculate boundary box
   space_lims <- get_search_space_limits(data, stretches, shifts, overlapping_percent)
 

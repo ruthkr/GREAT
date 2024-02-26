@@ -1,7 +1,6 @@
 #' Preprocess data before registration
 #'
 #' \code{preprocess_data()} is a function that:
-#' \item{Calculates \code{time_delta}.}
 #' \item{Calculates expression \code{var} values for each timepoint.}
 #' \item{Scales data via \code{\link{scale_data}}.}
 #'
@@ -12,7 +11,6 @@ preprocess_data <- function(input, reference, query, exp_sd = NA, scaling_method
   accession <- NULL
   timepoint <- NULL
   expression_value <- NULL
-  time_delta <- NULL
 
   # Validate parameters
   scaling_method <- match.arg(scaling_method)
@@ -30,9 +28,6 @@ preprocess_data <- function(input, reference, query, exp_sd = NA, scaling_method
   all_data <- filter_unchanged_expressions(all_data)
 
   cli::cli_alert_info("Will process {length(unique(all_data$gene_id))} gene{?s}.")
-
-  # Calculate time delta for each accession
-  all_data[, time_delta := timepoint - min(timepoint), by = .(gene_id, accession)]
 
   # Calculate expression variance
   all_data <- calc_variance(all_data, exp_sd)

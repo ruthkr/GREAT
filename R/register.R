@@ -226,7 +226,7 @@ register <- function(input,
   all_data <- all_data[order(gene_id, accession, timepoint, replicate)]
 
   # Restore original query and reference accession names
-  all_data[, c("time_delta", "timepoint_id") := NULL]
+  all_data[, c("timepoint_id") := NULL]
   all_data[, accession := factor(accession, levels = c("ref", "query"), labels = c(reference, query))][, .(gene_id, accession, timepoint, timepoint_reg, expression_value, replicate)]
 
   # Add accession values as data attributes

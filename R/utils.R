@@ -107,7 +107,7 @@ get_approximate_stretch <- function(data, reference = "ref", query = "query") {
 #' @noRd
 get_search_space_limits <- function(data, stretches = NA, shifts = NA, overlapping_percent = 0.5) {
   stretch_space_lims <- get_stretch_search_space_limits(data, stretches)
-  shift_space_lims <- get_shift_search_space_limits(data, shifts, stretch_space_lims$stretch_upper, overlapping_percent)
+  shift_space_lims <- get_shift_search_space_limits(data, shifts, stretch_space_lims, overlapping_percent)
   space_lims <- c(stretch_space_lims, shift_space_lims)
 
   return(space_lims)
@@ -165,7 +165,7 @@ get_stretch_search_space_limits <- function(data, stretches = NA) {
 #' Calculate limits of the shift search space
 #'
 #' @noRd
-get_shift_search_space_limits <- function(data, shifts = NA, stretch_upper, overlapping_percent = 0.5) {
+get_shift_search_space_limits <- function(data, shifts = NA, stretch_space_lims, overlapping_percent = 0.5) {
   # Suppress "no visible binding for global variable" note
   accession <- NULL
   timepoint <- NULL

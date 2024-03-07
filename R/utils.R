@@ -185,6 +185,11 @@ get_shift_search_space_limits <- function(data, shifts = NA, stretch_space_lims,
     shift_lower <- min(shifts)
     shift_upper <- max(shifts)
   } else {
+    # Read stretch limits
+    stretch_init <- stretch_space_lims$stretch_init
+    stretch_lower <- stretch_space_lims$stretch_lower
+    stretch_upper <- stretch_space_lims$stretch_upper
+
     # Extract time point ranges
     timepoints_ref <- unique(data[accession == "ref", timepoint])
     timepoints_query <- unique(data[accession == "query", timepoint])
@@ -193,25 +198,24 @@ get_shift_search_space_limits <- function(data, shifts = NA, stretch_space_lims,
     range_ref <- diff(range(timepoints_ref))
     range_query <- diff(range(timepoints_query))
     range_query_max_stretch <- stretch_upper * range_query
+    range_query_init_stretch <- stretch_init * range_query
 
     # Calculate minimum and maximum timepoints in which the curves overlap
     min_timepoint <- min(timepoints_ref) + overlapping_percent * range_ref - range_query_max_stretch
     max_timepoint <- max(timepoints_ref) - overlapping_percent * range_ref + range_query_max_stretch
 
     # Calculate limits
-    shift_lower <- min_timepoint - min(timepoints_query)
-    shift_upper <- (max_timepoint - range_query_max_stretch) - min(timepoints_query)
+    shift_lower <- min_timepoint - stretch_upper * min(timepoints_query)
+    shift_upper <- max_timepoint - stretch_lower * min(timepoints_query)
   }
 
-  # Calculate initial value (zero if possible)
+  # Calculate initial value (centered curves)
   if (calc_mode %in% c("auto", "bound")) {
-    shift_init <- 0
+    midpoint_ref <- min(timepoints_ref) + range_ref * 0.5
+    midpoint_query_init <- min(timepoints_query) * stretch_init + range_query_init_stretch * 0.5
+    shift_init <- midpoint_ref - midpoint_query_init
   } else {
     shift_init <- shifts
-  }
-
-  if (shift_init < shift_lower | shift_init > shift_upper) {
-    shift_init <- mean(c(shift_lower, shift_upper))
   }
 
   # Results object

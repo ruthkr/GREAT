@@ -196,9 +196,10 @@ optimise_using_lbfgsb <- function(data,
                                   space_lims) {
   # Parse initial and limit parameters
   stretch_init <- space_lims$stretch_init
-  shift_init <- space_lims$shift_init
   stretch_lower <- space_lims$stretch_lower
   stretch_upper <- space_lims$stretch_upper
+
+  shift_init <- space_lims$shift_init
   shift_lower <- space_lims$shift_lower
   shift_upper <- space_lims$shift_upper
 

@@ -9,7 +9,7 @@
 #' @param reference Accession name of reference data.
 #' @param query Accession name of query data.
 #' @param scaling_method Scaling method applied to data prior to registration process. Either \code{none} (default), \code{z-score}, or \code{min-max}.
-#' @param overlapping_percent Minimum percentage of overlapping time points on the reference data. Shifts will be only considered if it leaves at least this percentage of overlapping time points after applying the registration function.
+#' @param overlapping_percent Minimum percentage of overlapping time point range of the reference data. Shifts will be only considered if it leaves at least this percentage of overlapping time point range after applying the registration.
 #' @param optimise_registration_parameters Whether to optimise registration parameters. By default, \code{TRUE}.
 #' @param optimisation_method Optimisation method to use. Either \code{"nm"} for Nelder-Mead (default), \code{"lbfgsb"} for L-BFGS-B, or \code{"sa"} for Simulated Annealing.
 #' @param optimisation_config Optional list with arguments to override the default optimisation configuration.
@@ -101,10 +101,10 @@ register <- function(input,
     loglik_separate <- calc_loglik_H2(gene_data)
 
     # Explore search space
-    best_params <- explore_manual_search_space(gene_data, stretches, shifts, loglik_separate)
+    best_params <- explore_manual_search_space(gene_data, stretches, shifts, loglik_separate, overlapping_percent)
 
     # Register for Hypothesis 1
-    results <- register_manually(gene_data, best_params$stretch, best_params$shift, loglik_separate)
+    results <- register_manually(gene_data, best_params$stretch, best_params$shift, loglik_separate, overlapping_percent)
 
     return(results)
   }
@@ -143,6 +143,7 @@ register <- function(input,
     validate_params(stretches, shifts, "optimisation")
 
     # Run optimisation
+    cli::cli_alert_info("Using {.var overlapping_percent} = {overlapping_percent * 100}% as a registration criterion.")
     if (is.na(num_cores)) {
       results <- lapply(
         cli::cli_progress_along(
@@ -170,6 +171,7 @@ register <- function(input,
     validate_params(stretches, shifts, "manual")
 
     # Apply manual registration
+    cli::cli_alert_info("Using {.var overlapping_percent} = {overlapping_percent * 100}% as a registration criterion.")
     if (is.na(num_cores)) {
       results <- lapply(
         cli::cli_progress_along(
@@ -272,12 +274,17 @@ register_manually <- function(data,
                               stretch,
                               shift,
                               loglik_separate,
+                              overlapping_percent = 50,
                               return_data_reg = TRUE) {
   # Apply registration
   data_reg <- apply_registration(data, stretch, shift)
 
   # Calculate model comparison
-  loglik_combined <- calc_loglik_H1(data_reg)
+  if (calc_overlapping_percent(data_reg) < overlapping_percent) {
+    loglik_combined <- -999
+  } else {
+    loglik_combined <- calc_loglik_H1(data_reg)
+  }
 
   # Model comparison
   model_comparison <- compare_H1_and_H2(data_reg, stretch, shift, loglik_combined, loglik_separate)
@@ -300,7 +307,7 @@ register_manually <- function(data,
 #' Explore manual search space for a single gene
 #'
 #' @noRd
-explore_manual_search_space <- function(data, stretches, shifts, loglik_separate) {
+explore_manual_search_space <- function(data, stretches, shifts, loglik_separate, overlapping_percent) {
   # Suppress "no visible binding for global variable" note
   BIC_diff <- NULL
 
@@ -311,7 +318,7 @@ explore_manual_search_space <- function(data, stretches, shifts, loglik_separate
       lapply(
         shifts,
         function(shift) {
-          results <- register_manually(data, stretch, shift, loglik_separate, return_data_reg = FALSE)
+          results <- register_manually(data, stretch, shift, loglik_separate, overlapping_percent, return_data_reg = FALSE)
           results$model_comparison
         }
       )

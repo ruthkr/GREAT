@@ -32,7 +32,7 @@ register(
 
 \item{scaling_method}{Scaling method applied to data prior to registration process. Either \code{none} (default), \code{z-score}, or \code{min-max}.}
 
-\item{overlapping_percent}{Minimum percentage of overlapping time points on the reference data. Shifts will be only considered if it leaves at least this percentage of overlapping time points after applying the registration function.}
+\item{overlapping_percent}{Minimum percentage of overlapping time point range of the reference data. Shifts will be only considered if it leaves at least this percentage of overlapping time point range after applying the registration.}
 
 \item{optimise_registration_parameters}{Whether to optimise registration parameters. By default, \code{TRUE}.}
 

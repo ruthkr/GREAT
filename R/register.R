@@ -331,3 +331,13 @@ explore_manual_search_space <- function(data, stretches, shifts, loglik_separate
 
   return(best_params)
 }
+
+new_res_greatR <- function(x) {
+  structure(x, class = c("res_greatR", class(x)))
+}
+
+#' @export
+print.res_greatR <- function(x, ...) {
+  print(x$model_comparison)
+  return(invisible(x))
+}

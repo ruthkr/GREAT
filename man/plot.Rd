@@ -3,36 +3,54 @@
 \name{plot}
 \alias{plot}
 \alias{plot.res_greatR}
-\title{Plot gene of interest after registration}
+\alias{plot.dist_greatR}
+\title{Plot gene of interest after registration / Visualise distances between samples from different time points}
 \usage{
 \method{plot}{res_greatR}(
   x,
-  type = c("registered", "original"),
+  type = c("result", "original"),
   genes_list = NULL,
-  title = NULL,
+  show_rep_mean = FALSE,
   ncol = NULL,
-  plot_mean_data = FALSE,
+  title = NULL,
+  ...
+)
+
+\method{plot}{dist_greatR}(
+  x,
+  type = c("result", "original"),
+  match_timepoints = TRUE,
+  title = NULL,
   ...
 )
 }
 \arguments{
-\item{x}{Registration results, output of the \code{\link{register}} registration process.}
+\item{x}{Input object.
+\itemize{
+\item For \code{\link[=plot.res_greatR]{plot.res_greatR()}}: registration results, output of the \code{\link[=register]{register()}} registration process.
+\item For \code{\link[=plot.dist_greatR]{plot.dist_greatR()}}: pairwise distances between reference and query time points, output of \code{\link[=calculate_distance]{calculate_distance()}}.
+}}
 
-\item{type}{Type of plot, determines whether to use "registered" or "original" time points. By default, "registered".}
+\item{type}{Type of plot, whether to use registration "result" or "original" time points. By default, "result".}
 
 \item{genes_list}{Optional vector indicating the \code{gene_id} values to be plotted.}
 
-\item{title}{Optional plot title.}
+\item{show_rep_mean}{Whether to show \code{replicate} mean values.}
 
 \item{ncol}{Number of columns in the plot grid. By default this is calculated automatically.}
 
-\item{plot_mean_data}{Whether mean data is displayed or not.}
+\item{title}{Optional plot title.}
 
 \item{...}{Arguments to be passed to methods (ignored).}
+
+\item{match_timepoints}{If \code{TRUE}, will match query time points to reference time points.}
 }
 \value{
-Plot of genes of interest after registration process (\code{type = "registered"}) or showing original time points (\code{type = "original"}).
+\itemize{
+\item For \code{\link[=plot.res_greatR]{plot.res_greatR()}}: plot of genes of interest after registration process (\code{type = "result"}) or showing original time points (\code{type = "original"}).
+\item For \code{\link[=plot.dist_greatR]{plot.dist_greatR()}}: distance heatmap of gene expression profiles over time between two different species.
+}
 }
 \description{
-Plot gene of interest after registration
+Plot gene of interest after registration / Visualise distances between samples from different time points
 }

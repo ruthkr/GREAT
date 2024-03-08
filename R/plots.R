@@ -1,22 +1,31 @@
-#' Plot gene of interest after registration
+#' Plot gene of interest after registration / Visualise distances between samples from different time points
 #'
-#' @param x Registration results, output of the \code{\link{register}} registration process.
-#' @param type Type of plot, determines whether to use "registered" or "original" time points. By default, "registered".
+#' @param x Input object.
+#'  - For [plot.res_greatR()]: registration results, output of the [register()] registration process.
+#'  - For [plot.dist_greatR()]: pairwise distances between reference and query time points, output of [calculate_distance()].
+#' @param type Type of plot, whether to use registration "result" or "original" time points. By default, "result".
 #' @param genes_list Optional vector indicating the \code{gene_id} values to be plotted.
-#' @param title Optional plot title.
+#' @param show_rep_mean Whether to show \code{replicate} mean values.
+#' @param match_timepoints If \code{TRUE}, will match query time points to reference time points.
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
-#' @param plot_mean_data Whether mean data is displayed or not.
+#' @param title Optional plot title.
 #' @param ... Arguments to be passed to methods (ignored).
 #'
 #' @name plot
-#' @return Plot of genes of interest after registration process (\code{type = "registered"}) or showing original time points (\code{type = "original"}).
+#' @return
+#'  - For [plot.res_greatR()]: plot of genes of interest after registration process (\code{type = "result"}) or showing original time points (\code{type = "original"}).
+#'  - For [plot.dist_greatR()]: distance heatmap of gene expression profiles over time between reference and query.
+NULL
+# > NULL
+
+#' @rdname plot
 #' @export
 plot.res_greatR <- function(x,
-                            type = c("registered", "original"),
+                            type = c("result", "original"),
                             genes_list = NULL,
-                            title = NULL,
+                            show_rep_mean = FALSE,
                             ncol = NULL,
-                            plot_mean_data = FALSE,
+                            title = NULL,
                             ...) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
@@ -60,7 +69,7 @@ plot.res_greatR <- function(x,
   data <- data[gene_facets, on = "gene_id"]
 
   # Plot labels
-  if (type == "registered") {
+  if (type == "result") {
     timepoint_var <- "timepoint_reg"
     x_lab <- "Registered time"
   } else {
@@ -78,7 +87,7 @@ plot.res_greatR <- function(x,
     ) +
     ggplot2::geom_point() +
     {
-      if (plot_mean_data) ggplot2::stat_summary(fun = mean, geom = "line")
+      if (show_rep_mean) ggplot2::stat_summary(fun = mean, geom = "line")
     } +
     ggplot2::facet_wrap(~gene_facet, scales = "free", ncol = ncol) +
     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
@@ -90,7 +99,7 @@ plot.res_greatR <- function(x,
     )
 
   # Add model curve layers
-  if (type == "registered") {
+  if (type == "result") {
     # Count registered and unregistered genes
     registered_count <- length(model_comparison[model_comparison$registered, gene_id])
     unregistered_count <- length(model_comparison[!model_comparison$registered, gene_id])
@@ -149,7 +158,7 @@ parse_gene_facets <- function(model_comparison, type) {
   shift <- NULL
   BIC_diff <- NULL
 
-  if (type == "registered") {
+  if (type == "result") {
     gene_facets <- model_comparison[, .(
       gene_id,
       gene_facet = paste0(
@@ -291,27 +300,13 @@ get_H2_model_curves <- function(data, model_comparison, reference, query) {
   return(preds)
 }
 
-#' Visualise distances between samples from different time points
-#'
-#' \code{plot_heatmap()} is a function that allows users to plot distances
-#' between samples from different time points to investigate the similarity of
-#' progression of gene expression states between species before or after
-#' registration.
-#'
-#' @param results Results containing distances between two different reference and query data, output of \code{\link{calculate_distance}}.
-#' @param type Type of plot, determines whether to use "registered" or "original" time points. By default, "registered".
-#' @param match_timepoints If \code{TRUE}, will match query time points to reference time points.
-#' @param title Optional plot title.
-#' @param axis_fontsize Font size of X and Y axes labels.
-#'
-#' @return Distance heatmap of gene expression profiles over time between two different species.
-#'
+#' @rdname plot
 #' @export
-plot_heatmap <- function(results,
-                         type = c("registered", "original"),
-                         match_timepoints = FALSE,
-                         title = NULL,
-                         axis_fontsize = NULL) {
+plot.dist_greatR <- function(x,
+                             type = c("result", "original"),
+                             match_timepoints = TRUE,
+                             title = NULL,
+                             ...) {
   # Suppress "no visible binding for global variable" note
   timepoint_ref <- NULL
   timepoint_query <- NULL
@@ -319,10 +314,10 @@ plot_heatmap <- function(results,
 
   # Validate parameters
   type <- match.arg(type)
-  if (type == "registered") {
-    data <- results$registered
+  if (type == "result") {
+    data <- x$result
   } else {
-    data <- results$original
+    data <- x$original
   }
 
   # Retrieve accession values from results
@@ -330,7 +325,7 @@ plot_heatmap <- function(results,
   query <- attr(data, "query")
 
   # Synchronise time points
-  if (match_timepoints) {
+  if (all(match_timepoints, type == "result")) {
     equal_timepoints <- intersect(data$timepoint_ref, data$timepoint_query)
     data <- data[timepoint_query %in% equal_timepoints & timepoint_ref %in% equal_timepoints]
   }
@@ -345,8 +340,6 @@ plot_heatmap <- function(results,
     ggplot2::geom_tile() +
     ggplot2::theme_bw() +
     ggplot2::theme(
-      axis.text.x = ggplot2::element_text(size = axis_fontsize),
-      axis.text.y = ggplot2::element_text(size = axis_fontsize),
       panel.border = ggplot2::element_blank(),
       legend.position = "top",
       legend.justification = "right",
@@ -366,7 +359,7 @@ plot_heatmap <- function(results,
     )
 
   # Synchronise time points
-  if (match_timepoints) {
+  if (all(match_timepoints, type == "result")) {
     gg_distance <- gg_distance + ggplot2::coord_fixed()
   }
 

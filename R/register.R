@@ -103,23 +103,6 @@ register <- function(input,
     return(results)
   }
 
-  # Validate input data
-  cli::cli_h1("Validating input data")
-
-  match_names(
-    x = colnames(input),
-    lookup = c("gene_id", "accession", "timepoint", "expression_value", "replicate"),
-    error = "Must review the column names of your input data:",
-    name_string = "column names"
-  )
-
-  match_names(
-    x = c(reference, query),
-    lookup = unique(input$accession),
-    error = "Must review the supplied {.var reference} and {.var query} values:",
-    name_string = "accession values"
-  )
-
   # Preprocess data
   overlapping_percent <- overlapping_percent / 100
   all_data <- preprocess_data(input, reference, query, exp_sd, scaling_method)

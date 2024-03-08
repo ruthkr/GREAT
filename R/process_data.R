@@ -12,7 +12,23 @@ preprocess_data <- function(input, reference, query, exp_sd = NA, scaling_method
   timepoint <- NULL
   expression_value <- NULL
 
-  # Validate parameters
+  # Validate input data and parameters
+  cli::cli_h1("Validating input data")
+
+  match_names(
+    x = colnames(input),
+    lookup = c("gene_id", "accession", "timepoint", "expression_value", "replicate"),
+    error = "Must review the column names of your input data:",
+    name_string = "column names"
+  )
+
+  match_names(
+    x = c(reference, query),
+    lookup = unique(input$accession),
+    error = "Must review the supplied {.var reference} and {.var query} values:",
+    name_string = "accession values"
+  )
+
   scaling_method <- match.arg(scaling_method)
 
   # Make sure the data are data.tables

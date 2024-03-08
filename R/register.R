@@ -48,6 +48,12 @@ register <- function(input,
                      optimisation_config = NULL,
                      exp_sd = NA,
                      num_cores = NA) {
+  # Store function arguments
+  fun_args <- c(as.list(environment()))
+  fun_args$input <- NULL
+  fun_args$scaling_method <- fun_args$scaling_method[1]
+  fun_args$optimisation_method <- fun_args$optimisation_method[1]
+
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
@@ -222,7 +228,8 @@ register <- function(input,
   # Results object
   results_list <- list(
     data = all_data,
-    model_comparison = model_comparison
+    model_comparison = model_comparison,
+    fun_args = fun_args
   )
 
   return(results_list)

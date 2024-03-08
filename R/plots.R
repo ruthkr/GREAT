@@ -32,7 +32,7 @@ plot.res_greatR <- function(x,
   model_comparison <- x$model_comparison
   reference <- attr(data, "ref")
   query <- attr(data, "query")
-  scaling_method <- attr(data, "scaling_method")
+  scaling_method <- x$fun_args$scaling_method
 
   # Select genes to be plotted
   genes <- unique(data[, gene_id])

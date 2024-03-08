@@ -1,11 +1,15 @@
 #' Calculate distance between sample data before and after registration
 #'
-#' @param results Result of registration process using \code{\link{register}}.
+#' \code{calculate_distance()} is a function that allows users to calculate
+#' pairwise distances between samples from different time points to
+#' investigate the similarity of progression before or after registration.
+#'
+#' @param results Result of registration process using [register()].
 #'
 #' @return This function returns a list of data frames which includes:
 #'
-#' \item{registered}{distance between scaled reference and query expressions using registered time points.}
-#' \item{original}{distance between scaled reference and query expressions using original time points.}
+#' \item{registered}{pairwise distance between scaled reference and query expressions using registered time points.}
+#' \item{original}{pairwise distance between scaled reference and query expressions using original time points.}
 #'
 #' @export
 calculate_distance <- function(results) {
@@ -30,26 +34,26 @@ calculate_distance <- function(results) {
   data_ref <- data[data$accession == reference]
 
   # Cross join all reference and query time points
-  timepoint_cj_registered <- get_timepoint_comb_registered_data(data_ref, data_query)
+  timepoint_cj_result <- get_timepoint_comb_result_data(data_ref, data_query)
   timepoint_cj_original <- get_timepoint_comb_original_data(data_ref, data_query)
 
   # Calculate mean square distances
-  dist_registered <- timepoint_cj_registered[, .(distance = mean((exp_ref - exp_query)^2)), by = .(timepoint_ref, timepoint_query)][timepoint_query >= 0]
+  dist_result <- timepoint_cj_result[, .(distance = mean((exp_ref - exp_query)^2)), by = .(timepoint_ref, timepoint_query)][timepoint_query >= 0]
   dist_original <- timepoint_cj_original[, .(distance = mean((exp_ref - exp_query)^2)), by = .(timepoint_ref, timepoint_query)][timepoint_query >= 0]
 
   # Add accession values as data attributes
-  data.table::setattr(dist_registered, "ref", reference)
-  data.table::setattr(dist_registered, "query", query)
+  data.table::setattr(dist_result, "ref", reference)
+  data.table::setattr(dist_result, "query", query)
   data.table::setattr(dist_original, "ref", reference)
   data.table::setattr(dist_original, "query", query)
 
   # Results object
   results_list <- list(
-    registered = dist_registered,
+    result = dist_result,
     original = dist_original
   )
 
-  return(results_list)
+  return(new_dist_greatR(results_list))
 }
 
 #' Cross join all original reference and query time points and expression values
@@ -93,7 +97,7 @@ get_timepoint_comb_original_data <- function(data_ref, data_query) {
 #' Cross join all reference and registered query time points and expression values
 #'
 #' @noRd
-get_timepoint_comb_registered_data <- function(data_ref, data_query) {
+get_timepoint_comb_result_data <- function(data_ref, data_query) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   gene_ref <- NULL
@@ -159,4 +163,14 @@ get_timepoint_comb_registered_data <- function(data_ref, data_query) {
   comb <- comb[, .(gene_id = gene_ref, timepoint_ref, timepoint_query, exp_ref, exp_query)]
 
   return(comb)
+}
+
+new_dist_greatR <- function(x) {
+  structure(x, class = c("dist_greatR", class(x)))
+}
+
+#' @export
+print.dist_greatR <- function(x, ...) {
+  print(x[seq_along(x)])
+  return(invisible(x))
 }

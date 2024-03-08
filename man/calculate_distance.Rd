@@ -7,14 +7,16 @@
 calculate_distance(results)
 }
 \arguments{
-\item{results}{Result of registration process using \code{\link{register}}.}
+\item{results}{Result of registration process using \code{\link[=register]{register()}}.}
 }
 \value{
 This function returns a list of data frames which includes:
 
-\item{registered}{distance between scaled reference and query expressions using registered time points.}
-\item{original}{distance between scaled reference and query expressions using original time points.}
+\item{registered}{pairwise distance between scaled reference and query expressions using registered time points.}
+\item{original}{pairwise distance between scaled reference and query expressions using original time points.}
 }
 \description{
-Calculate distance between sample data before and after registration
+\code{calculate_distance()} is a function that allows users to calculate
+pairwise distances between samples from different time points to
+investigate the similarity of progression before or after registration.
 }

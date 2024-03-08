@@ -45,10 +45,11 @@ register(
 \item{num_cores}{Number of cores to use if the user wants to register genes asynchronously (in parallel) in the background on the same machine. By default, \code{NA}, the registration will be run without parallelisation.}
 }
 \value{
-This function returns a list of data frames, containing:
+This function returns a \code{res_greatR} object containing:
 
 \item{data}{a table containing the scaled input data and an additional \code{timepoint_reg} column after applying registration parameters to the query data.}
 \item{model_comparison}{a table comparing the optimal registration function for each gene (based on \code{all_shifts_df} scores) to model with no registration applied.}
+\item{fun_args}{a list of arguments used when calling the function.}
 }
 \description{
 \code{register()} is a function to register expression profiles a user

@@ -10,7 +10,7 @@ calculate_distance(results)
 \item{results}{Result of registration process using \code{\link[=register]{register()}}.}
 }
 \value{
-This function returns a list of data frames which includes:
+This function returns a \code{dist_greatR} object containing two data frames:
 
 \item{registered}{pairwise distance between scaled reference and query expressions using registered time points.}
 \item{original}{pairwise distance between scaled reference and query expressions using original time points.}

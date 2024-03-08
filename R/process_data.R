@@ -2,7 +2,7 @@
 #'
 #' \code{preprocess_data()} is a function that:
 #' \item{Calculates expression \code{var} values for each timepoint.}
-#' \item{Scales data via \code{\link{scale_data}}.}
+#' \item{Scales data via [scale_data()].}
 #'
 #' @noRd
 preprocess_data <- function(input, reference, query, exp_sd = NA, scaling_method = c("none", "z-score", "min-max")) {

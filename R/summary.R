@@ -1,6 +1,6 @@
 #' Summarise registration results
 #'
-#' @param object Registration results, output of the \code{\link{register}} registration process.
+#' @param object Registration results, output of the [register()] registration process.
 #' @param ... Arguments to be passed to methods (ignored).
 #'
 #' @return This function returns a list containing:

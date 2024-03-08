@@ -48,7 +48,7 @@
 \value{
 \itemize{
 \item For \code{\link[=plot.res_greatR]{plot.res_greatR()}}: plot of genes of interest after registration process (\code{type = "result"}) or showing original time points (\code{type = "original"}).
-\item For \code{\link[=plot.dist_greatR]{plot.dist_greatR()}}: distance heatmap of gene expression profiles over time between two different species.
+\item For \code{\link[=plot.dist_greatR]{plot.dist_greatR()}}: distance heatmap of gene expression profiles over time between reference and query.
 }
 }
 \description{

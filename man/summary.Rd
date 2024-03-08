@@ -8,7 +8,7 @@
 \method{summary}{res_greatR}(object, ...)
 }
 \arguments{
-\item{object}{Registration results, output of the \code{\link{register}} registration process.}
+\item{object}{Registration results, output of the \code{\link[=register]{register()}} registration process.}
 
 \item{...}{Arguments to be passed to methods (ignored).}
 }

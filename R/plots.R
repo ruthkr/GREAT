@@ -83,7 +83,6 @@ plot.res_greatR <- function(x,
       x = !!ggplot2::sym(timepoint_var),
       y = expression_value,
       color = accession
-      # fill = accession
     ) +
     ggplot2::geom_point() +
     {
@@ -91,11 +90,12 @@ plot.res_greatR <- function(x,
     } +
     ggplot2::facet_wrap(~gene_facet, scales = "free", ncol = ncol) +
     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
-    ggplot2::theme_bw() +
+    theme_greatR() +
     ggplot2::labs(
       title = title,
       x = x_lab,
-      y = ifelse(scaling_method == "none", "Expression", "Scaled expression")
+      y = ifelse(scaling_method == "none", "Expression", "Scaled expression"),
+      colour = NULL
     )
 
   # Add model curve layers
@@ -141,7 +141,8 @@ plot.res_greatR <- function(x,
   gg_registered <- gg_registered +
     ggplot2::scale_color_manual(
       breaks = c(reference, query),
-      values = scales::hue_pal()(2)
+      # values = scales::hue_pal()(2)
+      values = greatR_palettes$disc
     )
 
   return(gg_registered)
@@ -162,10 +163,10 @@ parse_gene_facets <- function(model_comparison, type) {
     gene_facets <- model_comparison[, .(
       gene_id,
       gene_facet = paste0(
-        gene_id, " - ", ifelse(registered, "REG", "NO_REG"),
+        gene_id, " - ", ifelse(registered, "REG", "NON-REG"),
         ifelse(
           registered,
-          paste0("\n", "BIC score: ", round(BIC_diff, 2), ", stretch: ", round(stretch, 2), ", shift: ", round(shift, 2)),
+          paste0("\n", "BIC diff: ", round(BIC_diff, 2), ", stretch: ", round(stretch, 2), ", shift: ", round(shift, 2)),
           ""
         )
       )
@@ -338,20 +339,20 @@ plot.dist_greatR <- function(x,
       fill = log(distance)
     ) +
     ggplot2::geom_tile() +
-    ggplot2::theme_bw() +
+    theme_greatR() +
     ggplot2::theme(
-      panel.border = ggplot2::element_blank(),
       legend.position = "top",
       legend.justification = "right",
-      legend.margin = ggplot2::margin(0, 0, 0, 0),
-      legend.box.margin = ggplot2::margin(0, 0, -10, -10),
+      legend.margin = ggplot2::margin(0, 0, -5, 0),
       legend.title = ggplot2::element_text(size = 10),
       legend.key.height = ggplot2::unit(5, "pt")
     ) +
     ggplot2::guides(
       fill = ggplot2::guide_colorbar(label.position = "top")
     ) +
-    ggplot2::scale_fill_viridis_c() +
+    ggplot2::scale_fill_gradientn(colours = greatR_palettes$cont) +
+    ggplot2::scale_x_discrete(expand = c(0, 0)) +
+    ggplot2::scale_y_discrete(expand = c(0, 0)) +
     ggplot2::labs(
       title = title,
       x = query,
@@ -365,3 +366,46 @@ plot.dist_greatR <- function(x,
 
   return(gg_distance)
 }
+
+#' @noRd
+theme_greatR <- function(base_size = 12, base_family = "sans") {
+  (
+    ggplot2::theme(
+      axis.line = ggplot2::element_blank(),
+      axis.text = ggplot2::element_text(
+        size = ceiling(base_size * 0.7),
+        colour = "black"
+      ),
+      axis.title = ggplot2::element_text(
+        size = ceiling(base_size * 0.8)
+      ),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_blank(),
+      panel.background = ggplot2::element_blank(),
+      panel.border = ggplot2::element_rect(
+        fill = NA,
+        colour = "black",
+        linewidth = 1,
+        linetype = "solid"
+      ),
+      strip.background = ggplot2::element_blank(),
+      legend.title = ggplot2::element_text(
+        size = ceiling(base_size * 0.75)
+      ),
+      legend.position = "right",
+      legend.key = ggplot2::element_rect(fill = "white", colour = NA),
+      plot.title = ggplot2::element_text(
+        size = ceiling(base_size * 1.1), face = "bold"
+      ),
+      plot.subtitle = ggplot2::element_text(
+        size = ceiling(base_size * 1.05)
+      )
+    )
+  )
+}
+
+#' @noRd
+greatR_palettes <- list(
+  cont = c("#3e1190", "#4268b7", "#4195bd", "#51bdb9", "#8fdc9f", "#f9ef93"),
+  disc = c("#1b9e77", "#f38400")
+)

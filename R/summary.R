@@ -1,6 +1,7 @@
 #' Summarise registration results
 #'
-#' @param results Registration results, output of the \code{\link{register}} registration process.
+#' @param object Registration results, output of the \code{\link{register}} registration process.
+#' @param ... Arguments to be passed to methods (ignored).
 #'
 #' @return This function returns a list containing:
 #'
@@ -8,13 +9,14 @@
 #' \item{registered_genes}{vector of gene accessions which were successfully registered.}
 #' \item{non_registered_genes}{vector of non-registered gene accessions.}
 #'
+#' @name summary
 #' @export
-summarise_registration <- function(results) {
+summary.res_greatR <- function(object, ...) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
 
   # Summarise results
-  data <- results$model_comparison
+  data <- object$model_comparison
 
   total <- nrow(data)
   reg <- sum(data$registered)
@@ -50,5 +52,13 @@ summarise_registration <- function(results) {
     non_registered_genes = non_registered_genes
   )
 
+  class(results_list) <- "summary.res_greatR"
+
   return(results_list)
+}
+
+#' @export
+print.summary.res_greatR <- function(x, ...) {
+  print(x$summary)
+  return(invisible(x))
 }

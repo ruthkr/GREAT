@@ -1,20 +1,23 @@
 #' Plot gene of interest after registration
 #'
-#' @param results Registration results, output of the \code{\link{register}} registration process.
+#' @param x Registration results, output of the \code{\link{register}} registration process.
 #' @param type Type of plot, determines whether to use "registered" or "original" time points. By default, "registered".
 #' @param genes_list Optional vector indicating the \code{gene_id} values to be plotted.
 #' @param title Optional plot title.
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
 #' @param plot_mean_data Whether mean data is displayed or not.
-#' @return Plot of genes of interest after registration process (\code{type = "registered"}) or showing original time points (\code{type = "original"}).
+#' @param ... Arguments to be passed to methods (ignored).
 #'
+#' @name plot
+#' @return Plot of genes of interest after registration process (\code{type = "registered"}) or showing original time points (\code{type = "original"}).
 #' @export
-plot_registration_results <- function(results,
-                                      type = c("registered", "original"),
-                                      genes_list = NULL,
-                                      title = NULL,
-                                      ncol = NULL,
-                                      plot_mean_data = FALSE) {
+plot.res_greatR <- function(x,
+                            type = c("registered", "original"),
+                            genes_list = NULL,
+                            title = NULL,
+                            ncol = NULL,
+                            plot_mean_data = FALSE,
+                            ...) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   accession <- NULL
@@ -25,8 +28,8 @@ plot_registration_results <- function(results,
   type <- match.arg(type)
 
   # Parse results
-  data <- results$data
-  model_comparison <- results$model_comparison
+  data <- x$data
+  model_comparison <- x$model_comparison
   reference <- attr(data, "ref")
   query <- attr(data, "query")
   scaling_method <- attr(data, "scaling_method")

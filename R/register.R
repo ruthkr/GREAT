@@ -232,7 +232,7 @@ register <- function(input,
     fun_args = fun_args
   )
 
-  return(results_list)
+  return(new_res_greatR(results_list))
 }
 
 #' Auxiliary function to apply registration with optimisation

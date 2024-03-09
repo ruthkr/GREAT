@@ -251,3 +251,55 @@ calc_overlapping_percent <- function(data) {
 
   return(overlapping_percent)
 }
+
+#' Combine different registration results
+#'
+#' @noRd
+bind_results <- function(...) {
+  # Parse arguments
+  args <- list(...)
+  if (length(args) == 1 && is.list(args[[1]])) {
+    results <- unlist(args, recursive = FALSE)
+  } else {
+    results <- args
+  }
+
+  # Check accessions
+  ref <- unique(sapply(results, function(x) attr(x$data, "ref")))
+  query <- unique(sapply(results, function(x) attr(x$data, "query")))
+
+  if (any(length(ref) > 1, length(query) > 1)) {
+    stop(
+      cli::format_error(c(
+        "{.var ref} and {.var query} must be unique",
+        "x" = "Your data contained {ref} for {.var ref} and {query} for {.var query}."
+      )),
+      call. = FALSE
+    )
+  }
+
+  # Bind results
+  data <- data.table::rbindlist(lapply(results, function(x) x$data))
+  model_comparison <- data.table::rbindlist(lapply(results, function(x) x$model_comparison))
+
+  # Add accession values as data attributes
+  data.table::setattr(data, "ref", ref)
+  data.table::setattr(data, "query", query)
+
+  # Parse fun_args
+  fun_args_list <- lapply(results, function(x) x$fun_args)
+  fun_args <- lapply(
+    unique(unlist(lapply(fun_args_list, names))),
+    function(name) sapply(fun_args_list, function(x) x[[name]])
+  )
+  names(fun_args) <- unique(unlist(lapply(fun_args_list, names)))
+
+  # Results object
+  results_list <- list(
+    data = data,
+    model_comparison = model_comparison,
+    fun_args = fun_args
+  )
+
+  return(new_res_greatR(results_list))
+}

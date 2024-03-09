@@ -275,7 +275,7 @@ register_manually <- function(data,
                               stretch,
                               shift,
                               loglik_separate,
-                              overlapping_percent = 50,
+                              overlapping_percent = 0.5,
                               return_data_reg = TRUE) {
   # Apply registration
   data_reg <- apply_registration(data, stretch, shift)

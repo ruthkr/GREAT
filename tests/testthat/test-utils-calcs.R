@@ -1,7 +1,7 @@
 # Get expression data and fit with a model
 sample_data <- data.table::fread(system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR"))
 sample_data_raw <- sample_data[1:10]
-sample_data <- calc_variance(data.table::copy(sample_data_raw))
+sample_data <- suppressMessages(calc_variance(data.table::copy(sample_data_raw)))
 
 fit_model <- stats::lm(timepoint ~ expression_value, data = sample_data)
 
@@ -29,8 +29,8 @@ test_that("calc_BIC works", {
 test_that("calc_variance works", {
   sample_data_with_reps <- data.table::copy(sample_data_raw)
   sample_data_with_no_reps <- data.table::copy(sample_data_raw[grep("-a", sample_data_raw$replicate), ])
-  var_with_reps <- calc_variance(sample_data_with_reps)
-  var_with_no_reps <- calc_variance(sample_data_with_no_reps)
+  var_with_reps <- suppressMessages(calc_variance(sample_data_with_reps))
+  var_with_no_reps <- suppressMessages(calc_variance(sample_data_with_no_reps))
 
   # Expected outputs
   expect_gt(length(unique(var_with_reps$var)), 1)

@@ -2,7 +2,7 @@ brapa_sample_data <- data.table::fread(system.file("extdata/brapa_arabidopsis_al
 reference <- "Ro18"
 query <- "Col0"
 gene_data <- brapa_sample_data[gene_id == "BRAA03G051930.3C"]
-all_data <- preprocess_data(gene_data, reference, query, scaling_method = "z-score")
+all_data <- suppressMessages(preprocess_data(gene_data, reference, query, scaling_method = "z-score"))
 
 test_that("match_names works", {
   a <- LETTERS[1:3]
@@ -94,7 +94,7 @@ test_that("get_search_space_limits (init) works", {
 })
 
 test_that("calc_overlapping_percent works", {
-  all_data_reg <- apply_registration(all_data, 3.10, 2.13)
+  all_data_reg <- apply_registration(all_data, 3.10, -12.58)
   overlapping_raw <- calc_overlapping_percent(all_data)
   overlapping_reg <- calc_overlapping_percent(all_data_reg)
 

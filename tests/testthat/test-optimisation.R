@@ -2,11 +2,11 @@ brapa_sample_data <- data.table::fread(system.file("extdata/brapa_arabidopsis_al
 reference <- "Ro18"
 query <- "Col0"
 gene_data <- brapa_sample_data[gene_id == "BRAA03G051930.3C"]
-all_data <- preprocess_data(gene_data, reference, query, scaling_method = "z-score")
+all_data <- suppressMessages(preprocess_data(gene_data, reference, query, scaling_method = "z-score"))
 
 test_that("objective_fun works", {
   # Expected outputs
-  expect_equal(objective_fun(all_data, 3.10, 2.13, 0.5), -18.82, tolerance = 1e-2)
+  expect_equal(objective_fun(all_data, 3.10, -12.58, 0.5), -18.82, tolerance = 1e-2)
   expect_equal(objective_fun(all_data), -999)
 })
 

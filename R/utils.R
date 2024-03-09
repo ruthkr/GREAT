@@ -176,6 +176,16 @@ get_shift_search_space_limits <- function(data, shifts = NA, stretch_space_lims,
     calc_mode <- "bound"
   }
 
+  # Extract time point ranges
+  timepoints_ref <- unique(data[accession == "ref", timepoint])
+  timepoints_query <- unique(data[accession == "query", timepoint])
+  range_ref <- range(timepoints_ref)
+  range_query <- range(timepoints_query)
+
+  # Read init stretch limit
+  stretch_init <- stretch_space_lims$stretch_init
+  range_query_init_stretch <- stretch_init * diff(range_query)
+
   # Calculate boundary
   if (calc_mode == "bound") {
     # Calculate limits
@@ -183,33 +193,23 @@ get_shift_search_space_limits <- function(data, shifts = NA, stretch_space_lims,
     shift_upper <- max(shifts)
   } else {
     # Read stretch limits
-    stretch_init <- stretch_space_lims$stretch_init
     stretch_lower <- stretch_space_lims$stretch_lower
     stretch_upper <- stretch_space_lims$stretch_upper
-
-    # Extract time point ranges
-    timepoints_ref <- unique(data[accession == "ref", timepoint])
-    timepoints_query <- unique(data[accession == "query", timepoint])
-
-    # Calculate time point ranges
-    range_ref <- diff(range(timepoints_ref))
-    range_query <- diff(range(timepoints_query))
-    range_query_max_stretch <- stretch_upper * range_query
-    range_query_init_stretch <- stretch_init * range_query
+    range_query_max_stretch <- stretch_upper * diff(range_query)
 
     # Calculate minimum and maximum timepoints in which the curves overlap
-    min_timepoint <- min(timepoints_ref) + overlapping_percent * range_ref - range_query_max_stretch
-    max_timepoint <- max(timepoints_ref) - overlapping_percent * range_ref + range_query_max_stretch
+    min_timepoint <- range_ref[1] + overlapping_percent * diff(range_ref) - range_query_max_stretch
+    max_timepoint <- range_ref[2] - overlapping_percent * diff(range_ref) + range_query_max_stretch
 
     # Calculate limits
-    shift_lower <- min_timepoint - stretch_upper * min(timepoints_query)
-    shift_upper <- max_timepoint - stretch_lower * min(timepoints_query)
+    shift_lower <- min_timepoint - stretch_upper * range_query[1]
+    shift_upper <- max_timepoint - stretch_lower * range_query[1]
   }
 
   # Calculate initial value (centered curves)
   if (calc_mode %in% c("auto", "bound")) {
-    midpoint_ref <- min(timepoints_ref) + range_ref * 0.5
-    midpoint_query_init <- min(timepoints_query) * stretch_init + range_query_init_stretch * 0.5
+    midpoint_ref <- range_ref[1] + diff(range_ref) * 0.5
+    midpoint_query_init <- range_query[1] * stretch_space_lims$stretch_init + range_query_init_stretch * 0.5
     shift_init <- midpoint_ref - midpoint_query_init
   } else {
     shift_init <- shifts

@@ -102,3 +102,46 @@ test_that("calc_overlapping_percent works", {
   expect_gte(overlapping_reg, overlapping_raw)
   expect_equal(overlapping_reg, 1, tolerance = 1e-1)
 })
+
+test_that("bind_results works", {
+  registration_results <- suppressMessages(register(
+    brapa_sample_data[gene_id %in% c("BRAA03G051930.3C", "BRAA04G005470.3C")],
+    reference = "Ro18",
+    query = "Col0",
+    scaling_method = "z-score",
+    stretches = 3.10,
+    shifts = -12.58,
+    optimise_registration_parameters = FALSE
+  ))
+
+  registration_results_a <- suppressMessages(register(
+    brapa_sample_data[gene_id == "BRAA03G051930.3C"],
+    reference = "Ro18",
+    query = "Col0",
+    scaling_method = "z-score",
+    stretches = 3.10,
+    shifts = -12.58,
+    optimise_registration_parameters = FALSE
+  ))
+
+  registration_results_b <- suppressMessages(register(
+    brapa_sample_data[gene_id == "BRAA04G005470.3C"],
+    reference = "Ro18",
+    query = "Col0",
+    scaling_method = "z-score",
+    # stretches = 3.53,
+    # shifts = -20.25,
+    stretches = 3.10,
+    shifts = -12.58,
+    optimise_registration_parameters = FALSE
+  ))
+
+  registration_results_ab1 <- bind_results(registration_results_a, registration_results_b)
+  registration_results_ab2 <- bind_results(list(registration_results_a, registration_results_b))
+
+  # Expected outputs
+  expect_s3_class(registration_results_ab1, "res_greatR")
+  expect_equal(registration_results_ab1$data, registration_results$data)
+  expect_equal(registration_results_ab1$model_comparison, registration_results$model_comparison)
+  expect_equal(registration_results_ab1, registration_results_ab2)
+})

@@ -137,19 +137,16 @@ get_stretch_search_space_limits <- function(data, stretches = NA) {
     stretch_lower <- min(stretches)
     stretch_upper <- max(stretches)
   } else {
-    # Initial approximate value
-    stretch_approx <- get_approximate_stretch(data)
-
     # Initial value
     if (calc_mode == "auto") {
-      stretch_init <- stretch_approx
+      stretch_init <- get_approximate_stretch(data)
     } else if (calc_mode == "init") {
       stretch_init <- stretches
     }
 
     # Calculate limits
-    stretch_lower <- 0.5 * stretch_approx
-    stretch_upper <- 1.5 * stretch_approx
+    stretch_lower <- 0.5 * stretch_init
+    stretch_upper <- 1.5 * stretch_init
   }
 
   # Results object

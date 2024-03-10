@@ -1,7 +1,7 @@
 registration_results <- readRDS(system.file("extdata/brapa_arabidopsis_registration.rds", package = "greatR"))
 
 # Summary and visualisation ----
-test_that("summarise_registration works", {
+test_that("summary.res_greatR works", {
   reg_summary <- summary(registration_results)
 
   # Expected outputs
@@ -11,7 +11,7 @@ test_that("summarise_registration works", {
   expect_equal(length(reg_summary$non_registered_genes), as.numeric(reg_summary$summary[Result == "Non-registered genes", Value]))
 })
 
-test_that("plot_registration_results works", {
+test_that("plot.res_greatR works", {
   gg <- plot(registration_results)
   gg_original <- plot(registration_results, "original")
 
@@ -38,7 +38,7 @@ test_that("calculate_distance works", {
   expect_equal(colnames(sample_distance$result), colnames(sample_distance$original))
 })
 
-test_that("plot_heatmap works", {
+test_that("plot.dist_greatR works", {
   sample_distance <- calculate_distance(registration_results)
   gg <- plot(sample_distance, match_timepoints = TRUE)
   gg_original <- plot(sample_distance, "original")

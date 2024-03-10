@@ -24,7 +24,7 @@ knitr::include_graphics("figures/visualisation_process.png")
 
 ## Getting a summary from registration results
 
-The total number of registered and non-registered genes can be obtained by running the function `summarise_registration()` with `registration_results` object as an input.
+The total number of registered and non-registered genes can be obtained by running the function `summary()` with `registration_results` object as an input.
 
 ```{r load-greatR, message=FALSE, include=FALSE}
 # Load the package
@@ -38,7 +38,7 @@ registration_results <- system.file("extdata/brapa_arabidopsis_registration.rds"
   readRDS()
 ```
 
-The function `summarise_registration()` returns a list containing three different objects:
+The function `summary()` returns a list containing three different objects:
 
 - `summary` is a data frame containing the summary of the registration results,
 - `registered_genes` is a vector of gene accessions or IDs which were successfully registered, and

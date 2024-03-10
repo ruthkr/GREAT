@@ -122,6 +122,7 @@ scale_data <- function(all_data, scaling_method = c("none", "z-score", "min-max"
   expression_value <- NULL
   scaled_expression_value <- NULL
 
+  cli::cli_alert_info("Using {.var scaling_method} = \"{scaling_method}\".")
   if (scaling_method == "z-score") {
     # Calculate mean and standard deviation of expression in all_data by accession
     all_data[,

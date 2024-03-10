@@ -4,7 +4,7 @@
 \alias{plot}
 \alias{plot.res_greatR}
 \alias{plot.dist_greatR}
-\title{Plot gene of interest after registration / Visualise distances between samples from different time points}
+\title{Visualise registration results}
 \usage{
 \method{plot}{res_greatR}(
   x,
@@ -52,5 +52,5 @@
 }
 }
 \description{
-Plot gene of interest after registration / Visualise distances between samples from different time points
+Visualise registration results
 }

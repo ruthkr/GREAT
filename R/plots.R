@@ -1,4 +1,4 @@
-#' Plot gene of interest after registration / Visualise distances between samples from different time points
+#' Visualise registration results
 #'
 #' @param x Input object.
 #'  - For [plot.res_greatR()]: registration results, output of the [register()] registration process.

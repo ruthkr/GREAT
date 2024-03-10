@@ -237,14 +237,9 @@ calc_overlapping_percent <- function(data) {
   range_ref <- range(unique(data[accession == "ref", timepoint]))
   range_query <- range(unique(data[accession == "query", timepoint]))
 
-  if (all(range_ref[2] >= range_query[2], range_ref[1] <= range_query[1])) {
-    # Query is fully contained on reference
-    overlapping_percent <- 1
-  } else {
-    # Calculate overlapping percent over reference
-    overlap <- min(c(range_ref[2], range_query[2])) - max(c(range_ref[1], range_query[1]))
-    overlapping_percent <- overlap / diff(range_ref)
-  }
+  # Calculate how much of ref is contained in query
+  overlap <- min(c(range_ref[2], range_query[2])) - max(c(range_ref[1], range_query[1]))
+  overlapping_percent <- overlap / diff(range_ref)
 
   return(overlapping_percent)
 }

@@ -46,7 +46,7 @@ The function `summarise_registration()` returns a list containing three differen
 
 ```{r get-summary-results}
 # Get registration summary
-reg_summary <- summarise_registration(registration_results)
+reg_summary <- summary(registration_results)
 
 reg_summary$summary |>
   knitr::kable()
@@ -64,11 +64,11 @@ reg_summary$non_registered_genes
 
 ## Plotting registration results
 
-The function `plot_registration_results()` allows users to plot the registration results of the genes of interest.
+The function `plot()` allows users to plot the registration results of the genes of interest.
 
 ```{r plot-results, fig.align='center', fig.height=8, fig.width=7, warning=FALSE}
 # Plot registration result
-plot_registration_results(
+plot(
   registration_results,
   ncol = 2
 )
@@ -76,7 +76,7 @@ plot_registration_results(
 
 Notice that the plot includes a label indicating if the particular genes are registered or not registered, as well as the registration parameters in case the registration was successful.
 
-For more details on the other function paramaters, go to `plot_registration_results()`.
+For more details on the other function paramaters, go to `plot()`.
 
 ## Analysing similarity of expression profiles overtime before and after registering
 
@@ -90,16 +90,16 @@ sample_distance <- calculate_distance(registration_results)
 
 The function `calculate_distance()` returns a list of two data frames:
 
-- `registered` distance between scaled reference and query expressions using registered time points.
+- `result` distance between scaled reference and query expressions using registered time points.
 - `original` distance between scaled reference and query expressions using original time points.
 
 ### Plot heatmap of sample distances
 
-Each of these data frames above can be visualised using the `plot_heatmap()` function, by selecting either `type = "registered"` or `type = "original"`.
+Each of these data frames above can be visualised using the `plot()` function, by selecting either `type = "result"` or `type = "original"`.
 
 ```{r plot-dist-original, fig.align='center', fig.height=5, fig.width=5, warning=FALSE}
 # Plot heatmap of mean expression profiles distance before registration process
-plot_heatmap(
+plot(
   sample_distance,
   type = "original"
 )
@@ -107,9 +107,9 @@ plot_heatmap(
 
 ```{r plot-dist-registered, fig.align='center', fig.height=5, fig.width=5, warning=FALSE}
 # Plot heatmap of mean expression profiles distance after registration process
-plot_heatmap(
+plot(
   sample_distance,
-  type = "registered",
+  type = "result",
   match_timepoints = TRUE
 )
 ```

@@ -86,11 +86,14 @@ registration_results <- register(
 )
 #> ── Validating input data ────────────────────────────────────────────────────────
 #> ℹ Will process 10 genes.
-#>
+#> ℹ Using estimated standard deviation, as no `exp_sd` was provided.
+#> ℹ Using `scaling_method` = "z-score".
+#> 
 #> ── Starting registration with optimisation ──────────────────────────────────────
 #> ℹ Using Nelder-Mead method.
 #> ℹ Using computed stretches and shifts search space limits.
-#> ✔ Optimising registration parameters for genes (10/10) [6.7s]
+#> ℹ Using `overlapping_percent` = 50% as a registration criterion.
+#> ✔ Optimising registration parameters for genes (10/10) [5.4s] 
 ```
 
 ## Reference

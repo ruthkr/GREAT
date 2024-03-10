@@ -21,10 +21,10 @@ reference:
 
 - title: Summarise and visualise registration results
   contents:
-  - summarise_registration
+  - summary.res_greatR
   - calculate_distance
-  - plot_registration_results
-  - plot_heatmap
+  - plot.res_greatR
+  - plot.dist_greatR
 
 articles:
 - title: Articles

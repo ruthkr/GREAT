@@ -24,16 +24,18 @@ summary.res_greatR <- function(object, ...) {
 
   stretches_list <- unique(data[data$registered, round(stretch, 2)])
   shifts_list <- unique(data[data$registered, round(shift, 2)])
-  if (length(stretches_list) == 0) {
-    stretches_list <- NA
+  if (length(stretches_list) > 0) {
+    stretch <- range(stretches_list)
+    stretch_range <- paste0("[", stretch[1], ", ", stretch[2], "]")
+  } else {
+    stretch_range <- "NA"
   }
-  if (length(shifts_list) == 0) {
-    shifts_list <- NA
+  if (length(shifts_list) > 0) {
+    shift <- range(shifts_list)
+    shift_range <- paste0("[", shift[1], ", ", shift[2], "]")
+  } else {
+    shift_range <- "NA"
   }
-  stretch <- range(stretches_list)
-  shift <- range(shifts_list)
-  stretch_range <- paste0("[", stretch[1], ", ", stretch[2], "]")
-  shift_range <- paste0("[", shift[1], ", ", shift[2], "]")
 
   # Create summary table
   df_summary <- data.table::data.table(

@@ -8,7 +8,7 @@ template:
   bootstrap: 5
   bootswatch: litera
   bslib:
-    primary: "#7e57c2"
+    primary: "#452b74"
     base_font: {google: "Lato"}
     heading_font: {google: "Lato"}
     code_font: {google: "Fira Code"}

@@ -106,10 +106,10 @@ illustrated in the figure below.</p>
 <h2 id="getting-a-summary-from-registration-results">Getting a summary from registration results<a class="anchor" aria-label="anchor" href="#getting-a-summary-from-registration-results"></a>
 </h2>
 <p>The total number of registered and non-registered genes can be
-obtained by running the function <code><a href="../reference/summarise_registration.html">summarise_registration()</a></code>
-with <code>registration_results</code> object as an input.</p>
-<p>The function <code><a href="../reference/summarise_registration.html">summarise_registration()</a></code> returns a list
-containing three different objects:</p>
+obtained by running the function <code><a href="../reference/summary.html">summary()</a></code> with
+<code>registration_results</code> object as an input.</p>
+<p>The function <code><a href="../reference/summary.html">summary()</a></code> returns a list containing three
+different objects:</p>
 <ul>
 <li>
 <code>summary</code> is a data frame containing the summary of the
@@ -123,7 +123,7 @@ accessions or IDs.</li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get registration summary</span></span>
-<span><span class="va">reg_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summarise_registration.html">summarise_registration</a></span><span class="op">(</span><span class="va">registration_results</span><span class="op">)</span></span>
+<span><span class="va">reg_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summary.html">summary</a></span><span class="op">(</span><span class="va">registration_results</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">reg_summary</span><span class="op">$</span><span class="va">summary</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -147,11 +147,11 @@ accessions or IDs.</li>
 </tr>
 <tr class="even">
 <td align="left">Stretch</td>
-<td align="left">[2.25, 4]</td>
+<td align="left">[2.25, 5.82]</td>
 </tr>
 <tr class="odd">
 <td align="left">Shift</td>
-<td align="left">[-6.24, 4.4]</td>
+<td align="left">[-53.04, -4.34]</td>
 </tr>
 </tbody>
 </table>
@@ -169,11 +169,11 @@ can be viewed by calling:</p>
 <div class="section level2">
 <h2 id="plotting-registration-results">Plotting registration results<a class="anchor" aria-label="anchor" href="#plotting-registration-results"></a>
 </h2>
-<p>The function <code><a href="../reference/plot_registration_results.html">plot_registration_results()</a></code> allows users to
-plot the registration results of the genes of interest.</p>
+<p>The function <code><a href="../reference/plot.html">plot()</a></code> allows users to plot the
+registration results of the genes of interest.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot registration result</span></span>
-<span><span class="fu"><a href="../reference/plot_registration_results.html">plot_registration_results</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span></span>
 <span>  <span class="va">registration_results</span>,</span>
 <span>  ncol <span class="op">=</span> <span class="fl">2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -182,7 +182,7 @@ plot the registration results of the genes of interest.</p>
 genes are registered or not registered, as well as the registration
 parameters in case the registration was successful.</p>
 <p>For more details on the other function paramaters, go to
-<code><a href="../reference/plot_registration_results.html">plot_registration_results()</a></code>.</p>
+<code><a href="../reference/plot.html">plot()</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="analysing-similarity-of-expression-profiles-overtime-before-and-after-registering">Analysing similarity of expression profiles overtime before and
@@ -200,7 +200,7 @@ between datasets before and after registering using the function
 data frames:</p>
 <ul>
 <li>
-<code>registered</code> distance between scaled reference and query
+<code>result</code> distance between scaled reference and query
 expressions using registered time points.</li>
 <li>
 <code>original</code> distance between scaled reference and query
@@ -211,20 +211,20 @@ expressions using original time points.</li>
 <h3 id="plot-heatmap-of-sample-distances">Plot heatmap of sample distances<a class="anchor" aria-label="anchor" href="#plot-heatmap-of-sample-distances"></a>
 </h3>
 <p>Each of these data frames above can be visualised using the
-<code><a href="../reference/plot_heatmap.html">plot_heatmap()</a></code> function, by selecting either
-<code>type = "registered"</code> or <code>type = "original"</code>.</p>
+<code><a href="../reference/plot.html">plot()</a></code> function, by selecting either
+<code>type = "result"</code> or <code>type = "original"</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot heatmap of mean expression profiles distance before registration process</span></span>
-<span><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span></span>
 <span>  <span class="va">sample_distance</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"original"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="visualise-results_files/figure-html/plot-dist-original-1.png" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot heatmap of mean expression profiles distance after registration process</span></span>
-<span><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span></span>
 <span>  <span class="va">sample_distance</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">"registered"</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"result"</span>,</span>
 <span>  match_timepoints <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="visualise-results_files/figure-html/plot-dist-registered-1.png" width="480" style="display: block; margin: auto;"></p>

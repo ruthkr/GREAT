@@ -145,16 +145,18 @@ automated optimisation process.</p>
 <span>  reference <span class="op">=</span> <span class="st">"Ro18"</span>,</span>
 <span>  query <span class="op">=</span> <span class="st">"Col0"</span>,</span>
 <span>  scaling_method <span class="op">=</span> <span class="st">"z-score"</span>,</span>
-<span>  stretches <span class="op">=</span> <span class="fl">2.6</span>,</span>
-<span>  shifts <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  stretches <span class="op">=</span> <span class="fl">2.25</span>,</span>
+<span>  shifts <span class="op">=</span> <span class="op">-</span><span class="fl">4.36</span>,</span>
 <span>  optimise_registration_parameters <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── Validating input data ───────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ℹ Will process 1 gene.</span></span>
 <span><span class="co">#&gt; ℹ Using estimated standard deviation, as no `exp_sd` was provided.</span></span>
-<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt; ℹ Using `scaling_method` = "z-score".</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── Starting manual registration ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; ✔ Applying registration for genes (1/1) [34ms]</span></span></code></pre></div>
+<span><span class="co">#&gt; ℹ Using `overlapping_percent` = 50% as a registration criterion.</span></span>
+<span><span class="co">#&gt; ✔ Applying registration for genes (1/1) [38ms]</span></span></code></pre></div>
 <p>To check whether the gene is registered or not, we can get the
 summary results by accessing the <code>model_comparison</code> table
 from the registration result.</p>
@@ -171,10 +173,10 @@ from the registration result.</p>
 </tr></thead>
 <tbody><tr class="odd">
 <td align="left">BRAA03G023790.3C</td>
-<td align="right">2.6</td>
-<td align="right">4</td>
-<td align="right">40.15235</td>
-<td align="left">FALSE</td>
+<td align="right">2.25</td>
+<td align="right">-4.36</td>
+<td align="right">-7.849037</td>
+<td align="left">TRUE</td>
 </tr></tbody>
 </table>
 <p>As we can see, using the given stretch and shift parameter above, the
@@ -201,9 +203,11 @@ disable the automated optimisation process.</p>
 <span><span class="co">#&gt; ── Validating input data ───────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ℹ Will process 10 genes.</span></span>
 <span><span class="co">#&gt; ℹ Using estimated standard deviation, as no `exp_sd` was provided.</span></span>
-<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt; ℹ Using `scaling_method` = "z-score".</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── Starting manual registration ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; ✔ Applying registration for genes (10/10) [15.5s]</span></span></code></pre></div>
+<span><span class="co">#&gt; ℹ Using `overlapping_percent` = 50% as a registration criterion.</span></span>
+<span><span class="co">#&gt; ✔ Applying registration for genes (10/10) [12.4s]</span></span></code></pre></div>
 <p>Similar to the previous registration process, users can analyse
 further the registration result by following the <a href="https://ruthkr.github.io/greatR/articles/visualise-results.html">visualising
 results</a> vignette.</p>

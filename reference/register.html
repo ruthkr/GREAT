@@ -109,7 +109,7 @@ wishes to compare.</p>
 
 
 <dt>overlapping_percent</dt>
-<dd><p>Minimum percentage of overlapping time points on the reference data. Shifts will be only considered if it leaves at least this percentage of overlapping time points after applying the registration function.</p></dd>
+<dd><p>Minimum percentage of overlapping time point range of the reference data. Shifts will be only considered if it leaves at least this percentage of overlapping time point range after applying the registration.</p></dd>
 
 
 <dt>optimise_registration_parameters</dt>
@@ -136,12 +136,15 @@ wishes to compare.</p>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>This function returns a list of data frames, containing:</p>
+<p>This function returns a <code>res_greatR</code> object containing:</p>
 <dl><dt>data</dt>
 <dd><p>a table containing the scaled input data and an additional <code>timepoint_reg</code> column after applying registration parameters to the query data.</p></dd>
 
 <dt>model_comparison</dt>
 <dd><p>a table comparing the optimal registration function for each gene (based on <code>all_shifts_df</code> scores) to model with no registration applied.</p></dd>
+
+<dt>fun_args</dt>
+<dd><p>a list of arguments used when calling the function.</p></dd>
 
 </dl></div>
 

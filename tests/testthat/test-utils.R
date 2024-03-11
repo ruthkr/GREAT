@@ -56,9 +56,9 @@ test_that("get_search_space_limits (auto) works", {
   expect_equal(space_lims$stretch_init, 2.667, tolerance = 1e-2)
   expect_equal(space_lims$stretch_lower, 1.333, tolerance = 1e-2)
   expect_equal(space_lims$stretch_upper, 4, tolerance = 1e-2)
-  expect_equal(space_lims$shift_init, 0, tolerance = 1e-2)
-  expect_equal(space_lims$shift_lower, -20, tolerance = 1e-2)
-  expect_equal(space_lims$shift_upper, 16, tolerance = 1e-2)
+  expect_equal(space_lims$shift_init, -7.667, tolerance = 1e-2)
+  expect_equal(space_lims$shift_lower, -41, tolerance = 1e-2)
+  expect_equal(space_lims$shift_upper, 49.667, tolerance = 1e-2)
   expect_no_error(get_search_space_limits(all_data))
   expect_error(get_search_space_limits(gene_data))
 })
@@ -86,11 +86,11 @@ test_that("get_search_space_limits (init) works", {
   # Expected outputs
   expect_equal(names(space_lims), c("stretch_init", "stretch_lower", "stretch_upper", "shift_init", "shift_lower", "shift_upper"))
   expect_equal(space_lims$stretch_init, stretches, tolerance = 1e-2)
-  expect_equal(space_lims$stretch_lower, 1.333, tolerance = 1e-2)
-  expect_equal(space_lims$stretch_upper, 4, tolerance = 1e-2)
+  expect_equal(space_lims$stretch_lower, 0.5, tolerance = 1e-2)
+  expect_equal(space_lims$stretch_upper, 1.5, tolerance = 1e-2)
   expect_equal(space_lims$shift_init, shifts, tolerance = 1e-2)
-  expect_equal(space_lims$shift_lower, -20, tolerance = 1e-2)
-  expect_equal(space_lims$shift_upper, 16, tolerance = 1e-2)
+  expect_equal(space_lims$shift_lower, -1, tolerance = 1e-2)
+  expect_equal(space_lims$shift_upper, 33, tolerance = 1e-2)
 })
 
 test_that("calc_overlapping_percent works", {

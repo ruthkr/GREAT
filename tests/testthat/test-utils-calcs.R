@@ -34,5 +34,5 @@ test_that("calc_variance works", {
 
   # Expected outputs
   expect_gt(length(unique(var_with_reps$var)), 1)
-  expect_equal(length(unique(var_with_no_reps$var)), 1)
+  expect_true(all(var_with_no_reps$var >= 0.25))
 })

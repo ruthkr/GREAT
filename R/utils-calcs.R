@@ -87,7 +87,7 @@ calc_variance <- function(all_data, exp_sd = NA) {
 
     # Set variance for data with no replicates
     if (nrow(all_data_no_reps) > 0) {
-      all_data_no_reps[, var := 0.01]
+      all_data_no_reps[, var := pmax(expression_value / 10, 0.25), by = .(gene_id, accession, timepoint)]
     }
 
     # Combine data

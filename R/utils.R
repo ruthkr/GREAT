@@ -106,7 +106,7 @@ get_approximate_stretch <- function(data, reference = "ref", query = "query") {
 #'
 #' @noRd
 get_search_space_limits <- function(data, stretches = NA, shifts = NA, overlapping_percent = 0.5) {
-  stretch_space_lims <- get_stretch_search_space_limits(data, stretches)
+  stretch_space_lims <- get_stretch_search_space_limits(data, stretches, overlapping_percent)
   shift_space_lims <- get_shift_search_space_limits(data, shifts, stretch_space_lims, overlapping_percent)
   space_lims <- c(stretch_space_lims, shift_space_lims)
 
@@ -116,7 +116,7 @@ get_search_space_limits <- function(data, stretches = NA, shifts = NA, overlappi
 #' Calculate limits of the stretch search space
 #'
 #' @noRd
-get_stretch_search_space_limits <- function(data, stretches = NA) {
+get_stretch_search_space_limits <- function(data, stretches = NA, overlapping_percent = 0.5) {
   # Suppress "no visible binding for global variable" note
   accession <- NULL
   timepoint <- NULL
@@ -145,7 +145,7 @@ get_stretch_search_space_limits <- function(data, stretches = NA) {
     }
 
     # Calculate limits
-    stretch_lower <- 0.5 * stretch_init
+    stretch_lower <- overlapping_percent * stretch_init
     stretch_upper <- 1.5 * stretch_init
   }
 
@@ -195,11 +195,10 @@ get_shift_search_space_limits <- function(data, shifts = NA, stretch_space_lims,
     # Read stretch limits
     stretch_lower <- stretch_space_lims$stretch_lower
     stretch_upper <- stretch_space_lims$stretch_upper
-    range_query_max_stretch <- stretch_upper * diff(range_query)
 
     # Calculate minimum and maximum timepoints in which the curves overlap
-    min_timepoint <- range_ref[1] + overlapping_percent * diff(range_ref) - range_query_max_stretch
-    max_timepoint <- range_ref[2] - overlapping_percent * diff(range_ref) + range_query_max_stretch
+    min_timepoint <- range_ref[1] + overlapping_percent * diff(range_ref) - stretch_upper * diff(range_query)
+    max_timepoint <- range_ref[2] - overlapping_percent * diff(range_ref)
 
     # Calculate limits
     shift_lower <- min_timepoint - stretch_upper * range_query[1]

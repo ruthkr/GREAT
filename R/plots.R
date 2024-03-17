@@ -383,7 +383,7 @@ plot.summary.res_greatR <- function(x,
                                     type_dist = c("histogram", "density"),
                                     bins = 30,
                                     alpha = NA,
-                                    title,
+                                    title = NULL,
                                     ...) {
   # Suppress "no visible binding for global variable" note
   stretch <- NULL

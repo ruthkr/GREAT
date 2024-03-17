@@ -31,7 +31,7 @@
   type_dist = c("histogram", "density"),
   bins = 30,
   alpha = NA,
-  title,
+  title = NULL,
   ...
 )
 }

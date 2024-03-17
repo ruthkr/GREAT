@@ -5,6 +5,47 @@ gene_data <- brapa_sample_data[gene_id == "BRAA03G051930.3C"]
 
 # Preprocessing and intermediate functions ----
 
+test_that("transform_input.data.frame works", {
+  df <- gene_data
+  df_tf <- transform_input(df)
+
+  # Expected outputs
+  expect_true("data.frame" %in% class(df_tf))
+  expect_equal(colnames(df), colnames(df_tf))
+  expect_equal(nrow(df), nrow(df_tf))
+})
+
+test_that("transform_input.list (numeric) works", {
+  list_num <- list(
+    reference = c(1, 2, 3, 4, 5, 6, 7, 8),
+    query = c(0, 1, 2, 3, 4)
+  )
+  df_tf <- transform_input(list_num, reference = reference, query = query)
+
+  # Expected outputs
+  expect_true("data.frame" %in% class(df_tf))
+  expect_setequal(colnames(df_tf), c("gene_id", "accession", "timepoint", "replicate", "expression_value"))
+  expect_equal(length(intersect(unique(df_tf$accession), c(reference, query))), 2)
+})
+
+test_that("transform_input.list (df) works", {
+  ara_data <- data.table::fread(system.file("extdata/arabidopsis_SOC1_data.csv", package = "greatR"))
+  rapa_data <- data.table::fread(system.file("extdata/brapa_SOC1_data.csv", package = "greatR"))
+
+  list_df <- list(
+    reference = rapa_data,
+    query = ara_data
+  )
+
+  df_tf <- transform_input(list_df, reference = reference, query = query)
+
+  # Expected outputs
+  expect_true("data.frame" %in% class(df_tf))
+  expect_setequal(colnames(df_tf), c("gene_id", "accession", "timepoint", "replicate", "expression_value"))
+  expect_equal(length(intersect(unique(df_tf$accession), c(reference, query))), 2)
+  expect_setequal(paste0(unique(rapa_data$gene_id), "_", unique(ara_data$gene_id)), unique(df_tf$gene_id))
+})
+
 test_that("preprocess_data works", {
   all_data <- suppressMessages(preprocess_data(brapa_sample_data, reference, query))
   all_data_norm <- suppressMessages(preprocess_data(brapa_sample_data, reference, query, scaling_method = "z-score"))

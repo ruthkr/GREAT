@@ -18,8 +18,8 @@ This article will show users how to register data using the sample data provided
 
 <br>
 
-```{r reg-data, echo=FALSE, fig.align='center', out.width='20%'}
-knitr::include_graphics("figures/01_registration_opt_default.png")
+```{r reg-data, echo=FALSE, fig.align='center', out.width='100%'}
+knitr::include_graphics("figures/registration_opt_diagram.png")
 ```
 
 ## Loading sample data
@@ -52,7 +52,7 @@ b_rapa_data[, .SD[1:6], by = accession][, .(gene_id, accession, timepoint, expre
 
 ## Registering the data
 
-To align gene expression time-course between *Arabidopsis* Col-0 and *B. rapa* Ro18, we can use function `register()`. By default, the best registration parameters are optimised via Nelder-Mead (`optimisation_method = "nm"`). When using the default `optimise_registration_parameters = TRUE`, the stretch and shift search space is automatically estimated. For more details on the other function paramaters, go to `register()`.
+To align gene expression time-course between *Arabidopsis* Col-0 and *B. rapa* Ro18, we can use function `register()`. By default, the best registration parameters are optimised via Nelder-Mead (`optimisation_method = "nm"`). When using the default `use_optimisation = TRUE`, the stretch and shift search space is automatically estimated. For more details on the other function paramaters, go to `register()`.
 
 ```{r register-data-raw, message=FALSE, warning=FALSE, eval=FALSE}
 registration_results <- register(

@@ -29,11 +29,7 @@ profiles alignment.
 The flowchart below illustrates the workflow of the package given an
 input data:
 
-<br>
-
-<img src="man/figures/greatR_workflow.png" width="85%" />
-
-<br>
+<img src="man/figures/greatR_workflow.png" width="100%" />
 
 More details on how to use this package are available on function
 documentations and the following vignettes:

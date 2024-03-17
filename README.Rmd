@@ -30,13 +30,9 @@ knitr::opts_chunk$set(
 
 The flowchart below illustrates the workflow of the package given an input data:
 
-<br>
-
-```{r all-data-illustration, echo=FALSE, out.width='85%'}
+```{r all-data-illustration, echo=FALSE, out.width='100%'}
 knitr::include_graphics("man/figures/greatR_workflow.png")
 ```
-
-<br>
 
 More details on how to use this package are available on function documentations and the following vignettes:
 

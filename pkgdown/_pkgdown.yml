@@ -24,6 +24,7 @@ reference:
   - summary.res_greatR
   - calculate_distance
   - plot.res_greatR
+  - plot.summary.res_greatR
   - plot.dist_greatR
 
 articles:

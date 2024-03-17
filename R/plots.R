@@ -141,7 +141,6 @@ plot.res_greatR <- function(x,
   gg_registered <- gg_registered +
     ggplot2::scale_color_manual(
       breaks = c(reference, query),
-      # values = scales::hue_pal()(2)
       values = greatR_palettes$disc
     )
 
@@ -407,5 +406,6 @@ theme_greatR <- function(base_size = 12, base_family = "sans") {
 #' @noRd
 greatR_palettes <- list(
   cont = c("#3e1190", "#4268b7", "#4195bd", "#51bdb9", "#8fdc9f", "#f9ef93"),
-  disc = c("#1b9e77", "#f38400")
+  disc = c("#1b9e77", "#f38400"),
+  hist = c("REG" = "#4268b7", "NON-REG" = "#d98484")
 )

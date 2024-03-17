@@ -57,7 +57,7 @@
     <a class="dropdown-item" href="../articles/visualise-results.html">Visualising results</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Others</h6>
-    <a class="dropdown-item" href="../articles/register-data-manually.html">Register data with provided parameters</a>
+    <a class="dropdown-item" href="../articles/register-data-manually.html">Registering data without optimisation</a>
   </div>
 </li>
 <li class="nav-item">
@@ -100,7 +100,7 @@
 data provided by the package. Given an input data, users can directly
 register the data as illustrated below.</p>
 <p><br></p>
-<p><img src="figures/01_registration_opt_default.png" width="20%" style="display: block; margin: auto;"></p>
+<p><img src="figures/registration_opt_diagram.png" width="100%" style="display: block; margin: auto;"></p>
 <div class="section level2">
 <h2 id="loading-sample-data">Loading sample data<a class="anchor" aria-label="anchor" href="#loading-sample-data"></a>
 </h2>
@@ -224,10 +224,9 @@ package:</p>
 Col-0 and <em>B. rapa</em> Ro18, we can use function
 <code><a href="../reference/register.html">register()</a></code>. By default, the best registration parameters
 are optimised via Nelder-Mead (<code>optimisation_method = "nm"</code>).
-When using the default
-<code>optimise_registration_parameters = TRUE</code>, the stretch and
-shift search space is automatically estimated. For more details on the
-other function paramaters, go to <code><a href="../reference/register.html">register()</a></code>.</p>
+When using the default <code>use_optimisation = TRUE</code>, the stretch
+and shift search space is automatically estimated. For more details on
+the other function paramaters, go to <code><a href="../reference/register.html">register()</a></code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/register.html">register</a></span><span class="op">(</span></span>
 <span>  <span class="va">b_rapa_data</span>,</span>

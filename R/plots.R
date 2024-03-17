@@ -409,3 +409,125 @@ greatR_palettes <- list(
   disc = c("#1b9e77", "#f38400"),
   hist = c("REG" = "#4268b7", "NON-REG" = "#d98484")
 )
+
+#' @rdname plot
+#' @export
+plot.summary.res_greatR <- function(x,
+                                    type = c("all", "registered"),
+                                    type_dist = c("histogram", "density"),
+                                    bins = 30,
+                                    alpha = NA,
+                                    title,
+                                    ...) {
+  # Suppress "no visible binding for global variable" note
+  stretch <- NULL
+  shift <- NULL
+  registered <- NULL
+
+  # Validate parameters
+  type <- match.arg(type)
+  type_dist <- match.arg(type_dist)
+
+  # Parse data
+  x <- x$reg_params
+  if (type == "registered") {
+    x <- x[x$registered, ]
+  }
+  x$registered <- factor(x$registered, levels = c(TRUE, FALSE), labels = c("REG", "NON-REG"))
+
+  # Scatterplot of stretch and shift (center)
+  point_shape <- ifelse(nrow(x) <= 1000, 19, 21)
+  if (is.na(alpha)) {
+    point_alpha <- ifelse(nrow(x) <= 1000, 1, 0.5)
+  } else {
+    point_alpha <- alpha
+  }
+
+  plot_center <- ggplot2::ggplot(x) +
+    ggplot2::aes(
+      x = stretch,
+      y = shift,
+      color = registered
+    ) +
+    ggplot2::geom_point(alpha = point_alpha, shape = point_shape) +
+    ggplot2::scale_color_manual(
+      breaks = c("REG", "NON-REG"),
+      values = greatR_palettes$hist
+    ) +
+    ggplot2::labs(x = "Stretch", y = "Shift", color = NULL) +
+    theme_greatR()
+
+  # Marginal density of stretch (top)
+  plot_top <- ggplot2::ggplot(x) +
+    ggplot2::aes(
+      x = stretch,
+      color = registered
+    ) +
+    ggplot2::scale_y_continuous(n.breaks = 4) +
+    ggplot2::scale_color_manual(
+      breaks = c("REG", "NON-REG"),
+      values = greatR_palettes$hist
+    ) +
+    theme_greatR() +
+    ggplot2::theme(
+      legend.position = "none",
+      axis.title.x = ggplot2::element_blank(),
+      axis.text.x = ggplot2::element_blank(),
+      axis.ticks.x = ggplot2::element_blank()
+    )
+
+  # Marginal density of shift (right)
+  plot_right <- ggplot2::ggplot(x) +
+    ggplot2::aes(
+      x = shift,
+      color = registered
+    ) +
+    ggplot2::coord_flip() +
+    ggplot2::scale_y_continuous(n.breaks = 4) +
+    ggplot2::scale_color_manual(values = greatR_palettes$hist) +
+    theme_greatR() +
+    ggplot2::theme(
+      legend.position = "none",
+      axis.title.y = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_blank()
+    )
+
+  # Select geom for marginals
+  marginal_hist <- list(
+    ggplot2::geom_histogram(fill = "transparent", position = "identity", bins = bins),
+    ggplot2::labs(y = "Count")
+  )
+
+  marginal_dens <- list(
+    ggplot2::geom_density(),
+    ggplot2::labs(y = "Density")
+  )
+
+  if (type_dist == "histogram") {
+    plot_top <- plot_top + marginal_hist
+    plot_right <- plot_right + marginal_hist
+  } else if (type_dist == "density") {
+    plot_top <- plot_top + marginal_dens
+    plot_right <- plot_right + marginal_dens
+  }
+
+  # Construct patchwork
+  design <- "BBBD
+             AAAC
+             AAAC
+             AAAC
+             "
+  patch <- patchwork::wrap_plots(
+    list(
+      plot_center,
+      plot_top,
+      plot_right,
+      patchwork::guide_area()
+    ),
+    guides = "collect",
+    design = design
+  )
+
+  return(patch)
+}

@@ -11,6 +11,23 @@ test_that("summary.res_greatR works", {
   expect_equal(length(reg_summary$non_registered_genes), as.numeric(reg_summary$summary[Result == "Non-registered genes", Value]))
 })
 
+test_that("plot.summary.res_greatR works", {
+  reg_summary <- summary(registration_results)
+  gg_all <- plot(reg_summary)
+  gg_reg <- plot(reg_summary, type = "registered", type_dist = "density")
+
+  # Expected outputs
+  expect_equal(length(gg_all), 4)
+  expect_equal(colnames(gg_all[[1]]$data), colnames(reg_summary$reg_params))
+  expect_gte(nrow(gg_all[[1]]$data), nrow(gg_reg[[1]]$data))
+  expect_equal(gg_all[[1]]$labels$x, "Stretch")
+  expect_equal(gg_all[[1]]$labels$y, "Shift")
+  expect_equal(gg_all[[2]]$labels$y, "Count")
+  expect_equal(gg_all[[3]]$labels$y, "Count")
+  expect_equal(gg_reg[[2]]$labels$y, "Density")
+  expect_equal(gg_reg[[3]]$labels$y, "Density")
+})
+
 test_that("plot.res_greatR works", {
   gg <- plot(registration_results)
   gg_original <- plot(registration_results, "original")

@@ -1,3 +1,104 @@
+#' @noRd
+transform_input <- function(input, reference, query) {
+  UseMethod("transform_input", input)
+}
+
+#' @export
+transform_input.default <- function(input, reference, query) {
+  stop(
+    cli::format_error("Input cannot be of {.cls {class(input)}} class"),
+    call. = FALSE
+  )
+}
+
+#' @export
+transform_input.data.frame <- function(input, reference, query) {
+  return(input)
+}
+
+#' @export
+transform_input.list <- function(input, reference, query) {
+  # Suppress "no visible binding for global variable" note
+  gene_id <- NULL
+  Var1 <- NULL
+  Var2 <- NULL
+
+  # Validate names
+  if (length(intersect(names(input), c("reference", "query"))) != 2) {
+    stop(
+      cli::format_error(c(
+        "The elements of the input list must be {.val reference} and {.val query}.",
+        "x" = "Your data contained {.val {names(input)[1]}} and {.val {names(input)[2]}}."
+      )),
+      call. = FALSE
+    )
+  }
+
+  # Check elements classes
+  elements_class <- lapply(input, class)
+
+  # Numeric input
+  if (all(elements_class$reference == "numeric", elements_class$query == "numeric")) {
+    input <- rbind(
+      # Reference data
+      data.frame(
+        gene_id = "A",
+        accession = reference,
+        timepoint = seq_along(input$reference),
+        replicate = 1,
+        expression_value = input$reference
+      ),
+      # Query data
+      data.frame(
+        gene_id = "A",
+        accession = query,
+        timepoint = seq_along(input$query),
+        replicate = 1,
+        expression_value = input$query
+      )
+    )
+
+    return(input)
+  }
+
+  # Data frame input
+  if (all("data.frame" %in% elements_class$reference, "data.frame" %in% elements_class$query)) {
+    # Have a possible combination of ref and query IDs
+    df_ids <- expand.grid(
+      unique(input$reference$gene_id),
+      unique(input$query$gene_id)
+    )
+
+    # Set all to data.table
+    data.table::setDT(df_ids)
+    input_ref <- data.table::as.data.table(input$reference)
+    input_query <- data.table::as.data.table(input$query)
+
+    # Create padded reference data
+    ref_padded <- merge(
+      df_ids, input_ref,
+      by.x = "Var1", by.y = "gene_id",
+      allow.cartesian = TRUE
+    )
+    ref_padded[, gene_id := paste0(Var1, "_", Var2)]
+    ref_padded <- ref_padded[, c("Var1", "Var2") := NULL]
+
+    # Create padded query data
+    query_padded <- merge(
+      df_ids, input_query,
+      by.x = "Var2", by.y = "gene_id",
+      allow.cartesian = TRUE
+    )
+    query_padded[, gene_id := paste0(Var1, "_", Var2)]
+    query_padded <- query_padded[, c("Var1", "Var2") := NULL]
+
+    # Bind data
+    input <- rbind(ref_padded, query_padded)
+
+    return(input)
+  }
+}
+
 #' Preprocess data before registration
 #'
 #' \code{preprocess_data()} is a function that:

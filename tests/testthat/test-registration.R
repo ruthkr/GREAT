@@ -91,7 +91,7 @@ test_that("register (with no optimisation) works", {
     query = "Col0",
     stretches = stretch,
     shifts = shift,
-    optimise_registration_parameters = FALSE,
+    use_optimisation = FALSE,
     scaling_method = "z-score"
   ))
 
@@ -104,7 +104,7 @@ test_that("register (with no optimisation) works", {
   expect_equal(colnames(data_reg), c("gene_id", "accession", "expression_value", "replicate", "timepoint", "timepoint_reg"))
   expect_equal(colnames(model_comparison), c("gene_id", "stretch", "shift", "BIC_diff", "registered"))
   expect_equal(model_comparison$registered, TRUE)
-  expect_error(suppressMessages(register(gene_data, reference = "Ro18", query = "Col0", stretches = stretch, shifts = NA, optimise_registration_parameters = FALSE)))
+  expect_error(suppressMessages(register(gene_data, reference = "Ro18", query = "Col0", stretches = stretch, shifts = NA, use_optimisation = FALSE)))
 })
 
 test_that("register (with optimisation) works", {

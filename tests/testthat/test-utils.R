@@ -111,7 +111,7 @@ test_that("bind_results works", {
     scaling_method = "z-score",
     stretches = 3.10,
     shifts = -12.58,
-    optimise_registration_parameters = FALSE
+    use_optimisation = FALSE
   ))
 
   registration_results_a <- suppressMessages(register(
@@ -121,7 +121,7 @@ test_that("bind_results works", {
     scaling_method = "z-score",
     stretches = 3.10,
     shifts = -12.58,
-    optimise_registration_parameters = FALSE
+    use_optimisation = FALSE
   ))
 
   registration_results_b <- suppressMessages(register(
@@ -133,7 +133,7 @@ test_that("bind_results works", {
     # shifts = -20.25,
     stretches = 3.10,
     shifts = -12.58,
-    optimise_registration_parameters = FALSE
+    use_optimisation = FALSE
   ))
 
   registration_results_ab1 <- bind_results(registration_results_a, registration_results_b)

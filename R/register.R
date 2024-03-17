@@ -4,13 +4,13 @@
 #' wishes to compare.
 #'
 #' @param input Input data frame containing all replicates of gene expression in each genotype at each time point.
-#' @param stretches Candidate registration stretch factors to apply to query data, only required if \code{optimise_registration_parameters = FALSE}.
-#' @param shifts Candidate registration shift values to apply to query data, only required if \code{optimise_registration_parameters = FALSE}.
+#' @param stretches Candidate registration stretch factors to apply to query data, only required if \code{use_optimisation = FALSE}.
+#' @param shifts Candidate registration shift values to apply to query data, only required if \code{use_optimisation = FALSE}.
 #' @param reference Accession name of reference data.
 #' @param query Accession name of query data.
 #' @param scaling_method Scaling method applied to data prior to registration process. Either \code{none} (default), \code{z-score}, or \code{min-max}.
 #' @param overlapping_percent Minimum percentage of overlapping time point range of the reference data. Shifts will be only considered if it leaves at least this percentage of overlapping time point range after applying the registration.
-#' @param optimise_registration_parameters Whether to optimise registration parameters. By default, \code{TRUE}.
+#' @param use_optimisation Whether to optimise registration parameters. By default, \code{TRUE}.
 #' @param optimisation_method Optimisation method to use. Either \code{"nm"} for Nelder-Mead (default), \code{"lbfgsb"} for L-BFGS-B, or \code{"sa"} for Simulated Annealing.
 #' @param optimisation_config Optional list with arguments to override the default optimisation configuration.
 #' @param exp_sd Optional experimental standard deviation on the expression replicates.
@@ -44,7 +44,7 @@ register <- function(input,
                      query,
                      scaling_method = c("none", "z-score", "min-max"),
                      overlapping_percent = 50,
-                     optimise_registration_parameters = TRUE,
+                     use_optimisation = TRUE,
                      optimisation_method = c("nm", "lbfgsb", "sa"),
                      optimisation_config = NULL,
                      exp_sd = NA,
@@ -117,7 +117,7 @@ register <- function(input,
   gene_id_list <- unique(all_data$gene_id)
 
   # Begin registration logic
-  if (optimise_registration_parameters) {
+  if (use_optimisation) {
     optimisation_method <- match.arg(optimisation_method)
 
     # Registration with optimisation

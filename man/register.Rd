@@ -12,7 +12,7 @@ register(
   query,
   scaling_method = c("none", "z-score", "min-max"),
   overlapping_percent = 50,
-  optimise_registration_parameters = TRUE,
+  use_optimisation = TRUE,
   optimisation_method = c("nm", "lbfgsb", "sa"),
   optimisation_config = NULL,
   exp_sd = NA,
@@ -22,9 +22,9 @@ register(
 \arguments{
 \item{input}{Input data frame containing all replicates of gene expression in each genotype at each time point.}
 
-\item{stretches}{Candidate registration stretch factors to apply to query data, only required if \code{optimise_registration_parameters = FALSE}.}
+\item{stretches}{Candidate registration stretch factors to apply to query data, only required if \code{use_optimisation = FALSE}.}
 
-\item{shifts}{Candidate registration shift values to apply to query data, only required if \code{optimise_registration_parameters = FALSE}.}
+\item{shifts}{Candidate registration shift values to apply to query data, only required if \code{use_optimisation = FALSE}.}
 
 \item{reference}{Accession name of reference data.}
 
@@ -34,7 +34,7 @@ register(
 
 \item{overlapping_percent}{Minimum percentage of overlapping time point range of the reference data. Shifts will be only considered if it leaves at least this percentage of overlapping time point range after applying the registration.}
 
-\item{optimise_registration_parameters}{Whether to optimise registration parameters. By default, \code{TRUE}.}
+\item{use_optimisation}{Whether to optimise registration parameters. By default, \code{TRUE}.}
 
 \item{optimisation_method}{Optimisation method to use. Either \code{"nm"} for Nelder-Mead (default), \code{"lbfgsb"} for L-BFGS-B, or \code{"sa"} for Simulated Annealing.}
 

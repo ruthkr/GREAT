@@ -142,6 +142,9 @@ plot.res_greatR <- function(x,
     ggplot2::scale_color_manual(
       breaks = c(reference, query),
       values = greatR_palettes$disc
+    ) +
+    ggplot2::guides(
+      color = ggplot2::guide_legend(override.aes = list(linetype = NULL))
     )
 
   return(gg_registered)
@@ -455,7 +458,10 @@ plot.summary.res_greatR <- function(x,
       values = greatR_palettes$hist
     ) +
     ggplot2::labs(x = "Stretch", y = "Shift", color = NULL) +
-    theme_greatR()
+    theme_greatR() +
+    ggplot2::guides(
+      color = ggplot2::guide_legend(override.aes = list(shape = 19, alpha = 1))
+    )
 
   # Marginal density of stretch (top)
   plot_top <- ggplot2::ggplot(x) +

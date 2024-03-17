@@ -6,7 +6,7 @@ test_that("summary.res_greatR works", {
 
   # Expected outputs
   expect_s3_class(reg_summary, "summary.res_greatR")
-  expect_equal(names(reg_summary), c("summary", "registered_genes", "non_registered_genes"))
+  expect_equal(names(reg_summary), c("summary", "registered_genes", "non_registered_genes", "reg_params"))
   expect_equal(length(reg_summary$registered_genes), as.numeric(reg_summary$summary[Result == "Registered genes", Value]))
   expect_equal(length(reg_summary$non_registered_genes), as.numeric(reg_summary$summary[Result == "Non-registered genes", Value]))
 })

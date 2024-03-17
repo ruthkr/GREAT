@@ -14,6 +14,7 @@
 summary.res_greatR <- function(object, ...) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
+  registered <- NULL
 
   # Summarise results
   data <- object$model_comparison
@@ -51,7 +52,8 @@ summary.res_greatR <- function(object, ...) {
   results_list <- list(
     summary = df_summary,
     registered_genes = registered_genes,
-    non_registered_genes = non_registered_genes
+    non_registered_genes = non_registered_genes,
+    reg_params = data[, .(stretch, shift, registered)]
   )
 
   class(results_list) <- "summary.res_greatR"

@@ -2,12 +2,18 @@
 #'
 #' @param x Input object.
 #'  - For [plot.res_greatR()]: registration results, output of the [register()] registration process.
+#'  - For [plot.summary.res_greatR()]: registration results summary, output of [summary()].
 #'  - For [plot.dist_greatR()]: pairwise distances between reference and query time points, output of [calculate_distance()].
-#' @param type Type of plot, whether to use registration "result" or "original" time points. By default, "result".
+#' @param type Type of plot.
+#'  - For both [plot.res_greatR()] and  [plot.dist_greatR()]: whether to use registration "result" (default) or "original" time points.
+#'  - For [plot.summary.res_greatR()]: whether to show "all" registered and non-registered genes (default) or only "registered" ones.
+#' @param type_dist Type of marginal distribution. Can be either "histogram" (default), or "density".
 #' @param genes_list Optional vector indicating the \code{gene_id} values to be plotted.
 #' @param show_rep_mean Whether to show \code{replicate} mean values.
 #' @param match_timepoints If \code{TRUE}, will match query time points to reference time points.
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
+#' @param bins Number of bins to use when \code{type_dist} = "histogram". By default, 30.
+#' @param alpha Optional opacity of the points in the scatterplot.
 #' @param title Optional plot title.
 #' @param ... Arguments to be passed to methods (ignored).
 #'
@@ -15,6 +21,7 @@
 #' @return
 #'  - For [plot.res_greatR()]: plot of genes of interest after registration process (\code{type = "result"}) or showing original time points (\code{type = "original"}).
 #'  - For [plot.dist_greatR()]: distance heatmap of gene expression profiles over time between reference and query.
+#'  - For [plot.summary.res_greatR()]: TODO.
 NULL
 # > NULL
 
@@ -95,7 +102,7 @@ plot.res_greatR <- function(x,
       title = title,
       x = x_lab,
       y = ifelse(scaling_method == "none", "Expression", "Scaled expression"),
-      colour = NULL
+      color = NULL
     )
 
   # Add model curve layers
@@ -352,7 +359,7 @@ plot.dist_greatR <- function(x,
     ggplot2::guides(
       fill = ggplot2::guide_colorbar(label.position = "top")
     ) +
-    ggplot2::scale_fill_gradientn(colours = greatR_palettes$cont) +
+    ggplot2::scale_fill_gradientn(colors = greatR_palettes$cont) +
     ggplot2::scale_x_discrete(expand = c(0, 0)) +
     ggplot2::scale_y_discrete(expand = c(0, 0)) +
     ggplot2::labs(
@@ -436,7 +443,8 @@ plot.summary.res_greatR <- function(x,
       axis.title.x = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_blank(),
       axis.ticks.x = ggplot2::element_blank()
-    )
+    ) +
+    ggplot2::labs(title = title)
 
   # Marginal density of shift (right)
   plot_right <- ggplot2::ggplot(x) +

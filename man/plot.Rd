@@ -4,6 +4,7 @@
 \alias{plot}
 \alias{plot.res_greatR}
 \alias{plot.dist_greatR}
+\alias{plot.summary.res_greatR}
 \title{Visualise registration results}
 \usage{
 \method{plot}{res_greatR}(
@@ -23,15 +24,30 @@
   title = NULL,
   ...
 )
+
+\method{plot}{summary.res_greatR}(
+  x,
+  type = c("all", "registered"),
+  type_dist = c("histogram", "density"),
+  bins = 30,
+  alpha = NA,
+  title,
+  ...
+)
 }
 \arguments{
 \item{x}{Input object.
 \itemize{
 \item For \code{\link[=plot.res_greatR]{plot.res_greatR()}}: registration results, output of the \code{\link[=register]{register()}} registration process.
+\item For \code{\link[=plot.summary.res_greatR]{plot.summary.res_greatR()}}: registration results summary, output of \code{\link[=summary]{summary()}}.
 \item For \code{\link[=plot.dist_greatR]{plot.dist_greatR()}}: pairwise distances between reference and query time points, output of \code{\link[=calculate_distance]{calculate_distance()}}.
 }}
 
-\item{type}{Type of plot, whether to use registration "result" or "original" time points. By default, "result".}
+\item{type}{Type of plot.
+\itemize{
+\item For both \code{\link[=plot.res_greatR]{plot.res_greatR()}} and  \code{\link[=plot.dist_greatR]{plot.dist_greatR()}}: whether to use registration "result" (default) or "original" time points.
+\item For \code{\link[=plot.summary.res_greatR]{plot.summary.res_greatR()}}: whether to show "all" registered and non-registered genes (default) or only "registered" ones.
+}}
 
 \item{genes_list}{Optional vector indicating the \code{gene_id} values to be plotted.}
 
@@ -44,11 +60,18 @@
 \item{...}{Arguments to be passed to methods (ignored).}
 
 \item{match_timepoints}{If \code{TRUE}, will match query time points to reference time points.}
+
+\item{type_dist}{Type of marginal distribution. Can be either "histogram" (default), or "density".}
+
+\item{bins}{Number of bins to use when \code{type_dist} = "histogram". By default, 30.}
+
+\item{alpha}{Optional opacity of the points in the scatterplot.}
 }
 \value{
 \itemize{
 \item For \code{\link[=plot.res_greatR]{plot.res_greatR()}}: plot of genes of interest after registration process (\code{type = "result"}) or showing original time points (\code{type = "original"}).
 \item For \code{\link[=plot.dist_greatR]{plot.dist_greatR()}}: distance heatmap of gene expression profiles over time between reference and query.
+\item For \code{\link[=plot.summary.res_greatR]{plot.summary.res_greatR()}}: TODO.
 }
 }
 \description{

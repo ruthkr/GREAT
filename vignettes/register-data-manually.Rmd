@@ -32,7 +32,11 @@ b_rapa_data <- system.file("extdata/brapa_arabidopsis_data.csv", package = "grea
   data.table::fread()
 ```
 
-## Registering single gene
+## Registering without optimisation
+
+```{r reg-data-manual, echo=FALSE, fig.align='center', out.width='65%'}
+knitr::include_graphics("figures/registration_params_table.png")
+```
 
 Here, we will only use a single gene with `gene_id = "BRAA03G023790.3C"` from the sample data.
 
@@ -40,11 +44,7 @@ Here, we will only use a single gene with `gene_id = "BRAA03G023790.3C"` from th
 gene_BRAA03G023790.3C_data <- b_rapa_data[gene_id == "BRAA03G023790.3C"]
 ```
 
-Before registering, we can use the helper function `get_approximate_stretch()` to approximate the stretch factor between our sample datasets as shown in the figure below.
-
-```{r reg-data-manual, echo=FALSE, fig.align='center', out.width='75%'}
-knitr::include_graphics("figures/registration_params_table.png")
-```
+Before registering, we can use the helper function `get_approximate_stretch()` to approximate the stretch factor between our sample datasets.
 
 ```{r get-approximate, message=FALSE, warning=FALSE}
 get_approximate_stretch(

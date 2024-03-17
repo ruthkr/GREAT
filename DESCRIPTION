@@ -28,6 +28,7 @@ Imports:
     ggplot2,
     neldermead,
     optimization,
+    patchwork,
     scales,
     stats
 Suggests:

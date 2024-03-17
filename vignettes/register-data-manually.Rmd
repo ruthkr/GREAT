@@ -28,7 +28,7 @@ library(data.table)
 
 ```{r brapa-data, message=FALSE, warning=FALSE}
 # Load a data frame from the sample data
-b_rapa_data <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") |>
+b_rapa_data <- system.file("extdata/brapa_arabidopsis_data.csv", package = "greatR") |>
   data.table::fread()
 ```
 
@@ -70,7 +70,7 @@ registration_results <- register(
 #> ℹ Will process 1 gene.
 #> ℹ Using estimated standard deviation, as no `exp_sd` was provided.
 #> ℹ Using `scaling_method` = "z-score".
-#> 
+#>
 #> ── Starting manual registration ────────────────────────────────────────────────
 #> ℹ Using `overlapping_percent` = 50% as a registration criterion.
 #> ✔ Applying registration for genes (1/1) [38ms]
@@ -103,7 +103,7 @@ registration_results <- register(
 #> ℹ Will process 10 genes.
 #> ℹ Using estimated standard deviation, as no `exp_sd` was provided.
 #> ℹ Using `scaling_method` = "z-score".
-#> 
+#>
 #> ── Starting manual registration ────────────────────────────────────────────────
 #> ℹ Using `overlapping_percent` = 50% as a registration criterion.
 #> ✔ Applying registration for genes (10/10) [12.4s]

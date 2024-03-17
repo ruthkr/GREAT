@@ -1,5 +1,5 @@
 # Get expression data and fit with a model
-sample_data <- data.table::fread(system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR"))
+sample_data <- data.table::fread(system.file("extdata/brapa_arabidopsis_data.csv", package = "greatR"))
 sample_data_raw <- sample_data[1:10]
 sample_data <- suppressMessages(calc_variance(data.table::copy(sample_data_raw)))
 

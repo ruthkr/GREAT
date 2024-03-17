@@ -74,7 +74,7 @@ library(greatR)
 
 ``` r
 # Load a data frame from the sample data
-b_rapa_data <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") |>
+b_rapa_data <- system.file("extdata/brapa_arabidopsis_data.csv", package = "greatR") |>
   utils::read.csv()
 
 # Running the registration
@@ -88,12 +88,12 @@ registration_results <- register(
 #> ℹ Will process 10 genes.
 #> ℹ Using estimated standard deviation, as no `exp_sd` was provided.
 #> ℹ Using `scaling_method` = "z-score".
-#> 
+#>
 #> ── Starting registration with optimisation ──────────────────────────────────────
 #> ℹ Using Nelder-Mead method.
 #> ℹ Using computed stretches and shifts search space limits.
 #> ℹ Using `overlapping_percent` = 50% as a registration criterion.
-#> ✔ Optimising registration parameters for genes (10/10) [5.4s] 
+#> ✔ Optimising registration parameters for genes (10/10) [5.4s]
 ```
 
 ## Reference

@@ -36,7 +36,7 @@ Below we can see a real example of how the `input` data should look like:
 
 ```{r brapa-data-kable, echo=FALSE}
 # Load a data frame from the sample data
-b_rapa_data <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR") |>
+b_rapa_data <- system.file("extdata/brapa_arabidopsis_data.csv", package = "greatR") |>
   data.table::fread()
 
 b_rapa_data[, .SD[1:2], by = accession][, .(gene_id, accession, timepoint, expression_value, replicate)] |>

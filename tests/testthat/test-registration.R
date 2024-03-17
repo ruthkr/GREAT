@@ -1,4 +1,4 @@
-brapa_sample_data <- data.table::fread(system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR"))
+brapa_sample_data <- data.table::fread(system.file("extdata/brapa_arabidopsis_data.csv", package = "greatR"))
 reference <- "Ro18"
 query <- "Col0"
 gene_data <- brapa_sample_data[gene_id == "BRAA03G051930.3C"]

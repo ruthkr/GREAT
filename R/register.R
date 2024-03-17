@@ -27,7 +27,7 @@
 #' @examples
 #' \dontrun{
 #' # Load a data frame from the sample data
-#' data_path <- system.file("extdata/brapa_arabidopsis_all_replicates.csv", package = "greatR")
+#' data_path <- system.file("extdata/brapa_arabidopsis_data.csv", package = "greatR")
 #' all_data <- utils::read.csv(data_path)
 #'
 #' # Running the registration

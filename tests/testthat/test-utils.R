@@ -129,8 +129,16 @@ test_that("bind_results works", {
     reference = "Ro18",
     query = "Col0",
     scaling_method = "z-score",
-    # stretches = 3.53,
-    # shifts = -20.25,
+    stretches = 3.10,
+    shifts = -12.58,
+    use_optimisation = FALSE
+  ))
+
+  registration_results_c <- suppressMessages(register(
+    brapa_sample_data[gene_id == "BRAA04G005470.3C",][, accession := ifelse(accession == "Ro18", "DH", "Col0")][],
+    reference = "DH",
+    query = "Col0",
+    scaling_method = "z-score",
     stretches = 3.10,
     shifts = -12.58,
     use_optimisation = FALSE
@@ -144,4 +152,5 @@ test_that("bind_results works", {
   expect_equal(registration_results_ab1$data, registration_results$data)
   expect_equal(registration_results_ab1$model_comparison, registration_results$model_comparison)
   expect_equal(registration_results_ab1, registration_results_ab2)
+  expect_error(bind_results(registration_results_a, registration_results_c))
 })

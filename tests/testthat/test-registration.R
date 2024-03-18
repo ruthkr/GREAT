@@ -13,6 +13,7 @@ test_that("transform_input.data.frame works", {
   expect_true("data.frame" %in% class(df_tf))
   expect_equal(colnames(df), colnames(df_tf))
   expect_equal(nrow(df), nrow(df_tf))
+  expect_error(transform_input(1:10))
 })
 
 test_that("transform_input.list (numeric) works", {
@@ -26,6 +27,7 @@ test_that("transform_input.list (numeric) works", {
   expect_true("data.frame" %in% class(df_tf))
   expect_setequal(colnames(df_tf), c("gene_id", "accession", "timepoint", "replicate", "expression_value"))
   expect_equal(length(intersect(unique(df_tf$accession), c(reference, query))), 2)
+  expect_error(transform_input(unname(list_num)))
 })
 
 test_that("transform_input.list (df) works", {
@@ -44,6 +46,7 @@ test_that("transform_input.list (df) works", {
   expect_setequal(colnames(df_tf), c("gene_id", "accession", "timepoint", "replicate", "expression_value"))
   expect_equal(length(intersect(unique(df_tf$accession), c(reference, query))), 2)
   expect_setequal(paste0(unique(rapa_data$gene_id), "_", unique(ara_data$gene_id)), unique(df_tf$gene_id))
+  expect_error(transform_input(unname(list_df)))
 })
 
 test_that("preprocess_data works", {
@@ -100,6 +103,7 @@ test_that("register (with no optimisation) works", {
 
   # Expected outputs
   expect_s3_class(registration_results, "res_greatR")
+  expect_equal(capture_output(print(registration_results$model_comparison)), capture_output(print(registration_results)))
   expect_equal(names(registration_results), c("data", "model_comparison", "fun_args"))
   expect_equal(colnames(data_reg), c("gene_id", "accession", "expression_value", "replicate", "timepoint", "timepoint_reg"))
   expect_equal(colnames(model_comparison), c("gene_id", "stretch", "shift", "BIC_diff", "registered"))

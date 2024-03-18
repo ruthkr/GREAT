@@ -31,6 +31,7 @@
   type_dist = c("histogram", "density"),
   bins = 30,
   alpha = NA,
+  scatterplot_size = c(4, 3),
   title = NULL,
   ...
 )
@@ -66,6 +67,8 @@
 \item{bins}{Number of bins to use when \code{type_dist} = "histogram". By default, 30.}
 
 \item{alpha}{Optional opacity of the points in the scatterplot.}
+
+\item{scatterplot_size}{Vector \code{c(width, height)} specifying the ratio of width and height of the scatterplot with respect to stretch and shift distribution plots.}
 }
 \value{
 \itemize{

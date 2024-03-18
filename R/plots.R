@@ -14,6 +14,7 @@
 #' @param ncol Number of columns in the plot grid. By default this is calculated automatically.
 #' @param bins Number of bins to use when \code{type_dist} = "histogram". By default, 30.
 #' @param alpha Optional opacity of the points in the scatterplot.
+#' @param scatterplot_size Vector \code{c(width, height)} specifying the ratio of width and height of the scatterplot with respect to stretch and shift distribution plots.
 #' @param title Optional plot title.
 #' @param ... Arguments to be passed to methods (ignored).
 #'
@@ -383,6 +384,7 @@ plot.summary.res_greatR <- function(x,
                                     type_dist = c("histogram", "density"),
                                     bins = 30,
                                     alpha = NA,
+                                    scatterplot_size = c(4, 3),
                                     title = NULL,
                                     ...) {
   # Suppress "no visible binding for global variable" note
@@ -483,20 +485,19 @@ plot.summary.res_greatR <- function(x,
   }
 
   # Construct patchwork
-  design <- "BBBD
-             AAAC
-             AAAC
-             AAAC
-             "
+  plots_list <- list(
+    plot_top,
+    patchwork::guide_area(),
+    plot_center,
+    plot_right
+  )
+
   patch <- patchwork::wrap_plots(
-    list(
-      plot_center,
-      plot_top,
-      plot_right,
-      patchwork::guide_area()
-    ),
+    plots_list,
     guides = "collect",
-    design = design
+    ncol = 2,
+    heights = c(1, scatterplot_size[2]),
+    widths = c(scatterplot_size[1], 1)
   )
 
   return(patch)

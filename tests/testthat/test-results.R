@@ -18,14 +18,14 @@ test_that("plot.summary.res_greatR works", {
 
   # Expected outputs
   expect_equal(length(gg_all), 4)
-  expect_equal(colnames(gg_all[[1]]$data), colnames(reg_summary$reg_params))
-  expect_gte(nrow(gg_all[[1]]$data), nrow(gg_reg[[1]]$data))
-  expect_equal(gg_all[[1]]$labels$x, "Stretch")
-  expect_equal(gg_all[[1]]$labels$y, "Shift")
-  expect_equal(gg_all[[2]]$labels$y, "Count")
-  expect_equal(gg_all[[3]]$labels$y, "Count")
-  expect_equal(gg_reg[[2]]$labels$y, "Density")
-  expect_equal(gg_reg[[3]]$labels$y, "Density")
+  expect_equal(colnames(gg_all[[3]]$data), colnames(reg_summary$reg_params))
+  expect_gte(nrow(gg_all[[3]]$data), nrow(gg_reg[[1]]$data))
+  expect_equal(gg_all[[3]]$labels$x, "Stretch")
+  expect_equal(gg_all[[3]]$labels$y, "Shift")
+  expect_equal(gg_all[[1]]$labels$y, "Count")
+  expect_equal(gg_all[[4]]$labels$y, "Count")
+  expect_equal(gg_reg[[1]]$labels$y, "Density")
+  expect_equal(gg_reg[[4]]$labels$y, "Density")
 })
 
 test_that("plot.res_greatR works", {

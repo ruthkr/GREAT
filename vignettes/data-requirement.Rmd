@@ -14,9 +14,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-The input data required for `greatR` is a data frame that contains gene expression time-course data with all replicates. The illustrated diagram below shows the required structure of the `input`.
+```{r fig-input-diagram, echo=FALSE, fig.align='center', out.width='75%'}
+knitr::include_graphics("figures/input_diagram.png")
+```
 
-```{r fig-all-data-illustration, echo=FALSE, fig.align='center', out.width='75%'}
+```{r fig-input-table, echo=FALSE, fig.align='center', out.width='75%'}
 knitr::include_graphics("figures/input_table.png")
 ```
 
@@ -37,4 +39,16 @@ b_rapa_data <- system.file("extdata/brapa_arabidopsis_data.csv", package = "grea
 
 b_rapa_data[, .SD[1:2], by = accession][, .(gene_id, accession, timepoint, expression_value, replicate)] |>
   knitr::kable()
+```
+
+## A list of data frames as an input
+
+```{r fig-input-list-tables, echo=FALSE, fig.align='center', out.width='85%'}
+knitr::include_graphics("figures/input_list_tables.png")
+```
+
+## A list of vectors as an input
+
+```{r fig-input-list-vectors, echo=FALSE, fig.align='center', out.width='38%'}
+knitr::include_graphics("figures/input_list_vectors.png")
 ```

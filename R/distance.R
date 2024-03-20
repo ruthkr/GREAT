@@ -15,6 +15,8 @@
 calculate_distance <- function(results) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
+  gene_ref <- NULL
+  gene_query <- NULL
   accession <- NULL
   timepoint <- NULL
   timepoint_reg <- NULL
@@ -30,12 +32,18 @@ calculate_distance <- function(results) {
   query <- attr(data, "query")
   data <- unique(data[, .(expression_value = mean(expression_value)), by = .(gene_id, accession, timepoint, timepoint_reg)])
 
-  data_query <- data[data$accession == query]
-  data_ref <- data[data$accession == reference]
+  data_query <- data[data$accession == query][, .(gene_query = gene_id, accession, timepoint_query = timepoint, timepoint_reg, exp_query = expression_value)]
+  data_ref <- data[data$accession == reference][, .(gene_ref = gene_id, accession, timepoint_ref = timepoint, timepoint_reg, exp_ref = expression_value)]
 
   # Cross join all reference and query time points
-  timepoint_cj_result <- get_timepoint_comb_result_data(data_ref, data_query)
-  timepoint_cj_original <- get_timepoint_comb_original_data(data_ref, data_query)
+  timepoint_cj_result <- get_timepoint_comb_result_data(
+    data_ref[, .(gene_ref, timepoint_ref, exp_ref)],
+    data_query[, .(gene_query, timepoint_query, timepoint_reg, exp_query)]
+  )
+  timepoint_cj_original <- get_timepoint_comb_original_data(
+    data_ref[, .(gene_ref, timepoint_ref, exp_ref)],
+    data_query[, .(gene_query, timepoint_query, exp_query)]
+  )
 
   # Calculate mean square distances
   dist_result <- timepoint_cj_result[, .(distance = mean((exp_ref - exp_query)^2)), by = .(timepoint_ref, timepoint_query)][timepoint_query >= 0]
@@ -72,17 +80,15 @@ get_timepoint_comb_original_data <- function(data_ref, data_query) {
   exp_query <- NULL
 
   # Perform cross join
-  genes <- unique(data_query$gene_id)
+  genes <- unique(data_query$gene_query)
 
   comb <- lapply(
     genes,
     function(gene) {
-      comb_gene <- cross_join(
-        unique(data_ref[data_ref$gene_id == gene][, .(gene_ref = gene_id, timepoint_ref = timepoint, exp_ref = expression_value)]),
-        unique(data_query[data_query$gene_id == gene][, .(gene_query = gene_id, timepoint_query = timepoint, exp_query = expression_value)])
+      cross_join(
+        unique(data_ref[data_ref$gene_ref == gene]),
+        unique(data_query[data_query$gene_query == gene])
       )
-
-      return(comb_gene)
     }
   )
 
@@ -111,28 +117,26 @@ get_timepoint_comb_result_data <- function(data_ref, data_query) {
   exp_query <- NULL
 
   # The imputed query time points to estimate expression values for
-  timepoint_ranges_query <- data_query[, .(min_t = ceiling(min(timepoint_reg)), max_t = floor(max(timepoint_reg))), by = "gene_id"]
+  timepoint_ranges_query <- data_query[, .(min_t = ceiling(min(timepoint_reg)), max_t = floor(max(timepoint_reg))), by = "gene_query"]
 
   imputed_query_timepoints <- data.table::rbindlist(
     Map(
       function(x, min_t, max_t) {
         data.table::data.table(gene_query = rep(x, max_t - min_t + 1), timepoint_query = seq(min_t, max_t))
-      }, timepoint_ranges_query$gene_id, timepoint_ranges_query$min_t, timepoint_ranges_query$max_t
+      }, timepoint_ranges_query$gene_query, timepoint_ranges_query$min_t, timepoint_ranges_query$max_t
     )
   )
 
   # Perform cross join
-  genes <- unique(data_query$gene_id)
+  genes <- unique(data_query$gene_query)
 
   comb <- lapply(
     genes,
     function(gene) {
-      comb_gene <- cross_join(
-        unique(data_ref[data_ref$gene_id == gene][, .(gene_ref = gene_id, timepoint_ref = timepoint, exp_ref = expression_value)]),
+      cross_join(
+        unique(data_ref[data_ref$gene_ref == gene]),
         imputed_query_timepoints[imputed_query_timepoints$gene_query == gene]
       )
-
-      return(comb_gene)
     }
   )
 
@@ -142,7 +146,7 @@ get_timepoint_comb_result_data <- function(data_ref, data_query) {
   fits <- lapply(
     genes,
     function(gene) {
-      fit_spline_model(data_query[data_query$gene_id == gene], x = "timepoint_reg")
+      fit_spline_model(data_query[data_query$gene_query == gene], x = "timepoint_reg", y = "exp_query")
     }
   )
   names(fits) <- genes

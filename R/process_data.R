@@ -39,10 +39,12 @@ transform_input.list <- function(input, reference, query) {
 
   # Numeric input
   if (all(elements_class$reference == "numeric", elements_class$query == "numeric")) {
+    gene_uuid <- paste0(sample(c(letters[1:6], 0:9), 8, replace = TRUE), collapse = "")
+
     input <- rbind(
       # Reference data
       data.frame(
-        gene_id = "A",
+        gene_id = gene_uuid,
         accession = reference,
         timepoint = seq_along(input$reference),
         replicate = 1,
@@ -50,7 +52,7 @@ transform_input.list <- function(input, reference, query) {
       ),
       # Query data
       data.frame(
-        gene_id = "A",
+        gene_id = gene_uuid,
         accession = query,
         timepoint = seq_along(input$query),
         replicate = 1,

@@ -11,7 +11,7 @@
 #' @param scaling_method Scaling method applied to data prior to registration process. Either \code{none} (default), \code{z-score}, or \code{min-max}.
 #' @param overlapping_percent Minimum percentage of overlapping time point range of the reference data. Shifts will be only considered if it leaves at least this percentage of overlapping time point range after applying the registration.
 #' @param use_optimisation Whether to optimise registration parameters. By default, \code{TRUE}.
-#' @param optimisation_method Optimisation method to use. Either \code{"nm"} for Nelder-Mead (default), \code{"lbfgsb"} for L-BFGS-B, or \code{"sa"} for Simulated Annealing.
+#' @param optimisation_method Optimisation method to use. Either \code{"lbfgsb"} for L-BFGS-B (default), \code{"nm"} for Nelder-Mead, or \code{"sa"} for Simulated Annealing.
 #' @param optimisation_config Optional list with arguments to override the default optimisation configuration.
 #' @param exp_sd Optional experimental standard deviation on the expression replicates.
 #' @param num_cores Number of cores to use if the user wants to register genes asynchronously (in parallel) in the background on the same machine. By default, \code{NA}, the registration will be run without parallelisation.
@@ -45,7 +45,7 @@ register <- function(input,
                      scaling_method = c("none", "z-score", "min-max"),
                      overlapping_percent = 50,
                      use_optimisation = TRUE,
-                     optimisation_method = c("nm", "lbfgsb", "sa"),
+                     optimisation_method = c("lbfgsb", "nm", "sa"),
                      optimisation_config = NULL,
                      exp_sd = NA,
                      num_cores = NA) {
@@ -124,7 +124,10 @@ register <- function(input,
     cli::cli_h1("Starting registration with optimisation")
 
     # Select optimisation method
-    if (optimisation_method == "nm") {
+    if (optimisation_method == "lbfgsb") {
+      cli::cli_alert_info("Using L-BFGS-B optimisation method.")
+      optimise_fun <- optimise_using_lbfgsb
+    } else if (optimisation_method == "nm") {
       cli::cli_alert_info("Using Nelder-Mead method.")
       optimise_fun <- optimise_using_nm
       if (is.null(optimisation_config)) {
@@ -136,9 +139,6 @@ register <- function(input,
       if (is.null(optimisation_config)) {
         optimisation_config <- list(num_iterations = 60, num_fun_evals = 100)
       }
-    } else if (optimisation_method == "lbfgsb") {
-      cli::cli_alert_info("Using L-BFGS-B optimization method.")
-      optimise_fun <- optimise_using_lbfgsb
     }
 
     # Validate stretch and shift values

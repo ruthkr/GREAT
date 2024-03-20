@@ -67,10 +67,10 @@ registration_results <- register(
 #> ℹ Using `scaling_method` = "z-score".
 #>
 #> ── Starting registration with optimisation ──────────────────────────────────────
-#> ℹ Using Nelder-Mead method.
+#> ℹ Using L-BFGS-B optimisation method.
 #> ℹ Using computed stretches and shifts search space limits.
 #> ℹ Using `overlapping_percent` = 50% as a registration criterion.
-#> ✔ Optimising registration parameters for genes (10/10) [5.4s]
+#> ✔ Optimising registration parameters for genes (10/10) [2s]
 ```
 
 

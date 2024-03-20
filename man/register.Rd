@@ -13,7 +13,7 @@ register(
   scaling_method = c("none", "z-score", "min-max"),
   overlapping_percent = 50,
   use_optimisation = TRUE,
-  optimisation_method = c("nm", "lbfgsb", "sa"),
+  optimisation_method = c("lbfgsb", "nm", "sa"),
   optimisation_config = NULL,
   exp_sd = NA,
   num_cores = NA
@@ -36,7 +36,7 @@ register(
 
 \item{use_optimisation}{Whether to optimise registration parameters. By default, \code{TRUE}.}
 
-\item{optimisation_method}{Optimisation method to use. Either \code{"nm"} for Nelder-Mead (default), \code{"lbfgsb"} for L-BFGS-B, or \code{"sa"} for Simulated Annealing.}
+\item{optimisation_method}{Optimisation method to use. Either \code{"lbfgsb"} for L-BFGS-B (default), \code{"nm"} for Nelder-Mead, or \code{"sa"} for Simulated Annealing.}
 
 \item{optimisation_config}{Optional list with arguments to override the default optimisation configuration.}
 

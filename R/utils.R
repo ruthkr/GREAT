@@ -198,7 +198,7 @@ get_shift_search_space_limits <- function(data, shifts = NA, stretch_space_lims,
 
     # Calculate minimum and maximum timepoints in which the curves overlap
     min_timepoint <- range_ref[1] + overlapping_percent * diff(range_ref) - stretch_upper * diff(range_query)
-    max_timepoint <- range_ref[2] - overlapping_percent * diff(range_ref)
+    max_timepoint <- range_ref[2] - overlapping_percent * diff(range_ref) + stretch_upper * diff(range_query)
 
     # Calculate limits
     shift_lower <- min_timepoint - stretch_upper * range_query[1]

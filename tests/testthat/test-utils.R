@@ -58,7 +58,7 @@ test_that("get_search_space_limits (auto) works", {
   expect_equal(space_lims$stretch_upper, 4, tolerance = 1e-2)
   expect_equal(space_lims$shift_init, -7.667, tolerance = 1e-2)
   expect_equal(space_lims$shift_lower, -41, tolerance = 1e-2)
-  expect_equal(space_lims$shift_upper, 13.667, tolerance = 1e-2)
+  expect_equal(space_lims$shift_upper, 49.667, tolerance = 1e-2)
   expect_no_error(get_search_space_limits(all_data))
   expect_error(get_search_space_limits(gene_data))
 })
@@ -90,7 +90,7 @@ test_that("get_search_space_limits (init) works", {
   expect_equal(space_lims$stretch_upper, 1.5, tolerance = 1e-2)
   expect_equal(space_lims$shift_init, shifts, tolerance = 1e-2)
   expect_equal(space_lims$shift_lower, -1, tolerance = 1e-2)
-  expect_equal(space_lims$shift_upper, 19.5, tolerance = 1e-2)
+  expect_equal(space_lims$shift_upper, 33, tolerance = 1e-2)
 })
 
 test_that("calc_overlapping_percent works", {
@@ -135,7 +135,7 @@ test_that("bind_results works", {
   ))
 
   registration_results_c <- suppressMessages(register(
-    brapa_sample_data[gene_id == "BRAA04G005470.3C",][, accession := ifelse(accession == "Ro18", "DH", "Col0")][],
+    brapa_sample_data[gene_id == "BRAA04G005470.3C", ][, accession := ifelse(accession == "Ro18", "DH", "Col0")][],
     reference = "DH",
     query = "Col0",
     scaling_method = "z-score",

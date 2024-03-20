@@ -96,8 +96,14 @@
 
     
     
-<p>The input data required for <code>greatR</code> is a data frame that
-contains gene expression time-course data with all replicates. The
+<p>The input data required for <code>greatR</code> can be either a data
+frame, a list of data frames, or a list of vectors, as shown below:</p>
+<p><img src="figures/input_diagram.png" width="75%" style="display: block; margin: auto;"></p>
+<div class="section level2">
+<h2 id="a-single-data-frame-input">A single data frame input<a class="anchor" aria-label="anchor" href="#a-single-data-frame-input"></a>
+</h2>
+<p>The single data frame input or the data frame in the list needs to
+contain gene expression time-course data with all replicates. The
 illustrated diagram below shows the required structure of the
 <code>input</code>.</p>
 <p><img src="figures/input_table.png" width="75%" style="display: block; margin: auto;"></p>
@@ -162,7 +168,81 @@ should look like:</p>
 <td align="left">Col0-07-b</td>
 </tr>
 </tbody>
-</table></main>
+</table>
+</div>
+<div class="section level2">
+<h2 id="a-list-of-data-frames-as-an-input">A list of data frames as an input<a class="anchor" aria-label="anchor" href="#a-list-of-data-frames-as-an-input"></a>
+</h2>
+<p><img src="figures/input_list_tables.png" width="85%" style="display: block; margin: auto;"></p>
+<p>If users do not have the data <strong>reference</strong> and
+<strong>query</strong> joined with the IDs mapped into one single data
+frame, there is an option of having the input data of a list of data
+frames. As shown in the illustrative diagram above, the list must
+contain both <strong>reference</strong> and <strong>query</strong> data
+frames with the columns as required in the single data frame input (see
+previous section).</p>
+<p>Below we can see an example of how the <code>input</code> list of
+data frames should look like:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load data frames from the sample data</span></span>
+<span><span class="va">brapa_ref_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_SOC1_data.csv"</span>, package <span class="op">=</span> <span class="st">"greatR"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ara_query_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/arabidopsis_SOC1_data.csv"</span>, package <span class="op">=</span> <span class="st">"greatR"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">list_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  reference <span class="op">=</span> <span class="va">brapa_ref_data</span>,</span>
+<span>  query <span class="op">=</span> <span class="va">ara_query_data</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">list_df</span></span>
+<span><span class="co">#&gt; $reference</span></span>
+<span><span class="co">#&gt;             gene_id accession timepoint expression_value                    replicate</span></span>
+<span><span class="co">#&gt;              &lt;char&gt;    &lt;char&gt;     &lt;int&gt;            &lt;num&gt;                       &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1: BRAA03G023790.3C      Ro18        11         1.984367  ERR_ro18_rna_seq_v3_R18A1_1</span></span>
+<span><span class="co">#&gt; 2: BRAA03G023790.3C      Ro18        11         1.474974  ERR_ro18_rna_seq_v3_R18A1_2</span></span>
+<span><span class="co">#&gt; 3: BRAA03G023790.3C      Ro18        11         2.194917  ERR_ro18_rna_seq_v3_R18A1_3</span></span>
+<span><span class="co">#&gt; 4: BRAA03G023790.3C      Ro18        29       113.797721 ERR_ro18_rna_seq_v3_R18A10_1</span></span>
+<span><span class="co">#&gt; 5: BRAA03G023790.3C      Ro18        29        94.650207 ERR_ro18_rna_seq_v3_R18A10_2</span></span>
+<span><span class="co">#&gt; 6: BRAA03G023790.3C      Ro18        29       129.176178 ERR_ro18_rna_seq_v3_R18A10_3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $query</span></span>
+<span><span class="co">#&gt;      gene_id accession timepoint expression_value                   replicate</span></span>
+<span><span class="co">#&gt;       &lt;char&gt;    &lt;char&gt;     &lt;int&gt;            &lt;num&gt;                      &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1: AT2G45660      Col0        15         76.95936 ERR_ds_klepikova_SRR1688425</span></span>
+<span><span class="co">#&gt; 2: AT2G45660      Col0        14         81.96151 ERR_ds_klepikova_SRR1688328</span></span>
+<span><span class="co">#&gt; 3: AT2G45660      Col0        16         59.24077 ERR_ds_klepikova_SRR1688427</span></span>
+<span><span class="co">#&gt; 4: AT2G45660      Col0        15         68.85581 ERR_ds_klepikova_SRR1688426</span></span>
+<span><span class="co">#&gt; 5: AT2G45660      Col0        12         64.21780 ERR_ds_klepikova_SRR2106520</span></span>
+<span><span class="co">#&gt; 6: AT2G45660      Col0        10         72.98476 ERR_ds_klepikova_SRR1661475</span></span></code></pre></div>
+<p>Note here that the elements of the list needs to be named
+<strong>reference</strong> and <strong>query</strong>, the order of the
+element will not effect the registration process.</p>
+</div>
+<div class="section level2">
+<h2 id="a-list-of-vectors-as-an-input">A list of vectors as an input<a class="anchor" aria-label="anchor" href="#a-list-of-vectors-as-an-input"></a>
+</h2>
+<p><img src="figures/input_list_vectors.png" width="38%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Define expression value vectors</span></span>
+<span><span class="va">ref_expressions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.9</span>, <span class="fl">3.1</span>, <span class="fl">7.8</span>, <span class="fl">31.6</span>, <span class="fl">33.7</span>, <span class="fl">31.5</span>, <span class="fl">131.4</span>, <span class="fl">107.5</span>, <span class="fl">116.7</span>, <span class="fl">112.5</span>, <span class="fl">109.7</span>, <span class="fl">57.4</span>, <span class="fl">50.9</span><span class="op">)</span></span>
+<span><span class="va">query_expressions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">14</span>, <span class="fl">12.1</span>, <span class="fl">15.9</span>, <span class="fl">47</span>, <span class="fl">30.9</span>, <span class="fl">50.5</span>, <span class="fl">80.1</span>, <span class="fl">67.4</span>, <span class="fl">72.9</span>, <span class="fl">61.7</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">list_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  reference <span class="op">=</span> <span class="va">ref_expressions</span>,</span>
+<span>  query <span class="op">=</span> <span class="va">query_expressions</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">list_vector</span></span>
+<span><span class="co">#&gt; $reference</span></span>
+<span><span class="co">#&gt;  [1]   1.9   3.1   7.8  31.6  33.7  31.5 131.4 107.5 116.7 112.5 109.7  57.4  50.9</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $query</span></span>
+<span><span class="co">#&gt;  [1] 14.0 12.1 15.9 47.0 30.9 50.5 80.1 67.4 72.9 61.7</span></span></code></pre></div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 

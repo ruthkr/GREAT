@@ -12,11 +12,19 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+options(width = 10000)
 ```
+
+The input data required for `greatR` can be either a data frame, a list of data frames, or a list of vectors, as shown below: 
 
 ```{r fig-input-diagram, echo=FALSE, fig.align='center', out.width='75%'}
 knitr::include_graphics("figures/input_diagram.png")
 ```
+
+## A single data frame input
+
+The single data frame input or the data frame in the list needs to contain gene expression time-course data with all replicates. The illustrated diagram below shows the required structure of the `input`.
 
 ```{r fig-input-table, echo=FALSE, fig.align='center', out.width='75%'}
 knitr::include_graphics("figures/input_table.png")
@@ -47,8 +55,76 @@ b_rapa_data[, .SD[1:2], by = accession][, .(gene_id, accession, timepoint, expre
 knitr::include_graphics("figures/input_list_tables.png")
 ```
 
+If users do not have the data **reference** and **query** joined with the IDs mapped into one single data frame, there is an option of having the input data of a list of data frames. As shown in the illustrative diagram above, the list must contain both **reference** and **query** data frames with the columns as required in the single data frame input (see previous section). 
+
+Below we can see an example of how the `input` list of data frames should look like:
+
+```{r brapa-data-list-df-read, include=FALSE}
+# Load a data frame from the sample data
+brapa_ref_data <- system.file("extdata/brapa_SOC1_data.csv", package = "greatR") |>
+  data.table::fread()
+
+ara_query_data <- system.file("extdata/arabidopsis_SOC1_data.csv", package = "greatR") |>
+  data.table::fread()
+
+list_df <- list(
+  reference = brapa_ref_data,
+  query = ara_query_data
+)
+```
+
+```r 
+# Load data frames from the sample data
+brapa_ref_data <- system.file("extdata/brapa_SOC1_data.csv", package = "greatR") |>
+  data.table::fread()
+
+ara_query_data <- system.file("extdata/arabidopsis_SOC1_data.csv", package = "greatR") |>
+  data.table::fread()
+
+list_df <- list(
+  reference = brapa_ref_data,
+  query = ara_query_data
+)
+
+list_df
+#> $reference
+#>             gene_id accession timepoint expression_value                    replicate
+#>              <char>    <char>     <int>            <num>                       <char>
+#> 1: BRAA03G023790.3C      Ro18        11         1.984367  ERR_ro18_rna_seq_v3_R18A1_1
+#> 2: BRAA03G023790.3C      Ro18        11         1.474974  ERR_ro18_rna_seq_v3_R18A1_2
+#> 3: BRAA03G023790.3C      Ro18        11         2.194917  ERR_ro18_rna_seq_v3_R18A1_3
+#> 4: BRAA03G023790.3C      Ro18        29       113.797721 ERR_ro18_rna_seq_v3_R18A10_1
+#> 5: BRAA03G023790.3C      Ro18        29        94.650207 ERR_ro18_rna_seq_v3_R18A10_2
+#> 6: BRAA03G023790.3C      Ro18        29       129.176178 ERR_ro18_rna_seq_v3_R18A10_3
+#> 
+#> $query
+#>      gene_id accession timepoint expression_value                   replicate
+#>       <char>    <char>     <int>            <num>                      <char>
+#> 1: AT2G45660      Col0        15         76.95936 ERR_ds_klepikova_SRR1688425
+#> 2: AT2G45660      Col0        14         81.96151 ERR_ds_klepikova_SRR1688328
+#> 3: AT2G45660      Col0        16         59.24077 ERR_ds_klepikova_SRR1688427
+#> 4: AT2G45660      Col0        15         68.85581 ERR_ds_klepikova_SRR1688426
+#> 5: AT2G45660      Col0        12         64.21780 ERR_ds_klepikova_SRR2106520
+#> 6: AT2G45660      Col0        10         72.98476 ERR_ds_klepikova_SRR1661475
+```
+
+Note here that the elements of the list needs to be named **reference** and **query**, the order of the element will not effect the registration process. 
+
 ## A list of vectors as an input
 
 ```{r fig-input-list-vectors, echo=FALSE, fig.align='center', out.width='38%'}
 knitr::include_graphics("figures/input_list_vectors.png")
+```
+
+```{r brapa-data-list-num}
+# Define expression value vectors
+ref_expressions <- c(1.9, 3.1, 7.8, 31.6, 33.7, 31.5, 131.4, 107.5, 116.7, 112.5, 109.7, 57.4, 50.9)
+query_expressions <- c(14, 12.1, 15.9, 47, 30.9, 50.5, 80.1, 67.4, 72.9, 61.7)
+
+list_vector <- list(
+  reference = ref_expressions,
+  query = query_expressions
+)
+
+list_vector
 ```

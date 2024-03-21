@@ -48,7 +48,7 @@
 \item{type}{Type of plot.
 \itemize{
 \item For both \code{\link[=plot.res_greatR]{plot.res_greatR()}} and  \code{\link[=plot.dist_greatR]{plot.dist_greatR()}}: whether to use registration "result" (default) or "original" time points.
-\item For \code{\link[=plot.summary.res_greatR]{plot.summary.res_greatR()}}: whether to show "all" registered and non-registered genes (default) or only "registered" ones.
+\item For \code{\link[=plot.summary.res_greatR]{plot.summary.res_greatR()}}: whether to show "all" genes (default) or only "registered" ones.
 }}
 
 \item{genes_list}{Optional vector indicating the \code{gene_id} values to be plotted.}

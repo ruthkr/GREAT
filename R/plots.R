@@ -6,7 +6,7 @@
 #'  - For [plot.dist_greatR()]: pairwise distances between reference and query time points, output of [calculate_distance()].
 #' @param type Type of plot.
 #'  - For both [plot.res_greatR()] and  [plot.dist_greatR()]: whether to use registration "result" (default) or "original" time points.
-#'  - For [plot.summary.res_greatR()]: whether to show "all" registered and non-registered genes (default) or only "registered" ones.
+#'  - For [plot.summary.res_greatR()]: whether to show "all" genes (default) or only "registered" ones.
 #' @param type_dist Type of marginal distribution. Can be either "histogram" (default), or "density".
 #' @param genes_list Optional vector indicating the \code{gene_id} values to be plotted.
 #' @param show_rep_mean Whether to show \code{replicate} mean values.

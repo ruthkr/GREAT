@@ -5,9 +5,10 @@
 #'
 #' @return This function returns a list containing:
 #'
-#' \item{summary}{contains result summaries of the registration results.}
+#' \item{summary}{table containing the summary of the registration results.}
 #' \item{registered_genes}{vector of gene accessions which were successfully registered.}
 #' \item{non_registered_genes}{vector of non-registered gene accessions.}
+#' \item{reg_params}{table containing distribution of registration parameters.}
 #'
 #' @name summary
 #' @export
@@ -53,7 +54,7 @@ summary.res_greatR <- function(object, ...) {
     summary = df_summary,
     registered_genes = registered_genes,
     non_registered_genes = non_registered_genes,
-    reg_params = data[, .(stretch, shift, registered)]
+    reg_params = data[, .(gene_id, stretch, shift, registered)]
   )
 
   class(results_list) <- "summary.res_greatR"

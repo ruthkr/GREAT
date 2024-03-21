@@ -382,6 +382,7 @@ plot.dist_greatR <- function(x,
 plot.summary.res_greatR <- function(x,
                                     type = c("all", "registered"),
                                     type_dist = c("histogram", "density"),
+                                    genes_list = NULL,
                                     bins = 30,
                                     alpha = NA,
                                     scatterplot_size = c(4, 3),
@@ -402,6 +403,21 @@ plot.summary.res_greatR <- function(x,
     x <- x[x$registered, ]
   }
   x$registered <- factor(x$registered, levels = c(TRUE, FALSE), labels = c("REG", "NON-REG"))
+
+  # Select genes to be plotted
+  if (any(!is.null(genes_list))) {
+    if (!inherits(genes_list, "character")) {
+      stop(
+        cli::format_error(c(
+          "{.var genes_list} must be a {.cls character} vector.",
+          "x" = "You supplied vectors with {.cls {class(genes_list)}} values."
+        )),
+        call. = FALSE
+      )
+    }
+
+    x <- x[x$gene_id %in% genes_list]
+  }
 
   # Scatterplot of stretch and shift (center)
   point_shape <- ifelse(nrow(x) <= 1000, 19, 21)

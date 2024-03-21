@@ -29,6 +29,7 @@
   x,
   type = c("all", "registered"),
   type_dist = c("histogram", "density"),
+  genes_list = NULL,
   bins = 30,
   alpha = NA,
   scatterplot_size = c(4, 3),

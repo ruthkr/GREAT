@@ -15,9 +15,10 @@
 \value{
 This function returns a list containing:
 
-\item{summary}{contains result summaries of the registration results.}
+\item{summary}{table containing the summary of the registration results.}
 \item{registered_genes}{vector of gene accessions which were successfully registered.}
 \item{non_registered_genes}{vector of non-registered gene accessions.}
+\item{reg_params}{table containing distribution of registration parameters.}
 }
 \description{
 Summarise registration results

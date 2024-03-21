@@ -47,7 +47,7 @@ test_that("plot.res_greatR works", {
 # Distance and visualisation ----
 
 test_that("calculate_distance works", {
-  sample_distance <- calculate_distance(registration_results)
+  sample_distance <- calculate_distance(registration_results, type = "all")
 
   set.seed(3)
   sample_dist_result <- sample_distance$result[sample(1:nrow(sample_distance$result), 6)]

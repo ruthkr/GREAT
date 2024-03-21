@@ -5,6 +5,8 @@
 #' investigate the similarity of progression before or after registration.
 #'
 #' @param results Result of registration process using [register()].
+#' @param type Whether to calculate distance considering only "registered" genes (default) or "all" genes.
+#' @param genes_list Optional vector indicating the \code{gene_id} values to be considered.
 #'
 #' @return This function returns a \code{dist_greatR} object containing two data frames:
 #'
@@ -12,7 +14,7 @@
 #' \item{original}{pairwise distance between scaled reference and query expressions using original time points.}
 #'
 #' @export
-calculate_distance <- function(results) {
+calculate_distance <- function(results, type = c("registered", "all"), genes_list = NULL) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   gene_ref <- NULL
@@ -26,12 +28,37 @@ calculate_distance <- function(results) {
   exp_ref <- NULL
   exp_query <- NULL
 
+  # Validate parameters
+  type <- match.arg(type)
+
   # Retrieve data from results
   data <- results$data
   reference <- attr(data, "ref")
   query <- attr(data, "query")
-  data <- unique(data[, .(expression_value = mean(expression_value)), by = .(gene_id, accession, timepoint, timepoint_reg)])
 
+  # Parse data
+  if (type == "registered") {
+    reg_genes <- results$model_comparison[results$model_comparison$registered, gene_id]
+    data <- data[data$gene_id %in% reg_genes, ]
+  }
+
+  # Select genes to be considered
+  if (any(!is.null(genes_list))) {
+    if (!inherits(genes_list, "character")) {
+      stop(
+        cli::format_error(c(
+          "{.var genes_list} must be a {.cls character} vector.",
+          "x" = "You supplied vectors with {.cls {class(genes_list)}} values."
+        )),
+        call. = FALSE
+      )
+    }
+
+    data <- data[data$gene_id %in% genes_list]
+  }
+
+  # Split data into referene and query
+  data <- unique(data[, .(expression_value = mean(expression_value)), by = .(gene_id, accession, timepoint, timepoint_reg)])
   data_query <- data[data$accession == query][, .(gene_query = gene_id, accession, timepoint_query = timepoint, timepoint_reg, exp_query = expression_value)]
   data_ref <- data[data$accession == reference][, .(gene_ref = gene_id, accession, timepoint_ref = timepoint, timepoint_reg, exp_ref = expression_value)]
 

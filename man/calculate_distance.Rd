@@ -4,10 +4,14 @@
 \alias{calculate_distance}
 \title{Calculate distance between sample data before and after registration}
 \usage{
-calculate_distance(results)
+calculate_distance(results, type = c("registered", "all"), genes_list = NULL)
 }
 \arguments{
 \item{results}{Result of registration process using \code{\link[=register]{register()}}.}
+
+\item{type}{Whether to calculate distance considering only "registered" genes (default) or "all" genes.}
+
+\item{genes_list}{Optional vector indicating the \code{gene_id} values to be considered.}
 }
 \value{
 This function returns a \code{dist_greatR} object containing two data frames:

@@ -65,7 +65,7 @@
 </ul><div class="section level3">
 <h3 id="improvements-1-1-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-1-0"></a></h3>
 <ul><li>Updated <code><a href="../reference/register.html">register()</a></code> to perform 3 sequential registrations when using Nelder-Mead, this improves the results of optimal stretch and shift parameters.</li>
-<li>Updated <code>calc_loglik()</code> to use <code>sigma_squared</code> in every timepoint in the sum.</li>
+<li>Updated <code>calc_loglik()</code> to use <code>sigma_squared</code> in every time point in the sum.</li>
 <li>Updated <code>scaled_data()</code> and <code>preprocess_data()</code> to return <code>all_data</code> object only, instead of a <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> containing <code>all_data</code>.</li>
 <li>Updated <code>compare_H1_and_H2()</code> to return <code>BIC_diff</code> column (<code>BIC_combined - BIC_separate</code>), instead of <code>BIC_combined</code> and <code>BIC_separate</code> on their own.</li>
 <li>Updated <code>explore_manual_search_space()</code> to use <code>BIC_diff</code> instead of <code>BIC_combined</code> to calculate <code>best_params</code> from <code>model_comparison</code> table.</li>
@@ -104,7 +104,7 @@
 <li>Switched to manual calculation of log likelihood via <code>calc_loglik()</code> instead of <code><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">stats::logLik()</a></code>.</li>
 <li>Reduced computation time up to 1000 times, (x30 speed-up from package rewrite, and x35 speed-up from switching default optimisation method).</li>
 <li>Removed {dplyr}, {magrittr}, {purrr}, {rlang}, and {stringr} as package dependencies.</li>
-<li>Added {neldermead} as a package depedency.</li>
+<li>Added {neldermead} as a package dependency.</li>
 <li>Updated list of exported functions:
 <ul><li><code><a href="../reference/register.html">register()</a></code></li>
 <li><code>summarise_registration()</code></li>
@@ -117,7 +117,7 @@
 <h3 id="improvements-1-0-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-0-0"></a></h3>
 <ul><li>Simplified parameters of main <code><a href="../reference/register.html">register()</a></code> function, and added <code>scaling_method</code>.</li>
 <li>Simplified structure of output object of <code><a href="../reference/register.html">register()</a></code>.</li>
-<li>Simplfied parameters of <code>summarise_registration()</code>, <code>plot_registration_results()</code>, <code>plot_heatmap()</code>, <code><a href="../reference/calculate_distance.html">calculate_distance()</a></code> to simply require <code>results</code> object from <code><a href="../reference/register.html">register()</a></code>, vastly simplifing usage.</li>
+<li>Simplified parameters of <code>summarise_registration()</code>, <code>plot_registration_results()</code>, <code>plot_heatmap()</code>, <code><a href="../reference/calculate_distance.html">calculate_distance()</a></code> to simply require <code>results</code> object from <code><a href="../reference/register.html">register()</a></code>, vastly simplifying usage.</li>
 <li>Improved messages, errors, and progress indicators with {cli}.</li>
 <li>Added correct pluralisation in {cli} messages.</li>
 <li>Rewrote unit tests to use {data.table} exclusively for data manipulation.</li>

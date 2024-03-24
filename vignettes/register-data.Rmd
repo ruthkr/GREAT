@@ -52,7 +52,7 @@ b_rapa_data[, .SD[1:6], by = accession][, .(gene_id, accession, timepoint, expre
 
 ## Registering the data
 
-To align gene expression time-course between *Arabidopsis* Col-0 and *B. rapa* Ro18, we can use function `register()`. By default, the best registration parameters are optimised via Nelder-Mead (`optimisation_method = "nm"`). When using the default `use_optimisation = TRUE`, the stretch and shift search space is automatically estimated. For more details on the other function paramaters, go to `register()`.
+To align gene expression time-course between *Arabidopsis* Col-0 and *B. rapa* Ro18, we can use function `register()`. By default, the best registration parameters are optimised via Nelder-Mead (`optimisation_method = "nm"`). When using the default `use_optimisation = TRUE`, the stretch and shift search space is automatically estimated. For more details on the other function parameters, go to `register()`.
 
 ```{r register-data-raw, message=FALSE, warning=FALSE, eval=FALSE}
 registration_results <- register(
@@ -90,7 +90,7 @@ registration_results <- register(
 )
 ```
 
-As noted in the [input data requirements](https://ruthkr.github.io/greatR/articles/data-requirement.html) vignette, `register()` also accepts a list of data frames or a list of refernce and query vectors as `input`:
+As noted in the [input data requirements](https://ruthkr.github.io/greatR/articles/data-requirement.html) vignette, `register()` also accepts a list of data frames or a list of reference and query vectors as `input`:
 
 ```{r register-data-list-vectors, message=FALSE, warning=FALSE}
 registration_results_vectors <- register(

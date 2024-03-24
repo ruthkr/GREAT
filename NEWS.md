@@ -8,7 +8,7 @@
 ## Improvements
 
 * Updated `register()` to perform 3 sequential registrations when using Nelder-Mead, this improves the results of optimal stretch and shift parameters.
-* Updated `calc_loglik()` to use `sigma_squared` in every timepoint in the sum.
+* Updated `calc_loglik()` to use `sigma_squared` in every time point in the sum.
 * Updated `scaled_data()` and `preprocess_data()` to return `all_data` object only, instead of a `list()` containing `all_data`.
 * Updated `compare_H1_and_H2()` to return `BIC_diff` column (`BIC_combined - BIC_separate`), instead of `BIC_combined` and `BIC_separate` on their own.
 * Updated `explore_manual_search_space()` to use `BIC_diff` instead of `BIC_combined` to calculate `best_params` from `model_comparison` table.
@@ -44,7 +44,7 @@
 * Switched to manual calculation of log likelihood via `calc_loglik()` instead of `stats::logLik()`.
 * Reduced computation time up to 1000 times, (x30 speed-up from package rewrite, and x35 speed-up from switching default optimisation method).
 * Removed {dplyr}, {magrittr}, {purrr}, {rlang}, and {stringr} as package dependencies.
-* Added {neldermead} as a package depedency.
+* Added {neldermead} as a package dependency.
 * Updated list of exported functions:
   * `register()`
   * `summarise_registration()`
@@ -57,7 +57,7 @@
 
 * Simplified parameters of main `register()` function, and added `scaling_method`.
 * Simplified structure of output object of `register()`.
-* Simplfied parameters of `summarise_registration()`, `plot_registration_results()`, `plot_heatmap()`, `calculate_distance()` to simply require `results` object from `register()`, vastly simplifing usage.
+* Simplified parameters of `summarise_registration()`, `plot_registration_results()`, `plot_heatmap()`, `calculate_distance()` to simply require `results` object from `register()`, vastly simplifying usage.
 * Improved messages, errors, and progress indicators with {cli}.
 * Added correct pluralisation in {cli} messages.
 * Rewrote unit tests to use {data.table} exclusively for data manipulation.

@@ -16,13 +16,14 @@ commit](https://img.shields.io/github/last-commit/ruthkr/greatR)](https://github
 
 `greatR` (**G**ene **R**egistration from **E**xpression **a**nd
 **T**ime-courses in **R**) is a tool to register (align) two sets of
-gene expression profiles that users wish to compare. These gene profiles
-data will be referred as the query and the reference data. To match the
-ranges over time between those profiles, the timepoints of the query
-gene expression profiles will be transformed through stretching and
-shifting process. This tool uses a statistical model comparison based on
-a Bayesian approach to evaluate the optimality of the gene expression
-profiles alignment.
+gene expression profiles that users wish to compare.
+
+These gene profiles data will be referred as the **query** and the
+**reference** data. To match the time point ranges between those
+profiles, the time points of the **query** profiles will be transformed
+through a stretching and shifting process. This tool uses a statistical
+model comparison based on a Bayesian approach to evaluate the optimality
+of the gene expression profiles alignment.
 
 ## Package workflow
 
@@ -31,8 +32,9 @@ input data:
 
 <img src="man/figures/greatR_workflow.png" width="100%" />
 
-More details on how to use this package are available on function
-documentations and the following vignettes:
+More details on how to use this package are available on [function
+documentations](https://ruthkr.github.io/greatR/reference/index.html)
+and the following vignettes:
 
 1.  [Input data
     requirements](https://ruthkr.github.io/greatR/articles/data-requirement.html)

@@ -7,6 +7,7 @@ all_data <- suppressMessages(preprocess_data(gene_data, reference, query, scalin
 test_that("objective_fun works", {
   # Expected outputs
   expect_equal(objective_fun(all_data, 3.10, -12.58, 0.5), -18.82, tolerance = 1e-2)
+  expect_equal(objective_fun(all_data, 3.10, 12.58, 0.5), -999)
   expect_equal(objective_fun(all_data), -999)
 })
 
@@ -18,4 +19,6 @@ test_that("optimise works", {
   # Expected outputs
   expect_equal(names(results_sa), c("stretch", "shift", "loglik_score"))
   expect_equal(names(results_nm), c("stretch", "shift", "loglik_score"))
+  expect_equal(unname(unlist(results_nm)), c(2.02, -6.84, -41.89), tolerance = 1e-1)
+  expect_equal(unname(unlist(results_sa)), c(2.67, -7.67, -19.51), tolerance = 1e-1)
 })

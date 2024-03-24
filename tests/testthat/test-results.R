@@ -9,6 +9,7 @@ test_that("summary.res_greatR works", {
   expect_equal(names(reg_summary), c("summary", "registered_genes", "non_registered_genes", "reg_params"))
   expect_equal(length(reg_summary$registered_genes), as.numeric(reg_summary$summary[Result == "Registered genes", Value]))
   expect_equal(length(reg_summary$non_registered_genes), as.numeric(reg_summary$summary[Result == "Non-registered genes", Value]))
+  expect_equal(reg_summary$reg_params, registration_results$model_comparison[, .(gene_id, stretch, shift, registered)])
   expect_equal(capture_output(print(reg_summary$summary)), capture_output(print(reg_summary)))
 })
 

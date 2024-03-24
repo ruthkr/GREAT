@@ -31,8 +31,13 @@ test_that("calc_variance works", {
   sample_data_with_no_reps <- data.table::copy(sample_data_raw[grep("-a", sample_data_raw$replicate), ])
   var_with_reps <- suppressMessages(calc_variance(sample_data_with_reps))
   var_with_no_reps <- suppressMessages(calc_variance(sample_data_with_no_reps))
+  num_timepoints <- length(unique(sample_data_raw$timepoint))
 
   # Expected outputs
-  expect_gt(length(unique(var_with_reps$var)), 1)
+  expect_gte(length(unique(var_with_reps$var)), 1)
+  expect_lte(length(unique(var_with_reps$var)), num_timepoints)
+  expect_true(all(var_with_reps$var >= var_with_reps$expression_value))
+  expect_gte(length(unique(var_with_no_reps$var)), 1)
+  expect_lte(length(unique(var_with_no_reps$var)), num_timepoints)
   expect_true(all(var_with_no_reps$var >= 0.25))
 })

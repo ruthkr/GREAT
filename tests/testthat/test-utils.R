@@ -33,6 +33,9 @@ test_that("cross_join works", {
   expect_equal(dim(dt_cj)[1], nrow(dt_a) * nrow(dt_b))
   expect_equal(dim(dt_cj)[2], ncol(dt_a) + ncol(dt_b))
   expect_equal(colnames(dt_cj), c(colnames(dt_a), colnames(dt_b)))
+  expect_equal(dt_cj$x, rep(dt_a$x, each = 3))
+  expect_equal(dt_cj$y, rep(dt_a$y, each = 3))
+  expect_equal(dt_cj$z, rep(dt_b$z, times = 2))
 })
 
 test_that("get_approximate_stretch works", {

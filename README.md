@@ -38,8 +38,8 @@ documentations and the following vignettes:
     requirements](https://ruthkr.github.io/greatR/articles/data-requirement.html)
 2.  [Register
     data](https://ruthkr.github.io/greatR/articles/register-data.html)
-3.  [Visualise registration
-    results](https://ruthkr.github.io/greatR/articles/visualise-results.html)
+3.  [Process registration
+    results](https://ruthkr.github.io/greatR/articles/process-results.html)
 
 ## Installation
 

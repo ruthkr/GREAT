@@ -24,21 +24,21 @@ knitr::include_graphics("figures/input_diagram.png")
 
 ## A single data frame input
 
-The single data frame input or the data frame in the list needs to contain gene expression time-course data with all replicates. The illustrated diagram below shows the required structure of the `input`.
+The single data frame input or the data frame in the list must contain gene expression time-course data with all replicates. The illustrative diagram below shows the required structure of the `input`.
 
 ```{r fig-input-table, echo=FALSE, fig.align='center', out.width='75%'}
 knitr::include_graphics("figures/input_table.png")
 ```
 
-This data frame must contain **reference** and **query** expression data which users wish to compare, and the following five columns:
+This data frame must contain **reference** and **query** expression data, and the following five columns:
 
 - `gene_id`: locus name or unique ID of each gene.
-- `accession`: accession or name of the reference and query data to compare.
+- `accession`: accession or name of the reference and query data.
 - `timepoint`: time points of the gene expression data.
-- `expression_value`: desired expression values or measure of the abundance of gene or transcripts which users wish to compare. This value can be RPM, RPKM, FPKM, TPM, TMM, DESeq, SCnorm, GeTMM, ComBat-Seq, and raw reads counts.
+- `expression_value`: desired expression values or measure of the abundance of gene or transcripts. This value can be RPM, RPKM, FPKM, TPM, TMM, or raw read counts.
 - `replicate`: biological replicate ID for an expression value at a particular time point.
 
-Below we can see a real example of how the `input` data should look like:
+The example below shows how the `input` data should look like:
 
 ```{r brapa-data-kable, echo=FALSE}
 # Load a data frame from the sample data
@@ -51,13 +51,13 @@ b_rapa_data[, .SD[1:2], by = accession][, .(gene_id, accession, timepoint, expre
 
 ## A list of data frames as an input
 
+If users do not have the data **reference** and **query** joined with the IDs mapped into one single data frame, there is an option of having the input data of a list of data frames. As shown in the illustrative diagram below, the list must contain both **reference** and **query** data frames with the columns as required in the single data frame input (see previous section). 
+
 ```{r fig-input-list-tables, echo=FALSE, fig.align='center', out.width='85%'}
 knitr::include_graphics("figures/input_list_tables.png")
 ```
 
-If users do not have the data **reference** and **query** joined with the IDs mapped into one single data frame, there is an option of having the input data of a list of data frames. As shown in the illustrative diagram above, the list must contain both **reference** and **query** data frames with the columns as required in the single data frame input (see previous section). 
-
-Below we can see an example of how the `input` list of data frames should look like:
+The example below shows how the `input` list of data frames should look like:
 
 ```{r brapa-data-list-df-read, include=FALSE}
 # Load a data frame from the sample data
@@ -108,13 +108,17 @@ list_df
 #> 6: AT2G45660      Col0        10         72.98476 ERR_ds_klepikova_SRR1661475
 ```
 
-Note here that the elements of the list needs to be named **reference** and **query**, the order of the element will not effect the registration process. 
+Note here that the elements of the list must be named **reference** and **query**, the order of the element will not effect the registration process. 
 
 ## A list of vectors as an input
+
+As an alternative of a list of data frame as input data, as shown above, users can also have a list of numerical vectors as their input. The illustrative diagram below shows how the input should look like:
 
 ```{r fig-input-list-vectors, echo=FALSE, fig.align='center', out.width='38%'}
 knitr::include_graphics("figures/input_list_vectors.png")
 ```
+
+The example below shows how the `input` list of vectors can be defined as an input: 
 
 ```{r brapa-data-list-num}
 # Define expression value vectors
@@ -128,3 +132,5 @@ list_vector <- list(
 
 list_vector
 ```
+
+Note that since there is no ID specified on the vectors, `greatR` will assign a unique ID for the reference and query pair data (see more in the [register data > Using other inputs ](https://ruthkr.github.io/greatR/articles/register-data.html#registration-results-1) article).

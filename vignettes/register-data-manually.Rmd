@@ -14,11 +14,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-This article will show users how to register data using some pre-defined shift and stretch parameters. This demo will use one of the genes from the sample data provided by the package. Users can check whether their sample data can be registered using the manually specified shift and stretch values.
+This article will show users how to register data using some specified shift and stretch parameters. This demo will use one of the genes from the sample data provided by the package.
 
 ## Load sample data
 
-`greatR` package provides an example of data frame containing two different species *A. thaliana* and *B. rapa* with two and three different replicates, respectively. This data frame can be read as follows:
+`greatR` provides an example of data frame containing two different species *A. thaliana* and *B. rapa* with two and three different replicates, respectively. This data frame can be read as follows:
 
 ```{r load-greatR, message=FALSE}
 # Load the package
@@ -34,11 +34,13 @@ b_rapa_data <- system.file("extdata/brapa_arabidopsis_data.csv", package = "grea
 
 ## Registering without optimisation
 
+The illustrative table below shows the major differences between runing `register()` with and without optimisation.
+
 ```{r reg-data-manual, echo=FALSE, fig.align='center', out.width='65%'}
 knitr::include_graphics("figures/registration_params_table.png")
 ```
 
-Here, we will only use a single gene with `gene_id = "BRAA03G023790.3C"` from the sample data.
+Here, we will only use a single gene with `gene_id = "BRAA03G023790.3C"` from the sample data, but this feature can also be used when registering multiple genes.
 
 ```{r get-subset-data, message=FALSE, warning=FALSE}
 gene_BRAA03G023790.3C_data <- b_rapa_data[gene_id == "BRAA03G023790.3C"]
@@ -87,11 +89,11 @@ As we can see, using the given stretch and shift parameter above, the *B. rapa* 
 
 ## Registering multiple gene with different pre-defined registration parameters
 
-Users can also register multiple different genes using their pre-defined parameters. Similar to registration process above, users need to set `use_optimisation = FALSE` to disable the automated optimisation process.
+Users can also specify a list of parameters rather than a single value. Similar to the registration process above, users need to set `use_optimisation = FALSE` to disable the automated optimisation process.
 
 ```{r register-multiple-gene-manual, message=FALSE, warning=FALSE, eval=FALSE}
 registration_results <- register(
-  b_rapa_data,
+  gene_BRAA03G023790.3C_data,
   reference = "Ro18",
   query = "Col0",
   scaling_method = "z-score",
@@ -100,13 +102,11 @@ registration_results <- register(
   use_optimisation = FALSE
 )
 #> ── Validating input data ───────────────────────────────────────────────────────
-#> ℹ Will process 10 genes.
+#> ℹ Will process 1 gene.
 #> ℹ Using estimated standard deviation, as no `exp_sd` was provided.
 #> ℹ Using `scaling_method` = "z-score".
 #>
 #> ── Starting manual registration ────────────────────────────────────────────────
 #> ℹ Using `overlapping_percent` = 50% as a registration criterion.
-#> ✔ Applying registration for genes (10/10) [12.4s]
+#> ✔ Applying registration for genes (1/1) [1.3s]
 ```
-
-Similar to the previous registration process, users can analyse further the registration result by following the [processing registration results](https://ruthkr.github.io/greatR/articles/process-results.html) vignette.

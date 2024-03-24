@@ -39,8 +39,8 @@ registration_results <- system.file("extdata/brapa_arabidopsis_registration.rds"
 The function `summary()` returns a list with S3 class `summary.res_greatR` containing four different objects:
 
 - `summary` is a data frame containing the summary of the registration results (default S3 print).
-- `registered_genes` is a vector of gene accessions or IDs which were successfully registered.
-- `non_registered_genes` is a vector of non-registered gene accessions or IDs.
+- `registered_genes` is a vector of gene IDs which are successfully registered.
+- `non_registered_genes` is a vector of non-registered gene IDs.
 - `reg_params` is a data frame containing the distribution of registration parameters.
 
 ```{r get-summary-results, fig.align='center'}
@@ -51,7 +51,7 @@ reg_summary$summary |>
   knitr::kable()
 ```
 
-The list of gene accessions which were registered or non-registered can be viewed by calling:
+The list of gene IDs which are registered or non-registered can be viewed by calling:
 
 ```{r print-accession-of-registered-genes}
 reg_summary$registered_genes
@@ -65,16 +65,24 @@ reg_summary$non_registered_genes
 
 The function `plot()` allows users to plot the bivariate distribution of the registration parameters. Non-registered genes can be ignored by selecting `type = "registered"` instead of the default `type = "all"`. Similarly, the marginal distribution type can be changed from `type_dist = "histogram"` (default) to `type_dist = "density"`.
 
-```{r plot-summary-results, fig.align='center', fig.height=4, fig.width=4.5, warning=FALSE}
+```r
 plot(
   reg_summary,
   type = "registered"
 )
 ```
 
+```{r plot-summary-results, echo=FALSE, fig.align='center', fig.height=4, fig.width=4.5, warning=FALSE}
+plot(
+  reg_summary,
+  type = "registered",
+  scatterplot_size = c(4, 3.5)
+)
+```
+
 ## Plotting registration results
 
-The function `plot()` allows users to plot the registration results of the genes of interest.
+The function `plot()` allows users to plot the registration results of the genes of interest (by default only up to the first 25 genes are shown, for more control over this, use the `genes_list` argument).
 
 ```{r plot-results, fig.align='center', fig.height=8, fig.width=7, warning=FALSE}
 # Plot registration result
@@ -84,15 +92,15 @@ plot(
 )
 ```
 
-Notice that the plot includes a label indicating if the particular genes are registered or non-registered, as well as the registration parameters in case the registration was successful.
+Notice that the plot includes a label indicating if the particular genes are registered or non-registered, as well as the registration parameters in case the registration is successful.
 
-For more details on the other function parameters, go to `plot()`.
+For more details on the other function arguments, go to `plot()`.
 
 ## Analysing similarity of expression profiles over time before and after registering
 
 ### Calculate sample distance
 
-After registering the data, users can compare the overall similarity between datasets before and after registering using the function `calculate_distance()`.
+After registering the data, users can compare the overall similarity between datasets before and after registering using the function `calculate_distance()`. By default all genes are considered in this calculation, this can be changed by using the `genes_list` argument.
 
 ```{r get-sample-distance}
 sample_distance <- calculate_distance(registration_results)
@@ -100,8 +108,8 @@ sample_distance <- calculate_distance(registration_results)
 
 The function `calculate_distance()` returns a list with S3 class `dist_greatR` of two data frames:
 
-- `result` distance between scaled reference and query expressions using registered time points.
-- `original` distance between scaled reference and query expressions using original time points.
+- `result` is the distance between scaled reference and query expressions using time points after registration.
+- `original` is the distance between scaled reference and query expressions using original time points before registration.
 
 ### Plot heatmap of sample distances
 

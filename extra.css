@@ -18,3 +18,7 @@ pre, pre code {
 pre {
   overflow: scroll;
 }
+
+main h2, main h3 {
+  margin-top: 2rem;
+}

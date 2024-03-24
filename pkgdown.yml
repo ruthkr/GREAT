@@ -3,10 +3,10 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   data-requirement: data-requirement.html
+  process-results: process-results.html
   register-data-manually: register-data-manually.html
   register-data: register-data.html
-  visualise-results: visualise-results.html
-last_built: 2024-03-21T19:09Z
+last_built: 2024-03-24T11:26Z
 urls:
   reference: https://ruthkr.github.io/greatR/reference
   article: https://ruthkr.github.io/greatR/articles

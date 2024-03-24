@@ -1,8 +1,8 @@
 ---
-title: "Visualising results"
+title: "Processing results"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Visualising results}
+  %\VignetteIndexEntry{Processing results}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,13 +14,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-After running the registration function `register()` as shown in the [Registering data](https://ruthkr.github.io/greatR/articles/register-data.html) article, users can summarise and visualise the results as illustrated in the figure below.
+After running the registration function `register()` as shown in the [registering data](https://ruthkr.github.io/greatR/articles/register-data.html) article, users can summarise and visualise the results as illustrated in the figure below.
 
 ```{r vis-reg-data, echo=FALSE, fig.align='center', out.width='100%'}
 knitr::include_graphics("figures/visualisation_diagram.png")
 ```
 
-## Getting a summary from registration results
+## Summarising registration results
 
 The total number of registered and non-registered genes can be obtained by running the function `summary()` with `registration_results` object as an input.
 
@@ -36,13 +36,14 @@ registration_results <- system.file("extdata/brapa_arabidopsis_registration.rds"
   readRDS()
 ```
 
-The function `summary()` returns a list containing three different objects:
+The function `summary()` returns a list with S3 class `summary.res_greatR` containing four different objects:
 
-- `summary` is a data frame containing the summary of the registration results,
-- `registered_genes` is a vector of gene accessions or IDs which were successfully registered, and
+- `summary` is a data frame containing the summary of the registration results (default S3 print).
+- `registered_genes` is a vector of gene accessions or IDs which were successfully registered.
 - `non_registered_genes` is a vector of non-registered gene accessions or IDs.
+- `reg_params` is a data frame containing the distribution of registration parameters.
 
-```{r get-summary-results}
+```{r get-summary-results, fig.align='center'}
 # Get registration summary
 reg_summary <- summary(registration_results)
 
@@ -50,7 +51,7 @@ reg_summary$summary |>
   knitr::kable()
 ```
 
-The list of gene accessions which were registered or not registered can be viewed by calling:
+The list of gene accessions which were registered or non-registered can be viewed by calling:
 
 ```{r print-accession-of-registered-genes}
 reg_summary$registered_genes
@@ -58,6 +59,17 @@ reg_summary$registered_genes
 
 ```{r print-accession-of-non-registered-genes}
 reg_summary$non_registered_genes
+```
+
+### Plot distribution of registration parameters
+
+The function `plot()` allows users to plot the bivariate distribution of the registration parameters. Non-registered genes can be ignored by selecting `type = "registered"` insted of the default `type = "all"`. Similarly, the marginal distribution type can be changed from `type_dist = "histogram"` (defult) to `type_dist = "density"`.
+
+```{r plot-summary-results, fig.align='center', fig.height=4, fig.width=4.5, warning=FALSE}
+plot(
+  reg_summary,
+  type = "registered"
+)
 ```
 
 ## Plotting registration results
@@ -72,11 +84,11 @@ plot(
 )
 ```
 
-Notice that the plot includes a label indicating if the particular genes are registered or not registered, as well as the registration parameters in case the registration was successful.
+Notice that the plot includes a label indicating if the particular genes are registered or non-registered, as well as the registration parameters in case the registration was successful.
 
 For more details on the other function paramaters, go to `plot()`.
 
-## Analysing similarity of expression profiles overtime before and after registering
+## Analysing similarity of expression profiles over time before and after registering
 
 ### Calculate sample distance
 
@@ -86,16 +98,16 @@ After registering the data, users can compare the overall similarity between dat
 sample_distance <- calculate_distance(registration_results)
 ```
 
-The function `calculate_distance()` returns a list of two data frames:
+The function `calculate_distance()` returns a list with S3 class `dist_greatR` of two data frames:
 
 - `result` distance between scaled reference and query expressions using registered time points.
 - `original` distance between scaled reference and query expressions using original time points.
 
 ### Plot heatmap of sample distances
 
-Each of these data frames above can be visualised using the `plot()` function, by selecting either `type = "result"` or `type = "original"`.
+Each of these data frames above can be visualised using the `plot()` function, by selecting either `type = "result"` (default) or `type = "original"`.
 
-```{r plot-dist-original, fig.align='center', fig.height=5, fig.width=5, warning=FALSE}
+```{r plot-dist-original, fig.align='center', fig.height=4, fig.width=3, warning=FALSE}
 # Plot heatmap of mean expression profiles distance before registration process
 plot(
   sample_distance,
@@ -103,7 +115,7 @@ plot(
 )
 ```
 
-```{r plot-dist-registered, fig.align='center', fig.height=5, fig.width=5, warning=FALSE}
+```{r plot-dist-registered, fig.align='center', fig.height=4, fig.width=4, warning=FALSE}
 # Plot heatmap of mean expression profiles distance after registration process
 plot(
   sample_distance,

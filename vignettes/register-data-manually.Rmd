@@ -109,4 +109,4 @@ registration_results <- register(
 #> ✔ Applying registration for genes (10/10) [12.4s]
 ```
 
-Similar to the previous registration process, users can analyse further the registration result by following the [visualising results](https://ruthkr.github.io/greatR/articles/visualise-results.html) vignette.
+Similar to the previous registration process, users can analyse further the registration result by following the [processing registration results](https://ruthkr.github.io/greatR/articles/process-results.html) vignette.

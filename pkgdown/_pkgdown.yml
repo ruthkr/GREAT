@@ -33,7 +33,7 @@ articles:
   contents:
   - data-requirement
   - register-data
-  - visualise-results
+  - process-results
 
 - title: Articles
   navbar: Others

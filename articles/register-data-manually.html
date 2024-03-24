@@ -97,17 +97,15 @@
     
     
 <p>This article will show users how to register data using some
-pre-defined shift and stretch parameters. This demo will use one of the
-genes from the sample data provided by the package. Users can check
-whether their sample data can be registered using the manually specified
-shift and stretch values.</p>
+specified shift and stretch parameters. This demo will use one of the
+genes from the sample data provided by the package.</p>
 <div class="section level2">
 <h2 id="load-sample-data">Load sample data<a class="anchor" aria-label="anchor" href="#load-sample-data"></a>
 </h2>
-<p><code>greatR</code> package provides an example of data frame
-containing two different species <em>A. thaliana</em> and <em>B.
-rapa</em> with two and three different replicates, respectively. This
-data frame can be read as follows:</p>
+<p><code>greatR</code> provides an example of data frame containing two
+different species <em>A. thaliana</em> and <em>B. rapa</em> with two and
+three different replicates, respectively. This data frame can be read as
+follows:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ruthkr.github.io/greatR/">greatR</a></span><span class="op">)</span></span>
@@ -120,9 +118,12 @@ data frame can be read as follows:</p>
 <div class="section level2">
 <h2 id="registering-without-optimisation">Registering without optimisation<a class="anchor" aria-label="anchor" href="#registering-without-optimisation"></a>
 </h2>
+<p>The illustrative table below shows the major differences between
+runing <code><a href="../reference/register.html">register()</a></code> with and without optimisation.</p>
 <p><img src="figures/registration_params_table.png" width="65%" style="display: block; margin: auto;"></p>
 <p>Here, we will only use a single gene with
-<code>gene_id = "BRAA03G023790.3C"</code> from the sample data.</p>
+<code>gene_id = "BRAA03G023790.3C"</code> from the sample data, but this
+feature can also be used when registering multiple genes.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gene_BRAA03G023790.3C_data</span> <span class="op">&lt;-</span> <span class="va">b_rapa_data</span><span class="op">[</span><span class="va">gene_id</span> <span class="op">==</span> <span class="st">"BRAA03G023790.3C"</span><span class="op">]</span></span></code></pre></div>
 <p>Before registering, we can use the helper function
@@ -186,13 +187,13 @@ from the registration result.</p>
 <h2 id="registering-multiple-gene-with-different-pre-defined-registration-parameters">Registering multiple gene with different pre-defined registration
 parameters<a class="anchor" aria-label="anchor" href="#registering-multiple-gene-with-different-pre-defined-registration-parameters"></a>
 </h2>
-<p>Users can also register multiple different genes using their
-pre-defined parameters. Similar to registration process above, users
-need to set <code>use_optimisation = FALSE</code> to disable the
-automated optimisation process.</p>
+<p>Users can also specify a list of parameters rather than a single
+value. Similar to the registration process above, users need to set
+<code>use_optimisation = FALSE</code> to disable the automated
+optimisation process.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/register.html">register</a></span><span class="op">(</span></span>
-<span>  <span class="va">b_rapa_data</span>,</span>
+<span>  <span class="va">gene_BRAA03G023790.3C_data</span>,</span>
 <span>  reference <span class="op">=</span> <span class="st">"Ro18"</span>,</span>
 <span>  query <span class="op">=</span> <span class="st">"Col0"</span>,</span>
 <span>  scaling_method <span class="op">=</span> <span class="st">"z-score"</span>,</span>
@@ -201,16 +202,13 @@ automated optimisation process.</p>
 <span>  use_optimisation <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── Validating input data ───────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; ℹ Will process 10 genes.</span></span>
+<span><span class="co">#&gt; ℹ Will process 1 gene.</span></span>
 <span><span class="co">#&gt; ℹ Using estimated standard deviation, as no `exp_sd` was provided.</span></span>
 <span><span class="co">#&gt; ℹ Using `scaling_method` = "z-score".</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; ── Starting manual registration ────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ℹ Using `overlapping_percent` = 50% as a registration criterion.</span></span>
-<span><span class="co">#&gt; ✔ Applying registration for genes (10/10) [12.4s]</span></span></code></pre></div>
-<p>Similar to the previous registration process, users can analyse
-further the registration result by following the <a href="https://ruthkr.github.io/greatR/articles/process-results.html">processing
-registration results</a> vignette.</p>
+<span><span class="co">#&gt; ✔ Applying registration for genes (1/1) [1.3s]</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

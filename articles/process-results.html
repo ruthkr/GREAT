@@ -114,11 +114,11 @@ obtained by running the function <code><a href="../reference/summary.html">summa
 <code>summary</code> is a data frame containing the summary of the
 registration results (default S3 print).</li>
 <li>
-<code>registered_genes</code> is a vector of gene accessions or IDs
-which were successfully registered.</li>
+<code>registered_genes</code> is a vector of gene IDs which are
+successfully registered.</li>
 <li>
 <code>non_registered_genes</code> is a vector of non-registered gene
-accessions or IDs.</li>
+IDs.</li>
 <li>
 <code>reg_params</code> is a data frame containing the distribution
 of registration parameters.</li>
@@ -157,8 +157,8 @@ of registration parameters.</li>
 </tr>
 </tbody>
 </table>
-<p>The list of gene accessions which were registered or non-registered
-can be viewed by calling:</p>
+<p>The list of gene IDs which are registered or non-registered can be
+viewed by calling:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">reg_summary</span><span class="op">$</span><span class="va">registered_genes</span></span>
 <span><span class="co">#&gt; [1] "BRAA02G043220.3C" "BRAA03G023790.3C" "BRAA03G051930.3C" "BRAA04G005470.3C"</span></span>
@@ -188,7 +188,9 @@ to <code>type_dist = "density"</code>.</p>
 <h2 id="plotting-registration-results">Plotting registration results<a class="anchor" aria-label="anchor" href="#plotting-registration-results"></a>
 </h2>
 <p>The function <code><a href="../reference/plot.html">plot()</a></code> allows users to plot the
-registration results of the genes of interest.</p>
+registration results of the genes of interest (by default only up to the
+first 25 genes are shown, for more control over this, use the
+<code>genes_list</code> argument).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot registration result</span></span>
 <span><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span></span>
@@ -198,8 +200,8 @@ registration results of the genes of interest.</p>
 <p><img src="process-results_files/figure-html/plot-results-1.png" width="672" style="display: block; margin: auto;"></p>
 <p>Notice that the plot includes a label indicating if the particular
 genes are registered or non-registered, as well as the registration
-parameters in case the registration was successful.</p>
-<p>For more details on the other function parameters, go to
+parameters in case the registration is successful.</p>
+<p>For more details on the other function arguments, go to
 <code><a href="../reference/plot.html">plot()</a></code>.</p>
 </div>
 <div class="section level2">
@@ -211,18 +213,20 @@ after registering<a class="anchor" aria-label="anchor" href="#analysing-similari
 </h3>
 <p>After registering the data, users can compare the overall similarity
 between datasets before and after registering using the function
-<code><a href="../reference/calculate_distance.html">calculate_distance()</a></code>.</p>
+<code><a href="../reference/calculate_distance.html">calculate_distance()</a></code>. By default all genes are considered
+in this calculation, this can be changed by using the
+<code>genes_list</code> argument.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sample_distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_distance.html">calculate_distance</a></span><span class="op">(</span><span class="va">registration_results</span><span class="op">)</span></span></code></pre></div>
 <p>The function <code><a href="../reference/calculate_distance.html">calculate_distance()</a></code> returns a list with S3
 class <code>dist_greatR</code> of two data frames:</p>
 <ul>
 <li>
-<code>result</code> distance between scaled reference and query
-expressions using registered time points.</li>
+<code>result</code> is the distance between scaled reference and
+query expressions using time points after registration.</li>
 <li>
-<code>original</code> distance between scaled reference and query
-expressions using original time points.</li>
+<code>original</code> is the distance between scaled reference and
+query expressions using original time points before registration.</li>
 </ul>
 </div>
 <div class="section level3">

@@ -17,6 +17,7 @@ pre, pre code {
 
 pre {
   overflow: scroll;
+  padding: 0.5rem 0.5rem;
 }
 
 main h2, main h3 {

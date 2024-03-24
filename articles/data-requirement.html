@@ -102,34 +102,33 @@ frame, a list of data frames, or a list of vectors, as shown below:</p>
 <div class="section level2">
 <h2 id="a-single-data-frame-input">A single data frame input<a class="anchor" aria-label="anchor" href="#a-single-data-frame-input"></a>
 </h2>
-<p>The single data frame input or the data frame in the list needs to
+<p>The single data frame input or the data frame in the list must
 contain gene expression time-course data with all replicates. The
-illustrated diagram below shows the required structure of the
+illustrative diagram below shows the required structure of the
 <code>input</code>.</p>
 <p><img src="figures/input_table.png" width="75%" style="display: block; margin: auto;"></p>
 <p>This data frame must contain <strong>reference</strong> and
-<strong>query</strong> expression data which users wish to compare, and
-the following five columns:</p>
+<strong>query</strong> expression data, and the following five
+columns:</p>
 <ul>
 <li>
 <code>gene_id</code>: locus name or unique ID of each gene.</li>
 <li>
 <code>accession</code>: accession or name of the reference and query
-data to compare.</li>
+data.</li>
 <li>
 <code>timepoint</code>: time points of the gene expression
 data.</li>
 <li>
 <code>expression_value</code>: desired expression values or measure
-of the abundance of gene or transcripts which users wish to compare.
-This value can be RPM, RPKM, FPKM, TPM, TMM, DESeq, SCnorm, GeTMM,
-ComBat-Seq, and raw reads counts.</li>
+of the abundance of gene or transcripts. This value can be RPM, RPKM,
+FPKM, TPM, TMM, or raw read counts.</li>
 <li>
 <code>replicate</code>: biological replicate ID for an expression
 value at a particular time point.</li>
 </ul>
-<p>Below we can see a real example of how the <code>input</code> data
-should look like:</p>
+<p>The example below shows how the <code>input</code> data should look
+like:</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">gene_id</th>
@@ -173,16 +172,16 @@ should look like:</p>
 <div class="section level2">
 <h2 id="a-list-of-data-frames-as-an-input">A list of data frames as an input<a class="anchor" aria-label="anchor" href="#a-list-of-data-frames-as-an-input"></a>
 </h2>
-<p><img src="figures/input_list_tables.png" width="85%" style="display: block; margin: auto;"></p>
 <p>If users do not have the data <strong>reference</strong> and
 <strong>query</strong> joined with the IDs mapped into one single data
 frame, there is an option of having the input data of a list of data
-frames. As shown in the illustrative diagram above, the list must
+frames. As shown in the illustrative diagram below, the list must
 contain both <strong>reference</strong> and <strong>query</strong> data
 frames with the columns as required in the single data frame input (see
 previous section).</p>
-<p>Below we can see an example of how the <code>input</code> list of
-data frames should look like:</p>
+<p><img src="figures/input_list_tables.png" width="85%" style="display: block; margin: auto;"></p>
+<p>The example below shows how the <code>input</code> list of data
+frames should look like:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load data frames from the sample data</span></span>
 <span><span class="va">brapa_ref_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_SOC1_data.csv"</span>, package <span class="op">=</span> <span class="st">"greatR"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -216,14 +215,19 @@ data frames should look like:</p>
 <span><span class="co">#&gt; 4: AT2G45660      Col0        15         68.85581 ERR_ds_klepikova_SRR1688426</span></span>
 <span><span class="co">#&gt; 5: AT2G45660      Col0        12         64.21780 ERR_ds_klepikova_SRR2106520</span></span>
 <span><span class="co">#&gt; 6: AT2G45660      Col0        10         72.98476 ERR_ds_klepikova_SRR1661475</span></span></code></pre></div>
-<p>Note here that the elements of the list needs to be named
+<p>Note here that the elements of the list must be named
 <strong>reference</strong> and <strong>query</strong>, the order of the
 element will not effect the registration process.</p>
 </div>
 <div class="section level2">
 <h2 id="a-list-of-vectors-as-an-input">A list of vectors as an input<a class="anchor" aria-label="anchor" href="#a-list-of-vectors-as-an-input"></a>
 </h2>
+<p>As an alternative of a list of data frame as input data, as shown
+above, users can also have a list of numerical vectors as their input.
+The illustrative diagram below shows how the input should look like:</p>
 <p><img src="figures/input_list_vectors.png" width="38%" style="display: block; margin: auto;"></p>
+<p>The example below shows how the <code>input</code> list of vectors
+can be defined as an input:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define expression value vectors</span></span>
 <span><span class="va">ref_expressions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.9</span>, <span class="fl">3.1</span>, <span class="fl">7.8</span>, <span class="fl">31.6</span>, <span class="fl">33.7</span>, <span class="fl">31.5</span>, <span class="fl">131.4</span>, <span class="fl">107.5</span>, <span class="fl">116.7</span>, <span class="fl">112.5</span>, <span class="fl">109.7</span>, <span class="fl">57.4</span>, <span class="fl">50.9</span><span class="op">)</span></span>
@@ -240,6 +244,10 @@ element will not effect the registration process.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $query</span></span>
 <span><span class="co">#&gt;  [1] 14.0 12.1 15.9 47.0 30.9 50.5 80.1 67.4 72.9 61.7</span></span></code></pre></div>
+<p>Note that since there is no ID specified on the vectors,
+<code>greatR</code> will assign a unique ID for the reference and query
+pair data (see more in the <a href="https://ruthkr.github.io/greatR/articles/register-data.html#registration-results-1">register
+data &gt; Using other inputs</a> article).</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

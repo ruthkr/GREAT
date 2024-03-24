@@ -108,9 +108,9 @@ plot.res_greatR <- function(x,
 
   # Add model curve layers
   if (type == "result") {
-    # Count registered and unregistered genes
+    # Count registered and non-registered genes
     registered_count <- length(model_comparison[model_comparison$registered, gene_id])
-    unregistered_count <- length(model_comparison[!model_comparison$registered, gene_id])
+    non_registered_count <- length(model_comparison[!model_comparison$registered, gene_id])
 
     # Get curves for H1
     if (registered_count > 0) {
@@ -118,13 +118,13 @@ plot.res_greatR <- function(x,
       preds_H1 <- merge(preds_H1, gene_facets, by = "gene_id")
     }
     # Get curves for H2
-    if (unregistered_count > 0) {
+    if (non_registered_count > 0) {
       preds_H2 <- get_H2_model_curves(data, model_comparison, reference, query)
       preds_H2 <- merge(preds_H2, gene_facets, by = "gene_id")
     }
 
     # Bind predictions
-    if (unregistered_count == 0) {
+    if (non_registered_count == 0) {
       preds <- preds_H1
     } else if (registered_count == 0) {
       preds <- preds_H2
@@ -244,7 +244,7 @@ get_H2_model_curves <- function(data, model_comparison, reference, query) {
   accession <- NULL
   timepoint_reg <- NULL
 
-  # Get unregistered genes only
+  # Get non-registered genes only
   genes <- unique(model_comparison[!model_comparison$registered, gene_id])
 
   # Get reference and query data

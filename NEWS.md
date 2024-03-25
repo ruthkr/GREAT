@@ -1,3 +1,47 @@
+# greatR 1.1.0.9000
+
+* Added {patchwork} as a dependency.
+* Updated {greatR} logo.
+* Updated default `optimisation_method` in `register()` to be "lbfgsb" (LBFSG-B) instead of "nm" (Nelder-Mead).
+* Added sample SOC1 `arabidopsis_SOC1_data.csv` and `brapa_SOC1_data.csv` extdata.
+* Refactored `optimise_registration_parameters` argument in `register()` to `use_optimisation`.
+* Updated `register()` to return object of S3 class `res_greatR`.
+* Updated `calculate_distance()` to return object of S3 class `dist_greatR`.
+* Refactored `summarise_registration()` as `summary.res_greatR()` S3 method.
+
+## Improvements
+
+* Deprecate use of `time_delta` variable in registration process.
+* Added `fun_args` (a list of arguments used when calling the function) in `register()` results.
+* Updated `summary.res_greatR()` to return `NA` instead of `[NA, NA]` when all genes are non-registered.
+* Added `reg_params` (table containing distribution of registration parameters) to results list in `summary.res_greatR()` method.
+* Simplified `calc_overlapping_percent()` calculation.
+* Take into consideration `overlapping_percent` when applying manual registration.
+* Updated logic of `calc_variance()` for data with no replicates to consider `expression_value`.
+* Updated `get_stretch_search_space_limits()` and `get_shift_search_space_limits()` to exclude unexplorable regions in search space.
+* Improved `calculate_distance()` and aux `get_timepoint_comb_*_data()` functions to eliminate column selection and renaming inside `lapply()` calls, reducing execution time by up to 25%.
+* Added `type` ("registered" or "all") and `genes_list` arguments to `calculate_distance()` to filter genes.
+* Added new unit tests.
+* Updated unit tests, and added S3 class checks where apropriate.
+* Updated vignettes and README diagrams and figures.
+* Updated vignettes with additional examples, comments on arguments, and full coverage of all `plot()` methods.
+
+## Bug fixes
+
+* Fixed `get_shift_search_space_limits()` to adjust shift space limits accordingly to removal of `time_delta` variable (see 48c943cd).
+* Fixed default `overlapping_percent = 0.5` (instead of 50) in `register_manually()`.
+* Fixed `get_stretch_search_space_limits()` to correctly determine lower and upper limits when single stretch value is provided.
+* Fixed issue in `get_shift_search_space_limits()` where range variables were not available when `calc_mode == "bound"`.
+
+## New functions
+
+* `bind_results()` auxiliary function to merge results from `register()`.
+* `theme_greatR()` function and `greatR_palettes` list.
+* `transform_input()` S3 generic to accept different types of input in `register()`.
+* `plot.res_greatR()` S3 method to replace `plot_registration_results()`.
+* `plot.dist_greatR()` S3 method to replace `plot_heatmap()`.
+* `plot.summary.res_greatR()` S3 method inspired by `WVPlots::ScatterHistC()`.
+
 # greatR 1.1.0
 
 * Added {furrr} and {future} as dependencies.

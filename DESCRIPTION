@@ -14,7 +14,7 @@ Authors@R:
            comment = c(ORCID = "0000-0003-3749-035X"))
            )
 Description: A tool for registering (aligning) gene expression profiles
-    between two species (reference data and data to transform).
+    between reference and query data.
 License: GPL (>= 3)
 URL: https://ruthkr.github.io/greatR/, https://github.com/ruthkr/greatR/
 BugReports: https://github.com/ruthkr/greatR/issues/

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">greatR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,10 +27,10 @@
     <h6 class="dropdown-header" data-toc-skip>Overview</h6>
     <a class="dropdown-item" href="../articles/data-requirement.html">Input data requirements</a>
     <a class="dropdown-item" href="../articles/register-data.html">Registering data</a>
-    <a class="dropdown-item" href="../articles/visualise-results.html">Visualising results</a>
+    <a class="dropdown-item" href="../articles/process-results.html">Processing results</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Others</h6>
-    <a class="dropdown-item" href="../articles/register-data-manually.html">Register data with provided parameters</a>
+    <a class="dropdown-item" href="../articles/register-data-manually.html">Registering data without optimisation</a>
   </div>
 </li>
 <li class="active nav-item">
@@ -57,6 +57,56 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.1.0.9000" id="greatr-1109000">greatR 1.1.0.9000<a class="anchor" aria-label="anchor" href="#greatr-1109000"></a></h2>
+<ul><li>Added {patchwork} as a dependency.</li>
+<li>Updated {greatR} logo.</li>
+<li>Updated default <code>optimisation_method</code> in <code><a href="../reference/register.html">register()</a></code> to be “lbfgsb” (LBFSG-B) instead of “nm” (Nelder-Mead).</li>
+<li>Added sample SOC1 <code>arabidopsis_SOC1_data.csv</code> and <code>brapa_SOC1_data.csv</code> extdata.</li>
+<li>Refactored <code>optimise_registration_parameters</code> argument in <code><a href="../reference/register.html">register()</a></code> to <code>use_optimisation</code>.</li>
+<li>Updated <code><a href="../reference/register.html">register()</a></code> to return object of S3 class <code>res_greatR</code>.</li>
+<li>Updated <code><a href="../reference/calculate_distance.html">calculate_distance()</a></code> to return object of S3 class <code>dist_greatR</code>.</li>
+<li>Refactored <code>summarise_registration()</code> as <code><a href="../reference/summary.html">summary.res_greatR()</a></code> S3 method.</li>
+</ul><div class="section level3">
+<h3 id="improvements-1-1-0-9000">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-1-0-9000"></a></h3>
+<ul><li>Deprecate use of <code>time_delta</code> variable in registration process.</li>
+<li>Added <code>fun_args</code> (a list of arguments used when calling the function) in <code><a href="../reference/register.html">register()</a></code> results.</li>
+<li>Updated <code><a href="../reference/summary.html">summary.res_greatR()</a></code> to return <code>NA</code> instead of <code>[NA, NA]</code> when all genes are non-registered.</li>
+<li>Added <code>reg_params</code> (table containing distribution of registration parameters) to results list in <code><a href="../reference/summary.html">summary.res_greatR()</a></code> method.</li>
+<li>Simplified <code>calc_overlapping_percent()</code> calculation.</li>
+<li>Take into consideration <code>overlapping_percent</code> when applying manual registration.</li>
+<li>Updated logic of <code>calc_variance()</code> for data with no replicates to consider <code>expression_value</code>.</li>
+<li>Updated <code>get_stretch_search_space_limits()</code> and <code>get_shift_search_space_limits()</code> to exclude unexplorable regions in search space.</li>
+<li>Improved <code><a href="../reference/calculate_distance.html">calculate_distance()</a></code> and aux <code>get_timepoint_comb_*_data()</code> functions to eliminate column selection and renaming inside <code><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply()</a></code> calls, reducing execution time by up to 25%.</li>
+<li>Added <code>type</code> (“registered” or “all”) and <code>genes_list</code> arguments to <code><a href="../reference/calculate_distance.html">calculate_distance()</a></code> to filter genes.</li>
+<li>Added new unit tests.</li>
+<li>Updated unit tests, and added S3 class checks where apropriate.</li>
+<li>Updated vignettes and README diagrams and figures.</li>
+<li>Updated vignettes with additional examples, comments on arguments, and full coverage of all <code><a href="../reference/plot.html">plot()</a></code> methods.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-1-1-0-9000">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-1-0-9000"></a></h3>
+<ul><li>Fixed <code>get_shift_search_space_limits()</code> to adjust shift space limits accordingly to removal of <code>time_delta</code> variable (see 48c943cd).</li>
+<li>Fixed default <code>overlapping_percent = 0.5</code> (instead of 50) in <code>register_manually()</code>.</li>
+<li>Fixed <code>get_stretch_search_space_limits()</code> to correctly determine lower and upper limits when single stretch value is provided.</li>
+<li>Fixed issue in <code>get_shift_search_space_limits()</code> where range variables were not available when <code>calc_mode == "bound"</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-functions-1-1-0-9000">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-1-0-9000"></a></h3>
+<ul><li>
+<code>bind_results()</code> auxiliary function to merge results from <code><a href="../reference/register.html">register()</a></code>.</li>
+<li>
+<code>theme_greatR()</code> function and <code>greatR_palettes</code> list.</li>
+<li>
+<code>transform_input()</code> S3 generic to accept different types of input in <code><a href="../reference/register.html">register()</a></code>.</li>
+<li>
+<code><a href="../reference/plot.html">plot.res_greatR()</a></code> S3 method to replace <code>plot_registration_results()</code>.</li>
+<li>
+<code><a href="../reference/plot.html">plot.dist_greatR()</a></code> S3 method to replace <code>plot_heatmap()</code>.</li>
+<li>
+<code><a href="../reference/plot.html">plot.summary.res_greatR()</a></code> S3 method inspired by <code>WVPlots::ScatterHistC()</code>.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.0" id="greatr-110">greatR 1.1.0<a class="anchor" aria-label="anchor" href="#greatr-110"></a></h2><p class="text-muted">CRAN release: 2024-01-09</p>
 <ul><li>Added {furrr} and {future} as dependencies.</li>
 <li>Added <code>num_cores</code> parameter to <code><a href="../reference/register.html">register()</a></code> to allow users to run registration in parallel.</li>
@@ -65,7 +115,7 @@
 </ul><div class="section level3">
 <h3 id="improvements-1-1-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-1-0"></a></h3>
 <ul><li>Updated <code><a href="../reference/register.html">register()</a></code> to perform 3 sequential registrations when using Nelder-Mead, this improves the results of optimal stretch and shift parameters.</li>
-<li>Updated <code>calc_loglik()</code> to use <code>sigma_squared</code> in every timepoint in the sum.</li>
+<li>Updated <code>calc_loglik()</code> to use <code>sigma_squared</code> in every time point in the sum.</li>
 <li>Updated <code>scaled_data()</code> and <code>preprocess_data()</code> to return <code>all_data</code> object only, instead of a <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> containing <code>all_data</code>.</li>
 <li>Updated <code>compare_H1_and_H2()</code> to return <code>BIC_diff</code> column (<code>BIC_combined - BIC_separate</code>), instead of <code>BIC_combined</code> and <code>BIC_separate</code> on their own.</li>
 <li>Updated <code>explore_manual_search_space()</code> to use <code>BIC_diff</code> instead of <code>BIC_combined</code> to calculate <code>best_params</code> from <code>model_comparison</code> table.</li>
@@ -76,9 +126,9 @@
 <li>Ensure <code>results_list$data</code> is arranged/ordered correctly in <code><a href="../reference/register.html">register()</a></code>.</li>
 <li>Updated <code>get_H*_model_curves()</code> functions to ensure model curves are smooth.</li>
 <li>Updated <code>parse_gene_facets()</code> to display <code>BIC_diff</code> in facet strips.</li>
-<li>Added <code>plot_mean_data</code> parameter to <code><a href="../reference/plot_registration_results.html">plot_registration_results()</a></code>.</li>
+<li>Added <code>plot_mean_data</code> parameter to <code>plot_registration_results()</code>.</li>
 <li>Updated <code>overlapping_percent</code> parameter in <code><a href="../reference/register.html">register()</a></code> so it goes from 0 to 100 (it’s later normalised in the function to avoid breakages down the line).</li>
-<li>Added <code>scaling_method</code> as an attribute in <code>data</code> results from <code><a href="../reference/register.html">register()</a></code>, this is used in <code><a href="../reference/plot_registration_results.html">plot_registration_results()</a></code> to build the y-axis label according the the scaling method used.</li>
+<li>Added <code>scaling_method</code> as an attribute in <code>data</code> results from <code><a href="../reference/register.html">register()</a></code>, this is used in <code>plot_registration_results()</code> to build the y-axis label according the the scaling method used.</li>
 <li>Updated <code>brapa_arabidopsis_registration.rds</code> file with new pipeline results.</li>
 <li>Split <code>get_search_space_limits()</code> into separate aux functions for stretch and shift, which allows more stretch and shift input combinations.</li>
 <li>Updated <code>validate_params(..., registration_type = "optimisation")</code> to allow more stretch and shift input combinations.</li>
@@ -104,32 +154,32 @@
 <li>Switched to manual calculation of log likelihood via <code>calc_loglik()</code> instead of <code><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">stats::logLik()</a></code>.</li>
 <li>Reduced computation time up to 1000 times, (x30 speed-up from package rewrite, and x35 speed-up from switching default optimisation method).</li>
 <li>Removed {dplyr}, {magrittr}, {purrr}, {rlang}, and {stringr} as package dependencies.</li>
-<li>Added {neldermead} as a package depedency.</li>
+<li>Added {neldermead} as a package dependency.</li>
 <li>Updated list of exported functions:
 <ul><li><code><a href="../reference/register.html">register()</a></code></li>
-<li><code><a href="../reference/summarise_registration.html">summarise_registration()</a></code></li>
+<li><code>summarise_registration()</code></li>
 <li><code><a href="../reference/get_approximate_stretch.html">get_approximate_stretch()</a></code></li>
-<li><code><a href="../reference/plot_registration_results.html">plot_registration_results()</a></code></li>
-<li><code><a href="../reference/plot_heatmap.html">plot_heatmap()</a></code></li>
+<li><code>plot_registration_results()</code></li>
+<li><code>plot_heatmap()</code></li>
 <li><code><a href="../reference/calculate_distance.html">calculate_distance()</a></code></li>
 </ul></li>
 </ul><div class="section level3">
 <h3 id="improvements-1-0-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-0-0"></a></h3>
 <ul><li>Simplified parameters of main <code><a href="../reference/register.html">register()</a></code> function, and added <code>scaling_method</code>.</li>
 <li>Simplified structure of output object of <code><a href="../reference/register.html">register()</a></code>.</li>
-<li>Simplfied parameters of <code><a href="../reference/summarise_registration.html">summarise_registration()</a></code>, <code><a href="../reference/plot_registration_results.html">plot_registration_results()</a></code>, <code><a href="../reference/plot_heatmap.html">plot_heatmap()</a></code>, <code><a href="../reference/calculate_distance.html">calculate_distance()</a></code> to simply require <code>results</code> object from <code><a href="../reference/register.html">register()</a></code>, vastly simplifing usage.</li>
+<li>Simplified parameters of <code>summarise_registration()</code>, <code>plot_registration_results()</code>, <code>plot_heatmap()</code>, <code><a href="../reference/calculate_distance.html">calculate_distance()</a></code> to simply require <code>results</code> object from <code><a href="../reference/register.html">register()</a></code>, vastly simplifying usage.</li>
 <li>Improved messages, errors, and progress indicators with {cli}.</li>
 <li>Added correct pluralisation in {cli} messages.</li>
 <li>Rewrote unit tests to use {data.table} exclusively for data manipulation.</li>
-<li>Added unit tests for <code>calc_loglik_H1()</code>, <code>calc_loglik_H2()</code>, <code>calc_overlapping_percent()</code>, <code><a href="../reference/calculate_distance.html">calculate_distance()</a></code>, <code>cross_join()</code>, <code>get_search_space_limits_from_params()</code>, <code>get_search_space_limits()</code>, <code>objective_fun()</code>, <code><a href="https://rdrr.io/r/stats/optimize.html" class="external-link">optimise()</a></code>, <code><a href="../reference/plot_heatmap.html">plot_heatmap()</a></code>, <code><a href="../reference/plot_registration_results.html">plot_registration_results()</a></code>, <code>preprocess_data()</code>, <code>register_manually()</code>, <code><a href="../reference/register.html">register()</a></code>, <code>summary_registration()</code>, <code>validate_params()</code>.</li>
+<li>Added unit tests for <code>calc_loglik_H1()</code>, <code>calc_loglik_H2()</code>, <code>calc_overlapping_percent()</code>, <code><a href="../reference/calculate_distance.html">calculate_distance()</a></code>, <code>cross_join()</code>, <code>get_search_space_limits_from_params()</code>, <code>get_search_space_limits()</code>, <code>objective_fun()</code>, <code><a href="https://rdrr.io/r/stats/optimize.html" class="external-link">optimise()</a></code>, <code>plot_heatmap()</code>, <code>plot_registration_results()</code>, <code>preprocess_data()</code>, <code>register_manually()</code>, <code><a href="../reference/register.html">register()</a></code>, <code>summary_registration()</code>, <code>validate_params()</code>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-1-0-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-0"></a></h3>
 <ul><li>Fixed <code>match_names()</code> call when validating accession names in <code><a href="../reference/register.html">register()</a></code>
 </li>
 <li>Fixed use of deprecated <code>aes_string()</code> by parsing <code>timepoint_var</code> using <code>!!ggplot2::sym()</code> call.</li>
-<li>Fixed <code>preds</code> left join in <code><a href="../reference/plot_registration_results.html">plot_registration_results()</a></code>.</li>
-<li>Fixed issue in <code><a href="../reference/plot_registration_results.html">plot_registration_results()</a></code> not working when all genes are unregistered with <code>type = "registered"</code>.</li>
+<li>Fixed <code>preds</code> left join in <code>plot_registration_results()</code>.</li>
+<li>Fixed issue in <code>plot_registration_results()</code> not working when all genes are unregistered with <code>type = "registered"</code>.</li>
 <li>Fixed calculation of <code>time_delta</code> in <code>preprocess_data()</code> to ensure it’s grouped by <code>gene_id</code> and <code>accession</code> (not just <code>accession</code>).</li>
 </ul></div>
 </div>
@@ -152,8 +202,8 @@
 <div class="section level3">
 <h3 id="bug-fixes-0-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h3>
 <ul><li>Check that input accessions exist in the input data in <code><a href="../reference/get_approximate_stretch.html">get_approximate_stretch()</a></code>.</li>
-<li>Manually create time point sorting levels for <code>x_sample</code> and <code>y_sample</code> columns according in <code><a href="../reference/plot_heatmap.html">plot_heatmap()</a></code>.</li>
-<li>Properly handle <code>-</code> character in accession names in <code><a href="../reference/plot_heatmap.html">plot_heatmap()</a></code> so that time points are parsed correctly.</li>
+<li>Manually create time point sorting levels for <code>x_sample</code> and <code>y_sample</code> columns according in <code>plot_heatmap()</code>.</li>
+<li>Properly handle <code>-</code> character in accession names in <code>plot_heatmap()</code> so that time points are parsed correctly.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-features-0-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>

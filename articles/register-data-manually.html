@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="greatR">
-<title>Register data with provided parameters • greatR</title>
+<title>Registering data without optimisation • greatR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -20,7 +20,7 @@
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Register data with provided parameters">
+<meta property="og:title" content="Registering data without optimisation">
 <meta property="og:description" content="greatR">
 <meta property="og:image" content="https://ruthkr.github.io/greatR/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -36,7 +36,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">greatR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,10 +54,10 @@
     <h6 class="dropdown-header" data-toc-skip>Overview</h6>
     <a class="dropdown-item" href="../articles/data-requirement.html">Input data requirements</a>
     <a class="dropdown-item" href="../articles/register-data.html">Registering data</a>
-    <a class="dropdown-item" href="../articles/visualise-results.html">Visualising results</a>
+    <a class="dropdown-item" href="../articles/process-results.html">Processing results</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Others</h6>
-    <a class="dropdown-item" href="../articles/register-data-manually.html">Register data with provided parameters</a>
+    <a class="dropdown-item" href="../articles/register-data-manually.html">Registering data without optimisation</a>
   </div>
 </li>
 <li class="nav-item">
@@ -87,7 +87,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Register data with provided parameters</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Registering data without optimisation</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ruthkr/greatR/blob/HEAD/vignettes/register-data-manually.Rmd" class="external-link"><code>vignettes/register-data-manually.Rmd</code></a></small>
@@ -97,37 +97,38 @@
     
     
 <p>This article will show users how to register data using some
-pre-defined shift and stretch parameters. This demo will use one of the
-genes from the sample data provided by the package. Users can check
-whether their sample data can be registered using the manually specified
-shift and stretch values.</p>
+specified shift and stretch parameters. This demo will use one of the
+genes from the sample data provided by the package.</p>
 <div class="section level2">
 <h2 id="load-sample-data">Load sample data<a class="anchor" aria-label="anchor" href="#load-sample-data"></a>
 </h2>
-<p><code>greatR</code> package provides an example of data frame
-containing two different species <em>A. thaliana</em> and <em>B.
-rapa</em> with two and three different replicates, respectively. This
-data frame can be read as follows:</p>
+<p><code>greatR</code> provides an example of data frame containing two
+different species <em>A. thaliana</em> and <em>B. rapa</em> with two and
+three different replicates, respectively. This data frame can be read as
+follows:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ruthkr.github.io/greatR/">greatR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load a data frame from the sample data</span></span>
-<span><span class="va">b_rapa_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_all_replicates.csv"</span>, package <span class="op">=</span> <span class="st">"greatR"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="va">b_rapa_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_data.csv"</span>, package <span class="op">=</span> <span class="st">"greatR"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="registering-single-gene">Registering single gene<a class="anchor" aria-label="anchor" href="#registering-single-gene"></a>
+<h2 id="registering-without-optimisation">Registering without optimisation<a class="anchor" aria-label="anchor" href="#registering-without-optimisation"></a>
 </h2>
+<p>The illustrative table below shows the major differences between
+runing <code><a href="../reference/register.html">register()</a></code> with and without optimisation.</p>
+<p><img src="figures/registration_params_table.png" width="65%" style="display: block; margin: auto;"></p>
 <p>Here, we will only use a single gene with
-<code>gene_id = "BRAA03G023790.3C"</code> from the sample data.</p>
+<code>gene_id = "BRAA03G023790.3C"</code> from the sample data, but this
+feature can also be used when registering multiple genes.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gene_BRAA03G023790.3C_data</span> <span class="op">&lt;-</span> <span class="va">b_rapa_data</span><span class="op">[</span><span class="va">gene_id</span> <span class="op">==</span> <span class="st">"BRAA03G023790.3C"</span><span class="op">]</span></span></code></pre></div>
 <p>Before registering, we can use the helper function
 <code><a href="../reference/get_approximate_stretch.html">get_approximate_stretch()</a></code> to approximate the stretch factor
-between our sample datasets as shown in the figure below.</p>
-<p><img src="figures/02_registration_without_opt.png" width="75%" style="display: block; margin: auto;"></p>
+between our sample datasets.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_approximate_stretch.html">get_approximate_stretch</a></span><span class="op">(</span></span>
 <span>  <span class="va">gene_BRAA03G023790.3C_data</span>,</span>
@@ -137,24 +138,26 @@ between our sample datasets as shown in the figure below.</p>
 <span><span class="co">#&gt; [1] 2.666667</span></span></code></pre></div>
 <p>We can now use the estimated stretch calculated above in the
 registration process below. Users need to set
-<code>optimise_registration_parameters = FALSE</code> to disable the
-automated optimisation process.</p>
+<code>use_optimisation = FALSE</code> to disable the automated
+optimisation process.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/register.html">register</a></span><span class="op">(</span></span>
 <span>  <span class="va">gene_BRAA03G023790.3C_data</span>,</span>
 <span>  reference <span class="op">=</span> <span class="st">"Ro18"</span>,</span>
 <span>  query <span class="op">=</span> <span class="st">"Col0"</span>,</span>
 <span>  scaling_method <span class="op">=</span> <span class="st">"z-score"</span>,</span>
-<span>  stretches <span class="op">=</span> <span class="fl">2.6</span>,</span>
-<span>  shifts <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  optimise_registration_parameters <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  stretches <span class="op">=</span> <span class="fl">2.25</span>,</span>
+<span>  shifts <span class="op">=</span> <span class="op">-</span><span class="fl">4.36</span>,</span>
+<span>  use_optimisation <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── Validating input data ───────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ℹ Will process 1 gene.</span></span>
 <span><span class="co">#&gt; ℹ Using estimated standard deviation, as no `exp_sd` was provided.</span></span>
+<span><span class="co">#&gt; ℹ Using `scaling_method` = "z-score".</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; ── Starting manual registration ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; ✔ Applying registration for genes (1/1) [34ms]</span></span></code></pre></div>
+<span><span class="co">#&gt; ℹ Using `overlapping_percent` = 50% as a registration criterion.</span></span>
+<span><span class="co">#&gt; ✔ Applying registration for genes (1/1) [38ms]</span></span></code></pre></div>
 <p>To check whether the gene is registered or not, we can get the
 summary results by accessing the <code>model_comparison</code> table
 from the registration result.</p>
@@ -171,9 +174,9 @@ from the registration result.</p>
 </tr></thead>
 <tbody><tr class="odd">
 <td align="left">BRAA03G023790.3C</td>
-<td align="right">2.6</td>
-<td align="right">4</td>
-<td align="right">-5.034115</td>
+<td align="right">2.25</td>
+<td align="right">-4.36</td>
+<td align="right">-7.849037</td>
 <td align="left">TRUE</td>
 </tr></tbody>
 </table>
@@ -184,29 +187,28 @@ from the registration result.</p>
 <h2 id="registering-multiple-gene-with-different-pre-defined-registration-parameters">Registering multiple gene with different pre-defined registration
 parameters<a class="anchor" aria-label="anchor" href="#registering-multiple-gene-with-different-pre-defined-registration-parameters"></a>
 </h2>
-<p>Users can also register multiple different genes using their
-pre-defined parameters. Similar to registration process above, users
-need to set <code>optimise_registration_parameters = FALSE</code> to
-disable the automated optimisation process.</p>
+<p>Users can also specify a list of parameters rather than a single
+value. Similar to the registration process above, users need to set
+<code>use_optimisation = FALSE</code> to disable the automated
+optimisation process.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/register.html">register</a></span><span class="op">(</span></span>
-<span>  <span class="va">b_rapa_data</span>,</span>
+<span>  <span class="va">gene_BRAA03G023790.3C_data</span>,</span>
 <span>  reference <span class="op">=</span> <span class="st">"Ro18"</span>,</span>
 <span>  query <span class="op">=</span> <span class="st">"Col0"</span>,</span>
 <span>  scaling_method <span class="op">=</span> <span class="st">"z-score"</span>,</span>
 <span>  stretches <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  shifts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
-<span>  optimise_registration_parameters <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  use_optimisation <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── Validating input data ───────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; ℹ Will process 10 genes.</span></span>
+<span><span class="co">#&gt; ℹ Will process 1 gene.</span></span>
 <span><span class="co">#&gt; ℹ Using estimated standard deviation, as no `exp_sd` was provided.</span></span>
+<span><span class="co">#&gt; ℹ Using `scaling_method` = "z-score".</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; ── Starting manual registration ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; ✔ Applying registration for genes (10/10) [15.5s]</span></span></code></pre></div>
-<p>Similar to the previous registration process, users can analyse
-further the registration result by following the <a href="https://ruthkr.github.io/greatR/articles/visualise-results.html">visualising
-results</a> vignette.</p>
+<span><span class="co">#&gt; ℹ Using `overlapping_percent` = 50% as a registration criterion.</span></span>
+<span><span class="co">#&gt; ✔ Applying registration for genes (1/1) [1.3s]</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

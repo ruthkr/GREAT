@@ -13,13 +13,13 @@
     <loc>https://ruthkr.github.io/greatR/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/greatR/articles/process-results.html</loc>
-  </url>
-  <url>
     <loc>https://ruthkr.github.io/greatR/articles/register-data-manually.html</loc>
   </url>
   <url>
     <loc>https://ruthkr.github.io/greatR/articles/register-data.html</loc>
+  </url>
+  <url>
+    <loc>https://ruthkr.github.io/greatR/articles/visualise-results.html</loc>
   </url>
   <url>
     <loc>https://ruthkr.github.io/greatR/authors.html</loc>
@@ -40,12 +40,15 @@
     <loc>https://ruthkr.github.io/greatR/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/greatR/reference/plot.html</loc>
+    <loc>https://ruthkr.github.io/greatR/reference/plot_heatmap.html</loc>
+  </url>
+  <url>
+    <loc>https://ruthkr.github.io/greatR/reference/plot_registration_results.html</loc>
   </url>
   <url>
     <loc>https://ruthkr.github.io/greatR/reference/register.html</loc>
   </url>
   <url>
-    <loc>https://ruthkr.github.io/greatR/reference/summary.html</loc>
+    <loc>https://ruthkr.github.io/greatR/reference/summarise_registration.html</loc>
   </url>
 </urlset>

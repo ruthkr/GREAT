@@ -38,7 +38,7 @@
     
     <a class="navbar-brand me-2" href="index.html">greatR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,10 +56,10 @@
     <h6 class="dropdown-header" data-toc-skip>Overview</h6>
     <a class="dropdown-item" href="articles/data-requirement.html">Input data requirements</a>
     <a class="dropdown-item" href="articles/register-data.html">Registering data</a>
-    <a class="dropdown-item" href="articles/process-results.html">Processing results</a>
+    <a class="dropdown-item" href="articles/visualise-results.html">Visualising results</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Others</h6>
-    <a class="dropdown-item" href="articles/register-data-manually.html">Registering data without optimisation</a>
+    <a class="dropdown-item" href="articles/register-data-manually.html">Register data with provided parameters</a>
   </div>
 </li>
 <li class="nav-item">
@@ -91,18 +91,19 @@
 </div>
 <!-- badges: start -->
 
-<p><code>greatR</code> (<strong>G</strong>ene <strong>R</strong>egistration from <strong>E</strong>xpression <strong>a</strong>nd <strong>T</strong>ime-courses in <strong>R</strong>) is a tool to register (align) two sets of gene expression profiles that users wish to compare.</p>
-<p>These gene profiles data will be referred as the <strong>query</strong> and the <strong>reference</strong> data. To match the time point ranges between those profiles, the time points of the <strong>query</strong> profiles will be transformed through a stretching and shifting process. This tool uses a statistical model comparison based on a Bayesian approach to evaluate the optimality of the gene expression profiles alignment.</p>
+<p><code>greatR</code> (<strong>G</strong>ene <strong>R</strong>egistration from <strong>E</strong>xpression <strong>a</strong>nd <strong>T</strong>ime-courses in <strong>R</strong>) is a tool to register (align) two sets of gene expression profiles that users wish to compare. These gene profiles data will be referred as the query and the reference data. To match the ranges over time between those profiles, the timepoints of the query gene expression profiles will be transformed through stretching and shifting process. This tool uses a statistical model comparison based on a Bayesian approach to evaluate the optimality of the gene expression profiles alignment.</p>
 <div class="section level2">
 <h2 id="package-workflow">Package workflow<a class="anchor" aria-label="anchor" href="#package-workflow"></a>
 </h2>
 <p>The flowchart below illustrates the workflow of the package given an input data:</p>
-<p><img src="reference/figures/greatR_workflow.png" width="100%"></p>
-<p>More details on how to use this package are available on <a href="https://ruthkr.github.io/greatR/reference/index.html">function documentations</a> and the following vignettes:</p>
+<p><br></p>
+<p><img src="reference/figures/greatR_workflow.png" width="85%"></p>
+<p><br></p>
+<p>More details on how to use this package are available on function documentations and the following vignettes:</p>
 <ol style="list-style-type: decimal">
 <li><a href="https://ruthkr.github.io/greatR/articles/data-requirement.html">Input data requirements</a></li>
 <li><a href="https://ruthkr.github.io/greatR/articles/register-data.html">Register data</a></li>
-<li><a href="https://ruthkr.github.io/greatR/articles/process-results.html">Process registration results</a></li>
+<li><a href="https://ruthkr.github.io/greatR/articles/visualise-results.html">Visualise registration results</a></li>
 </ol>
 </div>
 <div class="section level2">
@@ -125,7 +126,7 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ruthkr.github.io/greatR/">greatR</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load a data frame from the sample data</span></span>
-<span><span class="va">b_rapa_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_data.csv"</span>, package <span class="op">=</span> <span class="st">"greatR"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="va">b_rapa_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_all_replicates.csv"</span>, package <span class="op">=</span> <span class="st">"greatR"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Running the registration</span></span>
@@ -137,14 +138,11 @@
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── Validating input data ────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ℹ Will process 10 genes.</span></span>
-<span><span class="co">#&gt; ℹ Using estimated standard deviation, as no `exp_sd` was provided.</span></span>
-<span><span class="co">#&gt; ℹ Using `scaling_method` = "z-score".</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; ── Starting registration with optimisation ──────────────────────────────────────</span></span>
-<span><span class="co">#&gt; ℹ Using L-BFGS-B optimisation method.</span></span>
+<span><span class="co">#&gt; ℹ Using Nelder-Mead method.</span></span>
 <span><span class="co">#&gt; ℹ Using computed stretches and shifts search space limits.</span></span>
-<span><span class="co">#&gt; ℹ Using `overlapping_percent` = 50% as a registration criterion.</span></span>
-<span><span class="co">#&gt; ✔ Optimising registration parameters for genes (10/10) [2s]</span></span></code></pre></div>
+<span><span class="co">#&gt; ✔ Optimising registration parameters for genes (10/10) [6.7s]</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>

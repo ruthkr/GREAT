@@ -36,7 +36,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">greatR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,10 +54,10 @@
     <h6 class="dropdown-header" data-toc-skip>Overview</h6>
     <a class="dropdown-item" href="../articles/data-requirement.html">Input data requirements</a>
     <a class="dropdown-item" href="../articles/register-data.html">Registering data</a>
-    <a class="dropdown-item" href="../articles/process-results.html">Processing results</a>
+    <a class="dropdown-item" href="../articles/visualise-results.html">Visualising results</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Others</h6>
-    <a class="dropdown-item" href="../articles/register-data-manually.html">Registering data without optimisation</a>
+    <a class="dropdown-item" href="../articles/register-data-manually.html">Register data with provided parameters</a>
   </div>
 </li>
 <li class="nav-item">
@@ -96,31 +96,30 @@
 
     
     
-<p>This article will show users how to register data using different
-types of input, as illustrated below.</p>
-<p><img src="figures/registration_opt_diagram.png" width="100%" style="display: block; margin: auto;"></p>
+<p>This article will show users how to register data using the sample
+data provided by the package. Given an input data, users can directly
+register the data as illustrated below.</p>
+<p><br></p>
+<p><img src="figures/01_registration_opt_default.png" width="20%" style="display: block; margin: auto;"></p>
 <div class="section level2">
-<h2 id="using-data-frame-input">Using data frame input<a class="anchor" aria-label="anchor" href="#using-data-frame-input"></a>
+<h2 id="loading-sample-data">Loading sample data<a class="anchor" aria-label="anchor" href="#loading-sample-data"></a>
 </h2>
-<div class="section level3">
-<h3 id="loading-sample-data">Loading sample data<a class="anchor" aria-label="anchor" href="#loading-sample-data"></a>
-</h3>
-<p><code>greatR</code> provides an example of data frame containing two
-different species <em>A. thaliana</em> and <em>B. rapa</em> with two and
-three different replicates, respectively. This data frame can be read as
-follows:</p>
+<p><code>greatR</code> package provides an example of data frame
+containing two different species <em>A. thaliana</em> and <em>B.
+rapa</em> with two and three different replicates, respectively. This
+data frame can be read as follows:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ruthkr.github.io/greatR/">greatR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load a data frame from the sample data</span></span>
-<span><span class="va">b_rapa_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_data.csv"</span>, package <span class="op">=</span> <span class="st">"greatR"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="va">b_rapa_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_all_replicates.csv"</span>, package <span class="op">=</span> <span class="st">"greatR"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Note that the data has all of five columns required by the
 package:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">b_rapa_data</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">b_rapa_data</span><span class="op">[</span>, <span class="va">.SD</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span>, by <span class="op">=</span> <span class="va">accession</span><span class="op">]</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -218,15 +217,17 @@ package:</p>
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="registering-the-data">Registering the data<a class="anchor" aria-label="anchor" href="#registering-the-data"></a>
-</h3>
+<div class="section level2">
+<h2 id="registering-the-data">Registering the data<a class="anchor" aria-label="anchor" href="#registering-the-data"></a>
+</h2>
 <p>To align gene expression time-course between <em>Arabidopsis</em>
-Col-0 and <em>B. rapa</em> Ro18, we can use the function
-<code><a href="../reference/register.html">register()</a></code>. When using the default
-<code>use_optimisation = TRUE</code>, <code>greatR</code> will find the
-best stretch and shift parameters through optimisation. For more details
-on the other function arguments, go to <code><a href="../reference/register.html">register()</a></code>.</p>
+Col-0 and <em>B. rapa</em> Ro18, we can use function
+<code><a href="../reference/register.html">register()</a></code>. By default, the best registration parameters
+are optimised via Nelder-Mead (<code>optimisation_method = "nm"</code>).
+When using the default
+<code>optimise_registration_parameters = TRUE</code>, the stretch and
+shift search space is automatically estimated. For more details on the
+other function paramaters, go to <code><a href="../reference/register.html">register()</a></code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/register.html">register</a></span><span class="op">(</span></span>
 <span>  <span class="va">b_rapa_data</span>,</span>
@@ -236,40 +237,23 @@ on the other function arguments, go to <code><a href="../reference/register.html
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── Validating input data ────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; ℹ Will process 10 genes.</span></span>
-<span><span class="co">#&gt; ℹ Using estimated standard deviation, as no `exp_sd` was provided.</span></span>
-<span><span class="co">#&gt; ℹ Using `scaling_method` = "z-score".</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; ── Starting registration with optimisation ──────────────────────────────────────</span></span>
-<span><span class="co">#&gt; ℹ Using L-BFGS-B optimisation method.</span></span>
+<span><span class="co">#&gt; ℹ Using Nelder-Mead method.</span></span>
 <span><span class="co">#&gt; ℹ Using computed stretches and shifts search space limits.</span></span>
-<span><span class="co">#&gt; ℹ Using `overlapping_percent` = 50% as a registration criterion.</span></span>
-<span><span class="co">#&gt; ✔ Optimising registration parameters for genes (10/10) [2s]</span></span></code></pre></div>
-<p>When dealing with thousands of genes, users may speed up the
-registration process by using the argument <code>num_cores</code> to run
-the registration using parallel processing.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 8</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">registration_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/register.html">register</a></span><span class="op">(</span></span>
-<span>  <span class="va">b_rapa_data</span>,</span>
-<span>  reference <span class="op">=</span> <span class="st">"Ro18"</span>,</span>
-<span>  query <span class="op">=</span> <span class="st">"Col0"</span>,</span>
-<span>  scaling_method <span class="op">=</span> <span class="st">"z-score"</span>,</span>
-<span>  num_cores <span class="op">=</span> <span class="fl">8</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; ✔ Optimising registration parameters for genes (10/10) [6.7s]</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="registration-results">Registration results<a class="anchor" aria-label="anchor" href="#registration-results"></a>
-</h3>
-<p>The function <code><a href="../reference/register.html">register()</a></code> returns a list with S3 class
-<code>res_greatR</code> containing three different objects:</p>
+<div class="section level2">
+<h2 id="registration-results">Registration results<a class="anchor" aria-label="anchor" href="#registration-results"></a>
+</h2>
+<p>The function <code><a href="../reference/register.html">register()</a></code> returns a list of two
+frames:</p>
 <ul>
 <li>
-<code>data</code> is a data frame containing the expression data and
-an additional <code>timepoint_reg</code> column which is a result of
-registered time points by applying the registration parameters to the
-query data.</li>
+<code>data</code> is a data frame containing the scaled expression
+data and an additional <code>timepoint_reg</code> column which is a
+result of registered time points by applying the registration parameters
+to the query data.</li>
 <li>
 <code>model_comparison</code> is a data frame containing (a) the
 optimal stretch and shift for each <code>gene_id</code> and (b) the
@@ -277,17 +261,12 @@ difference between Bayesian Information Criterion for the separate model
 and for the combined model (<code>BIC_diff</code>) after applying
 optimal registration parameters for each gene. If the value of
 <code>BIC_diff &lt; 0</code>, then expression dynamics between reference
-and query data can be registered (<code>registered = TRUE</code>).
-(Default S3 print).</li>
-<li>
-<code>fun_args</code> is a list of arguments used when calling the
-function (<code>reference</code>, <code>query</code>,
-<code>scaling_method</code>, …).</li>
+and query data can be registered (<code>registered = TRUE</code>).</li>
 </ul>
 <p>To check whether a gene is registered or not, we can get the summary
 results by accessing the <code>model_comparison</code> table from the
 registration result.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">registration_results</span><span class="op">$</span><span class="va">model_comparison</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -301,154 +280,82 @@ registration result.</p>
 <tbody>
 <tr class="odd">
 <td align="left">BRAA02G018970.3C</td>
-<td align="right">4.000000</td>
-<td align="right">-30.978998</td>
-<td align="right">2.830103</td>
+<td align="right">3.999999</td>
+<td align="right">-9.9803319</td>
+<td align="right">2.830104</td>
 <td align="left">FALSE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA02G043220.3C</td>
-<td align="right">2.451533</td>
-<td align="right">-10.595789</td>
+<td align="right">2.451715</td>
+<td align="right">-0.4364747</td>
 <td align="right">-3.571541</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA03G023790.3C</td>
-<td align="right">2.250665</td>
-<td align="right">-4.358395</td>
-<td align="right">-7.849111</td>
+<td align="right">2.250661</td>
+<td align="right">4.4018159</td>
+<td align="right">-7.849086</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA03G051930.3C</td>
-<td align="right">3.099925</td>
-<td align="right">-12.564349</td>
-<td align="right">-8.096682</td>
+<td align="right">3.100202</td>
+<td align="right">2.1364425</td>
+<td align="right">-8.096674</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA04G005470.3C</td>
-<td align="right">3.527640</td>
-<td align="right">-20.246481</td>
-<td align="right">-7.540003</td>
+<td align="right">3.527039</td>
+<td align="right">-2.5483276</td>
+<td align="right">-7.540002</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA05G005370.3C</td>
-<td align="right">2.275328</td>
-<td align="right">-5.030457</td>
-<td align="right">-7.726491</td>
+<td align="right">2.276239</td>
+<td align="right">3.8947552</td>
+<td align="right">-7.726484</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA06G025360.3C</td>
-<td align="right">2.383370</td>
-<td align="right">-8.024893</td>
+<td align="right">2.383838</td>
+<td align="right">1.6557012</td>
 <td align="right">-6.502890</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA07G030470.3C</td>
-<td align="right">4.000000</td>
-<td align="right">-27.031933</td>
-<td align="right">-5.450813</td>
+<td align="right">3.999999</td>
+<td align="right">-6.0350479</td>
+<td align="right">-5.450806</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="odd">
 <td align="left">BRAA07G034100.3C</td>
-<td align="right">4.000000</td>
-<td align="right">-27.237508</td>
-<td align="right">-3.927756</td>
+<td align="right">3.999999</td>
+<td align="right">-6.2376261</td>
+<td align="right">-3.927753</td>
 <td align="left">TRUE</td>
 </tr>
 <tr class="even">
 <td align="left">BRAA09G045310.3C</td>
-<td align="right">3.381275</td>
-<td align="right">-17.908895</td>
-<td align="right">-7.690015</td>
+<td align="right">3.379824</td>
+<td align="right">-1.2284081</td>
+<td align="right">-7.690014</td>
 <td align="left">TRUE</td>
 </tr>
 </tbody>
 </table>
-<p>From the sample data above, we can see that for nine out of ten
-genes, <code>registered = TRUE</code>, meaning that reference and query
-data between those nine genes can be aligned or registered. These data
-frame outputs can further be summarised and visualised; see the
-documentation on the <a href="https://ruthkr.github.io/greatR/articles/process-results.html">processing
-registration results</a> article.</p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="using-other-inputs">Using other inputs<a class="anchor" aria-label="anchor" href="#using-other-inputs"></a>
-</h2>
-<div class="section level3">
-<h3 id="loading-sample-data-1">Loading sample data<a class="anchor" aria-label="anchor" href="#loading-sample-data-1"></a>
-</h3>
-<p>As noted in the <a href="https://ruthkr.github.io/greatR/articles/data-requirement.html">input
-data requirements</a> article, <code><a href="../reference/register.html">register()</a></code> also accepts a
-list of data frames or a list of reference and query vectors as
-<code>input</code>:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Define expression value vectors</span></span>
-<span><span class="va">ref_expressions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.9</span>, <span class="fl">3.1</span>, <span class="fl">7.8</span>, <span class="fl">31.6</span>, <span class="fl">33.7</span>, <span class="fl">31.5</span>, <span class="fl">131.4</span>, <span class="fl">107.5</span>, <span class="fl">116.7</span>, <span class="fl">112.5</span>, <span class="fl">109.7</span>, <span class="fl">57.4</span>, <span class="fl">50.9</span><span class="op">)</span></span>
-<span><span class="va">query_expressions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">14</span>, <span class="fl">12.1</span>, <span class="fl">15.9</span>, <span class="fl">47</span>, <span class="fl">30.9</span>, <span class="fl">50.5</span>, <span class="fl">80.1</span>, <span class="fl">67.4</span>, <span class="fl">72.9</span>, <span class="fl">61.7</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">list_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  reference <span class="op">=</span> <span class="va">ref_expressions</span>,</span>
-<span>  query <span class="op">=</span> <span class="va">query_expressions</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="registering-the-data-1">Registering the data<a class="anchor" aria-label="anchor" href="#registering-the-data-1"></a>
-</h3>
-<p>As previously shown, to register the input list, users can run the
-function <code><a href="../reference/register.html">register()</a></code>:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">registration_results_vectors</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/register.html">register</a></span><span class="op">(</span></span>
-<span>  <span class="va">list_vector</span>,</span>
-<span>  reference <span class="op">=</span> <span class="st">"Ref"</span>,</span>
-<span>  query <span class="op">=</span> <span class="st">"Query"</span>,</span>
-<span>  scaling_method <span class="op">=</span> <span class="st">"z-score"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; ── Validating input data ───────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; ℹ Will process 1 gene.</span></span>
-<span><span class="co">#&gt; ℹ Using estimated standard deviation, as no `exp_sd` was provided.</span></span>
-<span><span class="co">#&gt; ℹ Using `scaling_method` = "z-score".</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ── Starting registration with optimisation ─────────────────────────────────────</span></span>
-<span><span class="co">#&gt; ℹ Using L-BFGS-B optimisation method.</span></span>
-<span><span class="co">#&gt; ℹ Using computed stretches and shifts search space limits.</span></span>
-<span><span class="co">#&gt; ℹ Using `overlapping_percent` = 50% as a registration criterion.</span></span>
-<span><span class="co">#&gt; ✔ Optimising registration parameters for genes (1/1) [170ms]</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="registration-results-1">Registration results<a class="anchor" aria-label="anchor" href="#registration-results-1"></a>
-</h3>
-<p>The registration result object will have the same structure as when
-using a data frame as an input. Since no ID is explicitly defined in the
-input vector list, a unique <code>gene_id</code> will be automatically
-generated for the reference and query pair.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">registration_results_vectors</span><span class="op">$</span><span class="va">model_comparison</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">gene_id</th>
-<th align="right">stretch</th>
-<th align="right">shift</th>
-<th align="right">BIC_diff</th>
-<th align="left">registered</th>
-</tr></thead>
-<tbody><tr class="odd">
-<td align="left">56206d19</td>
-<td align="right">1.125762</td>
-<td align="right">0.074995</td>
-<td align="right">-6.115123</td>
-<td align="left">TRUE</td>
-</tr></tbody>
-</table>
-</div>
+<p>From the sample data above, we can see that for all ten genes,
+<code>registered = TRUE</code>, meaning that reference and query data
+between those ten genes can be aligned or registered. These data frame
+outputs can further be summarised and visualised; see the documentation
+on the <a href="https://ruthkr.github.io/greatR/articles/visualise-results.html">visualising
+results</a> article.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

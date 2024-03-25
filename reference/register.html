@@ -12,7 +12,7 @@ wishes to compare."><meta property="og:image" content="https://ruthkr.github.io/
     
     <a class="navbar-brand me-2" href="../index.html">greatR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,10 +29,10 @@ wishes to compare."><meta property="og:image" content="https://ruthkr.github.io/
     <h6 class="dropdown-header" data-toc-skip>Overview</h6>
     <a class="dropdown-item" href="../articles/data-requirement.html">Input data requirements</a>
     <a class="dropdown-item" href="../articles/register-data.html">Registering data</a>
-    <a class="dropdown-item" href="../articles/process-results.html">Processing results</a>
+    <a class="dropdown-item" href="../articles/visualise-results.html">Visualising results</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Others</h6>
-    <a class="dropdown-item" href="../articles/register-data-manually.html">Registering data without optimisation</a>
+    <a class="dropdown-item" href="../articles/register-data-manually.html">Register data with provided parameters</a>
   </div>
 </li>
 <li class="nav-item">
@@ -74,8 +74,8 @@ wishes to compare.</p>
 <span>  <span class="va">query</span>,</span>
 <span>  scaling_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"z-score"</span>, <span class="st">"min-max"</span><span class="op">)</span>,</span>
 <span>  overlapping_percent <span class="op">=</span> <span class="fl">50</span>,</span>
-<span>  use_optimisation <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  optimisation_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lbfgsb"</span>, <span class="st">"nm"</span>, <span class="st">"sa"</span><span class="op">)</span>,</span>
+<span>  optimise_registration_parameters <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  optimisation_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nm"</span>, <span class="st">"lbfgsb"</span>, <span class="st">"sa"</span><span class="op">)</span>,</span>
 <span>  optimisation_config <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  exp_sd <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  num_cores <span class="op">=</span> <span class="cn">NA</span></span>
@@ -89,11 +89,11 @@ wishes to compare.</p>
 
 
 <dt>stretches</dt>
-<dd><p>Candidate registration stretch factors to apply to query data, only required if <code>use_optimisation = FALSE</code>.</p></dd>
+<dd><p>Candidate registration stretch factors to apply to query data, only required if <code>optimise_registration_parameters = FALSE</code>.</p></dd>
 
 
 <dt>shifts</dt>
-<dd><p>Candidate registration shift values to apply to query data, only required if <code>use_optimisation = FALSE</code>.</p></dd>
+<dd><p>Candidate registration shift values to apply to query data, only required if <code>optimise_registration_parameters = FALSE</code>.</p></dd>
 
 
 <dt>reference</dt>
@@ -109,15 +109,15 @@ wishes to compare.</p>
 
 
 <dt>overlapping_percent</dt>
-<dd><p>Minimum percentage of overlapping time point range of the reference data. Shifts will be only considered if it leaves at least this percentage of overlapping time point range after applying the registration.</p></dd>
+<dd><p>Minimum percentage of overlapping time points on the reference data. Shifts will be only considered if it leaves at least this percentage of overlapping time points after applying the registration function.</p></dd>
 
 
-<dt>use_optimisation</dt>
+<dt>optimise_registration_parameters</dt>
 <dd><p>Whether to optimise registration parameters. By default, <code>TRUE</code>.</p></dd>
 
 
 <dt>optimisation_method</dt>
-<dd><p>Optimisation method to use. Either <code>"lbfgsb"</code> for L-BFGS-B (default), <code>"nm"</code> for Nelder-Mead, or <code>"sa"</code> for Simulated Annealing.</p></dd>
+<dd><p>Optimisation method to use. Either <code>"nm"</code> for Nelder-Mead (default), <code>"lbfgsb"</code> for L-BFGS-B, or <code>"sa"</code> for Simulated Annealing.</p></dd>
 
 
 <dt>optimisation_config</dt>
@@ -136,15 +136,12 @@ wishes to compare.</p>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>This function returns a <code>res_greatR</code> object containing:</p>
+<p>This function returns a list of data frames, containing:</p>
 <dl><dt>data</dt>
 <dd><p>a table containing the scaled input data and an additional <code>timepoint_reg</code> column after applying registration parameters to the query data.</p></dd>
 
 <dt>model_comparison</dt>
 <dd><p>a table comparing the optimal registration function for each gene (based on <code>all_shifts_df</code> scores) to model with no registration applied.</p></dd>
-
-<dt>fun_args</dt>
-<dd><p>a list of arguments used when calling the function.</p></dd>
 
 </dl></div>
 
@@ -152,7 +149,7 @@ wishes to compare.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># Load a data frame from the sample data</span></span></span>
-<span class="r-in"><span><span class="va">data_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_data.csv"</span>, package <span class="op">=</span> <span class="st">"greatR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">data_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/brapa_arabidopsis_all_replicates.csv"</span>, package <span class="op">=</span> <span class="st">"greatR"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">all_data</span> <span class="op">&lt;-</span> <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">data_path</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Running the registration</span></span></span>

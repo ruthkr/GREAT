@@ -1,4 +1,4 @@
-# greatR 1.1.0.9000
+# greatR 2.0.0
 
 * Added {patchwork} as a dependency.
 * Updated {greatR} logo.

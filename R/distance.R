@@ -62,12 +62,16 @@ calculate_distance <- function(results, type = c("registered", "all"), genes_lis
   data_query <- data[data$accession == query][, .(gene_query = gene_id, accession, timepoint_query = timepoint, timepoint_reg, exp_query = expression_value)]
   data_ref <- data[data$accession == reference][, .(gene_ref = gene_id, accession, timepoint_ref = timepoint, timepoint_reg, exp_ref = expression_value)]
 
+  # Impute query expression values
+  data_query_imputed <- impute_query_exp_value(data_query)
+
   # Cross join all reference and query time points
-  timepoint_cj_result <- get_timepoint_comb_result_data(
+  timepoint_cj_result <- get_timepoint_comb_data(
     data_ref[, .(gene_ref, timepoint_ref, exp_ref)],
-    data_query[, .(gene_query, timepoint_query, timepoint_reg, exp_query)]
-  )
-  timepoint_cj_original <- get_timepoint_comb_original_data(
+    data_query_imputed
+  )[order(gene_id, timepoint_query)]
+
+  timepoint_cj_original <- get_timepoint_comb_data(
     data_ref[, .(gene_ref, timepoint_ref, exp_ref)],
     data_query[, .(gene_query, timepoint_query, exp_query)]
   )
@@ -91,10 +95,63 @@ calculate_distance <- function(results, type = c("registered", "all"), genes_lis
   return(new_dist_greatR(results_list))
 }
 
-#' Cross join all original reference and query time points and expression values
+#' Impute query expression values
 #'
 #' @noRd
-get_timepoint_comb_original_data <- function(data_ref, data_query) {
+impute_query_exp_value <- function(data_query) {
+  # Suppress "no visible binding for global variable" note
+  gene_id <- NULL
+  gene_ref <- NULL
+  gene_query <- NULL
+  timepoint <- NULL
+  timepoint_reg <- NULL
+  timepoint_ref <- NULL
+  timepoint_query <- NULL
+  expression_value <- NULL
+  exp_ref <- NULL
+  exp_query <- NULL
+
+  # The imputed query time points to estimate expression values for
+  timepoint_ranges_query <- data_query[, .(min_t = ceiling(min(timepoint_reg)), max_t = floor(max(timepoint_reg))), by = "gene_query"]
+
+  imputed_query_timepoints <- data.table::rbindlist(
+    Map(
+      function(x, min_t, max_t) {
+        data.table::data.table(gene_query = rep(x, max_t - min_t + 1), timepoint_query = seq(min_t, max_t))
+      }, timepoint_ranges_query$gene_query, timepoint_ranges_query$min_t, timepoint_ranges_query$max_t
+    )
+  )
+
+  # Fit using cubic splines with K+3 params for each gene
+  genes <- unique(data_query$gene_query)
+
+  fits <- lapply(
+    genes,
+    function(gene) {
+      fit_spline_model(data_query[data_query$gene_query == gene], x = "timepoint_reg", y = "exp_query")
+    }
+  )
+  names(fits) <- genes
+
+  # Predict query expression values
+  preds_query <- lapply(
+    genes,
+    function(gene) {
+      data <- unique(imputed_query_timepoints[imputed_query_timepoints$gene_query == gene][, .(timepoint_reg = timepoint_query)])
+      data[, .(gene_query = gene, timepoint_query = timepoint_reg, exp_query = stats::predict(fits[gene][[1]], newdata = data))]
+    }
+  )
+
+  # Left join to imputed timepoints
+  data_query_imputed <- merge(imputed_query_timepoints, data.table::rbindlist(preds_query), by = c("gene_query", "timepoint_query"))
+
+  return(data_query_imputed)
+}
+
+#' Cross join all reference and query time points and expression values
+#'
+#' @noRd
+get_timepoint_comb_data <- function(data_ref, data_query) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   gene_ref <- NULL
@@ -120,75 +177,6 @@ get_timepoint_comb_original_data <- function(data_ref, data_query) {
   )
 
   comb <- data.table::rbindlist(comb)
-
-  # Select relevant columns
-  comb <- comb[, .(gene_id = gene_ref, timepoint_ref, timepoint_query, exp_ref, exp_query)]
-
-  return(comb)
-}
-
-#' Cross join all reference and registered query time points and expression values
-#'
-#' @noRd
-get_timepoint_comb_result_data <- function(data_ref, data_query) {
-  # Suppress "no visible binding for global variable" note
-  gene_id <- NULL
-  gene_ref <- NULL
-  gene_query <- NULL
-  timepoint <- NULL
-  timepoint_reg <- NULL
-  timepoint_ref <- NULL
-  timepoint_query <- NULL
-  expression_value <- NULL
-  exp_ref <- NULL
-  exp_query <- NULL
-
-  # The imputed query time points to estimate expression values for
-  timepoint_ranges_query <- data_query[, .(min_t = ceiling(min(timepoint_reg)), max_t = floor(max(timepoint_reg))), by = "gene_query"]
-
-  imputed_query_timepoints <- data.table::rbindlist(
-    Map(
-      function(x, min_t, max_t) {
-        data.table::data.table(gene_query = rep(x, max_t - min_t + 1), timepoint_query = seq(min_t, max_t))
-      }, timepoint_ranges_query$gene_query, timepoint_ranges_query$min_t, timepoint_ranges_query$max_t
-    )
-  )
-
-  # Perform cross join
-  genes <- unique(data_query$gene_query)
-
-  comb <- lapply(
-    genes,
-    function(gene) {
-      cross_join(
-        unique(data_ref[data_ref$gene_ref == gene]),
-        imputed_query_timepoints[imputed_query_timepoints$gene_query == gene]
-      )
-    }
-  )
-
-  comb <- data.table::rbindlist(comb)
-
-  # Fit using cubic splines with K+3 params for each gene
-  fits <- lapply(
-    genes,
-    function(gene) {
-      fit_spline_model(data_query[data_query$gene_query == gene], x = "timepoint_reg", y = "exp_query")
-    }
-  )
-  names(fits) <- genes
-
-  # Predict query expression values
-  preds_query <- lapply(
-    genes,
-    function(gene) {
-      data <- unique(comb[comb$gene_query == gene][, .(timepoint_reg = timepoint_query)])
-      data[, .(gene_query = gene, timepoint_query = timepoint_reg, exp_query = stats::predict(fits[gene][[1]], newdata = data))]
-    }
-  )
-
-  # Left join to cross join
-  comb <- merge(comb, data.table::rbindlist(preds_query), by = c("gene_query", "timepoint_query"))
 
   # Select relevant columns
   comb <- comb[, .(gene_id = gene_ref, timepoint_ref, timepoint_query, exp_ref, exp_query)]

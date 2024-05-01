@@ -63,7 +63,7 @@ calculate_distance <- function(results, type = c("registered", "all"), genes_lis
   data_ref <- data[data$accession == reference][, .(gene_ref = gene_id, accession, timepoint_ref = timepoint, timepoint_reg, exp_ref = expression_value)]
 
   # Impute query expression values
-  data_query_imputed <- impute_query_exp_value(data_query)
+  data_query_imputed <- impute_query_exp_value(data_query[, .(gene_query, timepoint_reg, exp_query)])
 
   # Cross join all reference and query time points
   timepoint_cj_result <- get_timepoint_comb_data(
@@ -100,15 +100,9 @@ calculate_distance <- function(results, type = c("registered", "all"), genes_lis
 #' @noRd
 impute_query_exp_value <- function(data_query) {
   # Suppress "no visible binding for global variable" note
-  gene_id <- NULL
-  gene_ref <- NULL
   gene_query <- NULL
-  timepoint <- NULL
   timepoint_reg <- NULL
-  timepoint_ref <- NULL
   timepoint_query <- NULL
-  expression_value <- NULL
-  exp_ref <- NULL
   exp_query <- NULL
 
   # The imputed query time points to estimate expression values for
@@ -117,7 +111,10 @@ impute_query_exp_value <- function(data_query) {
   imputed_query_timepoints <- data.table::rbindlist(
     Map(
       function(x, min_t, max_t) {
-        data.table::data.table(gene_query = rep(x, max_t - min_t + 1), timepoint_query = seq(min_t, max_t))
+        data.table::data.table(
+          gene_query = rep(x, max_t - min_t + 1),
+          timepoint_query = seq(min_t, max_t)
+        )
       }, timepoint_ranges_query$gene_query, timepoint_ranges_query$min_t, timepoint_ranges_query$max_t
     )
   )
@@ -128,7 +125,11 @@ impute_query_exp_value <- function(data_query) {
   fits <- lapply(
     genes,
     function(gene) {
-      fit_spline_model(data_query[data_query$gene_query == gene], x = "timepoint_reg", y = "exp_query")
+      fit_spline_model(
+        data_query[data_query$gene_query == gene],
+        x = "timepoint_reg",
+        y = "exp_query"
+      )
     }
   )
   names(fits) <- genes
@@ -143,7 +144,11 @@ impute_query_exp_value <- function(data_query) {
   )
 
   # Left join to imputed timepoints
-  data_query_imputed <- merge(imputed_query_timepoints, data.table::rbindlist(preds_query), by = c("gene_query", "timepoint_query"))
+  data_query_imputed <- merge(
+    imputed_query_timepoints,
+    data.table::rbindlist(preds_query),
+    by = c("gene_query", "timepoint_query")
+  )
 
   return(data_query_imputed)
 }

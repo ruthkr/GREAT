@@ -46,7 +46,7 @@ calc_loglik_H1 <- function(data) {
 #' @noRd
 compare_H1_and_H2 <- function(data, stretch, shift, loglik_H1, loglik_H2) {
   # Specify parameters used to compute BIC
-  num_spline_params <- 4
+  num_spline_params <- 5
   num_registration_params <- 2
   num_obs <- nrow(data)
 

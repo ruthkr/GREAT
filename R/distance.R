@@ -95,10 +95,10 @@ calculate_distance <- function(results, type = c("registered", "all"), genes_lis
   return(new_dist_greatR(results_list))
 }
 
-#' Impute query expression values
+#' Impute query expression values from query fitted spline
 #'
 #' @noRd
-impute_query_exp_value <- function(data_query) {
+impute_query_exp_value_from_spline <- function(data_query) {
   # Suppress "no visible binding for global variable" note
   gene_query <- NULL
   timepoint_reg <- NULL
@@ -153,10 +153,47 @@ impute_query_exp_value <- function(data_query) {
   return(data_query_imputed)
 }
 
+#' Impute query expression values from query timepoints
+#'
+#' @noRd
+impute_query_exp_value <- function(data_query) {
+  # Suppress "no visible binding for global variable" note
+  gene_query <- NULL
+  timepoint_reg <- NULL
+  timepoint_query <- NULL
+  exp_query <- NULL
+
+  # Interpolate using approxfun
+  genes <- unique(data_query$gene_query)
+
+  imputed_list <- lapply(
+    genes,
+    function(gene) {
+        data <- data_query[data_query$gene_query == gene]
+
+        timepoint_range <- data[, .(min_t = ceiling(min(timepoint_reg)), max_t = floor(max(timepoint_reg)))]
+        timepoint_range_seq <- timepoint_range$min_t:timepoint_range$max_t
+
+        interp_data <- data.table::data.table(
+          gene_query = gene,
+          timepoint_query = timepoint_range_seq,
+          exp_query = approxfun(data$timepoint_reg, data$exp_query)(timepoint_range_seq)
+        )
+
+        return(interp_data)
+    }
+  )
+
+  # Bind results
+  data_query_imputed <- data.table::rbindlist(imputed_list)
+
+  return(data_query_imputed)
+}
+
 #' Cross join all reference and query time points and expression values
 #'
 #' @noRd
-get_timepoint_comb_data <- function(data_ref, data_query) {
+get_timepoint_comb_data <- function(data_ref, data_query, cross_join_all = FALSE) {
   # Suppress "no visible binding for global variable" note
   gene_id <- NULL
   gene_ref <- NULL

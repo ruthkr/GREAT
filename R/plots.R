@@ -335,6 +335,13 @@ plot.dist_greatR <- function(x,
   reference <- attr(data, "ref")
   query <- attr(data, "query")
 
+  # Filter quadrant of interest
+  data <- data[grepl(reference, data$timepoint_ref) & grepl(query, data$timepoint_query), ]
+
+  # Remove accession names from timepoints
+  data$timepoint_ref <- as.numeric(gsub(paste0(reference, " "), "", data$timepoint_ref))
+  data$timepoint_query <- as.numeric(gsub(paste0(query, " "), "", data$timepoint_query))
+
   # Synchronise time points
   if (all(match_timepoints, type == "result")) {
     equal_timepoints <- intersect(data$timepoint_ref, data$timepoint_query)

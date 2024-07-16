@@ -1,51 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://ruthkr.github.io/greatR/404.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/articles/data-requirement.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/articles/process-results.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/articles/register-data-manually.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/articles/register-data.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/reference/calculate_distance.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/reference/get_approximate_stretch.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/reference/plot.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/reference/register.html</loc>
-  </url>
-  <url>
-    <loc>https://ruthkr.github.io/greatR/reference/summary.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://ruthkr.github.io/greatR/404.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/LICENSE.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/articles/data-requirement.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/articles/index.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/articles/process-results.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/articles/register-data-manually.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/articles/register-data.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/authors.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/index.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/news/index.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/reference/calculate_distance.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/reference/get_approximate_stretch.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/reference/index.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/reference/plot.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/reference/register.html</loc></url>
+<url><loc>https://ruthkr.github.io/greatR/reference/summary.html</loc></url>
 </urlset>
+
